@@ -1,0 +1,24 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "baseUrl": "./src",
+    "paths": {
+      "@app-global": [ "app/global" ],
+      "@app-third-party": [ "app/third-party" ],
+      "@app-environments": ["environments/environment.ts"],
+      "@app-core-module": ["app-modules/core-modules"]
+    },
+    "strict": false,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false
+  },
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}
