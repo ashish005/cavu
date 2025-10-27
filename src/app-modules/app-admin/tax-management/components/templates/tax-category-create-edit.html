@@ -1,0 +1,117 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+    <div class="row row-sm">
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.taxGroups" title="Tax Group"
+                         (cb)="updateTaxGroupId($event)"
+                         [control]="formTaxGroupId"></select-dropdown>
+      </div>
+      <div class="col-sm-5">
+        <div class="md-form-group">
+          <div class="text-xs" style="float: right;position: absolute;top: 0px;right: 0px;">
+            <label class="md-check">
+              <span class="pr-4">Service</span>
+              <input type="checkbox" formControlName="isService">
+              <i class="blue"></i>
+            </label>
+          </div>
+          <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+          <label> Name </label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="md-form-group">
+          <input class="md-input" formControlName="taxCode" [ngClass]="{ 'is-invalid': submitted && f.taxCode.errors }">
+          <label> Tax Code </label>
+        </div>
+      </div>
+      <div class="col-sm-12">
+        <table class="table table-condensed" [formGroup]="customForm">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Rate</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody formArrayName="rateMapperRule">
+          <ng-template ngFor let-rule [ngForOf]="formRateMapperRule?.controls | filterFunction: filterRule" let-i="index">
+            <ng-container [formGroup]="rule">
+              <tr>
+                <td><span> {{rule.value.name}} </span></td>
+                <td><span> {{rule.value.rate}} <small *ngIf="rule.value.hasExtraTaxRate"> + Extra {{rule.value.extraTaxRate}}%</small></span></td>
+                <td>
+                  <label class="md-check"><input type="checkbox" formControlName="status"><i class="theme"></i><span></span></label>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="rule?.value.children?.length" [formGroup]="rule">
+              <tr *ngFor="let ruleItem of rule?.value.children; let k = index">
+                <td colspan="3">
+                  <span>{{ruleItem.name}} Rate: {{ruleItem.rate }}</span>
+                  <div *ngIf="ruleItem.extraTaxRate">
+                    <div class="md-form-group pb-0 pt-0">
+                      <div class="md-input">{{ruleItem?.value.extraTaxRate}}</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-template>
+          </tbody>
+        </table>
+        <!--<div formArrayName="rateMapperRule">
+          <div class="row theme">
+            <div class="col-md-5"><p> Name </p></div>
+            <div class="col-md-5"><p> Rate </p></div>
+            <div class="col-md-2"><p> Status </p></div>
+          </div>
+          <ng-template ngFor let-rule [ngForOf]="formRateMapperRule?.controls | filterFunction: filterRule" let-i="index">
+            <div [formGroup]="rule" class="flex box">
+              <div class="box-body">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="md-form-group pb-0 pt-0">
+                      <div class="md-input">{{rule.value.name}}</div>
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="md-form-group pb-0 pt-0">
+                      <div class="md-input">{{rule?.value.rate}}</div>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="md-form-group md-switch pb-0 pt-0">
+                      <input type="checkbox" formControlName="status">
+                    </label>
+                  </div>
+                </div>
+                <div class="row">
+                  <ng-template ngFor let-item [ngForOf]="rule?.value.children" let-i="index">
+                    <div class="box-body col">
+                      <small>{{ item.name }} Rate: {{ item.rate }}</small>
+                      <div *ngIf="item.extraTaxRate">
+                        <div class="md-form-group pb-0 pt-0">
+                          <div class="md-input">{{rule?.value.extraTaxRate}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </div>-->
+        <!--<button type="button" class="btn btn-sm btn-icon float-left p-2 m-2" (click)="addNewRow(null)"><i class="fa fa-plus"></i></button>-->
+      </div>
+      <ng-template #footerTemplate>
+        <div class="col-sm-12 text-right">
+          <button class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+            {{ submitted ? 'Submitting...' : actionType }}
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </form>
+</div>

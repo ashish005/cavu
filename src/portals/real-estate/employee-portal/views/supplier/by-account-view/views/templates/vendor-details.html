@@ -1,0 +1,88 @@
+<div class="tab-pane fade active show" id="tab_4">
+    <div class="row m-2">
+        <div class="col-4">
+            <small class="text-muted">Name/ Code</small>
+            <div class="_500">{{apiResolver?.vendor?.name}}</div>
+        </div>
+        <div class="col-4">
+            <small class="text-muted">Contact No</small>
+            <div class="_500">{{apiResolver?.vendor?.contactNo}}</div>
+        </div>
+        <div class="col-4">
+            <small class="text-muted">Email</small>
+            <div class="_500">{{apiResolver?.vendor?.contactEmail}}</div>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-6">
+            <small class="text-muted">Address</small>
+            <div class="_500">{{apiResolver?.vendor?.address}} {{apiResolver?.vendor?.city}}
+                {{apiResolver?.vendor?.pinCode}}
+            </div>
+        </div>
+        <div class="col-6">
+            <small class="text-muted">Manager</small>
+            <div class="_500">James Richo</div>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-6">
+            <small class="text-muted">Trade Name / Tax No</small>
+            <div class="_500">{{apiResolver?.vendor?.vendor?.tradeName}} {{apiResolver?.vendor?.vendor?.taxNo}}</div>
+        </div>
+        <div class="col-6">
+            <small class="text-muted">Registration No & Date</small>
+            <div class="_500">{{apiResolver?.vendor?.vendor?.registrationNo || '--'}}
+                {{apiResolver?.vendor?.vendor?.registrationDate | dateFormat}}
+            </div>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-4">
+            <small class="text-muted">Supply Type</small>
+            <div class="_500">{{apiResolver?.vendor?.vendor?.supplyType}}</div>
+        </div>
+        <div class="col-4">
+            <small class="text-muted">Nature</small>
+            <div class="_500">{{apiResolver?.vendor?.vendor?.nature}}</div>
+        </div>
+        <div class="col-4">
+            <small class="text-muted">Purchase Type</small>
+            <div class="_500">{{apiResolver?.vendor?.vendor?.purchaseType}}</div>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-6">
+            <div class="box no-border">
+                {{apiResolver?.vendor?.vendor?.amountCalcTypeId}}
+                <div class="px-3 row no-gutters">
+                    <div class="col-md-12">
+                        <div class="p-2 b-b"><a class="item-title _500 text-muted">Amount Calculation Type</a></div>
+                        <div class="py-2">
+                            <div style="height: 320px; position: relative; overflow: auto; background-color: transparent;">
+                                <pre class="p-2 d-block m-auto" style="min-height: 300px">
+
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="box no-border">
+                {{apiResolver?.vendor?.vendor?.amountCalcTypeId}}
+                <div class="px-3 row no-gutters">
+                    <div class="col-md-12">
+                        <div class="p-2 b-b"><a class="item-title _500 text-muted">Cost Calculation Type</a></div>
+                        <div class="py-2">
+                            <div style="height: 320px; position: relative; overflow: auto; background-color: transparent;">
+                                <pre class="p-2 d-block m-auto" style="min-height: 300px"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

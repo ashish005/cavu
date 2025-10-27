@@ -1,0 +1,14 @@
+<div [formGroup]="customForm">
+    <input id="search" class="p-0 item-title _500" autofocus type="text" placeholder="Type some text" (keyup)="particularFocus=true"
+           placeholder="Enter Particular Name" [formControl]="particularsSearch" autocomplete="off">
+    <ul class="drop list inset" [hidden]="!particularFocus">
+        <li class="match list-item" *ngFor="let item of particular$" (click)="applySelect(item)">
+            <div class="list-body">
+                <a class="item-title _500">{{item?.name }} <small class="float-right text-sm text-muted">{{item?.accountGroup}}</small> </a>
+                <div class="item-except text-sm text-muted h-1x">
+                    <div class="item-tag tag float-right">Curr Balance: {{item?.balance }}</div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

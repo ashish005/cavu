@@ -1,0 +1,87 @@
+<div id="setting" *ngIf="themeManager.showThemeSetting">
+    <div class="setting dark-white rounded-bottom active" id="theme" data-class="active">
+      <a href="#" data-toggle-class="active" data-target="#theme" class="dark-white toggle active">
+          <i class="fa fa-gear text-primary fa-spin"></i>
+      </a>
+        <div class="box-header p-2"><strong>Theme Switcher</strong></div>
+        <div class="box-divider"></div>
+        <div class="px-3">
+            <form [formGroup]="customForm" (submit)="onSubmit(customForm)">
+                <div class="row row-sm">
+                    <div class="col-sm-12">
+                        <p >
+                            <label class="md-check my-1 d-block">
+                                <input type="checkbox" formControlName="isFixedAside">
+                                <i></i>
+                                <span> Fixed Aside  </span>
+                            </label>
+                            <label class="md-check my-1 d-block">
+                                <input type="checkbox" formControlName="isFixedContent">
+                                <i></i>
+                                <span> Fixed Content</span>
+                            </label>
+                            <label class="md-check my-1 d-block">
+                                <input type="checkbox" formControlName="isFoldedAside">
+                                <i></i>
+                                <span> Folded Aside</span>
+                            </label>
+                            <label class="md-check my-1 d-block">
+                                <input type="checkbox" formControlName="isBoxedLayout">
+                                <i></i>
+                                <span>Boxed Layout</span>
+                            </label>
+                            <label class="pointer my-1 d-block" data-toggle="fullscreen" data-target="fullscreen">
+                <span class="ml-1 mr-2 auto">
+                    <i class="fa fa-expand d-inline"></i>
+                    <i class="fa fa-compress d-none"></i>
+                </span>
+                                <span>Fullscreen mode</span>
+                            </label>
+                        </p>
+                    </div>
+                    <div class="col-sm-12 py-1">
+                        <div class="d-inline-block" style="width: 60px">
+                            <small class="pr-2 text-xs _500">Themes</small>
+                        </div>
+                        <div class="d-inline-block">
+                            <label class="radio radio-inline m-0 mr-1 ui-check" *ngFor="let theme of themeManager.themesOptions; let themesIdx = index">
+                                <input type="radio" name="code" [checked]="theme.value === themeManager.selectedBaseThemeOption"
+                                       [value]="theme.value" formControlName="code">
+                                <i [ngClass]="theme.class"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 py-1">
+                        <div class="d-inline-block" style="width: 60px">
+                            <small class="pr-2 text-xs _500">Color</small>
+                        </div>
+                        <div class="d-inline-block">
+                            <label *ngFor="let theme of themeManager.themes; let themesIdx = index"
+                                   class="radio radio-inline m-0 mr-1 ui-check"
+                            [class.ui-check-color]="theme.id !=1">
+                                <input type="radio" name="name" formControlName="name" [value]="theme.id"> <i [class]="theme.class"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-12 py-1">
+                        <div class="d-inline-block" style="width: 60px">
+                          <small class="pr-2 text-xs _500">Font</small>
+                        </div>
+                        <div class="d-inline-block">
+                            <select formControlName="fontId">
+                                <option value="0">--Please select--</option>
+                                <option *ngFor="let fnt of themeManager.fonts" [value]="fnt.id">{{fnt?.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-center">
+                        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                            'Submit' }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

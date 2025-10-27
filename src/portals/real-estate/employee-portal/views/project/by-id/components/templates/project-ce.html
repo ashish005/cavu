@@ -1,0 +1,134 @@
+<form [formGroup]="customForm" class="p-3">
+    <div class="row row-sm">
+        <div class="col-sm-6">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                <label> Name </label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="shortName"
+                       [ngClass]="{ 'is-invalid': submitted && f['shortName'].errors }">
+                <label> Short Name </label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="code" [ngClass]="{ 'is-invalid': submitted && f['code'].errors }">
+                <label> Code </label>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="md-form-group">
+                <textarea class="md-input" rows="2" formControlName="description"
+                          [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"></textarea>
+                <label> Description </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <select-dropdown [items]="apiResolver?.masterType?.projectTypes"
+                             title="Project Type"
+                             (cb)="updateProjectType($event)"
+                             [control]="formProjectTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.divisions"
+                             title="Project Divisions"
+                             (cb)="updateProjectDivision($event)"
+                             [control]="formProjectDivisionId"></select-dropdown>
+        </div>
+        <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.billingTypes"
+                             title="Billing Type"
+                             (cb)="updateProjectBillingType($event)"
+                             [control]="formProjectBillingTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-6">
+            <user-type-ahead controlTitle="Customer (Search using email  First/ last name)"
+                        userType="customer" (cb)="updateCustomerById($event)"
+                        [controlId]="formCustomerId.value"
+                        [controlValue]="formCustomerName.value"></user-type-ahead>
+            <!--<select-dropdown [items]="apiResolver?.masterType?.clients"
+                             title="Client"
+                             (cb)="updateCustomer($event)"
+                             [control]="formCustomerId"></select-dropdown>-->
+        </div>
+        <div class="col-sm-6">
+            <user-type-ahead controlTitle="Manager (Search using email  First/ last name)"
+                        userType="employee" (cb)="updateManagerById($event)"
+                        [controlId]="formManagerId.value"
+                        [controlValue]="formManagerName.value"></user-type-ahead>
+            <!--<select-dropdown [items]="apiResolver?.masterType?.employees"
+                             title="Manager"
+                             (cb)="updateManager($event)"
+                             [control]="formManagerId"></select-dropdown>-->
+        </div>
+    </div>
+    <div class="row align-items-stretch">
+        <div class="col-sm-12">
+            <div class="box d-flex align-items-stretch">
+                <div class="box-body col">
+                    <div class="md-form-group">
+                        <input class="md-input" type="date" formControlName="expectedStartDate" [ngClass]="{ 'is-invalid': submitted && f['expectedStartDate'].errors }">
+                        <label>Expected Start Date</label>
+                    </div>
+                </div>
+                <div class="box-body col">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="expectedDurationDays" [ngClass]="{ 'is-invalid': submitted && f['expectedDurationDays'].errors }">
+                        <label>Expected Duration in Days</label>
+                    </div>
+                </div>
+                <div class="box-body col">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="expectedCost" [ngClass]="{ 'is-invalid': submitted && f['expectedCost'].errors }">
+                        <label>Expected Cost</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="box d-flex align-items-stretch">
+                <div class="box-body col">
+                    <div class="md-form-group col">
+                        <input class="md-input" type="date" formControlName="startDate" [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }">
+                        <label>Actual Start Date </label>
+                    </div>
+                </div>
+                <div class="box-body col">
+                    <div class="md-form-group col">
+                        <input class="md-input" type="date" formControlName="endDate" [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }">
+                        <label>class End Date </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="box d-flex align-items-stretch">
+                <div class="box-body col" *ngIf="options?.hasMultiProjectModule">
+                    <div class="md-form-group col">
+                        <label class="md-check"><input type="checkbox" formControlName="hasMultiModule"><i></i><span>Multi Module</span></label>
+                    </div>
+                </div>
+                <div class="box-body col" *ngIf="options?.hasProjectWorkFlow">
+                    <div class="md-form-group col">
+                        <label class="md-check"><input type="checkbox" formControlName="hasWorkFlow"><i></i><span>Work Flow</span></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        {{ customForm.value | json }}
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

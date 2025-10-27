@@ -1,0 +1,13 @@
+<div>
+  <ul class="breadcrumb">
+    <li *ngFor="let breadcrumb of breadcrumbs$; first as isFirst; last as isLast;">
+      <a *ngIf="!isLast; else lastRoute" [routerLink]="[breadcrumb.url]" routerLinkActive="active">
+        <span *ngIf="!isFirst">{{ breadcrumb.label }}</span>
+        <i *ngIf="isFirst" class="fa fa-home"></i>
+      </a>
+      <ng-template #lastRoute>
+        <a *ngIf="!isFirst">{{ breadcrumb.label }}</a>
+      </ng-template>
+    </li>
+  </ul>
+</div>

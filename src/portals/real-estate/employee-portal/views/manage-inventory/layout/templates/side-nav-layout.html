@@ -1,0 +1,88 @@
+<div class="app-content" role="main">
+    <div class="navbar light lt p-0">
+        <ul class="nav nav-sm no-border">
+            <li class="nav-item">
+                <a class="nav-link text-muted" (click)="goBack()">
+                    <span class="nav-text"><i class="fa fa-fw fa-mail-reply-all"></i></span>
+                </a>
+            </li>
+            <!--<li class="nav-item p-1 b-l b-r">
+                <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+            </li>-->
+            <li class="nav-item b-l">
+                <div class="nav-link">
+                    <div class="d-block">
+                        <h6 class="title _500 float-left pr-2 m-0">{{ moduleResolver.product?.name }}</h6>
+                    </div>
+                    <!--<small class="text-muted pr-2 border-right">Code: {{ moduleResolver.product?.code || '&#45;&#45;' }}</small>
+                    <small class="text-muted px-2 border-right">Type: {{ moduleResolver.product?.productType || '&#45;&#45;' }}</small>-->
+                    <small class="text-muted px-2 border-right">Nature: {{ moduleResolver.product?.nature || '--' }} </small>
+                    <!--<small class="text-muted px-2 border-right">Procurement Type: {{moduleResolver.product?.procurementType}}</small>-->
+                </div>
+            </li>
+        </ul>
+        <ul class="nav nav-xs flex-row no-border">
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+            <li class="nav-item mx-1">
+                <a class="btn btn-sm btn-outline border text-theme b-theme"><i class="fa fa-hand-grab-o pr-2"></i>Activities</a>
+            </li>
+        </ul>
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div id="content-aside">
+                <!--<div class="list-group list-group-gap p-2">
+                    <a class="list-group-item p-1 px-2 _500" (click)="navigateToModule(item)">
+                        <span class="float-right ml-2"><i class="fa fa-chevron-right"></i></span>
+                        {{ apiResolver.project?.name }}
+                    </a>
+                </div>
+                <div class="d-flex flex-column w-xl light lt" id="user-nav">
+                    <div class="px-3 py-2 text-muted text-sm">Modules/ Services</div>
+                    <div class="scrollable hover">
+                        <div class="list-group list-group-gap p-2">
+                            <ng-template ngFor let-item [ngForOf]="apiResolver.project?.modules" let-i="index">
+                                <a class="list-group-item p-1 px-2 _500" (click)="navigateToModule(item)">
+                                    <span class="float-right ml-2"><i class="fa fa-chevron-right"></i></span>
+                                    {{ item.name }}
+                                </a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="d-flex flex-column w-md light lt">
+                    <div class="scrollable hover">
+                        <div class="list-group list-group-gap p-2">
+                            <ng-template ngFor let-item [ngForOf]="apiResolver.items | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <a class="list-group-item p-0 px-2" [routerLink]="[item.route]" routerLinkActive="active">
+                                    <span class="float-right py-1"><i class="fa fa-chevron-right"></i></span>
+                                    <span class="nav-text py-1"><i [class]="item.icon" class="pr-2"></i>{{item.name}}</span>
+                                </a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <!--<div class="navbar flex-nowrap">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" data-pjax-state="" class="mr-1 d-md-none"><span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span></a>
+                        <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+                        <ul class="nav nav-xs flex-row nav-active-border b-warning bottom">
+                            <ng-template ngFor let-item [ngForOf]="apiResolver.items | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="modal" [routerLink]="[item.route]" routerLinkActive="active">
+                                        <span class="btn btn-sm">{{item.name}}</span>
+                                    </a>
+                                </li>
+                            </ng-template>
+                        </ul>
+                    </div>-->
+                    <div class="px-3 d-flex flex">
+                        <router-outlet (activate)='onActivate($event)'></router-outlet>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

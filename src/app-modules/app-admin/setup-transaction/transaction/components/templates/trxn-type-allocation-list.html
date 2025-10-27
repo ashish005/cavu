@@ -1,0 +1,39 @@
+<ng-template #groupRowTemplate let-row='row'>
+    <div class="list-item p-1">
+        <div class="list-body">
+            <a class="text-xs _500">{{row?.name}}</a>
+            <!--<div class="item-except text-sm text-muted h-1x">Detail</div>-->
+            <div class="item-tag tag hide"></div>
+        </div>
+        <div>
+            <ng-template ngFor let-trxnType [ngForOf]="apiResolver?.masterType?.trxnTypes" let-i="index">
+                <button type="button" class="btn btn-xs btn-outline" (click)="apply(row, trxnType)">{{trxnType.name}}</button>
+            </ng-template>
+        </div>
+    </div>
+    <ng-template ngFor let-childRow [ngForOf]="row?.children" let-i="index">
+        <div class="b-l ml-2">
+            <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{ row:childRow }"></ng-container>
+        </div>
+    </ng-template>
+</ng-template>
+<div class="d-flex flex-column w-xl" id="chat-nav">
+    <div class="navbar box-shadow">
+        <div class="input-group flex"><input type="text"
+                                             class="form-control px-0 no-bg no-border no-shadow search"
+                                             placeholder="Search" required=""> <span
+                class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                class="fa fa-search text-muted"></i></button></span></div>
+    </div>
+    <div class="scrollable hover">
+        <div class="list">
+            <div class="p-2 px-3 text-muted text-sm">All Non-allocated Accounts</div>
+            <ng-template ngFor let-row [ngForOf]="list" let-i="index">
+                <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:row}"></ng-container>
+            </ng-template>
+        </div>
+    </div>
+    <div class="p-3 mt-auto">
+        <span class="text-sm text-muted">Messages: 90+</span>
+    </div>
+</div>

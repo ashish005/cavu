@@ -1,0 +1,31 @@
+<td [formGroup]="customForm" style="padding: 5px;">
+    <label class="ui-switch float-left primary">
+        <input type="checkbox" formControlName="allowed" (change)="allowedChanges($event.target.checked, customForm)">
+        <i></i>
+    </label>
+    <div class="float-left ml-2">{{customForm.value.name}}</div>
+</td>
+<td>
+    <!--<span> {{rule.get('name').value}} </span>-->
+</td>
+<td [formGroup]="customForm" style="padding: 5px;"><label class="md-check"><input type="checkbox" formControlName="fullAccess"><i></i><span></span></label></td>
+<td [formGroup]="customForm" style="padding: 5px;">
+    <div class="flex d-flex">
+        <div class="d-inline-block" style="width: 45px;">
+            <label class="md-check"><input type="checkbox" formControlName="manage"><i class="green"></i><span></span></label>
+        </div>
+        <div class="d-inline-block px-1">
+            <label class="md-check"><input type="checkbox" formControlName="view"><i></i><span></span></label>
+        </div>
+        <div class="d-inline-block px-1 b-l b-r">
+            <label class="md-check"><input type="checkbox" formControlName="create"><i></i><span></span></label>
+        </div>
+        <div class="d-inline-block px-1">
+            <label class="md-check"><input type="checkbox" formControlName="modify"><i></i><span></span></label>
+        </div>
+    </div>
+</td>
+<td [formGroup]="customForm" style="padding: 5px;"><label class="md-check"><input type="checkbox" formControlName="delete"><i></i><span></span></label></td>
+<td [formGroup]="customForm" style="padding: 5px;"><label class="md-check"><input type="checkbox" formControlName="destroy"><i></i><span></span></label></td>
+<!--<td><label class="md-check"><input type="checkbox" formControlName="import"><i></i><span></span></label></td>
+ <td><label class="md-check"><input type="checkbox" formControlName="export"><i></i><span></span></label></td>-->

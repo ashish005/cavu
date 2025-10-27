@@ -1,0 +1,51 @@
+<!--d-flex flex-column flex box mb-0 bg-transparent-->
+<div class="content-main d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <span class="text-md text-ellipsis"> {{ userMasterType }} Dashboard</span>
+        </div>
+        <div class="scrollable hover h-100">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                    <div class="panel box no-border m-2">
+                        <div class="list-item">
+                            <div class="w-20">
+                                <a class="btn btn-xs mr-2" (click)="actionCb(row)"><i class="fa fa-edit"></i></a>
+                            </div>
+                            <div class="list-body">
+                                <a class="item-title _500">{{row.name}}</a>
+                                <div class="float-right">
+                                    <ng-template ngFor let-perm [ngForOf]="row.permissions" let-i="index">
+                                        <div class="d-inline-block px-1 mx-1 b-a text-sm">
+                                            <i class="fa fa-user text-sm mr-1" [class.text-success]="perm.status"></i>
+                                            <small class="title _500 pr-2" [class.text-success]="perm.status">{{perm.userRoleName}}</small>
+                                            <span class="px-1">
+                                                <i class="fa text-sm" [class]="perm.isVisible? 'fa-eye text-success': 'fa fa-eye-slash text-warning'"></i>
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="md-switch"><input type="checkbox" checked="checked"><i
+                                        class="blue"></i></label>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result" *ngIf="!gridData?.length && !isLoading">
+                <div class="p-4 text-center">No Result Found.</div>
+            </div>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+<ng-template #actionTemplate></ng-template>

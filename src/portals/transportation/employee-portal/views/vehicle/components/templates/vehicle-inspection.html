@@ -1,0 +1,85 @@
+<form [formGroup]="customForm" class="p-3">
+    <div class="row row-sm">
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <div class="md-input disabled">{{ customForm.get('vehicleNo').value }}</div>
+                <label> Vehicle No </label>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="md-form-group">
+                <div class="md-input disabled">{{ customForm.get('dueDate').value | dateFormat }}</div>
+                <!--<input type="date" class="md-input" formControlName="dueDate" style="height: 20px;">-->
+                <label>Due Date</label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="text-sm text-muted">Inspection Status</div>
+            <select class="md-input" formControlName="inspectionStatus">
+                <option *ngFor="let status of apiResolver.masterType?.inspectionStatuses;" [ngValue]="status.id">
+                    {{status.name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-sm text-muted">Inspected By</div>
+            <!--<select class="md-input" formControlName="inspectionStatus">
+                <option *ngFor="let status of apiResolver.masterType?.inspectionStatuses;" [ngValue]="status.id">
+                    {{status.name}}
+                </option>
+            </select>-->
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-12">
+            <div>
+                <h6 class="pb-0">Inspection Details</h6>
+            </div>
+            <table class="table small-table text-xs">
+                <thead>
+                <tr>
+                    <th>Head</th>
+                    <th>Schedule</th>
+                    <th>Inspected</th>
+                    <th>Rate</th>
+                    <th>Status</th>
+                    <th>isRepairRequired</th>
+                </tr>
+                </thead>
+                <tbody formArrayName="details">
+                <ng-template ngFor let-detail [ngForOf]="formInspectionDetails.controls" let-i="index">
+                    <tr [formGroup]="detail">
+                        <td>
+                            {{detail.value.inspectionHeadName}}
+                        </td>
+                        <td>
+                            {{ detail.value.inspectionScheduleId }}
+                        </td>
+                        <td><label class="md-check"><input type="checkbox" formControlName="isInspected"><i class="success"></i><span></span></label></td>
+                        <td>
+                            {{ detail.value.rateInspection }}
+                        </td>
+                        <td>
+                            <select class="md-input" formControlName="inspectionStatus" style="width: 70px">
+                                <option *ngFor="let entity of apiResolver.masterType?.inspectionStatuses;" [ngValue]="entity.id"> {{entity.name}}</option>
+                            </select>
+                        </td>
+                        <td><label class="md-check"><input type="checkbox" formControlName="isRepairRequired"><i class="success"></i><span></span></label></td>
+                    </tr>
+                </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

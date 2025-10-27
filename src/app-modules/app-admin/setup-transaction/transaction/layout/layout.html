@@ -1,0 +1,12 @@
+<div class="d-flex flex flex-column">
+    <div class="nav-active-border b-warning bottom m-1">
+        <div class="nav nav-xs float-left box-shadow">
+            <ng-template ngFor let-item [ngForOf]="items | sortBy:'asc': 'sortOrder'" let-i="index">
+                <a class="nav-link text-center"[routerLink]="item.route" routerLinkActive="active" >{{item.name}}</a>
+            </ng-template>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet></router-outlet>
+    </div>
+</div>

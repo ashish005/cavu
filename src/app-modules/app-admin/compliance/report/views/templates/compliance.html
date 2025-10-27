@@ -1,0 +1,39 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <table class="table small-table text-xs mb-0">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Done(%)</th>
+                    <th>Pending</th>
+                    <ng-template ngFor let-dt [ngForOf]="gridData[0]?.scheduledDates" let-i="index">
+                        <th>{{dt.name}}</th>
+                    </ng-template>
+                </tr>
+                </thead>
+                <tbody class="scroll-y box mb-0 bg-transparent">
+                <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                    <tr>
+                        <td>{{ row.complianceName }}</td>
+                        <td>{{row.completionPercentage}} %</td>
+                        <td>{{row.pendingCount}}</td>
+                        <ng-template ngFor let-schDate [ngForOf]="row.scheduledDates" let-i="index">
+                            <td compStatusChange [data]="schDate"></td>
+                        </ng-template>
+                    </tr>
+                </ng-template>
+                </tbody>
+            </table>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination
+                    [count]="gridOptions?.total"
+                    [perPage]="coreState?.take"
+                    [page]="coreState?.page"
+                    (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

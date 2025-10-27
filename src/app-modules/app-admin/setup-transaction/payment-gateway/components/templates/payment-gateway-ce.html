@@ -1,0 +1,209 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="row no-gutters p-2">
+            <div class="col-sm-12">
+                <div class="row no-gutters">
+                    <div class="col-8">
+                        <div class="md-form-group float-label">
+                            <div class="text-xs" style="float: right;position: absolute;top: 0px;right: 0px;">
+                                <label class="md-check">
+                                    <span class="pr-4">Reconciliation*</span>
+                                    <input type="checkbox" formControlName="isReconciliationRequired">
+                                    <i class="blue"></i>
+                                </label>
+                            </div>
+                            <input class="md-input" formControlName="name"
+                                   [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+                                   onkeyup="this.setAttribute('value', this.value);" required="">
+                            <label>Name</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="box">
+                            <div class="box-header p-2"><h6>Modes</h6>
+                            </div>
+                            <div class="box-divider m-0"></div>
+                            <div class="box-body p-0 px-1">
+                                <table class="table text-xs table-condensed">
+                            <thead>
+                            <tr>
+                                <th colspan="2">Mode Name</th>
+                                <th>Receipt</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody formArrayName="modeGatewayMapper">
+                            <ng-template ngFor let-rule [ngForOf]="formModeGatewayMapper.controls" let-i="index">
+                                <tr [formGroup]="rule">
+                                    <td colspan="2">
+                                        {{ rule.value.modeName }}
+                                        <!--<div class="">
+                                            <select (change)="updateModeId($event.currentTarget.value)" formControlName="modeId">
+                                                <ng-template ngFor let-mode [ngForOf]="apiResolver?.masterType?.modes" let-i="index">
+                                                    <option [value]="mode.id">{{mode.name}}</option>
+                                                </ng-template>
+                                            </select>
+                                        </div>-->
+                                    </td>
+                                    <td>
+                                        <label class="md-check"><input type="checkbox"
+                                                                       formControlName="isReceiptAllowed"><i
+                                                class="theme"></i></label>
+                                    </td>
+                                    <td>
+                                        <label class="md-check"><input type="checkbox"
+                                                                       formControlName="isPaymentAllowed"><i
+                                                class="theme"></i></label>
+                                    </td>
+                                    <td>
+                                        <label class="md-check"><input type="checkbox" formControlName="status"><i
+                                                class="theme"></i></label>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            </tbody>
+                        </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="md-form-group" *ngIf="formIsPOS.value">
+                            <input class="md-input" formControlName="identificationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f.identificationNo.errors }">
+                            <label>POS No </label>
+                        </div>
+                        <div class="m-3" *ngIf="formHasOptionalRefNo.value">
+                            <div>
+                                <label class="md-check">
+                                    <input type="checkbox" formControlName="isReferenceNoRequired"><i class="theme"></i>
+                                    <small>Reference No Required</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="box">
+                            <div class="box-header p-2"><h6>Provider Account</h6>
+                                <small>Account Where Payment will be Realised - For
+                                    Payments
+                                </small>
+                            </div>
+                            <div class="box-divider m-0"></div>
+                            <div class="box-body">
+                                <div class="row row-sm">
+                                    <div class="col-12">
+                                        <account-type-ahead controlTitle="Provider Account"
+                                                            accountKey="systemType" (cb)="updateProviderAccount($event)"
+                                                            [controlId]="formProviderAccountId.value"
+                                                            [controlValue]="formProviderAccount.value"></account-type-ahead>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="md-form-group">
+                                            <input class="md-input" formControlName="providerSupportNo">
+                                            <label>Provider Support No</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="box">
+                            <div class="box-header p-2">
+                                <h6 class="m-0">Realization Account</h6>
+                                <small>Where Payment will be landed after trxn - For Receipts</small>
+                            </div>
+                            <div class="box-divider m-0"></div>
+                            <div class="box-body">
+                                <div class="row row-sm">
+                                    <div class="col-12">
+                                        <account-type-ahead controlTitle="Realization Account"
+                                                            accountKey="systemType"
+                                                            (cb)="updateRealizationAccount($event)"
+                                                            [controlId]="formRealizationAccountId.value"
+                                                            [controlValue]="formRealizationAccount.value"></account-type-ahead>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mx-2 white lt b-t mt-auto">
+            <div class="row row-sm">
+                <div class="col-sm-12 text-center">
+                    <button type="click" class="btn btn-sm primary m-2" (click)="onSubmit(customForm)"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                        actionType}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--<div class="d-flex flex">
+    <div class="d-flex flex p-3">
+        <form [formGroup]="customForm" class="d-flex flex-column flex">
+            <div class="row row-sm">
+                <div class="col-sm-6">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                        <label>Gateway Name </label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="top-right text-xs">
+                        Required
+                        <label class="md-switch"><input type="checkbox" checked="checked" formControlName="isReconciliationRequired"> <i class="theme"></i></label>
+                    </div>
+                    <select-dropdown [items]="apiResolver?.masterType?.recoFrequencies"
+                                     title="Reconciliation"
+                                     (cb)="updateRecoFrequencyTypeId($event)"
+                                     [control]="formRecoFrequencyTypeId"></select-dropdown>
+                </div>
+                <div class="col-sm-3">
+                    <select-dropdown [items]="apiResolver?.masterType?.systemTypes"
+                                     title="System Type"
+                                     (cb)="updateSystemTypeId($event)"
+                                     [control]="formSystemTypeId"></select-dropdown>
+                </div>
+                <div class="col-sm-4">
+                    <div class="top-right text-xs">
+                        POS <label class="md-switch"><input type="checkbox" checked="checked" formControlName="isPOS"> <i class="theme"></i></label>
+                    </div>
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="pOSNo" [ngClass]="{ 'is-invalid': submitted && f.pOSNo.errors }">
+                        <label>POS No</label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <label class="md-switch float-right"><input type="checkbox" checked="checked" formControlName="isReferenceNoRequired"> <i class="theme"></i>*Reference No</label>
+                </div>
+                <div class="col-sm-4">
+                    <label class="md-switch float-right"><input type="checkbox" checked="checked" formControlName="isMobileWallet"><i class="theme"></i> Mobile Wallet</label>
+                </div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <button type="button" (click)="onSubmit(customForm)" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                            {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </form>
+    </div>
+</div>-->
+

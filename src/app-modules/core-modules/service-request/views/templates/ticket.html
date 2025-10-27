@@ -1,0 +1,95 @@
+<ng-template #routerActionTemplate>
+    <ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item">
+            <a class="nav-link" (click)="createTicket()">
+                <span class="btn btn-sm"><i class="fa fa-plus"></i> Ticket </span>
+            </a>
+        </li>
+    </ul>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap box-shadow">
+            <a data-toggle="modal" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <button id="sort" class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title=""
+                    data-original-title="Sort"><i class="fa fa-sort"></i></button>
+        </div>
+        <div class="scroll-y">
+            <div class="list animate fadeIn" id="ticket">
+                <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                    <div class="panel box no-border m-2">
+                        <div class="list-item">
+                            <div class="list-body">
+                                <a class="item-title _500" data-toggle="collapse" data-parent="#ticket"
+                                   [attr.data-target]="'#ticket_'+i">{{row?.header}}</a>
+                                <div class="item-except text-sm h-1x">
+                                    <a class="text-primary" (click)="showDetails(row)">Show Details</a>
+                                    <span class="text-muted px-2">{{row?.message}}</span>
+                                </div>
+                                <div class="item-except text-sm">
+                                    <div class="d-inline-block pr-2">
+                                        <small class="text-xs text-muted">Page Url</small>
+                                        <span class="text-xs px-2">{{row?.pageURL }}</span>
+                                    </div>
+                                </div>
+                                <div class="item-except text-sm">
+                                    <div class="d-inline-block pr-2">
+                                        <div class="d-inline-block"><small class="text-xs text-muted">Reporter</small><span class="text-xs px-2 b-r">{{row.userName }}</span> <span class="text-xs">{{row.userEmail }}</span> </div>
+                                    </div>
+                                    <div class="d-inline-block pr-2"><small class="text-xs text-muted">Mobile</small><span class="text-xs">{{row.mobileNo }}</span></div>
+                                    <div class="d-inline-block px-2 b-l b-r"><small class="text-xs text-muted">Email</small><span class="text-xs">{{row.emailId }}</span></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-center text-sm-right">
+                                    <div class="d-inline-block">
+                                        <small class="text-xs text-muted">Support Time</small>
+                                        <span class="text-xs">{{row?.supportTime }}</span>
+                                    </div>
+                                    <div class="d-inline-block px-3 text-center">
+                                        <ng-template ngFor let-attachment [ngForOf]="row.attachments" let-i="index">
+                                            <div class="d-inline-block">
+                                                <img [src]="attachment.fileUrl" class="b-a p-1" style="height: 70px;width: 110px;">
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="d-inline-block px-3 text-left">
+                                        <div class="d-block"><small class="text-xs text-muted">Created: </small><span class="item-date text-xs"> {{row.createdBy}} / {{row.createdDate | fullDateFormat }}</span></div>
+                                        <div class="d-block"><small class="text-xs text-muted">Modified: </small><span class="item-date text-xs">{{row.createdBy}} / {{row?.modifiedDate | fullDateFormat }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ticket_{{i}}" class="collapse in bg-transparent">
+                            <div class="d-flex flex">
+                                <div class="d-flex flex-column flex">
+                                    <div class="px-3 row no-gutters">
+                                        <div class="col-md-12">
+                                            <div class="p-2 b-b"><a class="item-title _500">Error Details</a></div>
+                                            <div class="py-2">
+                                                <div style="height: 320px; position: relative; overflow: auto; background-color: transparent;">
+                                                    <pre class="p-2" style="display: inline-block;position: absolute;"
+                                                         [innerHtml]="row?.xMlValue | prettyprint | safe"></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result" [ngClass]="{ 'hide': (gridData?.length)}">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,124 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex p-3">
+    <form [formGroup]="customForm">
+      <div class="row row-sm">
+        <!--<div class="col-sm-4">
+          <select-dropdown [items]="apiResolver?.masterType?.mediaType"
+                           title="Media Type"
+                           (cb)="updateMediaTypeId($event)"
+                           [control]="formMediaTypeId"></select-dropdown>
+        </div>-->
+        <div class="col-sm-8">
+          <div class="md-form-group">
+            <input class="md-input" formControlName="senderName"
+                   [ngClass]="{ 'is-invalid': submitted && f.senderName.errors }">
+            <label> Sender Name </label>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="md-form-group">
+            <label class="md-switch"><input type="checkbox" formControlName="status"> <i class="theme"></i> Is Active </label>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="md-form-group">
+            <label class="md-switch"><input type="checkbox" formControlName="isPrimary"><i class="theme"></i> Primary</label>
+          </div>
+        </div>
+        <div class="col-sm-12" *ngIf="isEmail">
+          <div class="box">
+            <div class="box-divider m-0"></div>
+            <div class="box-body">
+              <div class="row row-sm">
+                <div class="col-sm-6">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="senderEmailId">
+                    <label> Sender Email </label>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="emailPortNo">
+                    <label> Email Port </label>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="bccMailId">
+                    <label> BCC Mail</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12" *ngIf="isEmail || isSMS">
+          <div class="box">
+            <div class="box-divider m-0"></div>
+            <div class="box-body">
+              <div class="row row-sm">
+                <div class="col-sm-2">
+                  <div class="md-form-group">
+                    <label class="md-switch">
+                      <input type="checkbox" formControlName="isAPI"> <i class="theme"></i>
+                      API
+                    </label>
+                  </div>
+                </div>
+                <div class="col-sm-10">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="senderAPI"
+                           [ngClass]="{ 'is-invalid': submitted && f.senderAPI.errors }">
+                    <label> Credential API </label>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="credentialId"
+                           [ngClass]="{ 'is-invalid': submitted && f.credentialId.errors }">
+                    <label> Credential Id </label>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="md-form-group">
+                    <input class="md-input" formControlName="credentialPassword"
+                           [ngClass]="{ 'is-invalid': submitted && f.credentialPassword.errors }">
+                    <label> Credential Password </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="mb-2" id="accordion">
+            <div class="panel box no-border mb-2">
+              <div class="box-header p-2 p-y-sm">
+                <span class="float-right badge text-sm"></span>
+                <a data-parent="#accordion" data-target="#com_footer" data-toggle="collapse" class="collapsed"
+                   aria-expanded="false">
+                  Footer
+                </a>
+              </div>
+              <div class="collapse" id="com_footer">
+                <div class="px-2">
+                  <angular-editor class="md-input" formControlName="footer" [config]="config"></angular-editor>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #footerTemplate>
+        <div class="row">
+          <div class="col-sm-12 text-right">
+            <button type="button" (click)="onSubmit(customForm)" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+              <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+              {{ submitted ? 'Submitting...' : actionType }}
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </form>
+  </div>
+</div>

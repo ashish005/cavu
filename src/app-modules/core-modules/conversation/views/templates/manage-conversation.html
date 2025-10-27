@@ -1,0 +1,53 @@
+<ng-template #actionTemplate>
+    <!--<a class="no-shadow">
+        <h6 class="mb-0"> {{page?.title }}</h6>
+        <small class="float-left pl-4">{{page?.desc  }}</small>
+    </a>-->
+
+    <ul class="nav nav-xs flex-row no-border">
+        <!--<li class="nav-item">
+            <button class="btn btn-sm white ml-1 sort float-right" data-sort="item-title" data-toggle="tooltip" title="" data-original-title="Sort"><i class="fa fa-sort"></i></button>
+        </li>-->
+        <li class="nav-item"></li>
+    </ul>
+    <!--<div class="text-center nav-active-border b-warning bottom" style="margin-bottom: -20px;">
+        <a class="nav-link d-inline-block px-3 text-center" [routerLink]="['../inbox']" [class.active]="(view == 'inbox')"><small class="text-xs">Inbox</small></a>
+        <a class="nav-link d-inline-block px-3 b-l text-center" [routerLink]="['../sent']" [class.active]="(view == 'sent')"><small class="text-xs">Sent</small></a>
+        <a class="nav-link d-inline-block px-3 b-l text-center" [routerLink]="['../outbox']" [class.active]="(view == 'outbox')"><small class="text-xs">Outbox</small></a>
+        <a class="nav-link d-inline-block px-3 b-l text-center" [routerLink]="['../draft']" [class.active]="(view == 'draft')"><small class="text-xs">Draft</small></a>
+    </div>-->
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y" data-target="#content-aside">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-item [ngForOf]="gridData" let-i="index">
+                    <div class="list-item" (click)="navigateToDetails(item)">
+                        <div>
+                            <span>
+                                <i *ngIf="item?.isEmail" class="fa fa-envelope text-success"></i>
+                                <i *ngIf="item?.isSms" class="fa fa-mobile text-accent"></i>
+                                <i *ngIf="item?.isInbox" class="fa fa-inbox text-primary"></i>
+                            </span>
+                        </div>
+                        <div class="list-body">
+                            <a class="item-title _500">{{item.header}}</a>
+                            <!--<div class="item-except text-sm text-muted h-1x">{{item.content}}</div>-->
+                            <div class="item-tag tag hide">Trash</div>
+                        </div>
+                        <div>
+                            <button class="btn btn-xs white mx-1">Recipient <b class="text-success ml-2">{{item.recipientCount }}</b></button>
+                            <span class="item-date text-xs text-muted">{{item.scheduledDeliveredTime}}</span>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result" *ngIf="!gridData?.length">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>

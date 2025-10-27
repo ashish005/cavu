@@ -1,0 +1,27 @@
+<ng-template #actionTemplate>
+    <div class="navbar flex-nowrap">
+        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+        </a>
+        <!--<a class="no-shadow">
+            <h6 class="mb-0">{{pageTitle }}</h6>
+            <small class="float-left pl-4">{{page?.desc }}</small>
+        </a>-->
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)">
+            </org-grid>
+        </div>
+        <div class="pl-3 pr-3 white lt b-t mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                 [page]="coreState?.page" (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

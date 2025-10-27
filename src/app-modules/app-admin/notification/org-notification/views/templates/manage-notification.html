@@ -1,0 +1,223 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" *ngIf="!userMasterType" id="notification_aside">
+            <div class="modal-dialog d-flex flex-column w-md">
+                <a class="nav-link" (click)="createNotification()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Notification</span>
+                </a>
+                <div class="scrollable hover px-3 py-2">
+                    <div class="list-group list-group-gap">
+                        <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType?.notificationTypes" let-i="index">
+                            <a class="list-group-item box p-1 px-2"
+                               [class.active]="(activeNotificationType?.id == row.id)"
+                               (click)="notificationByUserType(row)">
+                                <i [ngClass]="row.icon"></i>
+                                <b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
+                                        class="fa fa-lock"></i></b>
+                                {{ row?.name }}
+                                <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                            </a>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+            </div>
+        </div>
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="d-flex flex-column w-xl b-r white modal-dialog" id="chat-nav">
+                <div class="navbar box-shadow">
+                    <div class="input-group flex">
+                        <input type="text" class="form-control px-0 no-bg no-border no-shadow search"
+                               placeholder="Search" required="">
+                        <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                                class="fa fa-search text-muted"></i></button></span>
+                    </div>
+                </div>
+                <div class="scrollable hover">
+                    <div class="list inset">
+                        <div class="p-2 px-3 text-muted text-sm">Messages</div>
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <div class="list-item">
+                                <div class="list-body">
+                                    <a class="item-title _500" data-pjax-state="">{{ row?.name }}</a>
+                                    <div class="item-except text-xs">
+                                        <ng-template ngFor let-template [ngForOf]="row?.templates | sortBy:'asc': 'sortOrder'" let-i="index">
+                                            <a class="btn btn-xs text-xs text-success"
+                                               [class]="template.templateId ? 'text-success': 'text-warning'"
+                                               (click)="showTemplateToCreateEdit(row, template)">{{ template?.name }}
+                                            </a>
+                                        </ng-template>
+                                        <div *ngIf="!row.isEventBased && !row.isReminder" class="float-right">
+                                            <a class="btn btn-xs badge badge-pill text-xs" (click)="showScheduler(row)"
+                                               [class]="(row.orgTaskScheduleId)? 'text-success': 'text-warning'">
+                                                <i class="fa fa-calendar"></i>
+                                            </a>
+                                            <!--<a class="btn btn-xs badge badge-pill text-xs" *ngIf="row.orgTaskScheduleId"
+                                               [class]="(row.orgReminder?.id) ? 'text-success': 'text-warning'"
+                                               (click)="showNotificationReminder(row)"
+                                               [ngbPopover]="row.orgReminder?.name" placement="auto"
+                                               (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+                                                <i class="fa fa-bell-o"></i>
+                                            </a>-->
+                                        </div>
+                                    </div>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                                <div><a (click)="updateNotification(row)"><i class="fa fa-edit"></i></a></div>
+                            </div>
+                        </ng-template>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <org-grid-pagination [count]="gridOptions?.total"
+                                         [perPage]="coreState?.take" [page]="coreState?.page"
+                                         (cb)="moveToPage($event)"></org-grid-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex" id="chat-list">
+                <div class="navbar flex-nowrap white lt box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                       data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                    </a>
+                    <a class="no-shadow">
+                        <h6 class="mb-0">{{ gridRow?.name }}</h6>
+                        <small class="float-left">{{ gridRow?.notificationTypeName }}</small>
+                    </a>
+                    <ul class="nav nav-xs flex-row" *ngIf="gridRow && gridRow.hasTemplate">
+                        <li class="nav-item" *ngIf="gridRow.orgTaskId && gridRow.orgTaskScheduleId">
+                            <a class="btn btn-xs text-xs no-border text-primary" (click)="checkActivity(gridRow)">Activities</a>
+                        </li>
+                        <li class="nav-item" *ngIf="!gridRow.isEventBased">
+                            <a class="btn btn-xs text-xs mx-1" (click)="showScheduler(gridRow)"
+                               [class]="(gridRow.orgTaskScheduleId) ? 'b-success text-success': 'b-warning text-warning'">
+                                <i class="fa fa-calendar"></i> {{(gridRow.orgTaskScheduleId) ? 'Scheduled' : 'Schedule All'}}
+                            </a>
+                            <small class="text-warning" *ngIf="!gridRow.orgTaskScheduleId"> Not yet Scheduled</small>
+                        </li>
+                        <!--<li class="nav-item" *ngIf="!gridRow?.isEventBased && gridRow?.orgTaskScheduleId">
+                            <a class="btn btn-xs text-xs mx-1"
+                               [class]="(gridRow?.hasReminder) ? 'b-success text-success': 'b-warning text-warning'"
+                               (click)="createNotificationReminder(gridRow)">
+                                <i class="fa fa-bell pr-1"></i>
+                                {{(gridRow?.hasReminder) ? 'Reminder Scheduled' : 'New Reminder'}}
+                            </a>
+                        </li>-->
+                        <li class="nav-item" *ngIf="gridRow?.isEventBased">
+                            <small class="text-xs">Template will be send on <a class="b-theme text-success">{{gridRow?.appEvent}} </a>
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+                <div class="scrollable hover">
+                    <div class="px-4 d-flex flex-column align-items-center">
+                        <span class="text-md mt-3 block">{{gridRow?.nextRun?.dueDate | dateFormat}}</span>
+                        <small class="text-muted" *ngIf="gridRow?.hasReminder">Next run:
+                            <ng-template ngFor let-reminder [ngForOf]="gridRow?.reminders" let-i="index">
+                                <span class="badge mx-1">{{reminder.name}}</span>
+                            </ng-template>
+                        </small>
+                    </div>
+                    <div class="p-3">
+                        <div class="row">
+                            <div class="col-sm-8 col-lg-8">
+                                <div>
+                                    <h6>Template settings</h6>
+                                    <small></small>
+                                </div>
+                                <div>
+                                    <table class="table small-table text-xs mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Event</th>
+                                            <th>Has Template</th>
+                                            <th>Is Task Reminder</th>
+                                            <th>Scheduler</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <ng-template ngFor let-template
+                                                     [ngForOf]="gridRow?.templates | sortBy:'asc': 'sortOrder'"
+                                                     let-i="index">
+                                            <tr>
+                                                <td>
+                                                    <a class="btn btn-xs text-xs text-success"
+                                                       [class]="template.templateId ? 'text-success': 'text-warning'"
+                                                       (click)="showTemplateToCreateEdit(template)">
+                                                        <i class="fa"
+                                                           [class]="template.templateId? 'fa-check': 'fa-plus'"
+                                                           style="width: 16px"></i> {{ template?.name }}
+                                                    </a>
+                                                </td>
+
+                                                <td><drop-down [list]="lookupResolver.masterType?.orgEvents" [options]="eventOptions" [id]="mediaType?.value?.appEvent" [data]="mediaType?.value"></drop-down></td>
+                                                <td><label class="md-check my-1"
+                                                           [class]="template.hasTemplate ? 'text-success': 'text-warning'">
+                                                    {{template.hasTemplate? 'Yes': 'No'}}</label></td>
+                                                <td><label class="md-check my-1"
+                                                           [class]="template.isTaskReminder ? 'text-success': 'text-warning'">
+                                                    {{template.isTaskReminder? 'Yes': 'No'}}</label></td>
+                                                <td>
+                                                    <small class="text-warning" *ngIf="!template.orgTaskScheduleId">Not
+                                                        Scheduled
+                                                    </small>
+                                                    <a *ngIf="template.orgTaskScheduleId"
+                                                       class="btn btn-xs text-xs no-border text-primary"
+                                                       (click)="checkActivity(template)">Activities</a>
+                                                </td>
+                                                <td><label class="md-check my-1"> {{template.status? 'Active':
+                                                    '--'}}</label></td>
+                                        </ng-template>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="box">
+                                    <div class="box-header">
+                                        <h6>Template Access To Roles</h6>
+                                        <small>These templates will be available to user's having below roles enabled
+                                        </small>
+                                    </div>
+                                    <div class="p-2">
+                                        <table class="table small-table text-xs mb-0">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Enable</th>
+                                                <th>Status</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <ng-template ngFor let-rule [ngForOf]="gridRow?.permissions" let-i="index">
+                                                <tr>
+                                                    <td><strong class="text-muted">{{rule.userRoleName}}</strong></td>
+                                                    <td><label><i
+                                                            [class]="(rule.isEnable)? 'fa fa-check text-success': 'fa fa-close text-warning'"></i></label>
+                                                    </td>
+                                                    <td><label><i
+                                                            [class]="(rule.status)? 'fa fa-check text-success': 'fa fa-close text-warning'"></i></label>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

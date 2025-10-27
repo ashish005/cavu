@@ -1,0 +1,30 @@
+<div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap">
+        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+        </a>
+        <div>
+            <h6 class="mb-0">{{ team?.name }} {{ team?.categoryName }}</h6>
+            <small class="clearfix"></small>
+        </div>
+        <div class="nav-active-border b-theme px-4 px-md-0">
+            <ul class="nav nav-xs flex-row">
+                <ng-template ngFor let-item [ngForOf]="viewNavigations | sortBy:'asc': 'sortOrder'" let-i="index">
+                    <li class="nav-item"><a class="nav-link" [routerLink]="[item.route]" routerLinkActive="active">{{item.name}}</a></li>
+                </ng-template>
+            </ul>
+        </div>
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item">
+                <button type="submit" class="btn btn-xs b-a b-theme text-theme" (click)="showUserFilters()">
+                    Team:Setup Filters
+                </button>
+            </li>
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        </ul>
+    </div>
+    <div class="d-flex flex" id="content-body">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+        <loader [isLoading]="isLoading"></loader>
+    </div>
+</div>

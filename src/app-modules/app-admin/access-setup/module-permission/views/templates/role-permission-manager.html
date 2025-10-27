@@ -1,0 +1,18 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt">
+            <div class="navbar-text flex p-0"><h6 class="mb-0">Role Module Permission</h6>
+                <small class="float-left"></small>
+            </div>
+        </div>
+        <div class="content-main d-flex flex">
+            <role-permission-manager [showPermissionUpdateButton]="showPermissionUpdateButton"
+                                     #rolePermMgr
+                                     module="employee"
+                                     (cb)="rpManagerCallback($event)"
+                                     [showNew]="showNew"
+                                     [singleRole]="singleRole">
+            </role-permission-manager>
+        </div>
+    </div>
+</div>

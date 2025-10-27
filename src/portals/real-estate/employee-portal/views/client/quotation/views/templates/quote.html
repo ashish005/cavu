@@ -1,0 +1,87 @@
+<ng-template #actionTemplate>
+    <!--<li class="nav-item mr-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme" (click)="createNew()">
+            <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+        </button>
+    </li>-->
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+
+<ng-template #actionTemplate1>
+    <div class="navbar box-shadow">
+        <!--<span class="text-md text-ellipsis flex"></span>-->
+        <ul class="nav nav-xs flex-row no-border pr-2">
+            <!--<li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#profile" data-modal=""
+                                    data-pjax-state=""><span class="btn btn-sm btn-icon btn-rounded success"><i
+              class="fa fa-user"></i></span></a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
+                                    data-original-title="Phone Call" data-pjax-state=""><span
+              class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+            </li>-->
+            <li class="nav-item">
+                <a class="nav-link"><span>{{pageTitle}}</span></a>
+            </li>
+          <!--<li class="nav-item">
+              <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToExcel()"><i
+                      class="fa fa-file-excel-o"></i></span></a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToPDF()"><i
+                      class="fa fa-file-pdf-o green"></i></span></a>
+          </li>-->
+        </ul>
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt">
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <h6>{{ pageTitle }}</h6>
+                </li>
+            </ul>
+            <ul class="nav nav-xs flex-row no-border float-right">
+                <li class="nav-item">
+                    <a class="nav-link"><span class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()"><i class="fa fa-plus pr-2"></i>New Quote</span></a>
+                </li>
+                <li class="nav-item">
+                    <!--<day-cash-search (onOk)="searchActionCb($event)"></day-cash-search>-->
+                </li>
+                <!--<li class="nav-item">
+                    <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToExcel()"><i
+                            class="fa fa-file-excel-o"></i></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToPDF()"><i
+                            class="fa fa-file-pdf-o green"></i></span></a>
+                </li>-->
+                <li class="nav-item">
+                    <button class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title="" data-original-title="Sort"><i class="fa fa-sort"></i></button>
+                </li>
+            </ul>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      [isLoading] = "isLoading"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)"
+                      (cbRemove)="actionRemoveCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination
+                    [count]="gridOptions?.total"
+                    [perPage]="coreState?.take"
+                    [page]="coreState?.page"
+                    (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

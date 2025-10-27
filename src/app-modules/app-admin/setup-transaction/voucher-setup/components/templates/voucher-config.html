@@ -1,0 +1,141 @@
+<div class="d-flex flex">
+    <div class="d-flex flex p-3">
+        <form [formGroup]="customForm" class="d-flex flex-column flex">
+            <div class="row row-sm">
+                <div class="col-sm-4">
+                    <div class="top-right text-xs">
+                        Primary
+                        <label class="md-switch"><input type="checkbox" checked="checked" formControlName="isPrimary"> <i class="theme"></i></label>
+                    </div>
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                        <label>Voucher Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="voucherNoDisplay" [ngClass]="{ 'is-invalid': submitted && f.voucherNoDisplay.errors }">
+                        <label>Display Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="voucherDateDisplay" [ngClass]="{ 'is-invalid': submitted && f.voucherDateDisplay.errors }">
+                        <label>Display Date</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-sm" formGroupName="config">
+                <div class="col-sm-4">
+                    <div class="top-right text-xs">
+                        Start With Zero
+                        <label class="md-switch"><input type="checkbox" checked="checked" formControlName="startWithZero"> <i class="theme"></i></label>
+                    </div>
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="voucherNoStartingFrom" [ngClass]="{ 'is-invalid': submitted && f.voucherNoStartingFrom.errors }">
+                        <label>Starting From</label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="top-right text-xs">
+                        Start With
+                        <label class="md-switch"><input type="checkbox" checked="checked" formControlName="startWithPrefix"> <i class="theme"></i></label>
+                    </div>
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="prefix" [ngClass]="{ 'is-invalid': submitted && f.prefix.errors }">
+                        <label>Prefix</label>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="suffix" [ngClass]="{ 'is-invalid': submitted && f.suffix.errors }">
+                        <label>Suffix</label>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="voucherNoLength" [ngClass]="{ 'is-invalid': submitted && f.voucherNoLength.errors }">
+                        <label> Length </label>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="md-form-group">
+                        <input class="md-input" type="date" formControlName="validFrom" [ngClass]="{ 'is-invalid': submitted && f.validFrom.errors }">
+                        <label> Valid From </label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <table class="table small-table text-xs table-condensed">
+                        <thead class="cf">
+                        <tr>
+                            <th>Phase</th>
+                            <th width="50px">Color</th>
+                            <th width="50px">MultiStatus</th>
+                            <th>Notify To</th>
+                            <th width="80px">TurnAround Time</th>
+                            <th width="80px">Skip If Amount <=</th>
+                            <th class="text-right">Active</th>
+                        </tr>
+                        </thead>
+                        <tbody formArrayName="phases">
+                        <ng-template ngFor let-phase [ngForOf]="phases.controls" let-i="index">
+                            <tr [formGroupName]="i">
+                                <td>
+                                    <div class="md-form-group p-0">
+                                        <input formControlName="name" data-title="please enter Name" class="md-input">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="md-form-group p-0"><input formControlName="color" type="color" class="md-input no-border"></div>
+                                </td>
+                                <td>
+                                    <label class="md-check my-1"><input type="checkbox" formControlName="hasPhaseStatus"><i></i><span></span></label>
+                                </td>
+                                <td>
+                                    <label class="md-check my-1"><input type="checkbox" formControlName="notifyToAssignee"><i></i><span></span></label>
+                                    assignedToRoleId: [data?.assignedToRoleId] <br/>
+
+                                    <label class="md-check my-1"><input type="checkbox" formControlName="notifyToParty"><i></i><span></span></label>
+                                    reportedToPartyId: [data?.reportedToPartyId]
+                                </td>
+                                <td>
+                                    <div class="md-form-group p-0">
+                                        <input type="number" style="width: 45px" formControlName="turnAroundTime" class="md-input text-right"> Hr
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="md-form-group p-0">
+                                        <input type="number" formControlName="skipCheckTillAmount" class="md-input  text-right">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-right">
+                                        <label class="md-check my-1"><input type="checkbox" formControlName="isActive"><i></i><span></span></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="row">
+                    <div class="col-3"><button type="button" (click)="addPhase()">Add Phase</button></div>
+                    <div class="col-3" [formGroup]="customForm">
+                        Active <label class="md-check my-1"><input type="checkbox" formControlName="ShowOnUI"><i></i><span></span></label>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button type="button" (click)="onSubmit(customForm)" class="btn btn-sm primary"
+                                [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                            {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </form>
+    </div>
+</div>

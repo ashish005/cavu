@@ -1,0 +1,122 @@
+<ng-template #actionTemplate>
+    <li class="nav-item mx-1">
+        <button class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()"><i class="fa fa-fw fa-plus"></i>
+            Create Variant
+        </button>
+    </li>
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <!--<a class="no-shadow">
+        <h6 class="mb-0"> {{pageTitle  }}</h6>
+        <small class="float-left">Management</small>
+    </a>-->
+</ng-template>
+<div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap lt">
+        <ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item">
+                <a class="no-shadow">
+                    <h6 class="mb-0"> {{pageTitle }}</h6>
+                    <small class="float-left">Management</small>
+                </a>
+            </li>
+        </ul>
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <!--<li class="nav-item">
+                <master-search></master-search>
+            </li>-->
+            <li class="nav-item">
+                <button class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title=""
+                        data-original-title="Sort"><i class="fa fa-sort"></i></button>
+            </li>
+        </ul>
+    </div>
+    <div class="scroll-y d-flex flex-column flex box mb-0 no-border bg-transparent">
+        <table class="table small-table text-xs mb-0">
+            <thead>
+            <tr>
+                <th><span class="pl-2">Item Name</span></th>
+                <th>Barcode</th>
+                <th>SKU</th>
+                <th width="100px">
+                    <div class="d-block text-right"><span>Stock</span> / Unit</div>
+                </th>
+                <th class="text-right" width="60px">
+                    <small>Featured</small>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-template ngFor let-item [ngForOf]="gridData" let-i="index">
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td> {{item.barCode}}</td>
+                    <td> {{item.sku}}</td>
+                    <td class="text-right"> {{item.purchaseHoldingQty}} {{item.unitType}}</td>
+                    <td class="text-right">
+                        <i class="fa" [class]="item.isFeatured? 'fa-check text-success': 'fa-close text-danger'"></i>
+                    </td>
+                </tr>
+                <tr class="text-xs">
+                    <td colspan="4">
+                        <table class="table small-table mb-0 mx-3">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <small>Valid From</small>
+                                </th>
+                                <th class="text-right">
+                                    <small>MRP</small>
+                                </th>
+                                <th class="text-right">
+                                    <small>Cost/ Retail</small>
+                                </th>
+                                <th class="text-right">
+                                    <small>Selling Price</small>
+                                </th>
+                                <th class="text-right">
+                                    <small>Tax Inclusive</small>
+                                </th>
+                                <th class="text-right">
+                                    <small>Fixed Price</small>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody class="light lt">
+                            <ng-template ngFor let-priceRow [ngForOf]="item.prices" let-i="index">
+                                <tr>
+                                    <td>{{priceRow.validFrom | dateFormat }}</td>
+                                    <td class="text-right">{{ priceRow.mrp | orgCurrency }}</td>
+                                    <td class="text-right">{{ priceRow.retailPrice | orgCurrency }}</td>
+                                    <td class="text-right">{{ priceRow.supplyPrice | orgCurrency }}</td>
+                                    <td class="text-right"><i class="fa"
+                                                              [class]="priceRow.isTaxInclusive? 'fa-check text-success': 'fa-close text-danger'"></i>
+                                    </td>
+                                    <td class="text-right"><i class="fa"
+                                                              [class]="priceRow.isFixedPrice? 'fa-check text-success': 'fa-close text-danger'"></i>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            </tbody>
+                            <tfoot class="box">
+                            <tr>
+                                <td colspan="6" class="text-center"><add-price [variant]="item" (onOk)="variantPriceCallback($event)">Add Price</add-price></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                    <td></td>
+                </tr>
+            </ng-template>
+            </tbody>
+        </table>
+        <div class="box-body light lt no-result" [class.hide]="gridData?.length">
+            <div class="p-2 text-center">No Results</div>
+        </div>
+    </div>
+    <div class="mt-auto">
+        <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                             (cb)="moveToPage($event)">
+        </org-grid-pagination>
+    </div>
+</div>

@@ -1,0 +1,110 @@
+<!--<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="_title 500 p-2"> My Org Task</div>
+        <div class="scroll-y">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="myOrgTasks" let-i="index">
+                    <div class="list-item" data-id="item-6">
+                        <div class="list-body">
+                            <a class="item-title _500" data-pjax-state="">{{ row.name }}</a>
+                            <div class="item-except text-sm text-muted h-1x">
+                                {{ row.orgProcess?.name }} <small>{{ row.orgProcess?.description }}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-xs b-a no-shadow" (click)="addTaskScheduler(row)"><i class="fa fa-fw fa-plus"></i> Schedule </a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="createReminder(row)"><i class="fa fa-fw fa-plus"></i> Reminder</a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="eventTaskCalendar(row)"><i class="fa fa-fw fa-plus"></i> Calendar</a>
+                            <a class="text-primary item-date text-xs" (click)="actionCb(row, 'task')">More</a>
+                            <a class="text-primary item-date text-xs" (click)="checkActivity(row)">Activity</a>
+
+
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column flex">
+        <div class="_title 500 p-2"> My Project Task</div>
+        <div class="scroll-y">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="myProjectTasks" let-i="index">
+                    <div class="list-item" data-id="item-6">
+                        <div class="list-body">
+                            <a class="item-title _500" data-pjax-state="">{{ row.name }}</a>
+                            <div class="item-except text-sm text-muted h-1x">
+                                {{ row.orgProcess?.name }} <small>{{ row.orgProcess?.description }}</small>
+                            </div>
+                            <div class="item-tag tag hide">Trash</div>
+                        </div>
+                        <div>
+                            <a class="text-primary item-date text-xs" (click)="showMoreCb(row, 'task')">More</a>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+</div>-->
+<ng-template #actionTemplate>
+    <div class="navbar flex-nowrap">
+        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+        </a>
+        <!--<a class="no-shadow">
+            <h6 class="mb-0">{{pageTitle }}</h6>
+            <small class="float-left pl-4">{{page?.desc }}</small>
+        </a>-->
+    </div>
+</ng-template>
+<!--<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                    <div class="list-item" data-id="item-6">
+                        <div class="list-body">
+                            <a class="item-title _500" data-pjax-state="">{{ row.name }}</a>
+                            <div class="item-except text-sm text-muted h-1x">
+                                {{ row.orgProcess?.name }} <small>{{ row.orgProcess?.description }}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-xs b-a no-shadow" (click)="addTaskScheduler(row)"><i class="fa fa-fw fa-plus"></i> Schedule </a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="createReminder(row)"><i class="fa fa-fw fa-plus"></i> Reminder</a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="eventTaskCalendar(row)"><i class="fa fa-fw fa-plus"></i> Calendar</a>
+                            <a class="text-primary item-date text-xs" (click)="actionCb(row, 'task')">More</a>
+                            <a class="text-primary item-date text-xs" (click)="checkActivity(row)">Activity</a>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+</div>-->
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)">
+            </org-grid>
+        </div>
+        <div class="pl-3 pr-3 white lt b-t mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                 [page]="coreState?.page" (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

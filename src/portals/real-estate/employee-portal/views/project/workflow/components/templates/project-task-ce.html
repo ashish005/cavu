@@ -1,0 +1,172 @@
+<form class="d-flex flex text-xs" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="row row-sm">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <select-dropdown [items]="apiResolver?.masterType?.frequencyTypes"
+                                 title="Frequency"
+                                 (cb)="updateFrequencyTypeId($event)"
+                                 [control]="formFrequencyTypeId"></select-dropdown>
+            </div>
+            <div class="col-sm-3">
+                <select-dropdown [items]="apiResolver?.masterType?.taskTypes"
+                                 title="Task Type" [disabled]="!formTaskTypeId.enabled"
+                                 (cb)="updateTaskTypeId($event)"
+                                 [control]="formTaskTypeId"></select-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <div class="md-form-group">
+                        <textarea rows="3" class="md-input"
+                                  placeholder="Write here something to remind you about this task"
+                                  formControlName="remark"
+                                  [ngClass]="{ 'is-invalid': submitted && f.remark.errors }"></textarea>
+                    <label> Remark </label>
+                </div>
+            </div>
+        </div>
+        <!--<div class="box">
+            <div class="box-body">
+                <div class="streamline mb-2">
+                    <ng-template ngFor let-process [ngForOf]="processList" let-i="index">
+                        <div class="sl-item">
+                            <div class="sl-item b-info"></div>
+                            <div class="sl-content">
+                                <div class="sl-date text-muted">{{process?.taskCount}}</div>
+                                <div class="sl-author">
+                                    {{process?.name}}
+                                    <label class="md-check float-right"><input type="radio" name="orgProcessId" formControlName="orgProcessId" [value]="process.id"><i class="theme"></i>Manual</label>
+                                </div>
+                                <small>{{process?.desc}}</small>
+                                <ng-template ngFor let-subProcess [ngForOf]="process?.subProcess" let-j="index">
+                                    <div class="sl-item b-warning">
+                                        <div class="sl-left"></div>
+                                        <div class="sl-content">
+                                            <div class="sl-date text-muted">{{subProcess?.taskCount}}</div>
+                                            <p>
+                                                {{subProcess?.name}}
+                                                <label class="md-check float-right">
+                                                    <input type="radio" name="orgProcessId" formControlName="orgProcessId" [value]="subProcess.id"><i class="theme"></i>Manual
+                                                </label>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>-->
+        <div class="form-group row">
+            <!--<div class="col-sm-6">
+                <select-dropdown [items]="processList"
+                                 title="Process"
+                                 (cb)="updateOrgProcessId($event)"
+                                 [control]="formOrgProcessId"></select-dropdown>
+            </div>-->
+            <div class="col-sm-3"><label class="md-switch"><input type="checkbox" formControlName="isManual"><i
+                    class="theme"></i>Manual</label></div>
+            <div class="col-sm-3"><label class="md-switch"> <input type="checkbox" formControlName="isPrimary"><i
+                    class="theme"></i>High Priority</label></div>
+        </div>
+        <div class="">
+            <div class="row row-sm">
+                <div class="col-sm-8">
+                    <div class="input-group pt-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><label class="md-check"><input type="checkbox"
+                                                                                         formControlName="isStatusOnMailRequired">
+                                <i class="theme"></i> Status on Mail</label></div>
+                        </div>
+                        <div class="form-control">
+                            <div class="float-left mx-2">
+                                <label class="md-check"><input type="checkbox"
+                                                               formControlName="isStatusOnMailDaily"> <i
+                                        class="theme"></i> Daily</label>
+                            </div>
+                            <div class="float-left mx-2">
+                                <label class="md-check"><input type="checkbox"
+                                                               formControlName="isStatusOnMailWeekly">
+                                    <i
+                                            class="theme"></i> Weekly</label>
+                            </div>
+                            <div class="float-left mx-2">
+                                <label class="md-check"><input type="checkbox"
+                                                               formControlName="isStatusOnMailMonthly">
+                                    <i
+                                            class="theme"></i> Monthly</label>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="form-text text-muted">Default status will be sent to your Inbox. Do you want
+                        an email
+                        update of this task as well.
+                    </small>
+                </div>
+                <div class="col-sm-2">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" min="1" max="31" formControlName="defaultDay"
+                               [ngClass]="{ 'is-invalid': submitted && f.defaultDay.errors }">
+                        <label> Default Day </label>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" min="1" max="12" formControlName="defaultMonth"
+                               [ngClass]="{ 'is-invalid': submitted && f.defaultMonth.errors }">
+                        <label> Default Month </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-2 col-form-label">Verified By</label>
+                <div class="col-sm-10">
+                    <user-type-ahead controlTitle="Verified By Employee (Search using email  First/ last name)"
+                                userType="employee" (cb)="updateVerifiedById($event)"
+                                [controlId]="formVerifiedById?.value"
+                                [controlValue]="formVerifiedBy?.value"></user-type-ahead>
+                </div>
+            </div>
+            <div class="box-divider m-0"></div>
+            <div class="row">
+                <label class="col-sm-2 col-form-label">Assigned To</label>
+                <div class="col-sm-10">
+                    <user-type-ahead controlTitle="Assigned To Employee (Search using email  First/ last name)"
+                                userType="employee" (cb)="updateAssignedToId($event)"
+                                [controlId]="formAssignedToId?.value"
+                                [controlValue]="formAssignedTo?.value"></user-type-ahead>
+                </div>
+            </div>
+            <div class="box-divider m-0"></div>
+            <div class="row">
+                <label class="col-sm-2 col-form-label">Reported To</label>
+                <div class="col-sm-10">
+                    <user-type-ahead controlTitle="Reported To Employee (Search using email  First/ last name)"
+                                userType="employee" (cb)="updateReportedToId($event)"
+                                [controlId]="formReportedToId?.value"
+                                [controlValue]="formReportedTo?.value"></user-type-ahead>
+                </div>
+            </div>
+        </div>
+    </div>
+    <loader [isLoading]="submitted"></loader>
+    <ng-template #footerTemplate>
+        <div class="row row-sm">
+            <div class="col-sm-12 text-center">
+                <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                        (click)="onSubmit(customForm)"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                    'Submitting...' : actionType
+                    }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

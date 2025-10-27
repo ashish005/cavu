@@ -1,0 +1,54 @@
+<ng-container [formGroup]="customForm" class="text-xs">
+    <td>
+        <div class="row">
+            <div class="col-sm-12">
+                <input class="md-input" formControlName="name" placeholder="variant Name" type="text">
+            </div>
+            <div class="col-sm-6">
+                <input class="md-input" formControlName="barCode" placeholder="ISBN, UPC, GTIN, etc." type="text">
+            </div>
+            <div class="col-sm-6">
+                <input class="md-input" formControlName="sku" placeholder="SKU" type="text">
+            </div>
+        </div>
+    </td>
+    <td>
+        <div class="row">
+            <div class="col-sm-12"><input class="md-input" formControlName="purchaseHoldingQty" placeholder="Stock" type="text"></div>
+            <div class="col-sm-12">
+                <a class="text-xs dropdown-toggle py-2" style="float: right;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ activeUnitType?.name || 'Unit Type' }}
+                </a>
+                <div class="dropdown-menu">
+                    <ng-template ngFor let-item [ngForOf]="apiResolver?.masterType?.unitTypes" let-i="index">
+                        <a class="dropdown-item" (click)="selectedUnitType(item)">{{item.name}}</a>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </td>
+    <td colspan="4"></td>
+    <!--<ng-container formArrayName="prices">
+        <ng-template ngFor let-row [ngForOf]="formVariantPrices?.controls" let-i="index">
+            <td [formGroup]="row"><div class="md-input text-right">{{row.get('mrp').value | number : '1.2-2' }}</div></td>
+            <td [formGroup]="row"><div class="md-input text-right">{{row.get('retailPrice').value | number : '1.2-2' }}</div></td>
+            <td [formGroup]="row"><div class="md-input text-right">{{row.get('supplyPrice').value | number : '1.2-2' }}</div></td>
+            <td [formGroup]="row">
+                <div class="d-flex text-center">
+                    <div class="lt p-1 px-2"><label class="md-switch"><input type="checkbox" formControlName="isTaxInclusive"><i class="blue"></i></label></div>
+                    <div class="lt p-1 px-2"><label class="md-switch"><input type="checkbox" formControlName="isFixedPrice"><i class="blue"></i></label></div>
+                </div>
+                <div class="text-center p-1">
+                    <add-price [variant]="row?.value" (onOk)="variantPriceCallback($event)">Add Price</add-price>
+                </div>
+            </td>
+        </ng-template>
+    </ng-container>-->
+    <td>
+        <div class="d-flex text-center">
+            <div class="lt p-1 px-2">
+                <label class="md-switch"><input type="checkbox" formControlName="isFeatured"> <i class="blue"></i></label>
+            </div>
+        </div>
+    </td>
+</ng-container>

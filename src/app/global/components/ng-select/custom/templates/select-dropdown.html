@@ -1,0 +1,13 @@
+<div class="md-select-form-group p-0" >
+  <div *ngIf="addNewEnabled" class="ng-placeholder text-xs" style="position: absolute; float: right; z-index: 999; right: 15px;top: -3px;">
+    <ng-template *ngTemplateOutlet="contentTemplate"></ng-template>
+  </div>
+  <ng-select [items]="items"
+             [disabled]="disabled"
+             [virtualScroll]="false"
+             required
+             [bindLabel]="bindLabel" [bindValue]="bindValue"
+             placeholder="{{title}}"
+             [(ngModel)]="control.value"
+             (change)="onChange($event)"></ng-select>
+</div>

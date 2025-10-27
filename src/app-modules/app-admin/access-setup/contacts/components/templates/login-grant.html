@@ -1,0 +1,115 @@
+<div class="flex p-3">
+    <form class="flex-column" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-7" *ngIf="!orgUserId">
+                <div class="row row-sm">
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="fName"
+                                   [ngClass]="{ 'is-invalid': submitted && f.fName.errors }">
+                            <label> First Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="lName"
+                                   [ngClass]="{ 'is-invalid': submitted && f.lName.errors }">
+                            <label> Last Name </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+                    <div class="col-sm-8">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="email"
+                                   [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                            <label> Email </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="phone"
+                                   [ngClass]="{ 'is-invalid': submitted && f.phone.errors }">
+                            <label> Phone </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="userName"
+                                   [ngClass]="{ 'is-invalid': submitted && f.userName.errors }">
+                            <label> User Name </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-7" *ngIf="orgUserId">
+                <div class="row row-sm">
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <div class="md-input" style="border-bottom: none;">{{customForm.value.fName}}</div>
+                            <label> First Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <div class="md-input" style="border-bottom: none;">{{customForm.value.lName}}</div>
+                            <label> Last Name </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-sm">
+                    <div class="col-sm-8">
+                        <div class="md-form-group">
+                            <div class="md-input" style="border-bottom: none;">{{customForm.value.email}}</div>
+                            <label> Email </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <div class="md-input" style="border-bottom: none;">{{customForm.value.phone}}</div>
+                            <label> Phone </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5 box py-2">
+                <div>
+                    <h6>Roles</h6>
+                    <small>This user should be having access to modules assigned to roles</small>
+                </div>
+                <div class="pb-2">
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th>Role Name</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody formArrayName="roles">
+                        <ng-template ngFor let-row [ngForOf]="formRoles.controls" let-i="index">
+                            <tr [formGroup]="row">
+                                <td><strong class="text-muted"><input formControlName="roleName"
+                                                                      class="no-border bg-transparent"></strong></td>
+                                <td><label class="md-check"><input type="checkbox" formControlName="status"><i
+                                        class="text-success"></i><span></span></label></td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row row-sm">
+                <div class="col-sm-12 text-center">
+                    <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                            (click)="onSubmit(customForm)"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                        actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </form>
+</div>

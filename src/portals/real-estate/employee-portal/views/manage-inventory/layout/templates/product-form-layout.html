@@ -1,0 +1,24 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="bg dk">
+        <div class="navbar light lt box-shadow-0 p-0">
+            <ul class="nav nav-sm no-border">
+                <li class="nav-item  b-r">
+                    <a class="nav-link text-muted" (click)="goBack()"><span class="nav-text"><i class="fa fa-fw fa-mail-reply-all"></i></span></a>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link">
+                        <div class="d-block"><h6 class="title _500 float-left pr-2 m-0">{{ apiResolver.product?.name }}</h6></div>
+                        <small class="text-muted pr-2 border-right">Code:{{ apiResolver.product?.code || '--' }}</small>
+                        <small class="text-muted px-2 border-right">Type:{{ apiResolver.product?.productType || '--' }}</small>
+                        <small class="text-muted px-2 border-right">Nature:{{ apiResolver.product?.nature || '--' }}</small>
+                        <small class="text-muted px-2 border-right">Procurement Type:{{apiResolver.product?.procurementType}}</small>
+                    </div>
+                </li>
+            </ul>
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet (activate)="onActivate($event)"></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex p-3">
+        <ul class="timeline" [class]="isCenterAlign? 'timeline-center': ''">
+            <!--timeline-center-->
+            <li class="tl-header">
+                <div class="btn btn-xs" data-toggle-class="timeline-center" data-target=".timeline">Project Stages</div>
+            </li>
+            <ng-template ngFor let-process [ngForOf]="processList | sortBy:'asc': 'sortOrder'" let-i="index">
+                <li class="tl-item" [class.tl-left]="(i%2 == 0)">
+                    <div class="tl-wrap b-info py-1" [class]="isCenterAlign? 'w-100': ''">
+                        <span class="tl-date text-muted">
+                        <i *ngIf="process.toDate" class="fa fa-check text-success text-sm"></i>
+                    </span>
+                        <!--<div class="tl-content px-0 box no-bg no-shadow">{{subProcess.name}}</div>-->
+                        <div class="tl-content box-color b-a text-color block w-xl w-auto-xs mb-0">
+                            <span class="arrow b-white left pull-top hidden-left"></span>
+                            <span class="arrow b-white right pull-top visible-left"></span>
+                            <div>
+                                <a class="text-primary item-title _500"> {{process?.name || '--'}}</a>
+                                <div class="float-right text-xs px-1 b-r" *ngIf="moduleId">
+                                    <small class="text-primary pr-2">End Date</small>
+                                    <div class="md-form-group p-0 float-right">
+                                        <input type="date" class="md-input" [attr.value]="process.toDate" (change)="onStartChange(process, $event.target.value, false)" style="height: 20px;">
+                                        <!--<label>End Date</label>-->
+                                    </div>
+                                </div>
+                                <div class="float-right text-xs px-1 b-l"  *ngIf="moduleId">
+                                    <small class="text-primary pr-2">Start Date</small>
+                                    <div class="md-form-group p-0 float-right">
+                                        <input type="date" class="md-input" [attr.value]="process.fromDate" (change)="onStartChange(process, $event.target.value, true)" style="height: 20px;">
+                                        <!--<label>Start Date</label>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ng-template>
+            <li class="tl-header">
+                <div class="btn btn-sm white btn-rounded">End</div>
+            </li>
+        </ul>
+    </form>
+</div>

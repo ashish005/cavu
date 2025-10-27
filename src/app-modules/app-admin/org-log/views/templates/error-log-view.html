@@ -1,0 +1,54 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap box-shadow">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <button id="sort" class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title=""
+              data-original-title="Sort"><i class="fa fa-sort"></i></button>
+    </div>
+    <div class="scroll-y">
+      <div class="list animate fadeIn" id="error-log">
+        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+          <div class="panel box no-border m-2">
+            <div class="list-item">
+              <div class="list-body">
+                <a class="item-title _500">{{row?.info}}</a>
+                <div class="item-except text-sm text-muted h-1x"><a class="item-title text-xs" data-toggle="collapse"
+                                                                    data-parent="#error-log"
+                                                                    [attr.data-target]="'#errorlog_'+i">See Details</a>
+                  {{row?.errorMessage}}
+                </div>
+                <div class="item-tag tag hide">Trash</div>
+              </div>
+              <div><span class="item-date text-xs text-muted">{{row?.createdDate }}</span></div>
+            </div>
+            <div id="errorlog_{{i}}" class="collapse in bg-transparent">
+              <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                  <div class="px-3 row no-gutters">
+                    <div class="col-md-12">
+                      <div class="p-2 b-b"><a class="item-title _500">Error Details</a></div>
+                      <div class="py-2">
+                        <div style="height: 320px; position: relative; overflow: auto; background-color: transparent;">
+                          <pre class="p-2" style="display: inline-block;position: absolute;" [innerHtml]="row?.xMlValue | prettyprint"></pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="no-result" [ngClass]="{ 'hide': (gridData?.length)}">
+        <div class="p-4 text-center">No Results</div>
+      </div>
+    </div>
+    <div class="mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                           (cb)="moveToPage($event)"></org-grid-pagination>
+    </div>
+  </div>
+</div>

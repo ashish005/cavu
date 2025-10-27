@@ -1,0 +1,109 @@
+<div class="app" id="app">
+  <div id="aside" class="app-aside fade nav-expand white light" style="display: none;" aria-hidden="true">
+    <div class="sidenav modal-dialog dk white light" ui-class="dark">
+      <div class="navbar dark-white" ui-class="dark-white">
+        <org-logo logoColor="#124f7acc"></org-logo>
+      </div>
+      <div class="flex hide-scroll">
+        <div class="scroll">
+          <div class="nav-active-theme" data-nav="">
+            <ul class="nav bg" *ngFor="let nav of navList">
+              <li *ngIf="nav?.key" class="nav-header hidden-folded">
+                <span class="text-xs">{{nav.key }}</span>
+              </li>
+              <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
+                <a [routerLink]="item.routeTo" [fragment]="item.code">
+                  <span class="nav-icon"><i [class]="item?.icon"></i> </span>
+                  <span class="nav-text">{{item?.key }}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="no-shrink lt">
+        <div class="nav-fold">
+          <!--<a class="d-flex p-2-3" data-toggle="dropdown" data-pjax-state="">
+            <span class="avatar w-28 theme text-theme circle" [attr.data-letters]="initials"></span>
+            &lt;!&ndash;<img src="../assets/images/a0.jpg" alt="..." class="w-28 circle">&ndash;&gt;
+          </a>-->
+          <div class="hidden-folded flex p-2-3 bg">
+            <div class="d-flex p-1">
+              <a class="px-2" data-toggle="tooltip" title="" (click)="logout()"><i class="fa fa-power-off text-muted"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div id="content" class="app-content box-shadow-0" role="main">
+        <div class="content-header white box-shadow" id="content-header">
+          <div class="navbar navbar-expand-lg">
+            <a class="d-lg-none mx-2" data-toggle="modal" data-target="#aside">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512">
+                <path d="M80 304h352v16H80zM80 248h352v16H80zM80 192h352v16H80z"></path>
+              </svg>
+            </a>
+            <div class="navbar-text nav-title flex"></div>
+            <ul class="nav flex-row order-lg-2">
+              <li class="nav-item">
+                <a title="Global Filter" class="nav-link px-2 text-primary active" (click)="showGlobalFilterPopup()">
+                  <span class="align-items-center">{{country?.name}} </span>
+                  <i class="fa fa-filter"></i>
+                </a>
+              </li>
+              <li class="dropdown d-flex align-items-center">
+                <a data-toggle="dropdown" class="nav-link">
+                  <span><i class="fa fa-user"></i></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right w pt-0 mt-2 animate fadeIn">
+                  <div class="p-2" *ngIf="authService.isAuthenticated$ | async" id="email"> {{ authService?.email }}</div>
+                  <a class="dropdown-item" [routerLink]="['profile']">
+                    <span>Profile</span>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <div class="dropdown-item pointer" (click)="logout()">Sign out</div>
+                </div>
+              </li>
+              <li class="d-lg-none d-flex align-items-center">
+                <a href="#" class="mx-2" data-toggle="collapse" data-target="#navbarToggler">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512">
+                    <path d="M64 144h384v32H64zM64 240h384v32H64zM64 336h384v32H64z"></path>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="p-2">
+            <app-breadcrumb></app-breadcrumb>
+        </div>
+        <div class="content-main d-flex flex" id="content-main">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>
+<ng-template #navbarRightTemplate>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">External</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a href="https://www.google.com" target="_blank">Google</a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">Session & Batch</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['session']" class="d-block">
+                    <small class="d-block _500 title">Session & Batch</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ng-template>

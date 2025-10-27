@@ -1,0 +1,75 @@
+<form class="flex" [formGroup]="customForm">
+    <ul class="nav nav-sm no-border">
+        <!--<li class="nav-item text-xs pl-2">
+          <small class="text-primary pr-2">Start Date</small>
+          <div class="md-form-group p-0 float-right">
+            <input type="date" formControlName="startDate" class="md-input" style="height: 20px;" [ngClass]="{ 'is-invalid': f.startDate.errors }">
+          </div>
+        </li>
+        <li class="nav-item text-xs pl-2">
+          <small class="text-primary pr-2">End Date</small>
+          <div class="md-form-group p-0 float-right">
+            <input type="date" formControlName="endDate" class="md-input" style="height: 20px;" [ngClass]="{ 'is-invalid': f.endDate.errors }">
+          </div>
+        </li>-->
+        <li class="nav-item dropdown">
+            <a class="nav-link no-border" data-pjax-state="" data-toggle="dropdown" title="Label"
+               aria-expanded="false">
+                <small class="text-primary pr-2">Duration</small>
+                <span class="nav-text">{{formStartDate?.value | dateFormat }} - {{formEndDate?.value | dateFormat }} <i
+                        class="fa fa-calendar"></i></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" role="menu" style="width: 300px;">
+                <div class="row row-sm pl-2 pr-2">
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input type="date" class="md-input" formControlName="startDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }">
+                            <label>Start Date</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input type="date" class="md-input" formControlName="endDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }">
+                            <label>End Date</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="btn btn-sm btn-block" (click)="applyDateChange()"> Apply </a>
+            </div>
+        </li>
+        <li class="nav-item" *ngIf="customForm.value.name">
+            <div class="form-control form-control-sm search">
+                {{ customForm.value.name }}
+            </div>
+        </li>
+        <li class="nav-item">
+            <div class="input-group flex">
+                <input type="text" id="search" autofocus (keyup)="particularFocus=true"
+                       [formControl]="particularsSearch" autocomplete="off"
+                       class="form-control px-0 no-bg no-border no-shadow search" placeholder="Enter Particular Name">
+                <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>
+            </div>
+        </li>
+    </ul>
+    <ul class="drop list inset" *ngIf="particularFocus"
+        style="max-height: 250px; margin: 0px 10px 0px 0px; position: absolute; width: 100%; z-index: 9; overflow-y: auto;"
+        [hidden]="!particularFocus">
+        <li class="match list-item" *ngFor="let item of particular$" (click)="applySelect(item)">
+            <div class="list-body">
+                <div class="item-except text-xs h-1x">
+                    <a class="item-title _500">{{item?.name }}
+                        <small class="float-right text-sm">
+                            <span class="badge green px-2">{{item?.accountGroupName}}</span>
+                        </small>
+                    </a>
+                </div>
+                <div class="item-except text-xs" style="font-size: .6rem">
+                    <span>Balance <small class="px-1">{{item.balance | orgCurrency }}</small></span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</form>

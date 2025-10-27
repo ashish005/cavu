@@ -1,0 +1,217 @@
+<form [formGroup]="customForm" class="d-flex flex">
+    <div class="d-flex flex-column flex p-3">
+        <div class="row">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="tradeName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['tradeName'].errors }">
+                            <label> Company/ Professional </label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <select-dropdown [items]="apiResolver?.masterType?.supplyTypes" title="Supply Type"
+                                         (cb)="updateSupplyTypeId($event)"
+                                         [control]="formSupplyTypeId"></select-dropdown>
+                    </div>
+                    <div class="col-3">
+                        <select-dropdown [items]="apiResolver?.masterType?.supplyNature" title="Nature"
+                                         (cb)="updateSupplyNatureId($event)"
+                                         [control]="formSupplyNatureId"></select-dropdown>
+                    </div>
+                    <div class="col-6">
+                        <select-dropdown [items]="apiResolver?.masterType?.purchaseTypes" title="Purchase Type"
+                                         (cb)="updatePurchaseTypeId($event)"
+                                         [control]="formPurchaseTypeId"></select-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="top-right text-xs" style="z-index: 1; right: 15px;">
+                            <label class="text-right md-check">
+                                <input type="checkbox" checked="checked" formControlName="isRegistered"><i
+                                    class="theme"></i> Registered
+                            </label>
+                        </div>
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="registrationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+                            <label> Registration No </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date" formControlName="registrationDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationDate'].errors }">
+                            <label> Registration Date </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="taxNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['taxNo'].errors }">
+                            <label> Tax No </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" formControlName="hasTaxByItem"><i class="theme"></i> Has Taxable
+                            Products
+                        </label>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" checked="checked" formControlName="hasItemInclTax"><i
+                                class="theme"></i> Product Inclusive Tax
+                        </label>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" checked="checked" formControlName="hasItemInclDiscount"><i
+                                class="theme"></i> Product Incl Discount
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span class="py-2 _500">Primary Contact</span>
+                        <div class="row d-flex">
+                            <div class="col-6">
+                                <div class="md-form-group">
+                                    <input class="md-input" formControlName="fName"
+                                           [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                                    <label> First Name </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="md-form-group">
+                                    <input class="md-input" formControlName="lName"
+                                           [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                                    <label> Last Name </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="md-form-group">
+                                    <input class="md-input" type="text" formControlName="email"
+                                           [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                                    <label> Email </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="md-form-group">
+                                    <input class="md-input" type="text" formControlName="phoneNo"
+                                           [ngClass]="{ 'is-invalid': submitted && f['phoneNo'].errors }">
+                                    <label> Phone No </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="box no-border">
+                    <div class="top-right" style="z-index: 1; right: 15px;">
+                        <a class="btn btn-xs text-xs" style="float: right; position: absolute; top: 0px; right: 0;"
+                           (click)="toggleNewAmountFormula()">
+                            <small *ngIf="!activeAmountCalcType">New Formula</small>
+                            <small *ngIf="activeAmountCalcType">Use Existing</small>
+                            <span class="caret"></span>
+                        </a>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="!activeAmountCalcType">
+                        <div class="col-md-12">
+                            <select-dropdown [items]="apiResolver.masterType?.calcTypes"
+                                             title="Amount Calc. Formula" bindLabel="'action'"
+                                             (cb)="updateAmountCalcTypeId($event)"
+                                             [control]="formAmountCalcTypeId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="activeAmountCalcType">
+                        <div class="col-md-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text-area" formControlName="amountCalcName"
+                                       [ngClass]="{ 'is-invalid': submitted && f['amountCalcName'].errors }">
+                                <label>Amount Calc Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="m-2" style="position: relative; overflow: auto; background-color: transparent;">
+                                <div class="md-form-group pb-0">
+                                    <textarea class="md-input" rows="4" formControlName="amountCalcFormula"></textarea>
+                                    <label> Formula</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="flex" *ngIf="activeAmountCalcType">
+                        <div class="md-form-group" >
+                            <input class="md-input" type="text-area" formControlName="amountCalcName" [ngClass]="{ 'is-invalid': submitted && f.amountCalcName.errors }">
+                            <label> Amount Calc Name</label>
+                        </div>
+                        <div class="md-form-group" >
+                            <textarea class="md-input" rows="4" formControlName="amountCalcFormula"></textarea>
+                            <label> Formula</label>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="box no-border">
+                    <div class="top-right" style="z-index: 1; right: 15px;">
+                        <a class="btn btn-xs  text-xs" style="float: right; position: absolute; top: 0px; right: 0;"
+                           (click)="toggleNewCostFormula()">
+                            <small *ngIf="!activeCostCalcType">New Formula</small>
+                            <small *ngIf="activeCostCalcType">Use Existing</small>
+                            <span class="caret"></span>
+                        </a>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="!activeCostCalcType">
+                        <div class="col-md-12">
+                            <select-dropdown [items]="apiResolver.masterType?.calcTypes"
+                                             title="Cost Calc Type" bindLabel="'action'"
+                                             (cb)="updateCostCalcTypeId($event)"
+                                             [control]="formCostCalcTypeId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="activeCostCalcType">
+                        <div class="col-md-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text-area" formControlName="costCalcName"
+                                       [ngClass]="{ 'is-invalid': submitted && f['costCalcName'].errors }">
+                                <label>Cost Calc Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="m-2">
+                                <div class="md-form-group pb-0">
+                                    <textarea class="md-input" rows="4" formControlName="amountCalcFormula"></textarea>
+                                    <label> Formula</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</form>

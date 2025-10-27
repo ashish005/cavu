@@ -1,0 +1,16 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scroll-y">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)">
+            </org-grid>
+        </div>
+        <div class="pl-3 pr-3 white lt b-t mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                 [page]="coreState?.page" (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

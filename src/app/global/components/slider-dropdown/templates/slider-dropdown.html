@@ -1,0 +1,40 @@
+<div class="content theme">
+  <div class="d-inline-flex">
+    <div *ngIf="hasNoChild">
+      <a class="btn btn-xs title _500">{{activeItem?.name}}</a>
+    </div>
+    <div class="dropdown open" *ngIf="!hasNoChild">
+      <a class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      {{name}} <span *ngIf="!name"> -- Please Select -- </span>
+      </a>
+      <a *ngIf="sliderOptions?.showClear" class="btn btn-xs btn-outline p-1 position-absolute" (click)="clearSelected()"><i class="fa fa-close"></i></a>
+      <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: -11px; left: 0px; will-change: transform;">
+        <div class="clear" *ngIf="showChild">
+          <a class="float-left pl-2" (click)="showAll($event)">Back</a>
+          <a class="float-right pr-2" *ngIf="activeItem?.children?.length" (click)="selectAllChild()">All</a>
+        </div>
+        <ng-container *ngIf="!showChild">
+          <ng-template ngFor let-item [ngForOf]="records" let-i="index">
+            <a class="dropdown-item" (click)="selectedData($event, item)">{{item?.name}}
+              <span *ngIf="(activeItem?.id === item?.id)" class="float-right" style="margin-right: -30px;">
+                <i class="fa fa-check text-success"></i>
+              </span>
+            </a>
+          </ng-template>
+        </ng-container>
+        <ng-container *ngIf="showChild">
+          <div class="dropdown-divider"></div>
+          <ng-template ngFor let-item [ngForOf]="activeItem?.children" let-i="index">
+            <a class="dropdown-item" (click)="selectedChildData(item)">{{item?.name}}
+              <span *ngIf="(activeChild?.id === item?.id)" class="float-right" style="margin-right: -30px;">
+                <i class="fa fa-check text-success"></i>
+              </span>
+            </a>
+          </ng-template>
+        </ng-container>
+        <!--<div class="dropdown-divider"></div>
+        <a class="dropdown-item">Separated link</a>-->
+      </div>
+    </div>
+  </div>
+</div>

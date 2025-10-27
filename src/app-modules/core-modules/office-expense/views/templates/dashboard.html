@@ -1,0 +1,50 @@
+<!--<ng-template #actionTemplate>
+    <div class="navbar flex-nowrap lt box-shadow">
+        <a data-toggle="modal" data-target="#content-aside" data-modal="" data-pjax-state="" class="mr-1 d-md-none">
+            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span></a>
+        <span class="text-md text-ellipsis flex">{{ pageTitle }}</span>
+    </div>
+</ng-template>-->
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="row">
+            <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                <div class="col-6 col-lg-3">
+                    <div class="box p-3">
+                        <div class="d-flex"><span class="text-muted">{{ row.head }}</span></div>
+                        <div class="py-3 text-center text-lg">{{ row.amount }}</div>
+                        <div class="list">
+                            <div class="list-item p-1">
+                                <div class="list-body">
+                                    <a class="item-title _500">Credit</a>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                                <div><span class="text-xs text-muted">{{ row.credit }}</span></div>
+                            </div>
+                            <div class="list-item p-1">
+                                <div class="list-body">
+                                    <a class="item-title _500">Debit</a>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                                <div><span class="text-xs text-muted">{{ row.debit }}</span></div>
+                            </div>
+                            <div class="list-item p-1">
+                                <div class="list-body">
+                                    <a class="item-title _500">Total Account</a>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                                <div><span class="text-xs text-muted">{{ row.accountCount}}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

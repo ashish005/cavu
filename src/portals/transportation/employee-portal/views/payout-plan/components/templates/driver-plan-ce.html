@@ -1,0 +1,75 @@
+<form [formGroup]="customForm" class="p-3">
+    <div class="row row-sm">
+        <div class="col-sm-4">
+            <div class="md-form-group float-label">
+                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                <label>Name</label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <select class="md-input" formControlName="payoutFrequency">
+                    <option *ngFor="let entity of apiResolver.masterType?.payoutFrequencies;" [ngValue]="entity.id"> {{entity.name}}</option>
+                </select>
+                <label class="text-xs text-muted m-0">Frequency</label>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="md-form-group">
+                <input *ngIf="formPayoutFrequency.value == 3 || formPayoutFrequency.value == 5" class="md-input text-right" style="width: 40px;" formControlName="payoutDay" [ngClass]="{ 'is-invalid': submitted && f['payoutDay'].errors }">
+                <select *ngIf="formPayoutFrequency.value == 1 || formPayoutFrequency.value == 2" class="md-input" formControlName="weekDay" style="width: 120px"><option *ngFor="let entity of weekDays;" [ngValue]="entity.id"> {{entity.name}}</option></select>
+                <label class="text-xs text-muted m-0">On</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-12">
+            <div>
+                <h6 class="pb-0">Payout Heads</h6>
+            </div>
+            <table class="table small-table text-sm">
+                <thead>
+                <tr>
+                    <th>Head</th>
+                    <th>Amount</th>
+                    <th>Payout Basis</th>
+                    <th>Frequency</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody formArrayName="planHeads">
+                <ng-container *ngFor="let rule of formPlanHeads?.controls; let i = index">
+                    <tr [formGroup]="rule">
+                        <td><strong class="text-muted">{{rule.get('headName').value}}</strong></td>
+                        <td>
+                            <input class="md-input text-right" formControlName="amount">
+                        </td>
+                        <td>
+                            <select class="md-input" formControlName="basedOn" style="width: 70px">
+                                <option *ngFor="let entity of apiResolver.masterType?.payoutBasis;" [ngValue]="entity.id"> {{entity.name}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="md-input" formControlName="frequency" style="width: 120px">
+                                <option *ngFor="let entity of apiResolver.masterType?.payoutFrequencies;" [ngValue]="entity.id"> {{entity.name}}</option>
+                            </select>
+                        </td>
+                        <td><label class="md-check"><input type="checkbox" formControlName="isActive"><i class="success"></i><span></span></label></td>
+                    </tr>
+                </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

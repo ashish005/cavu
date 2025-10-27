@@ -1,0 +1,231 @@
+$primary-color: #607D8B;
+
+:host {
+  display: contents !important;
+}
+
+:host header {
+  /*position: fixed;
+  top: 0;
+  left: 0;*/
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /*width: 100%;
+  height: 80px;
+  background-color: #318ebb;
+  box-shadow: 0 0px 8px rgba(212, 212, 212, 0.4);*/
+
+  .logo {
+    display: flex;
+    flex: 2;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    color: #FFF;
+    font-size: 3rem;
+    padding-left: 2rem;
+    cursor: pointer;
+  }
+  nav {
+    display: flex;
+    flex: 7;
+
+    .search-bar {
+      display: flex;
+      flex: 1;
+      max-width: 800px;
+      margin: 0 auto;
+
+      .search {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        .search__input {
+          display: flex;
+          flex: 1;
+          position: relative;
+          right: 0;
+          letter-spacing: .05rem;
+          background: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-128.png) #ececec;
+          background-repeat: no-repeat;
+          background-position: 1rem 50%;
+          background-size: 2rem;
+          outline: 0;
+          transition: background .3s ease-out, opacity .5s ease-out;
+
+          &:focus {
+            background: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-128.png) no-repeat 1rem 50% #FFFFFF;
+            background-size: 2rem;
+          }
+        }
+
+        .search__btn {
+          background: darken($primary-color, 20%);
+          height: 40px;
+          border: none;
+          width: 120px;
+          color: #FFF;
+          font-size: 0.8rem;
+          text-transform: uppercase;
+          letter-spacing: .1rem;
+          cursor: pointer;
+          outline: 0;
+          transition: all .4s ease-out;
+
+          &:hover {
+            background: darken($primary-color, 28%);
+          }
+        }
+        .search__icon {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .menu {
+    display: flex;
+    flex: 2;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 2rem;
+    font-size: 2rem;
+    color: #FFF;
+    height: 80px;
+    line-height: 80px;
+    cursor: pointer;
+  }
+}
+
+::ng-deep .suggestion {
+  display: flex;
+  position: absolute;
+  top: 42px;
+  border-top: 1px solid #F1F1F1;
+  opacity: 0;
+  visibility: hidden;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+    transform-origin: center top;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    animation: rotation-show 0.5s 0.3s;
+    animation-fill-mode: backwards;
+  }
+
+  &__content {
+    /*background: #fff;*/
+    display: flex;
+    flex: 1;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.5em;
+    font-size: 0.7rem;
+
+    .suggestion__content-right-side,
+    .suggestion__content-left-side {
+      flex: 1;
+      padding: 1em;
+
+      ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+          list-style-type: none;
+          padding: 2px 0;
+        }
+      }
+    }
+
+    .list-info {
+      h5 {
+        text-align: center;
+      }
+      ul {
+        padding: 10px 0 0 0;
+        max-width: 200px;
+        margin: auto;
+        li {
+          list-style: none;
+          border: 1px solid #f3f3f3;
+          background: #FFF;
+          text-align: center;
+          border-radius: 10px;
+          margin-bottom: 8px;
+          cursor: pointer;
+          transition: background .3s ease-out, border .4s ease-in-out;
+
+          &:hover {
+            border: 1px solid $primary-color;
+            background: #f1f1f1;
+          }
+        }
+      }
+    }
+  }
+}
+
+.hide-element {
+  display: none !important;
+}
+
+.mobile-search {
+  margin: 0 1em;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: 100%;
+}
+
+.close-icon {
+  color: #909090 !important;
+  position: absolute !important;
+  right: 8% !important;
+  font-size: 1rem;
+}
+
+@keyframes rotation-show {
+  0% {
+    transform: perspective(1000px) rotateX(-90deg);
+  }
+  100% {
+    transform: perspective(1000px) translateY(0);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .search__input {
+    font-size: 16px !important;
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+  }
+  .search__btn {
+    display: none !important;
+  }
+
+  .search__icon {
+    display: flex !important;
+    color: #FFF;
+    align-items: center;
+    flex: 6;
+    position: absolute;
+    right: 5rem;
+    cursor: pointer;
+    height: 80px;
+    line-height: 80px;
+  }
+
+  .message {
+    position: relative;
+    top: 80px;
+    background: #f3f3f3;
+    padding: 0.5rem 1.5rem;
+    display: block !important;
+    text-align: center;
+  }
+
+}

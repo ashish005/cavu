@@ -1,0 +1,24 @@
+<div class="app">
+  <div class="app-content box-shadow-0" role="main">
+    <div class="content-header white box-shadow-0">
+      <div class="navbar flex-nowrap">
+        <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
+          <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+        </a>
+        <div class="no-shadow">
+          <h6 class="mb-0"> Quiz Setup </h6>
+          <small class="float-left"> Setup Management</small>
+        </div>
+        <div class="nav-active-border b-theme px-4 px-md-0">
+          <ul class="nav nav-xs flex-row">
+            <li class="nav-item"><a class="nav-link" [routerLink]="['manage']"><span class="btn btn-sm btn-icon btn-rounded success"><i class="fa fa-reddit"></i></span></a></li>
+            <li class="nav-item"><a class="nav-link" [routerLink]="['create']"><span class="btn btn-sm btn-icon btn-rounded success"><i class="fa fa-plus"></i></span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="content-main d-flex flex">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

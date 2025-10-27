@@ -1,0 +1,16 @@
+<div class="flex flex-row">
+    <ul class="list inset">
+        <ng-template ngFor let-row [ngForOf]="entities" let-i="index">
+            <li class="list-item">
+                <a *ngIf="row.logoUrl" [style]="row.style"><img class="img-fluid w-40" [src]="row.logoUrl"/></a>
+                <div class="list-body">
+                    <div>
+                        <a>{{row.name}}</a>
+                        <a *ngIf="row.link" [href]="row.link" class="text-primary float-right" target="_blank">Link</a>
+                    </div>
+                    <small class="text-muted text-ellipsis">{{row.desc}}</small>
+                </div>
+            </li>
+        </ng-template>
+    </ul>
+</div>

@@ -1,0 +1,63 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap">
+        <div class="navbar-text flex p-0">
+            <h6 class="mb-0"> {{page?.title}}</h6>
+            <small class="float-left">Management</small>
+        </div>
+        <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item">
+                <a class="title _500 text-sm text-primary float-right" [routerLink]="['payment']"
+                           routerLinkActive="active">Connect Bank</a>
+            </li>
+        </ul>
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="fade aside aside-sm" id="content-aside">
+                <div class="modal-dialog d-flex flex-column w-md light lt" id="user-nav">
+                    <div class="navbar no-radius box-shadow">
+                        <div>
+                            <span class="text-muted">Invoices</span>
+                        </div>
+                        <a class="title _500 text-sm text-primary float-right" [routerLink]="['dashboard']"
+                           routerLinkActive="active">Dashboard</a>
+                    </div>
+                    <div class="scrollable hover">
+                        <div class="list-group list-group-gap p-2">
+                            <ng-template ngFor let-item [ngForOf]="apiResolver.masterType.voucherTypes" let-i="index">
+                                <a class="list-group-item p-1 px-2 _500" [routerLink]="[item.id, 'invoice']"
+                                   routerLinkActive="active">
+                                    <span class="float-right ml-2"><i class="fa fa-chevron-right"></i></span>
+                                    {{ item.name }}
+                                </a>
+                            </ng-template>
+                            <!--<li class="nav-header pb-2">
+                                    <div class="b-b px-1"><span class="text-muted">{{report.name}}</span></div>
+                                </li>
+                                <ng-template ngFor let-rep [ngForOf]="report.children" let-i="index">
+                                    <li class="nav-item"><a class="nav-link">{{ rep.name }}</a></li>
+                                </ng-template>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <!--<div class="navbar flex-nowrap box-shadow">
+                        <span *ngIf="(orgTaskId)">
+                          <a class="btn btn-outline b-a btn-xs b-theme theme text-theme b-primary" [routerLink]="['../']">Clear Search</a>
+                          <a class="p-2 active text-success"><i class="fa fa-check text-success d-none"></i> Search applied...</a>
+                        </span>
+                        <a class="ml-auto btn btn-outline b-a btn-sm b-theme" (click)="addRecord()"><i class="fa fa-fw fa-plus"></i> Org Task</a>
+                    </div>-->
+                    <router-outlet (activate)='onActivate($event)'></router-outlet>
+                    <!--<div class="mt-auto">
+                        <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                             [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

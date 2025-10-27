@@ -1,0 +1,54 @@
+<div class="p-3 white">
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <div class="row row-sm">
+        <div class="col-sm-12">
+          <div class="md-form-group float-label">
+            <input class="md-input" onkeyup="this.setAttribute('value', this.value);" required="">
+            <label>Quiz Name</label>
+          </div>
+        </div>
+      </div>
+      <div class="mb-2" id="accordion">
+        <div class="panel box no-border mb-2">
+          <div class="box-header p-y-sm">
+            <a data-toggle="collapse" data-parent="#accordion" data-target="#c_1"
+               style="z-index: 9;position: absolute;right: 12px;">
+              <span class="float-right badge text-sm">Expand</span>
+            </a>
+            <div class="input-group" style="position: absolute;">
+              <div class="input-group-prepend" style=" right: 130px; z-index: 9; position: absolute;">
+                <div aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown">Type<span class="sr-only">Type</span></div>
+                <div class="dropdown-menu" x-placement="bottom-start"
+                     style="position: absolute; transform: translate3d(64px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                  <div *ngFor="let qType of quizTypes; let i = index">
+                    <a class="dropdown-item" (click)="quizTypeChange(qType)">{{qType?.name}}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="md-form-group float-label">
+                  <textarea class="md-input" rows="4" value="">
+                  </textarea>
+                  <label>Question</label>
+                </div>
+              </div>
+            </div>
+            <div id="c_1" class="collapse in">
+              <div class="box-body p-0 text-sm" [ngSwitch]="activeQuiz?.id">
+                <multiple-choice *ngSwitchCase="1" [qPerms]="quizPerms"></multiple-choice>
+                <single-choice *ngSwitchCase="2"></single-choice>
+                <open-ended *ngSwitchCase="3"></open-ended>
+                <fill-in-the-blank *ngSwitchCase="4"></fill-in-the-blank>
+                <matching *ngSwitchCase="5"></matching>
+                <definitions *ngSwitchCase="6"></definitions>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

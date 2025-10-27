@@ -1,0 +1,63 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover">
+            <div class="p-3">
+                <div class="row row-sm mt-3">
+                    <div class="col-sm-12">
+                        <div class="box-header p-0"><h6>Host Info</h6></div>
+                        <table class="table small-table text-xs mb-0">
+                            <thead>
+                            <tr>
+                                <th class="w-25">Host Name</th>
+                                <th>Tenant Point</th>
+                                <!--<th style="width: 100px;">DB Type</th>-->
+                                <!--<th>DB Connection</th>-->
+                                <th>Enable</th>
+                                <th>Under Construction</th>
+                            </tr>
+                            </thead>
+                            <tbody class="scrollable hover h-100" formArrayName="hostConfigs">
+                            <ng-template ngFor let-item [ngForOf]="hostConfigsForm?.controls" let-i="index">
+                                <tr [formGroup]="item">
+                                    <td>
+                                        <input class="md-input" formControlName="hostName" [ngClass]="{ 'is-invalid': submitted && f.hostName.errors }">
+                                    </td>
+                                    <td>
+                                        <input class="md-input" formControlName="tenantPoint" [ngClass]="{ 'is-invalid': submitted && f.tenantPoint.errors }">
+                                    </td>
+                                    <!--<td>
+                                        <select-dropdown [items]="apiResolver?.masterType?.dbTypes"
+                                                         title="DB Type" [disabled]="!formEnabled" (cb)="updateDBType($event)"
+                                                         [control]="formDBType"></select-dropdown>
+                                    </td>
+                                    <td>
+                                        <input class="md-input" formControlName="connectionString" [ngClass]="{ 'is-invalid': submitted && f.connectionString.errors }">
+                                    </td>-->
+                                    <td>
+                                        <label class="md-check"><input type="checkbox" formControlName="enable"><i class="blue"></i></label>
+                                    </td>
+                                    <td>
+                                        <label class="md-check"><input type="checkbox" formControlName="isUnderConstruction"><i class="blue"></i></label>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            </tbody>
+                            <tfoot class="box">
+                            <tr>
+                                <td colspan="6"><a class="text-primary" (click)="addHostConfig()"><i class="fa fa-plus"></i> Add</a>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="white lt b-t mt-auto text-center">
+            <button type="button" class="btn btn-sm primary m-2" [disabled]="!customForm.valid" (click)="onOrgSubmit(customForm)">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                {{ submitted ? 'Submitting...' : 'Submit' }}
+            </button>
+        </div>
+    </div>
+</form>

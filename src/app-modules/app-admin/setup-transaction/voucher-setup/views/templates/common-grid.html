@@ -1,0 +1,27 @@
+<!--<ng-template #actionTemplate>
+    <ul class="nav">
+        <li class="nav-item mr-2">
+            <button class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()">
+                <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+            </button>
+        </li>
+    </ul>
+</ng-template>-->
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="content-main d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex-column box flex">
+                <org-grid [data]="gridData"
+                          [options]="gridOptions"
+                          [isLoading]="isLoading"
+                          (cb)="actionCb($event)"></org-grid>
+            </div>
+        </div>
+    </div>
+</div>

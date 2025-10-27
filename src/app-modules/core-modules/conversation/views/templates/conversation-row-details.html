@@ -1,0 +1,101 @@
+<ng-template #actionTemplate>
+    <ul class="nav nav-sm no-border">
+        <li class="nav-item">
+            <a class="nav-link text-muted" (click)="navigateBack()">
+                <span class="nav-text"><i class="fa fa-fw fa-mail-reply-all"></i></span>
+            </a>
+        </li>
+        <!--<li class="nav-item b-l p-l"><a class="nav-link text-muted no-border" data-toggle="tooltip"
+                                        data-placement="bottom" title="" data-pjax-state=""
+                                        data-original-title="Archive"><span class="nav-text"><i
+                class="fa fa-fw fa-hdd-o"></i></span></a></li>
+        <li class="nav-item hidden-sm-down"><a class="nav-link text-muted" data-toggle="tooltip"
+                                               data-placement="bottom" title="" data-pjax-state=""
+                                               data-original-title="Report"><span class="nav-text"><i
+                class="fa fa-fw fa-question"></i></span></a></li>
+        <li class="nav-item"><a class="nav-link text-muted" data-toggle="tooltip" data-placement="bottom"
+                                title="" data-pjax-state="" data-original-title="Delete"><span class="nav-text"><i
+                class="fa fa-fw fa-trash-o"></i></span></a></li>
+        <li class="nav-item dropdown"><a class="nav-link text-muted dropdown-toggle no-border"
+                                         data-toggle="dropdown" title="Label" data-pjax-state=""><span
+                class="nav-text"><i class="fa fa-fw fa-tag"></i></span></a>
+            <div class="dropdown-menu dropdown-menu-right mt-3" role="menu"><a class="dropdown-item"
+                                                                               data-pjax-state=""><i
+                    class="fa fa-dot-circle-o text-warn"></i> Bootstrap </a><a class="dropdown-item"
+                                                                               data-pjax-state=""><i
+                    class="fa fa-dot-circle-o text-info"></i> Html5 </a><a class="dropdown-item"
+                                                                           data-pjax-state=""><i
+                    class="fa fa-dot-circle-o text-warning"></i> Client </a><a class="dropdown-item"
+                                                                               data-pjax-state=""><i
+                    class="fa fa-dot-circle-o text-success"></i> Work</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" data-pjax-state=""><i class="fa fa-plus"></i> Create new label</a>
+            </div>
+        </li>-->
+    </ul>
+    <ul class="nav nav-sm no-border">
+        <li class="nav-item">
+            <a class="d-block">
+                <span class="badge blue">{{conversation?.mediaType}}</span>
+            </a>
+        </li>
+    </ul>
+    <a class="d-md-none btn-go-back btn btn-sm btn-icon primary" data-pjax-state=""><i class="fa fa-long-arrow-left"></i></a>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex box m-0 box-shadow">
+        <div class="scroll-y m-1 p-3">
+            <div class="clearfix">
+                <h6 class="mb-0 _500">
+                    <div [innerHTML]="conversation?.header" style="white-space: pre-line"></div>
+                </h6>
+            </div>
+            <div class="clearfix py-1">
+                <div class="d-block float-left pr-1">
+                    <span class="circle w-32 mr-2"><i class="fa fa-user"></i></span>
+                    <span>To</span>
+                </div>
+                <ul class="nav nav-xs flex-row no-border scroll-x float-left">
+                    <ng-template ngFor let-rcpt [ngForOf]="conversation?.recipientList" let-i="index">
+                        <li class="nav-item mr-2">
+                            <a class="btn btn-xs no-shadow b b-theme text-xs" [ngSwitch]="conversation?.mediaMasterType">
+                                <span *ngSwitchCase="'email'">{{rcpt.email || '--' }}</span>
+                                <span *ngSwitchCase="'sms'">{{rcpt.mobile || '--' }}</span>
+                                <span *ngSwitchDefault>{{rcpt.name || '--' }}</span>
+                            </a>
+                        </li>
+                    </ng-template>
+                </ul>
+            </div>
+            <div class="clearfix b-t py-2">
+                <div [innerHTML]="conversation?.content" style="white-space: pre-wrap"></div>
+            </div>
+            <!--<div class="clearfix px-2 b-b">
+                <div class="d-block float-left pr-1">
+                    <h6 class="mb-2">Attached files:</h6>
+                </div>
+                <ul class="nav nav-xs flex-row no-border scroll-x float-left">
+                    <li class="nav-item mr-2">
+                        <a class="d-block mb-1">
+                            <span class="badge info">PSD</span> DesignMockup.psd
+                            <small class="ml-2 text-muted">34kb</small>
+                        </a>
+                    </li>
+                    <li class="nav-item mr-2">
+                        <a class="d-block mb-1">
+                            <span class="badge blue">MP4</span> Design-video-show.mp4
+                            <small class="ml-2 text-muted">3mb</small>
+                        </a>
+                    </li>
+                    <li class="nav-item mr-2">
+                        <a class="d-block mb-1">
+                            <span class="badge blue">MP4</span> Design-video-show.mp4
+                            <small class="ml-2 text-muted">3mb</small>
+                        </a>
+                    </li>
+                </ul>
+            </div>-->
+        </div>
+        <loader [isLoading]="isLoading"></loader>
+    </div>
+</div>

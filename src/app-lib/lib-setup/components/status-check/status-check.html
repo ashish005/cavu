@@ -1,0 +1,8 @@
+<div class="input-group" [formGroup]="customForm">
+  <label class="md-switch float-left">
+    <input type="checkbox" formControlName="isActive"><i class="theme"></i>
+  </label>
+  <span class="input-group-append">
+    {{formIsActive?.value ? 'Enabled': 'Disabled'}}
+  </span>
+</div>

@@ -1,0 +1,64 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex p-3">
+    <form [formGroup]="customForm">
+      <div class="row row-sm">
+        <div class="col-sm-8">
+          <div class="md-form-group">
+            <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+            <label> Name </label>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="md-form-group">
+            <input class="md-input" formControlName="code" [ngClass]="{ 'is-invalid': submitted && f.code.errors }">
+            <label> Code </label>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="md-form-group">
+            <textarea class="md-input" rows="2" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"></textarea>
+            <label> Description </label>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="md-form-group">
+            <textarea class="md-input" rows="2" formControlName="footer" [ngClass]="{ 'is-invalid': submitted && f.footer.errors }"></textarea>
+            <label> Footer </label>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div>
+            <h6 class="pb-0">Portlet Rule</h6>
+            <small>These rules will be applicable for organization</small>
+          </div>
+          <table class="table small-table text-sm">
+            <thead>
+            <tr>
+              <th>User Role</th>
+              <th>Status</th>
+              <th>Visible</th>
+            </tr>
+            </thead>
+            <tbody formArrayName="permissions">
+            <ng-template ngFor let-rule [ngForOf]="formRule?.controls" let-i="index">
+              <tr [formGroup]="rule">
+                <td>{{rule.get('userRoleName').value}}</td>
+                <td><label class="md-check"><input type="checkbox" formControlName="status"><i class="success"></i><span></span></label></td>
+                <td><label class="md-check"><input type="checkbox" formControlName="isVisible"><i class="success"></i><span></span></label></td>
+              </tr>
+            </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <ng-template #footerTemplate>
+        <div class="col-sm-12 text-right">
+          <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType
+            }}
+          </button>
+        </div>
+      </ng-template>
+    </form>
+  </div>
+</div>

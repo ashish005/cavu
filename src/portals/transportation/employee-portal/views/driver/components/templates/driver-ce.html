@@ -1,0 +1,105 @@
+<form [formGroup]="customForm" class="p-3">
+    <div class="row row-sm">
+        <div class="col-sm-6">
+            <div class="md-form-group float-label">
+                <input class="md-input" formControlName="fName"
+                       [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                <label>First Name</label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="md-form-group float-label">
+                <input class="md-input" formControlName="lName"
+                       [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                <label>Last Name</label>
+            </div>
+        </div>
+        <!--<div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="dob"
+                       [ngClass]="{ 'is-invalid': submitted && f.dob.errors }">
+                <label>Date Of Birth</label>
+            </div>
+        </div>-->
+        <div class="col-sm-8">
+            <div class="md-form-group float-label">
+                <input class="md-input" type="email" formControlName="email"
+                       [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                <label>Primary E-mail</label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="md-form-group float-label">
+                <input class="md-input" type="text" formControlName="phone"
+                       [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+                <label>Mobile No</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="dlNumber"
+                       [ngClass]="{ 'is-invalid': submitted && f['dlNumber'].errors }">
+                <label> DL Number </label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.licenseTypes"
+                             title="License Type"
+                             (cb)="updateLicenseType($event)"
+                             [control]="formLicenseTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="dlValidity" [ngClass]="{ 'is-invalid': submitted && f['dlValidity'].errors }">
+                <label>DL Validity</label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="insuranceValidity" [ngClass]="{ 'is-invalid': submitted && f['insuranceValidity'].errors }">
+                <label>Insurance Validity</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="joiningDate" [ngClass]="{ 'is-invalid': submitted && f['joiningDate'].errors }">
+                <label>Joining Date</label>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <select-dropdown [items]="apiResolver?.masterType?.shifts"
+                             title="Shift"
+                             (cb)="updateShift($event)"
+                             [control]="formShiftId"></select-dropdown>
+        </div>
+        <div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" type="number" formControlName="experience" [ngClass]="{ 'is-invalid': submitted && f['experience'].errors }">
+                <label>Experience (Years)</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-5">
+            <select-dropdown [items]="apiResolver?.masterType?.plans"
+                             title="Plan"
+                             (cb)="updatePlan($event)"
+                             [control]="formPlanId"></select-dropdown>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

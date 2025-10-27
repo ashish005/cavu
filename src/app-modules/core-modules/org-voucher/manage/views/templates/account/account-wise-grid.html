@@ -1,0 +1,124 @@
+<ng-template #popupOptionsTemplate>
+    <div>
+        <div class="nav-active-border b-theme">
+            <ul class="nav nav-xs flex-row no-border pr-2">
+                <!--<li class="nav-item">
+                  <a class="nav-link" data-toggle="modal" data-target="#profile" data-modal=""
+                                        data-pjax-state=""><span class="btn btn-sm btn-icon btn-rounded success"><i
+                  class="fa fa-user"></i></span></a>
+                </li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
+                                        data-original-title="Phone Call" data-pjax-state=""><span
+                  class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"><span>{{pageTitle}}</span></a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-sm white ml-3" (click)="addRecord()">
+                            <span class="">
+                              <i class="fa fa-fw fa-plus  pr-2"></i><span class="hidden-folded d-inline">Voucher</span>
+                            </span>
+                    </button>
+                </li>-->
+                <!--<li class="nav-item">
+                    <a class="nav-link">
+                        <span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToExcel()"><i
+                            class="fa fa-file-excel-o"></i></span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToPDF()"><i
+                            class="fa fa-file-pdf-o green"></i></span></a>
+                </li>-->
+                <li class="nav-item"><a class="nav-link" (click)="changeViewType(true)"><i class="fa fa-table"></i>
+                    Table View</a></li>
+                <li class="nav-item"><a class="nav-link" (click)="changeViewType(false)"><i class="fa fa-list"></i>
+                    Detail View</a></li>
+                <!--<li>
+                    <date-time-picker #dateForm (cb)="dateChangeCb($event)"></date-time-picker>
+                </li>-->
+            </ul>
+        </div>
+    </div>
+</ng-template>
+<div class="d-flex flex d-print-none" *ngIf="isDetailView">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover">
+            <org-grid [data]="gridData" [options]="gridOptions" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="white mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex" [class.hide]="isDetailView">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl b-r white modal-dialog d-print-none">
+            <div class="navbar box-shadow">
+                <div class="input-group flex">
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search"
+                           required="">
+                    <span class="input-group-btn">
+                        <button class="btn no-bg no-border no-shadow" type="button"><i
+                                class="fa fa-search text-muted"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="px-2 text-muted text-sm">Vouchers</div>
+            <div class="scrollable hover">
+                <div class="list-group list-group-gap px-2">
+                    <ng-template ngFor let-row [ngForOf]="gridData | sortBy:'asc': 'sortOrder'" let-i="index">
+                        <div class="list-group-item p-0 px-2" [class.active]="row.voucherId == gridRow?.voucherId"
+                             (click)="actionCb(row)">
+                            <span class="float-right py-1">
+                                <small class="pr-2">{{row.voucherDate | dateFormat}}</small>
+                                <i class="fa fa-chevron-right"></i>
+                            </span>
+                            <span class="nav-text py-1">{{row.voucherNo}}</span>
+                            <div class="item-except text-xs text-muted">
+                                <div class="d-block float-left w-25">{{row.voucherTypeName}}</div>
+                                <div class="d-block">
+                                    <div class="d-inline-block">C: {{row?.credit | orgCurrency}}</div>
+                                    <div class="d-inline-block float-right">D: {{row?.debit | orgCurrency}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                     (cb)="moveToPage($event)"></org-grid-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="navbar box-shadow nav-active-border b-primary b-theme bottom d-print-none">
+                <span class="text-md text-ellipsis flex">{{gridRow?.voucherNo}}</span>
+                <ul class="nav nav-sm no-border">
+                    <ng-template ngFor let-row [ngForOf]="tabs | sortBy:'asc': 'sortOrder'" let-i="index">
+                        <li class="nav-item" (click)="openTab(row)">
+                            <a class="nav-link" [class.active]="activeTab?.id == row.id">{{row.name}}</a>
+                        </li>
+                    </ng-template>
+                </ul>
+            </div>
+            <!--<finance-report [data]="gridRow"></finance-report>-->
+            <!--<div class="content-main d-flex flex" id="content-main">
+                <div class="container d-flex flex" role="main" [class.hide]="'invoice' != activeTab?.id">
+                    <invoice-print #docPrint></invoice-print>
+                </div>
+                <div class="container d-flex flex p-0" *ngIf="'notify' == activeTab?.id">
+                    <invoice-notification-view [accountId]="accountId"
+                                               [voucherId]="gridRow?.voucherId"
+                                               [voucherTypeId]="gridRow?.voucherTypeId"></invoice-notification-view>
+                </div>
+                <div class="container d-flex flex p-0" *ngIf="'history' == activeTab?.id">
+                    <invoice-history [voucherId]="voucherId"></invoice-history>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</div>

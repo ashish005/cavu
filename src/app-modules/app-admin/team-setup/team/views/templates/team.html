@@ -1,0 +1,49 @@
+<ng-template #actionTemplate></ng-template>
+<div class="d-flex flex">
+    <div class="fade aside aside-sm" id="content-aside">
+        <div class="d-flex modal-dialog">
+            <div class="d-flex flex-column flex">
+                <div class="navbar box-shadow">
+                    <div class="input-group flex">
+                        <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required="">
+                        <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button">
+                            <i class="fa fa-search text-muted"></i></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="p-2 text-sm">
+                    <span class="text-muted">Groups</span>
+                    <a class="btn btn-xs float-right text-xs text-primary" (click)="showGroupCategory()">Group Categories</a>
+                </div>
+                <div class="scrollable hover">
+                    <div class="list">
+
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <div class="list-item p-1" (click)="showGroup(row)">
+                                <div class="list-body">
+                                    <a class="item-title _500">{{ row.name }}</a>
+                                </div>
+                                <div>
+                                    <small class="badge green mx-1" *ngIf="row.hasDynamicRules">Dynamic</small>
+                                    <a class="btn btn-xs float-right"><i class="fa fa-chevron-right"></i></a>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex" id="content-body">
+            <group-ce #groupCE hideDynamicResult="true" (onOk)="groupUpdated($event)"></group-ce>
+        </div>
+    </div>
+</div>

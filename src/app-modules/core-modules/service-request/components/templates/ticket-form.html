@@ -1,0 +1,52 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex p-3" name="form-contact" [formGroup]="customForm" (submit)="onSubmit(customForm)">
+    <div class="row flex flex-row text-center">
+      <ng-template ngFor let-supportType [ngForOf]="apiResolver?.masterType?.supportTypes" let-i="index">
+        <div class="col">
+          <label class="md-check">
+            <input type="radio" name="supportTypeId" [value]="supportType.id" formControlName="supportTypeId">
+            <i class="blue"></i> {{ supportType.name }}
+          </label>
+        </div>
+      </ng-template>
+    </div>
+    <div class="row">
+      <div class="col-sm-8 col-lg-8">
+        <div class="md-form-group float-label">
+          <input type="text" formControlName="emailId" class="md-input" [ngClass]="{ 'is-invalid': submitted && f['emailId'].errors }"/>
+          <label>Email</label>
+        </div>
+      </div>
+      <div class="col-sm-4 col-lg-4">
+        <div class="md-form-group float-label">
+          <input type="text" formControlName="phoneNumber" class="md-input" [ngClass]="{ 'is-invalid': submitted && f['phoneNumber'].errors }"/>
+          <label>Phone</label>
+        </div>
+      </div>
+      <div class="col-sm-12 col-lg-12">
+        <div class="md-form-group float-label">
+          <input type="text" formControlName="pageURL" class="md-input" [ngClass]="{ 'is-invalid': submitted && f['pageURL'].errors }"/>
+          <label>Page Url</label>
+        </div>
+      </div>
+      <div class="col-sm-12 col-lg-12">
+        <div class="md-form-group float-label">
+          <input type="text" formControlName="header" class="md-input" [ngClass]="{ 'is-invalid': submitted && f['header'].errors }"/>
+          <label>Subject</label>
+        </div>
+      </div>
+      <div class="col-sm-12 col-lg-12">
+        <div class="md-form-group">
+        <textarea class="md-input" rows="6" placeholder="hmm.." formControlName="message" [ngClass]="{ 'is-invalid': submitted && f['message'].errors }"></textarea>
+          <label> Message </label>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 text-center">
+      <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid">
+        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+        {{ submitted ? actionType?.loadingText : actionType?.text }}
+      </button>
+    </div>
+  </form>
+</div>

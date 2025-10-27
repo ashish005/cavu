@@ -1,0 +1,17 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap">
+        <div class="navbar-text flex p-0">
+            <h6 class="mb-0"> {{page?.title}}</h6>
+            <small class="float-left">Management</small>
+        </div>
+        <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        <!--<ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item">
+                <button class="btn white">Connect Bank</button>
+            </li>
+        </ul>-->
+    </div>
+    <div class="content-main d-flex flex" id="content-main">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>

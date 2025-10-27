@@ -1,0 +1,23 @@
+<div class="modal fade modal-open-aside show" data-backdrop="true" data-class="modal-open-aside" aria-modal="true"
+     style="display: block;" [ngStyle]="style" [class]="popupClass">
+  <div class="modal-dialog white" [ngClass]="bodyClass">
+    <div class="d-flex flex-column h-100 light bg">
+      <div class="navbar white lt box-shadow d-flex d-print-none">
+        <h3 class="text-md text-ellipsis mb-0">
+          {{header?.text}}
+          <!-- -->
+          <div class="item-except text-sm text-muted h-1x" *ngIf="header?.desc">{{header?.desc}}</div>
+        </h3>
+        <ng-template *ngTemplateOutlet="popupOptionsTemplateRef"></ng-template>
+        <a data-dismiss="modal" class="mr-0 ml-3" (click)="cancelClicked($event)"><span
+          class="text-md text-lg l-h-1x">×</span></a>
+      </div>
+      <div class="flex scrollable hover h-100">
+        <div #popupBody></div>
+      </div>
+      <div class="p-2 white lt b-t mt-auto" *ngIf="footerTemplateRef">
+        <ng-template *ngTemplateOutlet="footerTemplateRef"></ng-template>
+      </div>
+    </div>
+  </div>
+</div>

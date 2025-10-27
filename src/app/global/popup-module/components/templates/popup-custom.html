@@ -1,0 +1,17 @@
+<div id="setting" style="top: 60px !important;" [ngStyle]="style">
+  <div class="setting dark-white rounded-bottom active">
+    <a data-toggle-class="active" (click)="cancelClicked($event)"
+       class="dark-white toggle">
+      <i class="fa fa-gear text-theme fa-spin"></i>
+    </a>
+    <div class="box-header">
+      <button class="btn btn-xs float-right" (click)="cancelClicked($event)">×</button>
+      <strong>{{header?.text}}</strong>
+      <!--<small class="float-left">{{header?.desc}}</small>-->
+    </div>
+    <div class="box-divider"></div>
+    <div class="box-body">
+      <div #popupBody></div>
+    </div>
+  </div>
+</div>

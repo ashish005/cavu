@@ -1,0 +1,59 @@
+<ng-template #actionTemplate>
+    <!--<ul class="nav nav-xs flex-row no-border">
+      <li class="nav-item">
+        <button type="submit" class="btn btn-sm btn-outline text-theme b-theme mr-2" (click)="showPreview()">{{ (showPreviewScreen) ? 'Template View': 'Preview & Send' }}
+        </button>
+      </li>
+    </ul>-->
+</ng-template>
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex box mb-0 bg-transparent">
+        <div class="scroll-y p-3">
+            <div class="row row-sm" *ngIf="!isSMS">
+                <div class="col-sm-12">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="header" [ngClass]="{ 'is-invalid': submitted && f.header.errors }">
+                        <label> Subject </label>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="md-form-group pt-0 pb-0">
+                        <angular-editor class="md-input" style="white-space: pre-wrap;" formControlName="content" [config]="config"></angular-editor>
+                        <label> Message </label>
+                        <div style="margin-top: -20px;border-top: none !important; padding: .5rem .8rem 1rem;  border: 1px solid #ddd;  background-color: transparent;  overflow-x: hidden; overflow-y: auto; position: relative;" [innerHTML]="footer"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-sm" *ngIf="isSMS">
+                <div class="col-sm-12">
+                    <div class="md-form-group">
+                        <textarea class="md-input" rows="4" formControlName="content"></textarea>
+                        <label> SMS Text </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 b-t mt-auto">
+            <div class="md-form-group float-left p-0" *ngIf="!isSMS">
+                <label class="md-switch"><input type="checkbox" formControlName="isDefaultFooter"> <i class="theme"></i>Default Footer</label>
+            </div>
+            <div class="float-right">
+                <ng-template *ngTemplateOutlet="addUpdateActionTemplate"></ng-template>
+            </div>
+        </div>
+        <!--<loader [isLoading]="isLoading"></loader>-->
+    </div>
+    <!--<div class="fade aside aside-md">
+        <div class="modal-dialog d-flex flex-column w-lg">
+            <notification-tag [data]="apiResolver.masterType?.tags"></notification-tag>
+        </div>
+    </div>-->
+</form>
+<!--<div class="d-flex flex" *ngIf="isPreview">
+    <notification-preview [data]="previewData"></notification-preview>
+</div>-->
+<ng-template #addUpdateActionTemplate>
+    <a class="btn btn-sm btn-outline text-theme b-theme mr-2" (click)="resetForm()">Reset</a>
+    <button type="button" class="btn btn-sm btn-outline text-theme b-theme mr-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>{{ submitted ? 'Submitting...' : actionType }} </button>
+</ng-template>

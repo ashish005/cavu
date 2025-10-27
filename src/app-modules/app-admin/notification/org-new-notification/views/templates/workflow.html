@@ -1,0 +1,20 @@
+<ng-template #actionTemplate>
+    <!--<ul class="nav nav-xs flex-row no-border">
+      <li class="nav-item">
+        <button type="submit" class="btn btn-sm btn-outline text-theme b-theme mr-2" (click)="showPreview()">{{ (showPreviewScreen) ? 'Template View': 'Preview & Send' }}
+        </button>
+      </li>
+    </ul>-->
+</ng-template>
+<div class="d-flex flex" id="content-body">
+    <div class="d-flex flex-column flex">
+        <workflow [isCenterAlign]="true"></workflow>
+        <!--[processMasterType]="processMasterType"-->
+    </div>
+</div>
+
+<ng-template #addUpdateActionTemplate>
+    <!--<a class="btn btn-sm btn-outline text-theme b-theme mr-2" (click)="resetForm()">Reset</a>-->
+    <!--<button type="button" class="btn btn-sm btn-outline theme text-theme b-theme mr-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">-->
+        <!--<i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>{{ submitted ? 'Submitting...' : actionType }} </button>-->
+</ng-template>

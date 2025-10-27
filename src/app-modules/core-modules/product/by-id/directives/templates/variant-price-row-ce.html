@@ -1,0 +1,35 @@
+<ng-container [formGroup]="customForm">
+    <td>
+        <input class="md-input" type="date" formControlName="validFrom"
+               [ngClass]="{ 'is-invalid': submitted && f['validFrom'].errors }">
+    </td>
+    <td>
+        <input class="md-input text-right" type="number" formControlName="mrp"
+               [ngClass]="{ 'is-invalid': submitted && f['mrp'].errors }">
+    </td>
+    <td>
+        <input class="md-input text-right" type="number" formControlName="retailPrice"
+               [ngClass]="{ 'is-invalid': submitted && f['retailPrice'].errors }">
+    </td>
+    <td>
+        <input class="md-input text-right" type="number" formControlName="supplyPrice"
+               [ngClass]="{ 'is-invalid': submitted && f['supplyPrice'].errors }">
+    </td>
+    <td>
+        <label class="md-switch">
+            <input type="checkbox" checked="checked" formControlName="isTaxInclusive"><i
+                class="theme"></i>
+        </label>
+    </td>
+    <td>
+        <label class="md-switch">
+            <input type="checkbox" checked="checked" formControlName="isFixedPrice"><i
+                class="theme"></i>
+        </label>
+    </td>
+    <td>
+        <label class="md-switch">
+            <input type="checkbox" checked="checked" formControlName="status"><i class="theme"></i>
+        </label>
+    </td>
+</ng-container>

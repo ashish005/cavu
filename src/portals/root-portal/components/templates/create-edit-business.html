@@ -1,0 +1,265 @@
+<div class="d-flex flex scroll-y">
+    <div class="d-flex flex-column flex lt">
+        <div class="px-3 px-md-3 row">
+            <div class="col-sm-12">
+                <form [formGroup]="businessForm">
+                    <div class="row row-sm mt-3">
+                        <div class="col-sm-3">
+                            <select-dropdown [items]="apiResolver?.masterType?.country" title="Country"
+                                             [disabled]="disableControls"
+                                             (cb)="updateCountryId($event)"
+                                             [control]="formCountryId"></select-dropdown>
+                        </div>
+                        <div class="col-sm-3">
+                            <select-dropdown [items]="apiResolver?.masterType?.tenantTypes" title="Business Type"
+                                             [disabled]="disableControls"
+                                             (cb)="updateBusinessTypeId($event)"
+                                             [control]="formBusinessTypeId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-sm-6">
+                            <div class="md-form-group float-label">
+                                <input type="text" formControlName="name" class="md-input"
+                                       [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"/>
+                                <label>Business Name</label>
+                                <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                                    <div *ngIf="f['name'].errors?.['required']">Business Name (Business -
+                                        University/College/School/Coaching)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <select-dropdown [disabled]="!businessForm.enabled"
+                                             [items]="apiResolver?.masterType?.operatedBy"
+                                             title="Operated By" (cb)="updateOperatedBy($event)"
+                                             [control]="formOperatedBy"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="box">
+                                <div class="box-header"><h3>Business License</h3></div>
+                                <div class="box-body row py-0">
+                                    <div class="col-sm-12">
+                                        <div class="md-form-group float-label">
+                                            <input type="text" formControlName="licenseNo" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f['licenseNo'].errors }"/>
+                                            <label>Business License No</label>
+                                            <div *ngIf="submitted && f['licenseNo'].errors" class="invalid-feedback">
+                                                <div *ngIf="f['licenseNo'].errors?.['required']">Business Name is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="md-form-group float-label">
+                                            <input type="date" formControlName="validFromDate" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f['validFromDate'].errors }"/>
+                                            <label>Valid From</label>
+                                            <div *ngIf="submitted && f['validFromDate'].errors" class="invalid-feedback">
+                                                <div *ngIf="f['validFromDate'].errors?.['required']">Please Provide Business's
+                                                    Establishment
+                                                    Date
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="md-form-group float-label">
+                                            <input type="date" formControlName="validToDate" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f['validToDate'].errors }"/>
+                                            <label>Valid Till</label>
+                                            <div *ngIf="submitted && f['validToDate'].errors" class="invalid-feedback">
+                                                <div *ngIf="f['validToDate'].errors?.['required']">Please Provide Business's
+                                                    Approved Last
+                                                    Valid Date
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>Contact Person</h6>
+                                    <div class="row">
+                                        <div class="col-sm-5">
+                                            <div class="md-form-group float-label">
+                                                <input class="md-input" formControlName="contactPersonName"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }">
+                                                <label>Name</label>
+                                                <div *ngIf="submitted && f['contactPersonName'].errors"
+                                                     class="invalid-feedback">
+                                                    <div *ngIf="f['contactPersonName'].errors?.['required']">contact Name is
+                                                        required
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="md-form-group float-label">
+                                                <input class="md-input" formControlName="contactPersonMobile"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }">
+                                                <label>Mobile</label>
+                                                <div *ngIf="submitted && f['contactPersonMobile'].errors"
+                                                     class="invalid-feedback">
+                                                    <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is
+                                                        required
+                                                    </div>
+                                                    <div *ngIf="f['contactPersonMobile'].errors?.['mobile']">Phone must be a
+                                                        valid mobile no
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="md-form-group float-label">
+                                                <input class="md-input" formControlName="contactPersonEmail"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }">
+                                                <label>Email Id</label>
+                                                <div *ngIf="submitted && f['contactPersonEmail'].errors"
+                                                     class="invalid-feedback">
+                                                    <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is
+                                                        required
+                                                    </div>
+                                                    <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be a valid
+                                                        email address
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <h6>Referred By</h6>
+                                    <div class="row">
+                                        <div class="col-sm-5">
+                                            <select-dropdown [items]="referrals" bindValue="name"
+                                                             title="How did you know about us!" (cb)="updateRefSource($event)"
+                                                             [control]="formRefSource"></select-dropdown>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="referenceContact" class="md-input"/>
+                                                <label>Referred By</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="referenceMail" class="md-input"/>
+                                                <label>Email</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-sm-4 col-lg-3" *ngIf="!id">
+                            <div class="box-header p-0"><h6>Account Access Credential</h6></div>
+                            <div class="box">
+                                <ul class="list">
+                                    <li class="list-item">
+                                        <div class="list-body">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="userName" class="md-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }"/>
+                                                <label>
+                                                    UserName
+                                                    <div *ngIf="submitted && f['userName'].errors"
+                                                         class="invalid-feedback">
+                                                        <div *ngIf="f['userName'].errors?.['required']">UserName is required
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div class="md-form-group float-label">
+                                                <div class="md-input">Password&#64;123</div>
+                                                <label>Default Password</label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-lg-9">
+                            <div class="box-header p-0"><h6>Hosting Details</h6></div>
+                            <table class="table small-table text-xs mb-0">
+                                <thead>
+                                <tr>
+                                    <th style="width: 50px;"></th>
+                                    <th class="w-25">Domain URL/IP</th>
+                                    <th>API URL/ IP</th>
+                                    <!--<th style="width: 100px;">DB Type</th>
+                                    <th>DB Connection</th>-->
+                                    <th>Enable</th>
+                                    <th>Under Construction</th>
+                                </tr>
+                                </thead>
+                                <tbody class="scrollable hover h-100" formArrayName="hostConfigs">
+                                <ng-template ngFor let-item [ngForOf]="hostItems" let-i="index">
+                                    <tr [formGroup]="item">
+                                        <td>
+                                            <a class="text-primary" (click)="removeHostConfig(i)"><i class="fa fa-trash"></i></a>
+                                        </td>
+                                        <td>
+                                            <input class="md-input" formControlName="hostName"
+                                                   [ngClass]="{ 'is-invalid': submitted && f['hostName'].errors }">
+                                        </td>
+                                        <td>
+                                            <input class="md-input" formControlName="tenantPoint"
+                                                   [ngClass]="{ 'is-invalid': submitted && f['tenantPoint'].errors }">
+                                        </td>
+                                        <!--<td>
+                                            <select-dropdown [items]="apiResolver?.masterType?.dbTypes"
+                                                             title="DB Type" [disabled]="!formEnabled" (cb)="updateDBType($event)" [control]="formDBType"></select-dropdown>
+                                        </td>
+                                        <td>
+                                            <input class="md-input" formControlName="connectionString" [ngClass]="{ 'is-invalid': submitted && f.connectionString.errors }">
+                                        </td>-->
+                                        <td>
+                                            <p>
+                                                <label class="md-check"><input type="checkbox" formControlName="enable">
+                                                <i class="blue"></i></label>
+                                            </p>
+                                            <!--<div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" formControlName="enable">
+                                                </label>
+                                            </div>-->
+                                        </td>
+                                        <td>
+                                            <label class="md-check"><input type="checkbox" formControlName="isUnderConstruction"> <i class="blue"></i></label>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                </tbody>
+                                <tfoot class="box">
+                                <tr>
+                                    <td colspan="6">
+                                      <a class="text-primary" (click)="addHostConfig()"><i class="fa fa-plus"></i> Add</a>
+                                    </td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <ng-template #footerTemplate>
+                        <div class="col-sm-12">
+                            <button class="btn btn-sm btn-outline primary b-a float-right"
+                                    (click)="onSubmit(businessForm)"
+                                    [disabled]="!businessForm.valid || submitted">
+                                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                                {{ submitted ? 'Submitting...' : 'Register Admin' }}
+                            </button>
+                        </div>
+                    </ng-template>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

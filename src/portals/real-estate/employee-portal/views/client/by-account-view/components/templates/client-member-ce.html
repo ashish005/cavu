@@ -1,0 +1,62 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-2">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="title" [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
+                    <label> Title </label>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="fName" [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                    <label> First Name </label>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="lName" [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                    <label> Last Name </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="phone" [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+                    <label> Phone </label>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                    <label> Email </label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div style="float: right; position: absolute; top: 0px; right: 0; z-index: 9999;" type="button">
+                    <a class="btn btn-xs text-xs" *ngIf="relationType === 'new'" (click)="switchRelationType('existing')">Existing</a>
+                    <a class="btn btn-xs text-xs" *ngIf="relationType === 'existing'" (click)="switchRelationType('new')">New</a>
+                </div>
+                <div class="md-form-group" [hidden]="relationType === 'existing'">
+                    <input class="md-input" formControlName="relationName" [ngClass]="{ 'is-invalid': submitted && f['relationName'].errors }">
+                    <label> Relation Name </label>
+                </div>
+                <select-dropdown [hidden]="relationType === 'new'"
+                                 [items]="apiResolver.masterType?.relationTypes"
+                                 title="Relation With Company"
+                                 (cb)="updateRelationType($event)"
+                                 [control]="formRelationTypeId"></select-dropdown>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </form>
+</div>

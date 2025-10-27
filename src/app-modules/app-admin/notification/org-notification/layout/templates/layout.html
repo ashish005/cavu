@@ -1,0 +1,73 @@
+<!--<div class="content-main d-flex flex" id="content-main">
+  <div class="d-flex flex">
+    <div class="content-main d-flex flex">
+      <div class="d-flex flex">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>-->
+<ng-template #actionTemplate>
+    <ul class="nav nav-xs flex-row no-border pr-2">
+        <!--<li class="nav-item">
+          <a class="nav-link" data-toggle="modal" data-target="#profile" data-modal=""
+                                data-pjax-state=""><span class="btn btn-sm btn-icon btn-rounded success"><i
+          class="fa fa-user"></i></span></a>
+        </li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
+                                data-original-title="Phone Call" data-pjax-state=""><span
+          class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+        </li>-->
+        <li class="nav-item px-2" *ngIf="userMasterType">
+            <button class="btn btn-sm white" (click)="createNotification()">
+              <span class="">
+                <i class="fa fa-fw fa-plus pr-2"></i><span class="hidden-folded d-inline">New Notification</span>
+              </span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <div class="btn-group">
+                <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
+                    <button type="button" class="btn btn-sm btn-outline b-primary" (click)="showData(row)"><i class="fa"
+                                                                                                              [class]="row.icon"></i>
+                    </button>
+                </ng-template>
+            </div>
+        </li>
+        <!--<ng-template ngFor let-item [ngForOf]="viewNavigations | sortBy:'asc': 'sortOrder'" let-i="index">
+          <li class="nav-item px-1">
+            <a class="list-group-item box p-1 px-2" [routerLink]="[item.route]" routerLinkActive="active">
+              <span class="nav-text py-0"><i class="fa fa-calendar" class="pr-2"></i>{{item.name}}</span>
+            </a>
+          </li>
+        </ng-template>-->
+    </ul>
+</ng-template>
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap" *ngIf="!hideHeader">
+        <a class="no-shadow">
+            <h6 class="mb-0">Notifications</h6>
+            <small class="float-left pl-4">Manage</small>
+        </a>
+        <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        <!--<div class="text-right float-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
+                <p class="my-0 px-4">October 12, 2016</p>
+                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>-->
+        <ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item mx-1">
+                <!--<a class="btn btn-sm btn-outline border text-theme b-theme"><i class="fa fa-hand-grab-o pr-2"></i>Master Type</a>-->
+            </li>
+        </ul>
+    </div>
+
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>

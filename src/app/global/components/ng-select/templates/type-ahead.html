@@ -1,0 +1,21 @@
+<div class="md-select-form-group p-0" >
+    <a class="ng-placeholder text-xs" (click)="showSelect()" style="position: absolute; float: right; z-index: 999; right: 15px;top: -3px;">Edit</a>
+    <ng-select [items]="items$ | async" *ngIf="!hideTypeAhead"
+               [bindLabel]="bindLabel" [bindValue]="bindValue"
+               [trackByFn]="trackByFn" [minTermLength]="minLengthTerm"
+               [loading]="loading" [multiple]="multiple"
+               [closeOnSelect]="true" [disabled]="disabled"
+               [typeahead]="input$"
+               [placeholder]="controlTitle"
+               [(ngModel)]="controlId"
+               typeToSearchText="Please enter {{minLengthTerm}} or more characters"
+               (change)="onChange($event)">
+    </ng-select>
+    <small class="text-xs" style="top: -15px;position: relative;" [class.hide]="hideTypeAhead">Prev: {{input$ | async}}</small>
+    <div class="md-form-group" [class.hide]="!hideTypeAhead">
+        <div class="md-input">{{input$ | async}}</div>
+        <!--<label> {{title}} </label>-->
+    </div>
+    <!--<small>Search using email  First/ last name</small>-->
+</div>
+<!--[(ngModel)]="selectedUser"-->

@@ -1,0 +1,45 @@
+<form [formGroup]="customForm" (submit)="onSubmit(customForm)">
+  <div class="row row-sm">
+    <div class="col-sm-12">
+      <div class="md-form-group">
+        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+        <label> Name </label>
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <div class="box-header pb-0"><h3>Duty Constraint Rule</h3><small>These rules will be applicable for organization</small></div>
+      <div class="box-body">
+        <table class="w-100 table-bordered table-striped table-condensed">
+          <thead>
+          <tr>
+            <th>User Type</th>
+            <th>Value</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <!--<tbody formArrayName="dutyConstraintRule">
+            <ng-template ngFor let-rule [ngForOf]= "formRuleItem?.controls" let-i="index">
+              <tr [formGroup]="rule">
+                <td><strong class="text-muted"><input formControlName="employeeGrade" class="no-border bg-transparent"></strong></td>
+                <td><input formControlName="value" class="form-control b-b bg-transparent"></td>
+                <td><label class="md-check my-1"><input type="checkbox" formControlName="status"><i></i><span></span></label></td>
+              </tr>
+            </ng-template>
+          </tbody>-->
+          <tbody formArrayName="dutyConstraintRule">
+            <tr *ngFor="let rule of formRuleItem?.controls; let i = index" [formGroupName]="i">
+              <td><strong class="text-muted"><input formControlName="employeeGrade" class="no-border bg-transparent"></strong></td>
+              <td><input formControlName="value" class="form-control b-b bg-transparent"></td>
+              <td><label class="md-check my-1"><input type="checkbox" formControlName="status"><i></i><span></span></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 text-center">
+    <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+      <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+    </button>
+  </div>
+</form>

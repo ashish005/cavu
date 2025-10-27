@@ -1,0 +1,62 @@
+<div class="d-flex flex-column flex">
+    <div class="py-3">
+        <button class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Bank</button>
+    </div>
+    <div class="d-inline-block p-2">
+        <div class="float-left text-muted text-xs">Bank</div>
+        <a class="text-primary btn btn-xs text-xs _400 float-right"
+           [ngbPopover]="bankContent" placement="auto"
+           popoverTitle="Add Bank"
+           container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Add Bank</a>
+    </div>
+    <span class="text-xs hidden-folded">Main</span>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex px-2">
+            <div class="scrollable hover text-xs _500">
+                <div class="list-group list-group-gap">
+                    <ng-template ngFor let-row [ngForOf]="gridData | sortBy:'asc': 'name'" let-i="index">
+                        <a class="list-group-item box p-1 px-2">
+                            <i class="fa fa-lock" *ngIf="row.isLocked"></i>
+                            <a class="float-right btn btn-xs text-xs" (click)="showBankAccounts(row)"><i
+                                    class="fa fa-chevron-right"></i></a>
+                            <a class="float-right btn btn-xs text-xs" (click)="createBankAccount(row)"><i
+                                    class="fa fa-plus"></i> Bank Account</a>
+                            {{row.name}}
+                        </a>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                     (cb)="moveToPage($event)">
+                </org-grid-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #bankContent>
+    <form class="d-flex flex w-md" [formGroup]="customForm">
+        <div class="flex flex-column">
+            <div class="row d-flex">
+                <div class="col-sm-12">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="name"
+                               [class]="{ 'is-invalid': submitted && f.name.errors }">
+                        <label> Name </label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex row">
+                <div class="col-md-12 pt-2">
+                    <div class="popover__controls d-flex justify-content-end">
+                        <button class="btn btn-xs btn-success text-xs mx-2" (click)="onSubmit(customForm);p.close()">
+                            OK
+                        </button>
+                        <button class="btn btn-xs btn-danger text-xs" (click)="p.close()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <loader [isLoading]="isLoading"></loader>
+    </form>
+</ng-template>

@@ -1,0 +1,28 @@
+<ng-container [formGroup]="customForm" class="text-xs">
+    <td>
+        <a *ngIf="!filters?.length" class="text-danger px-2">No filters available</a>
+        <select-dropdown [items]="filters"
+                         title="Filters"
+                         (cb)="updateUserFilterTypeId($event)"
+                         [control]="formUserFilterTypeId"></select-dropdown>
+    </td>
+    <td>
+        <select-dropdown [items]="operatorList"
+                         title="Operator"
+                         (cb)="updateFilterOperator($event)"
+                         [control]="formFilterOperator"></select-dropdown>
+    </td>
+    <td>
+        <div class="form-control px-0" [class]="!formFilterValueName?.value ? 'border-danger text-danger': ''">
+            <a *ngIf="!formFilterValueName?.value" class="px-2">Required</a>
+            <a *ngIf="formFilterValueName?.value" class="btn btn-xs white mx-2">{{formFilterValueName?.value}}</a>
+            <button #optionsddl class="btn btn-xs white dropdown-toggle float-right mx-1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <ng-container *ngFor="let entity of entities; let k = index;">
+                    <a class="dropdown-item" (click)="changeFilterValue(entity)">{{entity.name}}</a>
+                </ng-container>
+            </div>
+        </div>
+    </td>
+    <td><a class="btn btn-xs" (click)="deleteFilterOptions()"><i class="fa fa-trash"></i></a></td>
+</ng-container>

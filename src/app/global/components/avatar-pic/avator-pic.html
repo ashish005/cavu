@@ -1,0 +1,10 @@
+<div class="avatar-upload p-3">
+  <div class="avatar-edit" (click)="openFile()">
+    <input type="file" #filecontrol accept=".png, .jpg, .jpeg" (change)="onSelectChange($event)">
+    <label></label>
+  </div>
+  <div class="avatar-preview" *ngIf="!hasImage">
+    <div class="preview-img" ></div>
+  </div>
+  <img #imagePreview [hidden]="!hasImage" class="avatar-preview"/>
+</div>

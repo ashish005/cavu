@@ -1,0 +1,144 @@
+<div class="support-dashboard z-index-0 mobile-date-picker col-sm-12 col-md-12 col-lg-12">
+    <div class="dashboard mt-4">
+        <div class="col-md-12 px-0">
+            <div class="border-charts">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Completed
+                                            tasks </h6><span class="h2 mb-0"> 0 </span></div>
+                                        <div class="col-auto"><span
+                                                class="h2 fe fe-check-square text-muted mb-0"></span></div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Incompleted
+                                            tasks </h6><span class="h2 mb-0"> 0 </span></div>
+                                        <div class="col-auto"><span class="h2 fe fe-x text-muted mb-0"></span></div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Overdue
+                                            tasks </h6><span class="h2 mb-0"> 0 </span></div>
+                                        <div class="col-auto"><span
+                                                class="h2 fe fe-calendar text-muted mb-0"></span></div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Total
+                                            tasks </h6><span class="h2 mb-0"> 1 </span></div>
+                                        <div class="col-auto"><span
+                                                class="h2 fe fe-clipboard text-muted mb-0"></span></div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Upcoming
+                                            tasks </h6><span class="h2 mb-0"> 0 </span></div>
+                                        <div class="col-auto"><span class="h2 fe fe-file text-muted mb-0"></span>
+                                        </div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 col-12">
+                        <div class="mb-4">
+                            <div class="card mb-0"><!----><!---->
+                                <div class="card-body"><!----><!---->
+                                    <div class="row align-items-center">
+                                        <div class="col"><h6 class="text-uppercase text-muted mb-2"> Planned
+                                            hours </h6><span class="h2 mb-0"> 0 </span></div>
+                                        <div class="col-auto"><span
+                                                class="h2 fe fe-calendar text-muted mb-0"></span></div>
+                                    </div>
+                                </div><!----><!----></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="_title 500 p-2"> My Org Task</div>
+        <div class="scroll-y">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="myOrgTasks" let-i="index">
+                    <div class="list-item" data-id="item-6">
+                        <div class="list-body">
+                            <a class="item-title _500" data-pjax-state="">{{ row.name }}</a>
+                            <div class="item-except text-sm text-muted h-1x">
+                                {{ row.orgProcess?.name }} <small>{{ row.orgProcess?.description }}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-xs b-a no-shadow" (click)="addTaskScheduler(row)"><i class="fa fa-fw fa-plus"></i> Schedule </a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="createReminder(row)"><i class="fa fa-fw fa-plus"></i> Reminder</a>
+                            <a class="btn btn-xs b-a no-shadow" (click)="eventTaskCalendar(row)"><i class="fa fa-fw fa-plus"></i> Calendar</a>
+                            <a class="text-primary item-date text-xs" (click)="actionCb(row, 'task')">More</a>
+                            <a class="text-primary item-date text-xs" (click)="checkActivity(row)">Activity</a>
+
+
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column flex">
+        <div class="_title 500 p-2"> My Project Task</div>
+        <div class="scroll-y">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-row [ngForOf]="myProjectTasks" let-i="index">
+                    <div class="list-item" data-id="item-6">
+                        <div class="list-body">
+                            <a class="item-title _500" data-pjax-state="">{{ row.name }}</a>
+                            <div class="item-except text-sm text-muted h-1x">
+                                {{ row.orgProcess?.name }} <small>{{ row.orgProcess?.description }}</small>
+                            </div>
+                            <div class="item-tag tag hide">Trash</div>
+                        </div>
+                        <div>
+                            <a class="text-primary item-date text-xs" (click)="showMoreCb(row, 'task')">More</a>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+</div>-->

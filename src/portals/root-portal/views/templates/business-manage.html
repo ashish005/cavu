@@ -1,0 +1,134 @@
+<ng-template #actionTemplate>
+  <div class="navbar no-radius pos-rlt">
+    <span class="text-md text-ellipsis flex">Businesses</span>
+    <!--<ul class="nav nav-xs flex-row no-border">
+      <li class="nav-item">
+        <button class="btn btn-default btn-sm no-shadow" type="button" (click)="newBusiness()"> Create Business
+          <i class="fa fa-plus"></i>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="btn btn-default btn-sm no-shadow" type="button" (click)="showClientBusinessPopup()"> Mac Ingenieria
+          <i class="fa fa-plus"></i>
+        </button>
+      </li>
+    </ul>-->
+    <div class="no-radius box-shadow pos-rlt">
+      <form class="flex ng-untouched ng-pristine ng-valid" novalidate="">
+        <div class="input-group"><input class="form-control form-control-sm search" placeholder="Search"
+                                        required="" type="text">
+          <div class="columns columns-right btn-group float-right">
+            <div class="keep-open btn-group" title="Columns">
+              <button aria-expanded="false" aria-label="columns"
+                      class="btn btn-default btn-sm no-shadow dropdown-toggle" data-toggle="dropdown"
+                      style="border-right: 0px;border-left: 0px;" type="button"><i class="fa fa-th-list"></i><span
+                      class="caret"></span></button>
+            </div>
+          </div>
+          <span class="input-group-append"><button class="btn btn-default btn-sm no-shadow" style="border-left: 0px;" type="button"><i class="fa fa-search"></i></button></span></div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="scrollable hover h-100">
+      <!--<div class="box">
+        <div class="animate fadeIn" *ngIf="gridData?.length">
+          <div class="no-more-tables">
+            <table class="p-0 table table-striped table-condensed cf">
+              <thead class="cf">
+              <tr>
+                &lt;!&ndash;<th>
+                  <label class="md-check m-0"><input type="checkbox" (change)="checkUncheckAll()"> <i class="indigo"></i></label>
+                </th>&ndash;&gt;
+                <th *ngFor="let head of gridOptions?.columnDefs;" [width]="head?.width">{{head?.headerName}}</th>
+                <th style="width:20px"></th>
+                <th style="width:30px" *ngIf="(gridOptions?.header?.edit)"></th>
+              </tr>
+              </thead>
+              <tbody class="scroll-y">
+              <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                <tr [attr.rowId]="row.id">
+                  <td *ngFor="let col of gridOptions?.columnDefs; let i=index" [attr.data-title]="col?.headerName">
+                    <ng-template #withCellFnTemplate> {{col.cellFn(row)}}</ng-template>
+                    <ng-template #withoutCellTemplate>
+                      {{row[col?.field]}}
+                    </ng-template>
+                    <ng-template #withCellTemplate>
+                      <dynamic-content [context]="row" [component]="col.cellTemplate" [col]="col"></dynamic-content>
+                    </ng-template>
+                    <ng-container
+                            *ngTemplateOutlet="col.cellTemplate ? withCellTemplate : (col?.cellFn)? withCellFnTemplate: withoutCellTemplate"></ng-container>
+                  </td>
+                  <td>
+                    <a class="remove" *ngIf="(!row?.isLocked && options?.header?.delete)" href="javascript:void(0)" (click)="remove(row)" title="Remove"><i class="fa fa-trash"></i></a>
+                    <a *ngIf="row?.isLocked" href="javascript:void(0)"><i class="fa fa-lock"></i></a>
+                  </td>
+                  <td *ngIf="(gridOptions?.header?.edit)">
+                    &lt;!&ndash;<label class="btn btn-xs btn-icon ui-check m-0">
+                      <input type="checkbox" name="post[]" (change)="checkValue(row)"><i class="dark-white"></i>
+                    </label>&ndash;&gt;
+                    &lt;!&ndash;<label class="md-check"><input type="checkbox" (change)="checkValue(row)"> <i class="indigo"></i></label>&ndash;&gt;
+                    <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" title="edit" (click)="editRecord(row)">
+                      <i class="fa fa-edit"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td [attr.colspan]="gridOptions?.columnDefs.length">
+                    <div class="box">
+                      <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                          <th><span class="pl-2">Name</span></th>
+                          <th><span class="float-right">Head Branch</span></th>
+                          <th><span class="float-right">Self Administration</span></th>
+                          <th><span class="pr-2 float-right">Seed</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-childRow [ngForOf]="row.branches" let-j="index">
+                          <tr>
+                            <td><span class="pl-2">{{ childRow?.name }}</span></td>
+                            <td><span class="float-right">{{ childRow?.isHeadBranch }}</span></td>
+                            <td><span class="float-right">{{ childRow?.taxAmount }}</span></td>
+                            <td>
+                              <button class="btn btn-xs theme b-theme text-xs border px-1 mx-1" (click)="showBranchPopup(row, childRow)"> Branch Feeder</button>
+                            </td>
+                          </tr>
+                        </ng-template>
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                  <td>
+                    <a class="remove" *ngIf="!childRow?.isLocked && options?.header?.delete" href="javascript:void(0)" (click)="remove(childRow)" title="Remove"><i class="fa fa-trash"></i></a>
+                    <a *ngIf="childRow?.isLocked" href="javascript:void(0)"><i class="fa fa-lock"></i></a>
+                  </td>
+                  <td *ngIf="(gridOptions?.header?.edit)">
+                    <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" title="edit" (click)="editRecord(childRow)"><i class="fa fa-edit"></i></a>
+                  </td>
+                </tr>
+              </ng-template>
+              </tbody>
+            </table>
+            <loader [isLoading]="isLoading"></loader>
+          </div>
+        </div>
+        <div class="box-body light lt no-result" [class.hide]="(gridData?.length && !isLoading)">
+          <div class="p-2 text-center">No Results</div>
+        </div>
+      </div>-->
+      <org-grid [data]="gridData"
+                [options]="gridOptions"
+                (cb)="actionCb($event)"
+                (update)="updateGrid($event)">
+      </org-grid>
+    </div>
+    <div class="px-3 white lt b-t mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)">
+      </org-grid-pagination>
+    </div>
+  </div>
+</div>

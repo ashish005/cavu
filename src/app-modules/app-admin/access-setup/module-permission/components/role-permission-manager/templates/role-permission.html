@@ -1,0 +1,70 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap box-shadow">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                           data-pjax-state=""><span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span></a>
+                        <div class="item-title _500 text-muted">
+                            Module Permission
+                        </div>
+                    </div>
+                    <div class="scroll-y box m-0">
+                        <table class="table text-xs table-condensed" [formGroup]="customForm">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Module</th>
+                                <th>Full Access</th>
+                                <th>
+                                    <div class="text-xs">
+                                        <div class="d-inline-block px-1" style="font-size: .6em;color: green;">Manage
+                                        </div>
+                                        <div class="d-inline-block px-1" style="font-size: .8em;">View</div>
+                                        <div class="d-inline-block px-1 b-l b-r" style="font-size: .8em;">Create</div>
+                                        <div class="d-inline-block px-1" style="font-size: .8em;">Modify</div>
+                                    </div>
+                                </th>
+                                <th>Soft Delete</th>
+                                <th>Destroy</th>
+                                <!--<th>Import</th>
+                                <th>Export</th>-->
+                            </tr>
+                            </thead>
+                            <tbody formArrayName="moduleRight">
+                            <ng-template ngFor let-rule [ngForOf]="formModuleRight?.controls" let-i="index">
+                                <ng-container [formGroup]="rule">
+                                    <tr>
+                                        <module-permission-row [customForm]="rule"></module-permission-row>
+                                    </tr>
+                                </ng-container>
+                                <ng-container *ngIf="rule.get('modulePermission')?.controls.length>0"
+                                              [formGroup]="rule">
+                                    <tr *ngFor="let ruleItem of rule.get('modulePermission')?.controls; let k = index"
+                                        [formGroup]="ruleItem">
+                                        <ng-container *ngIf="k==0">
+                                            <td [attr.rowspan]="rule.get('modulePermission')?.controls.length"
+                                                style="border-top: none;border-right: 1px solid #e9ebed;">
+                                                <!--
+                                                {{rule.get('name').value}}
+                                                 <label class="ui-switch primary float-right mr-2">
+                                                   <input type="checkbox" [checked]="rule.get('allowed').value" (change)="allowedChanges($event.target.checked, rule)"> <i></i>
+                                                 </label>
+                                                 -->
+                                            </td>
+                                        </ng-container>
+                                        <sub-module-permission-row [customForm]="ruleItem"></sub-module-permission-row>
+                                    </tr>
+                                </ng-container>
+                            </ng-template>
+                            </tbody>
+                        </table>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                    <div class="mt-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <select-dropdown [items]="apiResolver?.masterType?.resourceTypes"
+                                 title="Resource Type"
+                                 (cb)="updateResourceType($event)"
+                                 [control]="formResourceTypeId"></select-dropdown>
+            </div>
+            <div class="col-sm-12">
+                <div class="md-form-group">
+                    <textarea class="md-input" rows="2" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"></textarea>
+                    <label> Description </label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <select-dropdown [items]="apiResolver?.masterType?.billingTypes"
+                                 title="Billing Type"
+                                 (cb)="updateBillingType($event)"
+                                 [control]="formBillingTypeId"></select-dropdown>
+            </div>
+            <div class="col-sm-6">
+                <select-dropdown [items]="projectResolver.project?.modules"
+                                 title="Project Module/ Service"
+                                 (cb)="updateProjectModule($event)"
+                                 [control]="formProjectModuleId"></select-dropdown>
+            </div>
+            <div class="col-sm-6">
+                <user-type-ahead controlTitle="Vendor Executive (Search using email  First/ last name)" userType="vendor"
+                                 (cb)="updateVendorExecutive($event)"
+                                 [controlId]="formVendorExecutiveId?.value" [controlValue]="formVendorExecutive?.value"></user-type-ahead>
+                <!--<select-dropdown [items]="apiResolver?.masterType?.modules"
+                                 title="Vendor Executive"
+                                 [contentTemplate]="addVendorExecutive" addNewEnabled="true"
+                                 (cb)="updateVendorExecutive($event)"
+                                 [control]="formVendorExecutiveId"></select-dropdown>-->
+            </div>
+            <div class="col-sm-6">
+                <user-type-ahead controlTitle="Employee Executive (Search using email  First/ last name)" userType="employee"
+                            (cb)="updateEmpExecutive($event)"
+                            [controlId]="formEmpExecutiveId?.value" [controlValue]="formEmpExecutive?.value"></user-type-ahead>
+                <!--<select-dropdown [items]="apiResolver?.masterType?.modules"
+                                 title="Employee Executive"
+                                 [contentTemplate]="addEmpExecutive" addNewEnabled="true"
+                                 (cb)="updateEmpExecutive($event)"
+                                 [control]="formEmpExecutiveId"></select-dropdown>-->
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </form>
+</div>
+<!--
+<ng-template #addVendorExecutive><add-vendor-executive (cb)="popoverCallback($event)"></add-vendor-executive></ng-template>
+<ng-template #addEmpExecutive><add-employee-executive (cb)="popoverCallback($event)"></add-employee-executive></ng-template>-->

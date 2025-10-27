@@ -1,0 +1,51 @@
+<div class="content-main d-flex flex">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="modal-dialog d-flex flex-column w-md">
+                <div class="navbar">
+                    <div class="input-group flex">
+                        <!--<input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required=""> <span class="input-group-btn"><button
+                        class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>-->
+                        <span class="item-title _500">  </span>
+                    </div>
+                </div>
+                <div class="scrollable hover px-3">
+                    <div class="list-group list-group-gap">
+                        <ng-template ngFor let-group [ngForOf]="items | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <span *ngIf="group.isHeading" class="p-1 text-muted">{{group.name}}</span>
+                            <a *ngIf="!group.isHeading" class="list-group-item box p-1 px-2"
+                               [routerLink]="[group.route]" routerLinkActive="active">
+                                <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                                <i [class]="group.icon" class="pr-2"></i>{{group.name}}
+                            </a>
+                            <ng-template ngFor let-item [ngForOf]="group.children | sortBy:'asc': 'sortOrder'"
+                                         let-i="index">
+                                <a class="list-group-item box p-1 px-2" [routerLink]="[item.route]"
+                                   routerLinkActive="active">
+                                    <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                                    <i [class]="item.icon" class="pr-2"></i>{{item.name}}
+                                    <!--{{ item.name }}-->
+                                </a>
+                            </ng-template>
+                            <div class="p-2"></div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+            </div>
+        </div>
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex">
+                <div class="navbar no-radius box-shadow pos-rlt">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                       data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                    </a>
+                    <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+                </div>
+                <router-outlet (activate)='onActivate($event)'></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

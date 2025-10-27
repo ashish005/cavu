@@ -1,0 +1,70 @@
+<ng-template #popupOptionsTemplate>
+    <div class="navbar">
+        <!--<span class="text-md text-ellipsis flex"></span>-->
+        <ul class="nav nav-xs flex-row no-border pr-2">
+            <!--<li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#profile" data-modal=""
+                                    data-pjax-state=""><span class="btn btn-sm btn-icon btn-rounded success"><i
+              class="fa fa-user"></i></span></a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
+                                    data-original-title="Phone Call" data-pjax-state=""><span
+              class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+            </li>-->
+            <li class="nav-item">
+                <span class="hidden-folded d-inline">{{pageTitle}}</span>
+            </li>
+        </ul>
+        <ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item b-a mr-2">
+                <a class="btn btn-xs btn-icon float-right"> <i class="fa fa-close"></i></a>
+                <button class="btn btn-sm no-shadow" type="button">
+                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                    Opening Balance
+                </button>
+            </li>
+            <li class="nav-item b-a mr-2">
+                <a class="btn btn-xs btn-icon float-right"> <i class="fa fa-close"></i></a>
+                <button class="btn btn-sm no-shadow" type="button">
+                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                    closing Balance
+                </button>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl b-r white modal-dialog">
+            <!--<div class="navbar box-shadow">
+                <div class="input-group flex">
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required="">
+                    <span class="input-group-btn">
+                        <button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button>
+                    </span>
+                </div>
+            </div>-->
+            <div class="p-2 px-3 text-muted text-sm">Account Group</div>
+            <account-group-tree isPopup="true" (onOk)="showLedgerDetails($event)"></account-group-tree>
+            <!--<div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>-->
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+                <div class="d-flex flex-column flex">
+                    <org-grid [data]="gridData"
+                              [isLoading]="isLoading"
+                              [options]="gridOptions"
+                              (cb)="actionCb($event)"
+                              (update)="updateGridData($event)"></org-grid>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                     [page]="coreState?.page"
+                                     (cb)="moveToPage($event)"></org-grid-pagination>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="d-flex flex align-items-center">
+    <div class="text-center p-5 w-100">
+        <h1 class="display-5 my-5 text-success">Payment Successful!</h1>
+        <p><a [routerLink]="['../invoices']" class="b-b"> Check the Receipt here</a></p>
+        <p class="my-5 text-muted h4">Thank you for purchasing a subscription!</p>
+    </div>
+</div>

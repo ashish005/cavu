@@ -1,0 +1,8 @@
+<form class="flex" [formGroup]="customForm">
+    <div class="md-form-group">
+        <select class="md-input" formControlName="dateFormater" name="dateFormater" (change)="onDateFormatChange($event)">
+          <option *ngFor="let df of dateFormatList" [value]="df.id">{{ df.name }}</option>
+        </select>
+        <label>Date Format</label>
+    </div>
+</form>

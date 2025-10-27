@@ -1,0 +1,6 @@
+<form class="flex" [formGroup]="customForm">
+  <div class="input-group">
+    <input class="form-control form-control-sm" type="date" placeholder="Start Date" formControlName="startDate" [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }">
+    <input class="form-control form-control-sm" type="date" placeholder="End Date" formControlName="endDate" [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }">
+  </div>
+</form>

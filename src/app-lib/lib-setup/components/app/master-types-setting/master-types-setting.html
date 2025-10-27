@@ -1,0 +1,29 @@
+<a class="btn btn-sm btn-outline text-theme b-theme ml-2" style="right: 0;" (click)="toggleArea()">
+  <i class="fa fa-gear text-theme fa-spin"></i> {{list?.title}}
+</a>
+<div class="master-type-setting dark-white rounded-bottom" #masterTypeSetting>
+  <a (click)="toggleArea()" class="dark-white toggle">
+    <i class="fa fa-close"></i>
+  </a>
+  <div class="fade aside aside-sm">
+    <div class="d-flex flex-column w-xl b-r white modal-dialog">
+      <div class="scrollable hover">
+        <div class="list inset">
+          <ng-template ngFor let-k [ngForOf]="list?.navList" let-i="index">
+            <div class="p-2 px-3 text-muted text-sm">{{k?.name}}</div>
+
+            <div class="list-item" *ngFor="let item of k?.children">
+            <span class="w-40 avatar circle" *ngIf="item?.icon">
+              <i [class]="item?.icon"></i>
+            </span>
+              <div class="list-body">
+                <a class="_500 item-title" (click)="showRoutes(item)">{{ item?.name }}</a>
+                <small class="block text-muted text-ellipsis" *ngIf="item?.desc">{{ item?.desc }}</small>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="input-group">
+  <input type="text" class="form-control form-control-sm search" placeholder="Search" required="">
+  <div class="columns columns-right btn-group float-right">
+    <div class="keep-open btn-group" title="Columns">
+      <button type="button" aria-label="columns" class="btn btn-default btn-sm no-shadow dropdown-toggle" style="border-right: 0px;border-left: 0px;"
+              data-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-th-list"></i>
+        <span class="caret"></span>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end"
+           style="position: absolute; transform: translate3d(-261px, -107px, 0px); left: 0px; will-change: transform; width: 300px;">
+        <div class="dropdown pl-3 pr-3" (click)="hostListenerClick($event)">
+          <!--<fee-filter (cb)="feeFilter($event)"></fee-filter>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="input-group-append">
+    <button class="btn btn-default btn-sm no-shadow" style="border-left: 0px;" type="button">
+      <i class="fa fa-search"></i>
+    </button>
+  </span>
+</div>

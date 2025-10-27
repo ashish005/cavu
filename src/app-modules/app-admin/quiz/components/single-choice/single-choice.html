@@ -1,0 +1,30 @@
+<div class="flex flex-column">
+  <ul class="list" [formGroup]="customForm">
+    <li class="list-item " formArrayName="items" *ngFor="let item of formData.controls; let i = index;">
+      <button class="btn btn-xs float-left btn" style="margin-left: -10px;" (click)="removeItem(i)">
+        <i class="fa fa-minus"></i>
+      </button>
+      <div [formGroupName]="i" class="col-11 p-0">
+        <div class="md-form-group float-label pb-2">
+          <input class="md-input" onkeyup="this.setAttribute('value', this.value);" required="" value="">
+          <label>Options</label>
+        </div>
+        <label class="md-check"><input type="radio" checked="checked"> <i class="green"></i>Correct Answer? </label>
+      </div>
+    </li>
+    <li class="list-item">
+      <button class="btn btn-xs btn-outline b-a float-left" style="height: 25px" (click)="addItem()">
+        <i class="fa fa-plus"></i>
+      </button>
+      <div class="col-10 p-0">
+        <div class="md-form-group float-label">
+          <input class="md-input" value="" onkeyup="this.setAttribute('value', this.value);" required="">
+          <label>Hint: </label>
+        </div>
+      </div>
+    </li>
+    <li class="list-item p-0">
+      <button class="btn btn-sm btn-rounded success theme float-sm-right" type="button" (click)="update()">Create<i class="fa fa-send text-success"></i></button>
+    </li>
+  </ul>
+</div>

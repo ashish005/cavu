@@ -1,0 +1,19 @@
+<div class="sidenav my-3">
+  <nav class="nav-border b-theme">
+    <ul class="nav" *ngFor="let nav of data">
+      <li *ngIf="nav && nav.name" class="nav-header hidden-folded">
+        <span class="text-xs">{{nav?.name}}</span>
+      </li>
+      <li *ngFor="let item of nav?.children">
+
+        <!-- [class.active]="(activeFragment | async)=== item.code"-->
+        <!--<span class="nav-badge"><b class="badge badge-sm badge-pill success">{{ item?.authRole | json }}</b></span>-->
+        <a [routerLink]="item.routeTo" routerLinkActive="active" [fragment]="item.code">
+            <span class="nav-icon" *ngIf="item?.icon"><i [class]="item?.icon"></i></span>
+          <!--<span class="nav-icon" style="width: .5rem !important;" *ngIf="!item?.icon"></span>-->
+          <span class="nav-text">{{ item?.name }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

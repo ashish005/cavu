@@ -1,0 +1,45 @@
+<div class="content-main d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <span class="text-md text-ellipsis flex">{{pageTitle  }}</span>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-sm-6">
+                <div class="p-lg-3">
+                    <ng-template ngFor let-item [ngForOf]="leftFeatures | sortBy:'asc': 'sortOrder'" let-i="index">
+                        <div class="list py-2">
+                            <h6>{{item.name}} </h6>
+                            <ng-template [ngTemplateOutlet]="featureTemplateRef" [ngTemplateOutletContext]="{ data: item, order: 0 }"></ng-template>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="p-lg-3">
+                    <ng-template ngFor let-item [ngForOf]="rightFeatures | sortBy:'asc': 'sortOrder'" let-i="index">
+                        <div class="list py-2">
+                            <h6>{{item.name}}</h6>
+                            <ng-template [ngTemplateOutlet]="featureTemplateRef" [ngTemplateOutletContext]="{ data: item, order: 0 }"></ng-template>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #featureTemplateRef let-data="data" let-order="order">
+    <ng-template ngFor let-item [ngForOf]="data?.features | sortBy:'asc': 'sortOrder'" let-i="index">
+        <div class="list-item py-1">
+            <div class="list-body" [class]="'pl-'+order" [class.text-l-t]="item.status == 'inactive'">
+               <i class="fa pr-1" [class]="(item.status == 'active')?'fa-check text-success': 'fa-close text-danger'"></i>
+                <a class="item-title _500" [class]="'pl-'+order">{{item.name}}</a>
+                <div class="item-except text-sm text-muted" *ngIf="item.desc">{{item.desc}}</div>
+            </div>
+            <div><label class="md-check"><input type="checkbox"><i class="theme"></i></label></div>
+        </div>
+        <ng-template [ngTemplateOutlet]="featureTemplateRef" [ngTemplateOutletContext]="{ data: item, order: order+2 }"></ng-template>
+    </ng-template>
+</ng-template>

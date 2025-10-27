@@ -1,0 +1,22 @@
+<div class="app" id="app">
+    <div id="content" class="app-content box-shadow-0" role="main">
+        <div class="navbar flex-nowrap white lt box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <div class="no-shadow">
+                <h6 class="mb-0"> Global Setting </h6>
+                <small class="float-left"> Management</small>
+            </div>
+            <div class="nav-active-border b-theme px-4 px-md-0">
+                <ul class="nav nav-xs flex-row">
+                    <li class="nav-item"><a class="nav-link" [routerLink]="['language']">Language</a></li>
+                    <li class="nav-item"><a class="nav-link" [routerLink]="['currency']">Currency</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-main d-flex flex">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>

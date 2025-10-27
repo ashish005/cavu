@@ -1,0 +1,29 @@
+<div class="md-form-group p-0">
+  <span class="ng-placeholder" style="position: absolute; font-size: x-small;">{{titleInfo}} </span>
+  <span *ngIf="addNewEnabled" class="ng-placeholder" style="position: absolute; font-size: x-small; float-right"> Add New </span>
+  <ng-select
+    [items]="items"
+    [multiple]="true"
+    [bindLabel]="bindLabel"
+    [closeOnSelect]="false"
+    [bindValue]="bindValue"
+    [disabled]="disabled"
+    virtualScroll="false"
+    [(ngModel)]="selected" (change)="onChange($event)">
+    <ng-template ng-header-tmp>
+      <input type="checkbox" (change)="onSelectAllChange($event)"/> Select All
+    </ng-template>
+    <ng-template ng-multi-label-tmp let-items="items">
+      <span class="float-left pr-2" *ngIf="items && items.length>0">  {{ items.length  }}  selected</span>
+    </ng-template>
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+      <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/> <span class="pl-2"> {{item.name}} </span>
+    </ng-template>
+    <!--<ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">-->
+      <!--<input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/>-->
+    <!--</ng-template>-->
+    <!--<ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">-->
+      <!--<input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/> {{item.name}}-->
+    <!--</ng-template>-->
+  </ng-select>
+</div>

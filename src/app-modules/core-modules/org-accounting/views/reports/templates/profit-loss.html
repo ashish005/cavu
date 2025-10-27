@@ -1,0 +1,98 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex px-2">
+        <div class="box">
+            <div class="box-header">
+                <h6>Expense</h6>
+            </div>
+            <div class="box-body">
+                <table class="table small-table text-xs mb-0">
+                    <thead>
+                    <tr>
+                        <th><span class="pl-2">Head</span></th>
+                        <th><span class="float-right">Amount</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-template ngFor let-row [ngForOf]="expense?.highlist" let-j="index">
+                        <tr>
+                            <td><span class="pl-2">{{ row.head }}</span></td>
+                            <td><span class="pr-2 float-right">{{row.amount | orgCurrency}}</span></td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot *ngIf="expense?.highlist?.length">
+                    <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><span class="pr-2 text-xs _500 float-right text-success">{{expense.getHighTotal() | orgCurrency}}</span></td>
+                    </tr>
+                    </tfoot>
+                </table>
+                <table class="table small-table text-xs mb-0">
+                    <tbody *ngIf="expense?.lowlist?.length" class="pt-3 mt-3 b-t-2x">
+                    <ng-template ngFor let-row [ngForOf]="expense?.lowlist" let-j="index">
+                        <tr>
+                            <td><span class="pl-2">{{ row.head }}</span></td>
+                            <td><span class="pr-2 float-right">{{row.amount | orgCurrency}}</span></td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot *ngIf="expense?.lowlist?.length">
+                    <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><span class="pr-2 text-xs _500 float-right text-success">{{expense.getTotal() | orgCurrency}}</span></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+    </div>
+    <div class="d-flex flex-column flex px-2">
+        <div class="box">
+            <div class="box-header">
+                <h6>Income</h6>
+            </div>
+            <div class="box-body">
+                <table class="table small-table text-xs mb-0">
+                    <thead>
+                    <tr>
+                        <th><span class="pl-2">Head</span></th>
+                        <th><span class="float-right">Amount</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-template ngFor let-row [ngForOf]="income?.highlist" let-j="index">
+                        <tr>
+                            <td><span class="pl-2">{{ row.head }}</span></td>
+                            <td><span class="pr-2 float-right">{{row.amount | orgCurrency}}</span></td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot *ngIf="income?.highlist?.length">
+                    <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><span class="pr-2 text-xs _500 float-right text-success">{{income.getHighTotal() | orgCurrency}}</span></td>
+                    </tr>
+                    </tfoot>
+                </table>
+                <table class="table small-table text-xs mb-0">
+                    <tbody *ngIf="income?.lowlist?.length" class="pt-3 mt-3 b-t-2x">
+                    <ng-template ngFor let-row [ngForOf]="income?.lowlist" let-j="index">
+                        <tr>
+                            <td><span class="pl-2">{{ row.head }}</span></td>
+                            <td><span class="pr-2 float-right">{{row.amount | orgCurrency}}</span></td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot *ngIf="income?.lowlist?.length">
+                    <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><span class="pr-2 text-xs _500 float-right text-success">{{income.getTotal() | orgCurrency}}</span></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+    </div>
+</div>

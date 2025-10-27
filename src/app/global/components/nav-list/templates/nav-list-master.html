@@ -1,0 +1,39 @@
+<nav class="sidenav nav-stacked nav-active-dark" data-nav="">
+  <ul class="nav">
+    <ng-template ngFor let-item="$implicit" [ngForOf]="data">
+      <li *ngIf="item?.children.length>1">
+        <a data-pjax-state="external" >
+          <span class="nav-caret"><i class="fa fa-caret-down"></i></span>
+          <!--<span class="nav-icon no-fade"><i class="badge badge-xs badge-o md b-warning"></i></span>-->
+          <span class="nav-text">{{item?.name}}</span>
+        </a>
+        <ul class="nav-sub">
+          <li class="nav-item" *ngFor="let ch of item?.children">
+            <a class="nav-link" [routerLink]="ch.routeTo" routerLinkActive="active">{{ch.name}}</a></li>
+        </ul>
+      </li>
+      <ng-container *ngIf="item?.children.length==1">
+        <li class="nav-item" *ngFor="let ch of item?.children">
+          <a class="nav-link" [routerLink]="ch.routeTo" routerLinkActive="active">{{ch.name}}</a>
+        </li>
+      </ng-container>
+    </ng-template>
+  </ul>
+</nav>
+<!--<nav class="bg bg-auto-sm" data-nav="">
+  <ul class="nav flex-column nav-sm nav-active-border left b-primary">
+    <ng-template ngFor let-item="$implicit" [ngForOf]="data">
+      <li *ngIf="item?.children.length>1" class="nav-item">
+        <a data-pjax-state="external" class="nav-link"><span class="nav-caret"><i class="fa fa-caret-down"></i></span>{{item?.name}}</a>
+        <ul class="nav nav-sub pl-3">
+          <li *ngFor="let ch of item?.children"><a class="nav-link" [routerLink]="ch.routeTo" routerLinkActive="active">{{ch.name}}</a></li>
+        </ul>
+      </li>
+      <ng-container *ngIf="item?.children.length==1">
+        <li class="nav-item" *ngFor="let ch of item?.children">
+          <a class="nav-link" [routerLink]="ch.routeTo" routerLinkActive="active">{{ch.name}}</a>
+        </li>
+      </ng-container>
+    </ng-template>
+  </ul>
+</nav>-->

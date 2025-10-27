@@ -1,0 +1,16 @@
+<form class="flex" [formGroup]="customForm">
+    <ul class="nav nav-xs no-border">
+        <li class="nav-item text-xs pl-2">
+            <small class="text-primary pr-2">Start Date</small>
+            <div class="md-form-group p-0 float-right">
+                <input type="date" formControlName="startDate" class="md-input" style="height: 20px;" [ngClass]="{ 'is-invalid': f['startDate'].errors }">
+            </div>
+        </li>
+        <li class="nav-item text-xs pl-2">
+            <small class="text-primary pr-2">End Date</small>
+            <div class="md-form-group p-0 float-right">
+                <input type="date" formControlName="endDate" class="md-input" style="height: 20px;" [ngClass]="{ 'is-invalid': f['endDate'].errors }">
+            </div>
+        </li>
+    </ul>
+</form>

@@ -1,0 +1,103 @@
+<div class="flex box">
+    <!--<div class="col-sm-4">
+        <table class="table small-table text-xs mb-0">
+            <thead>
+            <tr>
+                <th><span class="pl-2">Attribute*</span></th>
+                <th><span>Options</span></th>
+            </tr>
+            </thead>
+            <tbody formArrayName="attributes">
+            <tr *ngFor="let item of formAttributes.controls; let i = index;" [formGroup]="item" attribute-row
+                [customForm]="item"></tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td><b class="pl-2">Total</b></td>
+                <td><b class="float-right"></b></td>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="box-body light lt no-result">
+            <div class="p-2 text-center">No Results</div>
+        </div>
+    </div>-->
+    <div class="box-header"><h3>Variants/ Items</h3>
+        <!--<small>Sub title goes here with small font</small>-->
+    </div>
+    <div class="box-tool">
+        <ul class="nav nav-xs">
+            <li class="nav-item"><add-variant [productId]="productId" (cb)="variantCallback($event)"></add-variant></li>
+        </ul>
+    </div>
+    <div class="col-sm-12">
+        <table class="table small-table text-xs mb-0">
+            <thead>
+            <tr>
+                <th><span class="pl-2">Item Name</span></th>
+                <th>Barcode</th>
+                <th>SKU</th>
+                <th width="100px"><div class="d-block text-right"><span>Stock</span> / Unit</div></th>
+                <th class="text-right" width="60px"><small>Featured</small></th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-template ngFor let-item [ngForOf]="gridData" let-i="index">
+                <!--<tr variant-row [customForm]="item"></tr>-->
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td> {{item.barCode}} </td>
+                    <td> {{item.sku}} </td>
+                    <td> {{item.purchaseHoldingQty}} {{item.unitType}} </td>
+                    <td class="text-right">
+                        <i class="fa" [class]="item.isFeatured? 'fa-check text-success': 'fa-close text-danger'"></i>
+                    </td>
+                </tr>
+                <tr class="text-xs">
+                    <td>
+                        <add-price [variant]="item" (onOk)="variantPriceCallback($event)">Add Price</add-price>
+                    </td>
+                    <td colspan="4">
+                        <table class="table small-table mb-0">
+                            <thead>
+                            <tr>
+                                <th>Valid From</th>
+                                <th class="text-right">MRP</th>
+                                <th class="text-right">Cost/ Retail</th>
+                                <th class="text-right">Selling Price</th>
+                                <th class="text-right"><small>Tax Inclusive </small></th>
+                                <th class="text-right"><small>Fixed Price</small></th>
+                            </tr>
+                            </thead>
+                            <tbody class="light lt">
+                            <ng-template ngFor let-priceRow [ngForOf]="item.prices" let-i="index">
+                                <tr>
+                                    <td>{{priceRow.validFrom }}</td>
+                                    <td class="text-right">{{ priceRow.mrp | number : '1.2-2' }}</td>
+                                    <td class="text-right">{{ priceRow.retailPrice | number : '1.2-2' }}</td>
+                                    <td class="text-right">{{ priceRow.supplyPrice | number : '1.2-2' }}</td>
+                                    <td class="text-right"> <i class="fa" [class]="priceRow.isTaxInclusive? 'fa-check text-success': 'fa-close text-danger'"></i></td>
+                                    <td class="text-right"><i class="fa" [class]="priceRow.isFixedPrice? 'fa-check text-success': 'fa-close text-danger'"></i></td>
+                                </tr>
+                            </ng-template>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </ng-template>
+            </tbody>
+            <!--<tfoot class="box">
+            <tr>
+                <td colspan="2"><a class="text-primary">Add Item</a><b
+                        class="pl-2 float-right">Total</b></td>
+                <td><b class="float-right">MRP</b></td>
+                <td><b class="pr-2 float-right">Selling Price</b></td>
+                <td colspan="3"></td>
+            </tr>
+            </tfoot>-->
+        </table>
+        <div class="box-body light lt no-result" [class.hide]="gridData?.length">
+            <div class="p-2 text-center">No Results</div>
+        </div>
+    </div>
+</div>

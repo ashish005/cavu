@@ -1,0 +1,19 @@
+<a class="text-primary" [ngbPopover]="content" placement="auto"
+   popoverTitle="New Brand"
+   container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Add Brand</a>
+<ng-template #content>
+    <form [formGroup]="customForm">
+        <div class="d-flex row" style="width: 400px;">
+            <div class="col-md-12">
+                <div class="md-form-group float-label">
+                    <input class="md-input" formControlName="name" required [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label>Name</label>
+                </div>
+            </div>
+        </div>
+        <div class="popover__controls d-flex justify-content-end">
+            <button class="btn btn-xs btn-success text-xs mx-2" (click)="saveForm(customForm, p);">OK</button>
+            <button class="btn btn-xs btn-danger text-xs" (click)="p.close()">Cancel</button>
+        </div>
+    </form>
+</ng-template>

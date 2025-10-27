@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Cavu</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    .ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-placeholder, .ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-value {
+      position: absolute !important;
+    }
+    /*.ng-select .ng-select-container { min-height: 40px !important;}
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+      line-height: 2.5em;
+      min-height: unset !important;
+    }*/
+    /*
+    .ng-select .ng-select-container .ng-value-container {
+      padding: 0.2em 0 !important;
+      border-top: 0.9em solid transparent;
+    }
+    .ng-select .ng-select-container .ng-value-container .ng-placeholder{
+      font-size: 1.1em;
+      opacity: .5;
+    }
+    .ng-select .ng-spinner-loader {
+      bottom: -15px;
+    }
+    .ng-select-multiple .ng-spinner-loader {
+      bottom: 0px;
+    }*/
+
+    .md-input { height: 25px; }
+    /*.ng-select .ng-select-container { min-height: unset;}*/
+    /*.md-input { height: unset;}*/
+    /*.float-label .md-input:not([value=""])~label, .float-label .md-input:valid~label { size: .5rem;}*/
+  </style>
+  <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+</head>
+<body>
+  <app-body></app-body>
+  <div id="appLoader" class="loading" style="display: none;">
+    <small style="padding: 10px;">Loading...</small>
+  </div>
+  <div #popup id="app-popup"></div>
+</body>
+</html>

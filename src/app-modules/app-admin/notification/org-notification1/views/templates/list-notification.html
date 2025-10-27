@@ -1,0 +1,56 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="d-flex flex-column w-xl b-r white modal-dialog" id="chat-nav">
+                <div class="scrollable hover">
+                    <div class="list inset">
+                        <div class="p-2 px-3 text-muted text-sm">Messages</div>
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <div class="list-item">
+                                <div class="list-body">
+                                    <a class="item-title _500" data-pjax-state="">{{ row?.name }}</a>
+                                    <div class="item-except text-xs">
+                                        <ng-template ngFor let-template [ngForOf]="row?.templates | sortBy:'asc': 'sortOrder'" let-i="index">
+                                            <a class="btn btn-xs text-xs text-success"
+                                               [class]="template.templateId ? 'text-success': 'text-warning'"
+                                               (click)="showTemplateToCreateEdit(row, template)">{{ template?.name }}
+                                            </a>
+                                        </ng-template>
+                                        <div *ngIf="!row.isEventBased && !row.isReminder" class="float-right">
+                                            <a class="btn btn-xs badge text-xs" (click)="showScheduler(row)"
+                                               [class]="(row.schedulerConfig?.orgTaskScheduleId)? 'text-success': 'text-warning'">
+                                                <i class="fa fa-calendar"></i>
+                                            </a>
+                                            <a class="btn btn-xs text-xs no-border text-primary"
+                                               *ngIf="row.schedulerConfig?.orgTaskId && row.schedulerConfig?.orgTaskScheduleId"
+                                               (click)="checkActivity(row)"><i class="fa fa-table"></i></a>
+                                            <!--<a class="btn btn-xs badge badge-pill text-xs" *ngIf="row.orgTaskScheduleId"
+                                               [class]="(row.orgReminder?.id) ? 'text-success': 'text-warning'"
+                                               (click)="showNotificationReminder(row)"
+                                               [ngbPopover]="row.orgReminder?.name" placement="auto"
+                                               (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+                                                <i class="fa fa-bell-o"></i>
+                                            </a>-->
+                                        </div>
+                                    </div>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                                <div><a (click)="updateNotification(row)"><i class="fa fa-edit"></i></a></div>
+                            </div>
+                        </ng-template>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <org-grid-pagination [count]="gridOptions?.total"
+                                         [perPage]="coreState?.take" [page]="coreState?.page"
+                                         (cb)="moveToPage($event)"></org-grid-pagination>
+                </div>
+            </div>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+</div>

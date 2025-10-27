@@ -1,0 +1,191 @@
+<form [formGroup]="customForm" class="d-flex flex">
+    <div class="d-flex flex-column flex p-3">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Company/ Professional </label>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="code"
+                           [ngClass]="{ 'is-invalid': submitted && f['code'].errors }">
+                    <label> Vendor Code </label>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="md-form-group">
+                    <input class="md-input" type="text" formControlName="contactNo"
+                           [ngClass]="{ 'is-invalid': submitted && f['contactNo'].errors }">
+                    <label> Contact No </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="md-form-group">
+                    <input class="md-input" type="text" formControlName="contactEmail"
+                           [ngClass]="{ 'is-invalid': submitted && f['contactEmail'].errors }">
+                    <label> Email </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="address"
+                           [ngClass]="{ 'is-invalid': submitted && f['address'].errors }">
+                    <label> Address </label>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="md-form-group">
+                    <input class="md-input" type="text" formControlName="city"
+                           [ngClass]="{ 'is-invalid': submitted && f['city'].errors }">
+                    <label> City </label>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="pinCode"
+                           [ngClass]="{ 'is-invalid': submitted && f['pinCode'].errors }">
+                    <label> PinCode </label>
+                </div>
+            </div>
+
+        </div>
+        <div class="row m-2" *ngIf="actionType != 'Update'">
+            <div class="col-4">
+                <span class="py-2 _500">Registration Info</span>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="top-right text-xs" style="z-index: 1; right: 15px;">
+                            <label class="text-right md-check">
+                                <input type="checkbox" checked="checked" formControlName="isRegistered"><i class="theme"></i> Registered
+                            </label>
+                        </div>
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="registrationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+                            <label> Registration No </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date" formControlName="registrationDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationDate'].errors }">
+                            <label> Registration Date </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="taxNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['taxNo'].errors }">
+                            <label> Tax No </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 white">
+                <span class="py-2 _500">Primary Contact</span>
+                <div class="row d-flex">
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="fName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                            <label> First Name </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="lName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                            <label> Last Name </label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="email"
+                                   [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                            <label> Email </label>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="phoneNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['phoneNo'].errors }">
+                            <label> Phone No </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="actionType != 'Update'">
+            <div class="col-4 row">
+                <div class="col-sm-12">
+                    <select-dropdown [items]="apiResolver.masterType?.supplyTypes"
+                                     title="Supply Type"
+                                     (cb)="updateSupplyTypeId($event)"
+                                     [control]="formSupplyTypeId"></select-dropdown>
+                </div>
+                <div class="col-12">
+                    <select-dropdown [items]="apiResolver.masterType?.supplyNature"
+                                     title="Supply Nature"
+                                     (cb)="updateNatureId($event)"
+                                     [control]="formNatureId"></select-dropdown>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12">
+                        <select-dropdown [items]="apiResolver.masterType?.purchaseTypes"
+                                         title="Purchase Type"
+                                         (cb)="updatePurchaseTypeId($event)"
+                                         [control]="formPurchaseTypeId"></select-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" formControlName="hasTaxByItem"><i class="theme"></i> Tax By Item
+                        </label>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" checked="checked" formControlName="hasItemInclTax"><i class="theme"></i> Inclusive Tax
+                        </label>
+                    </div>
+                    <div class="col-sm-12">
+                        <label class="text-right md-check">
+                            <input type="checkbox" checked="checked" formControlName="hasItemInclDiscount"><i class="theme"></i> Incl Discount
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="col-sm-12">
+                    <select-dropdown [items]="apiResolver.masterType?.calcTypes"
+                                     title="Amount Calc. Type"
+                                     (cb)="updateAmountCalcTypeId($event)"
+                                     [control]="formAmountCalcTypeId"></select-dropdown>
+                </div>
+                <div class="col-sm-12">
+                    <select-dropdown [items]="apiResolver.masterType?.calcTypes"
+                                     title="Cost Calc Type"
+                                     (cb)="updateCostCalcTypeId($event)"
+                                     [control]="formCostCalcTypeId"></select-dropdown>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

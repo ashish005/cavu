@@ -1,0 +1,97 @@
+<div class="container mt-4">
+  <h2>DocuSign Embedded Signing</h2>
+
+  Send a Sample Contract
+  <form #signForm="ngForm" class="mb-3">
+    <div class="form-group mb-3">
+      <label for="name">Recipient Name</label>
+      <input
+        type="text"
+        id="name"
+        [(ngModel)]="recipient.name"
+        name="name"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="email">Recipient Email</label>
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="recipient.email"
+        name="email"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <div>
+      For Signing the sample document
+      <ul class="button-row">
+        <li>
+          <button type="button" class="btn btn-primary" (click)="sendNow()" [disabled]="signing">
+            {{ signing ? 'Preparing Document...' : 'Send Now' }}
+          </button>
+        </li>
+        <li class="list-inline-item">
+          <button type="button" class="btn btn-secondary" [disabled]="review_signing" (click)="reviewAndSend()">Review & Send</button>
+        </li>
+      </ul>
+    </div>
+  </form>
+  <!--<div *ngIf="signingUrl">
+    <h5>Embedded Signing Window</h5>
+    <iframe
+      [src]="signingUrl | safeUrl"
+      width="100%"
+      height="800px" frameborder="0" allow="geolocation"
+      style="width: 100%; height: 800px; border: 1px solid #ccc;"></iframe>
+  </div>-->
+
+  <div *ngIf="error" class="alert alert-danger mt-3">
+    {{ error }}
+  </div>
+</div>
+<style>
+  .button-row {
+    display: flex;
+    gap: 1rem; /* space between buttons */
+    padding: 0;
+    list-style: none;
+    margin: 1rem 0;
+  }
+
+  .button-row li {
+    margin: 0;
+  }
+
+  .btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn.primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .btn.primary:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+
+  .btn.secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+</style>

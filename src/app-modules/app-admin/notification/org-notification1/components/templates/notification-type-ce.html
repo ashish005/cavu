@@ -1,0 +1,106 @@
+<div class="flex p-3">
+    <form class="flex-column" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <div class="text-xs" style="float: right;position: absolute;top: 0px;right: 0px;">
+                        <label class="md-check">
+                            <span class="pr-4">EventBased</span>
+                            <input type="checkbox" formControlName="isEventBased">
+                            <i class="blue"></i>
+                        </label>
+                    </div>
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <select-dropdown [items]="notificationTypes"
+                                 title="Notification Type"
+                                 [disabled]="formNotificationTypeId.disabled"
+                                 (cb)="updateNotificationType($event)"
+                                 [control]="formNotificationTypeId"></select-dropdown>
+            </div>
+        </div>
+        <div class="row row-sm box" *ngIf="customForm.value?.isEventBased">
+            <div class="col-sm-12 p-2">
+                <drop-down [list]="lookupEvents" [options]="eventOptions" [id]="customForm?.value?.appEvent" [data]="customForm?.value"></drop-down>
+            </div>
+        </div>
+        <div class="row row-sm">
+            <div class="col-sm-4">
+                <div>
+                    <h6>Template Access To Roles</h6>
+                    <small>These templates will be available to user's having below roles enabled</small>
+                </div>
+                <div class="pb-2">
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Enable</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody formArrayName="permissions">
+                        <ng-template ngFor let-rule [ngForOf]="formPermissions?.controls" let-i="index">
+                            <tr [formGroup]="rule">
+                                <td><strong class="text-muted"><input formControlName="userRoleName"
+                                                                      class="no-border bg-transparent"></strong>
+                                </td>
+                                <td><label class="md-check"><input type="checkbox" formControlName="isEnable"><i
+                                        class="text-success"></i><span></span></label></td>
+                                <td><label class="md-check"><input type="checkbox" formControlName="status"><i
+                                        class="text-success"></i><span></span></label></td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div>
+                    <h6>Template settings</h6>
+                    <small></small>
+                </div>
+                <div>
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Has Template</th>
+                            <th>Has Footer</th>
+                            <th>Is Task Reminder</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody formArrayName="templates">
+                        <ng-template ngFor let-template [ngForOf]="formTemplates?.controls" let-i="index">
+                            <tr [formGroup]="template">
+                                <td>{{template.value.name}}</td>
+                                <td><label class="md-check my-1"> {{template.value.hasTemplate? 'Yes': 'No'}}</label>
+                                </td>
+                                <td><label class="md-check my-1"> {{template.value.isDefaultFooter? 'Yes': 'No'}}</label></td>
+                                <td>
+                                    <label class="md-check">{{template.value.isTaskReminder? 'Yes': 'No'}}</label>
+                                </td>
+                                <td><label class="md-check my-1"> {{template.value.status? 'Active': '--'}}</label></td>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row row-sm">
+                <div class="col-sm-12 text-center">
+                    <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal" (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                        actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </form>
+</div>

@@ -1,0 +1,17 @@
+<div class="btn-group w-100">
+  <ng-template ngFor let-item [ngForOf]="options.buttons" let-i="index">
+    <div class="p-1" [ngClass]="item?.widthClass">
+      <ng-template [ngIf]="'button'==item?.type">
+        <button type="button" class="btn btn-xs btn-outline b-primary w-100" (click)="item.action(first, second)" [disabled]="item.disabledCheck(first)">
+          {{ item?.text }}
+        </button>
+      </ng-template>
+      <ng-template [ngIf]="'checkbox'==item?.type">
+        <div [ngClass]="item?.align">
+          <input type="checkbox" class="btn btn-xs btn-outline b-primary" [(ngModel)]="item.checked" (change)="item.action(item, first)" [disabled]="item.disabledCheck(first)"/>
+          {{ item?.text }}
+        </div>
+      </ng-template>
+    </div>
+  </ng-template>
+</div>

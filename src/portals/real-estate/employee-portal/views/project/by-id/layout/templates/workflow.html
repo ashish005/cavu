@@ -1,0 +1,35 @@
+<ng-template #actionTemplate></ng-template>
+<ng-template #pageTitleTemplate>
+    <a class="no-shadow">
+        <h6 class="mb-0"> {{pageTitle }}</h6>
+        <small class="float-left">Management</small>
+    </a>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt">
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+                </li>
+            </ul>
+            <div class="nav-active-border b-primary b-theme bottom">
+                <ul class="nav nav-pills nav-sm nav-rounded">
+                    <li class="nav-item"><a class="nav-link" [routerLink]="['view']" routerLinkActive="active">Workflow</a></li>
+                    <!--<li class="nav-item"><a class="nav-link" [routerLink]="['tasks']" routerLinkActive="active">Task</a></li>
+                    <li class="nav-item"><a class="nav-link" [routerLink]="['schedules']" routerLinkActive="active">Schedules</a></li>
+                    <li class="nav-item"><a class="nav-link" [routerLink]="['schedule-history']" routerLinkActive="active">Schedule History</a></li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="content-main d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="d-flex flex scroll-y">
+                        <router-outlet (activate)='onActivate($event)'></router-outlet>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

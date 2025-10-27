@@ -1,0 +1,63 @@
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="d-flex flex app-content box-shadow-4">
+    <div class="d-flex flex-column flex">
+        <div class="row px-3">
+            <ng-template ngFor let-summary [ngForOf]="projectSummaryItems" let-i="index">
+                <div class="col-sm-6 col-lg-3">
+                    <dashboard-summary [id]="id" [type]="summary.type"></dashboard-summary>
+                </div>
+            </ng-template>
+        </div>
+        <!--<div class="py-3 flex">
+            <a class="d-inline-block px-3 text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.receipt | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Receipts</small>
+            </a>
+            <a class="d-inline-block px-3 b-l b-r text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.expense | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Expense</small>
+            </a>
+            <a class="d-inline-block px-3 text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.due | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Due</small>
+            </a>
+            <a class="d-inline-block px-3 b-l b-r text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.expectedCost | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Expected Cost</small>
+            </a>
+            <a class="d-inline-block px-3 text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.approvedBudget | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Approved Budget</small>
+            </a>
+            <a class="d-inline-block px-3 b-l text-center">
+                <span class="text-md d-block">
+                    {{apiResolver?.project?.advanceAmount | orgCurrency}}
+                </span>
+                <small class="text-xs text-muted">Advance</small>
+            </a>
+        </div>-->
+    </div>
+    <!--<div class="row no-gutters">
+        <div class="col-sm-6">
+            <task-status-chart #statusChart [id]="id" type="status" endpoint="projectDashboard"></task-status-chart>
+        </div>
+        <div class="col-sm-6 light lt">
+            <budget-chart #budgetChart [id]="id" type="accountanalysis" endpoint="projectDashboard"></budget-chart>
+        </div>
+    </div>-->
+</div>

@@ -1,0 +1,89 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex" data-plugin="chat">
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="d-flex flex-column w-xxl" id="chat-nav">
+                <div class="scrollable hover">
+                    <div class="list inset">
+                        <div class="p-2 px-3 text-sm">{{data?.supportTypeName}}</div>
+                        {{ data?.pageURL }}
+                        <div class="p-2 px-3 text-muted text-sm">Attachments</div>
+                        <ng-template ngFor let-attachment [ngForOf]="data?.attachments" let-i="index">
+                            <div class="list-item">
+                                <img [src]="attachment.fileUrl" class="w-100">
+                                <div class="list-body">{{attachment.fileName}}</div>
+                                <div>{{attachment.fileSize}}</div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex" id="chat-list">
+                <div class="navbar flex-nowrap white lt box-shadow">
+                    <ul class="nav nav-sm no-border">
+                        <li class="nav-item"><a class="nav-link text-muted" data-toggle="modal" data-target="#modal-new"
+                                                title="Reply" data-pjax-state=""><span class="nav-text"><i
+                                class="fa fa-fw fa-mail-reply-all"></i></span></a></li>
+                        <li class="nav-item b-l p-l">
+                            <div class="no-shadow px-2">
+                                <h6 class="mb-0">{{ data?.header }}</h6>
+                                <small class="float-left"> {{data?.message}}</small>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <ul class="nav nav-xs flex-row no-border">
+                        <li class="nav-item mx-1 b-r">
+                            <div class="d-block"><span
+                                    class="title _500 float-left pr-2 m-0">{{ data?.userName }}</span></div>
+                            <small class="text-muted px-2 border-right">User</small>
+                            {{ data?.userEmail }}
+                        </li>
+                        <li class="nav-item mx-1">
+                            <div class="d-block">
+                                <span class="title _500 float-left pr-2 m-0">{{ data?.createdDate | fullDateFormat }}</span>
+                            </div>
+                            <small class="text-muted px-2 border-right">created</small>
+                            {{ data?.createdBy }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="scrollable hover">
+                    <div class="p-3">
+                        <div class="streamline mb-2">
+                            <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                                <div class="sl-item">
+                                    <div class="sl-left"></div>
+                                    <div class="sl-content">
+                                        <div class="sl-date text-muted">{{ row.createdDate | fullDateFormat }}</div>
+                                        <div class="sl-author">{{row.content}}</div>
+                                        <chat-form [id]="row?.id" [ticket]="data"
+                                                   (onOk)="fetchRecords($event)"></chat-form>
+                                        <ng-template ngFor let-child [ngForOf]="row.children" let-i="index">
+                                            <div class="sl-item">
+                                                <div class="sl-left"></div>
+                                                <div class="sl-content">
+                                                    <div class="sl-date text-muted">{{ child.createdDate | fullDateFormat }}
+                                                    </div>
+                                                    <p>
+                                                        {{child.content}}
+                                                    </p>
+                                                    <chat-form [id]="child.id" [ticket]="data"
+                                                               (onOk)="fetchRecords($event)"></chat-form>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 white lt b-t mt-auto">
+                    <chat-form [ticket]="data" (onOk)="fetchRecords($event)"></chat-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

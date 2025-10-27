@@ -1,0 +1,62 @@
+<ng-template #actionTemplate>
+
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="navbar flex-nowrap lt">
+        <a data-toggle="modal" data-target="#content-aside"
+           data-modal="" class="mr-1 d-md-none"
+           data-pjax-state=""><span
+                class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
+
+        <div class="no-shadow">
+            <h6 class="mb-0"> {{ page?.header  }} </h6>
+            <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+        </div>
+        <ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item">
+                <div class="btn-group">
+                    <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
+                        <button type="button" class="btn btn-sm btn-outline b-primary" [class.active]="activeView == row.route" (click)="changeRouteTo(row)"><i class="fa" [class]="row.icon"></i></button>
+                    </ng-template>
+                </div>
+            </li>
+        </ul>
+        <!--<ul class="nav" *ngIf="canCreateNewGateway">
+            <li class="nav-item mr-2">
+                <button  class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()">
+                    <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+                </button>
+            </li>
+        </ul>-->
+    </div>
+</ng-template>
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap box-shadow">
+        <!--<a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"><span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
+        <span class="text-md text-ellipsis">{{ pageTitle  }}</span>-->
+        <div class="nav-active-border b-theme">
+            <ul class="nav">
+                <li class="nav-item" (click)="onTaxGroupChange(null)">
+                    <a class="nav-link" [class.active]="!taxGroup?.id">All</a>
+                </li>
+                <ng-template ngFor let-row [ngForOf]="apiResolver?.masterType?.taxGroups | sortBy:'asc': 'sortOrder'" let-i="index">
+                    <li class="nav-item ng-star-inserted" (click)="onTaxGroupChange(row)">
+                        <a class="nav-link" [class.active]="(taxGroup?.id == row.id)">{{row.name }}</a>
+                    </li>
+                </ng-template>
+            </ul>
+        </div>
+        <ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item b-l pl-2">
+                <button id="sort"
+                        class="btn btn-sm white ml-1 sort"
+                        data-sort="item-title" data-toggle="tooltip" title=""
+                        data-original-title="Sort"><i class="fa fa-sort"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>

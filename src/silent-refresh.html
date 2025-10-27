@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Silent Refresh</title>
+  <script>
+    /**
+     * Notify the parent window that we’ve received the response.
+     * Required for angular-oauth2-oidc silent refresh to work.
+     */
+    window.addEventListener("load", () => {
+      if (window.opener) {
+        window.opener.postMessage(window.location.href, window.location.origin);
+      } else if (window.parent !== window) {
+        window.parent.postMessage(window.location.href, window.location.origin);
+      }
+    });
+  </script>
+</head>
+<body>
+<p>Loading...</p>
+</body>
+</html>

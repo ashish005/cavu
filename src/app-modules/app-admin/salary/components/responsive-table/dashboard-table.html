@@ -1,0 +1,30 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="animate fadeIn">
+      <div id="no-more-tables">
+        <table class="p-0 table table-striped table-condensed cf">
+          <thead class="cf">
+          <tr>
+            <th *ngFor="let head of options?.columnDefs;">{{head?.headerName}}</th>
+          </tr>
+          </thead>
+          <tbody class="scroll-y">
+          <tr *ngFor="let row of data; let i = index" [attr.rowId]="row.id">
+            <td *ngFor="let col of options?.columnDefs; let i=index" [attr.data-title]="col?.headerName">
+              <ng-template #withCellFnTemplate> {{col.cellFn(row)}} </ng-template>
+              <ng-template #withoutCellTemplate>{{row[col?.field]}} </ng-template>
+              <ng-template #withCellTemplate>
+                <dynamic-content [context]="row" [component]="col.cellTemplate"></dynamic-content>
+              </ng-template>
+              <ng-container *ngTemplateOutlet="col.cellTemplate ? withCellTemplate : (col?.cellFn)? withCellFnTemplate: withoutCellTemplate"></ng-container>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="no-result hide">
+  <div class="p-4 text-center">No Results</div>
+</div>

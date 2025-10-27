@@ -1,0 +1,24 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex">
+        <div class="d-flex flex" id="content-body">
+            <!--<router-outlet></router-outlet>-->
+            <div class="d-flex flex-column flex" id="chat-list">
+                <div class="navbar flex-nowrap box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                    </a>
+                    <div class="navbar-text flex p-0">
+                        <h6 class="mb-0"> {{title}}</h6>
+                        <small class="float-left">Management</small>
+                    </div>
+                    <ul class="nav nav-xs flex-row no-border text-xs">
+                        <li class="nav-item">
+                            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+                        </li>
+                    </ul>
+                </div>
+                <router-outlet (activate)='onActivate($event)'></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<table class="box mb-1 table-condensed month w-100">
+    <thead>
+    <tr>
+        <th class="text-xs 500 py-2" colspan="7">{{options.monthNames[month]}}</th>
+    </tr>
+    <tr>
+        <ng-template ngFor let-day [ngForOf]="options.dayNames" let-i="index">
+            <th class="day-header"> {{getCurrenyDay(i)}} </th>
+        </ng-template>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template ngFor let-cal [ngForOf]="calendarArray" let-i="index">
+        <tr>
+            <ng-template ngFor let-e [ngForOf]="cal" let-j="index">
+                <td class="day" [class]="e.class">
+                    <div *ngIf="e.dType == 'current-month'" class="day-content" [class]="(today == e.match)?'warning':''">
+                        <!--[class]="events[e.match]?.length?'success':''"-->
+                        <!--<div class="gc-event" *ngIf="events[e.match]">
+                            <ng-template ngFor let-matchedEvent [ngForOf]="events[e.match]" let-i="index">
+                               <small class="text-xs">{{matchedEvent.name}}</small>
+                            </ng-template>
+                        </div>-->
+                        <small>
+                            <span class="badge badge-pill success up" *ngIf="events[e.match]">{{events[e.match].length}}</span>
+                            {{e.date}}
+                        </small>
+                    </div>
+                    <div *ngIf="e.dType != 'current-month'" class="day-content">{{e.date}}</div>
+                </td>
+            </ng-template>
+        </tr>
+    </ng-template>
+    </tbody>
+</table>

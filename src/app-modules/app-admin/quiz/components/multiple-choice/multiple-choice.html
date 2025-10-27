@@ -1,0 +1,59 @@
+<div class="flex flex-column" *ngIf="qPerms.w">
+  <ul class="list" [formGroup]="customForm">
+    <li class="list-item " formArrayName="items" *ngFor="let item of formData.controls; let i = index;">
+      <button class="btn btn-xs float-left btn" style="margin-left: -10px;" (click)="removeItem(i)">
+        <i class="fa fa-minus"></i>
+      </button>
+      <div [formGroupName]="i" class="col-11 p-0">
+        <div class="md-form-group float-label pb-2">
+          <input class="md-input" onkeyup="this.setAttribute('value', this.value);" required="" value="">
+          <label>Options</label>
+        </div>
+        <label class="md-check"><input type="checkbox" checked="checked"> <i class="green"></i>Correct Answer? </label>
+      </div>
+    </li>
+    <li class="list-item">
+      <button class="btn btn-xs btn-outline b-a float-left" style="height: 25px; margin-left: -10px;"
+              (click)="addItem()">
+        <i class="fa fa-plus"></i>
+      </button>
+      <div class="col-10 p-0">
+        <div class="md-form-group float-label">
+          <input class="md-input" value="" onkeyup="this.setAttribute('value', this.value);" required="">
+          <label>Hint: </label>
+        </div>
+      </div>
+    </li>
+    <li class="list-item p-0">
+      <button class="btn btn-sm btn-rounded success theme float-sm-right" type="button" (click)="update()">Create<i
+        class="fa fa-send text-success"></i></button>
+    </li>
+  </ul>
+</div>
+<div class="p-3" *ngIf="qPerms.r">
+  <div class="row">
+    <div class="col-sm-12 col-md-12" id="quiz">
+      <div class="text-sm">
+        <a class="float-right badge text-sm" data-parent="#quiz" data-target="#c_1" data-toggle="collapse">Expand</a>
+        <span class="float-right badge text-sm">1 Marks</span>
+        <div class="float-left mr-2">
+          <span class="text-md w-32 avatar warn">Q</span>
+        </div>
+        <h5>{{qItem?.questions}}</h5>
+        <small class="ml-3">Mini-scenario with correct/incorrect feedback</small>
+      </div>
+      <div class="collapse in show" id="c_1">
+        <ul class="ml-3 list-group">
+          <li class="list-group-item p-2 mb-2" *ngFor="let option of qItem?.answers">
+            <div class="text-sm">
+              <div class="float-left mr-2">
+                <span class="text-md w-32 avatar rounded success">A</span>
+              </div>
+              <p class="m-0">{{option}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

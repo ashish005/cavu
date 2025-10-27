@@ -1,0 +1,207 @@
+<div class="app">
+    <div id="aside" class="app-aside fade box-shadow-x nav-expand folded white" aria-hidden="true" ui-class="white">
+        <div class="sidenav modal-dialog dk white" ui-class="white">
+            <div class="flex hide-scroll">
+                <div class="scroll">
+                    <div class="nav-border b-primary" data-nav="">
+                        <ul class="nav bg">
+                            <li class="nav-header">
+                                <div class="py-3">
+                                    <button class="btn btn-sm btn-block theme text-theme"
+                                            (click)="createNotification()">
+                                        <i class="fa fa-fw fa-plus"></i>
+                                        <span class="hidden-folded d-inline">New Notification</span>
+                                    </button>
+                                </div>
+                            </li>
+                            <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType?.notificationTypes"
+                                         let-i="index">
+                                <li>
+                                    <a (click)="notificationByUserType(row)">
+                                        <span class="nav-icon"><i [ngClass]="row.icon"></i></span>
+                                        <span class="nav-text">{{ row.name }}</span>
+                                    </a>
+                                </li>
+                                <ng-template ngFor let-children [ngForOf]="row.children" let-j="index">
+                                    <li>
+                                        <a (click)="notificationByUserType(children)">
+                                            <span class="nav-icon"><i [ngClass]="children.icon"></i></span>
+                                            <span class="nav-text">{{ children.name }}</span>
+                                        </a>
+                                    </li>
+                                </ng-template>
+                            </ng-template>
+                            <li class="pb-2 hidden-folded"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="app-content box-shadow-0" role="main">
+        <div class="navbar flex-nowrap">
+            <a class="no-shadow">
+                <h6 class="mb-0">Notifications
+                    <small class="px-2">{{ notificationType?.name }}</small>
+                </h6>
+                <small class="float-left">Manage</small>
+            </a>
+            <!--<div class="text-right float-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
+                    <p class="my-0 px-4">October 12, 2016</p>
+                    <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>-->
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <div class="btn-group">
+                        <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
+                            <button type="button" class="btn btn-sm btn-outline b-primary" (click)="showView(row)"><i
+                                    class="fa"
+                                    [class]="row.icon"></i>
+                            </button>
+                        </ng-template>
+                    </div>
+                </li>
+            </ul>
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item mx-1">
+                    <!--<a class="btn btn-sm btn-outline border text-theme b-theme" (click)="showOrgProcessWorkflow()">
+                        <i class="fa fa-hand-grab-o pr-2"></i>Workflow
+                    </a>-->
+                </li>
+            </ul>
+        </div>
+        <!--<div class="content-main d-flex flex" id="content-main">
+            <div class="d-flex flex" data-plugin="chat">
+                <div class="fade aside aside-sm" id="content-aside">
+                    <div class="d-flex flex-column w-xl modal-dialog">
+                        &lt;!&ndash;<a class="nav-link" (click)="createNotification()">
+                            <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Notification</span>
+                        </a>&ndash;&gt;
+                        <div class="scrollable hover">
+                            <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                                <div class="list-item">
+                                    <div class="list-body">
+                                        <a class="item-title _500" data-pjax-state="">{{ row?.name }}</a>
+                                        <div class="item-except text-xs">
+                                            <ng-template ngFor let-template
+                                                         [ngForOf]="row?.templates | sortBy:'asc': 'sortOrder'"
+                                                         let-i="index">
+                                                <a class="btn btn-xs text-xs text-success"
+                                                   [class]="template.templateId ? 'text-success': 'text-warning'"
+                                                   (click)="showTemplateToCreateEdit(row, template)">{{ template?.name
+                                                    }}
+                                                </a>
+                                            </ng-template>
+                                            <div *ngIf="row.isReminder && row.schedulerConfig" class="float-right">
+                                                &lt;!&ndash;<a class="btn btn-xs badge badge-pill text-xs"
+                                                   (click)="showScheduler(row)"
+                                                   [class]="(row.orgTaskScheduleId)? 'text-success': 'text-warning'">
+                                                    <i class="fa fa-calendar"></i>
+                                                </a>&ndash;&gt;
+                                                <a class="btn btn-xs badge badge-pill text-xs"
+                                                   [class]="(row.schedulerConfig?.orgTaskScheduleId) ? 'text-success': 'text-warning'"
+                                                   (click)="showNotificationReminder(row)"
+                                                   [ngbPopover]="row.orgReminder?.name" placement="auto"
+                                                   (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+                                                    <i class="fa fa-bell-o"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="item-tag tag hide"></div>
+                                    </div>
+                                    <div><a class="btn btn-xs" (click)="updateNotification(row)"><i
+                                            class="fa fa-edit"></i></a>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <loader [isLoading]="isLoading"></loader>
+                            <div class="no-result hide">
+                                <div class="p-4 text-center">No Results</div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <org-grid-pagination [count]="gridOptions?.total"
+                                                 [perPage]="coreState?.take" [page]="coreState?.page"
+                                                 (cb)="moveToPage($event)"></org-grid-pagination>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex" id="content-body">
+                    <div class="d-flex flex-column flex">
+                        <div class="navbar flex-nowrap white lt box-shadow">
+                            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                               data-pjax-state="">
+                                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                            </a>
+                            <a class="no-shadow">
+                                <h6 class="mb-0">{{ notification?.name }}</h6>
+                                <small class="float-left">{{ notification?.notificationTypeName }}</small>
+                            </a>
+                            <div class="nav-active-border b-theme" *ngIf="notification">
+                                <ul class="nav nav-sm">
+                                    <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType.mediaTypes"
+                                                 let-i="index">
+                                        <li class="nav-item">
+                                            <a class="nav-link" [class.active]="(activeView == row.masterType)"
+                                               [routerLink]="[notification.id, row.masterType]">{{row.name}}</a>
+                                        </li>
+                                    </ng-template>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex flex">
+                            <div class="d-flex flex-column flex">
+                                <div class="px-4 d-flex flex-column align-items-center">
+                                    <span class="text-md mt-3 block">{{notification?.nextRun?.dueDate | dateFormat}}</span>
+                                    <small class="text-muted" *ngIf="notification?.hasReminder">Next run:
+                                        <ng-template ngFor let-reminder [ngForOf]="notification?.reminders"
+                                                     let-i="index">
+                                            <span class="badge mx-1">{{reminder.name}}</span>
+                                        </ng-template>
+                                    </small>
+                                    <ul class="nav nav-xs flex-row" *ngIf="notification && notification.hasTemplate">
+                                        <li class="nav-item"
+                                            *ngIf="notification.orgTaskId && notification.orgTaskScheduleId">
+                                            <a class="btn btn-xs text-xs no-border text-primary"
+                                               (click)="checkActivity(notification)">Activities</a>
+                                        </li>
+                                        &lt;!&ndash;<li class="nav-item" *ngIf="!notification.isEventBased">
+                                            <a class="btn btn-xs text-xs mx-1" (click)="showScheduler(notification)"
+                                               [class]="(notification.orgTaskScheduleId) ? 'b-success text-success': 'b-warning text-warning'">
+                                                <i class="fa fa-calendar"></i> {{(notification.orgTaskScheduleId) ? 'Scheduled'
+                                                :
+                                                'Schedule All'}}
+                                            </a>
+                                            <small class="text-warning" *ngIf="!notification.orgTaskScheduleId"> Not yet
+                                                Scheduled
+                                            </small>
+                                        </li>&ndash;&gt;
+                                        <li class="nav-item" *ngIf="notification?.hasReminder">
+                                            <a class="btn btn-xs text-xs mx-1"
+                                               [class]="(notification?.schedulerConfig?.orgTaskScheduleId) ? 'b-success text-success': 'b-warning text-warning'"
+                                               (click)="createNotificationReminder(gridRow)">
+                                                <i class="fa fa-bell pr-1"></i>
+                                                {{(notification?.hasReminder) ? 'Reminder Scheduled' : 'New Reminder'}}
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" *ngIf="notification?.isEventBased">
+                                            <small class="text-xs">Template will be send on <a
+                                                    class="b-theme text-success">{{notification?.appEvent}} </a>
+                                            </small>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <router-outlet (activate)='onActivate($event)'></router-outlet>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>

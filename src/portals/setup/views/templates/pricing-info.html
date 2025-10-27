@@ -1,0 +1,81 @@
+<div class="flex">
+    <div class="flex align-self-center">
+        <div class="row py-2">
+            <div class="col-sm-6 order-sm-2 text-center">
+                <div class="d-flex flex-column flex">
+                    <div class="_700 d-block mt-2">
+                        <span class="text-lg"> Elite Plan</span>
+                    </div>
+                    <span class="_300 text-md">Our Recommendation</span>
+                </div>
+            </div>
+            <div class="col-sm-6 order-sm-1">
+                <div class="clearfix">
+                    <div class="d-flex align-items-center">
+                        <span class="avatar w-56 success"><span class="fa fa-money text-lg"></span></span>
+                        <div class="mx-3"><span class="text-lg _700">Pricing Simplified
+                        <span class="text-muted text-sm">for your business</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-active-border b-info padding py-0">
+        <ul class="nav">
+            <ng-template ngFor let-software [ngForOf]="apiResolver.masterType.softwares" let-i="index">
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="activeSoftware?.code == software.code"
+                       (click)="showBySoftware(software)">{{software.code}}</a>
+                </li>
+            </ng-template>
+        </ul>
+    </div>
+    <div class="d-flex flex light lt">
+        <div class="d-flex flex-column flex p-2">
+            <div class="box">
+                <div class="box-header text-center">
+                    <h2>Plan Comparison Chart</h2>
+                </div>
+                <table class="table small-table text-xs mb-0">
+                    <thead>
+                    <tr>
+                        <th><span class="pl-2"></span></th>
+                        <ng-template ngFor let-licenseType
+                                     [ngForOf]="software.licenseTypes" let-i="index">
+                            <th class="col-2">
+                                <div class="box-body text-center light lt">
+                                    <h6 class="text-u-c">{{licenseType.name}}</h6>
+                                    <!--<h3 class="py-1">
+                                        <sup>$</sup> <span class="text-2x">39</span> <span class="text-xs">/ mo</span>
+                                    </h3>-->
+                                </div>
+                            </th>
+                        </ng-template>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-template ngFor let-row [ngForOf]="software.licensingFeatures"
+                                 let-i="index">
+                        <tr>
+                            <td><span class="pl-2 _500 text-sm">{{ row.name }}</span></td>
+                            <ng-template ngFor let-feature
+                                         [ngForOf]="row?.softwareLicenseFeatures"
+                                         let-i="index">
+                                <td>
+                                    <span>{{ feature.value }}</span>
+                                    <!--<span class="text-muted">Under Review</span>-->
+                                </td>
+                            </ng-template>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                </table>
+                <div class="box-body light lt no-result" *ngIf="!software.licensingFeatures?.length">
+                    <div class="p-2 text-center">Plan is Under Review</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<pricing-plan></pricing-plan>-->
+</div>

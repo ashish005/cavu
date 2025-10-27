@@ -1,0 +1,145 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="d-flex flex-column w-xl b-r white modal-dialog" id="chat-nav">
+                <div class="navbar box-shadow">
+                    <div class="input-group">
+                        <div class="form-control">
+                            <div class="list text-xs">
+                                <ng-template ngFor let-nature [ngForOf]="lookupResolver?.masterType?.supplyNature"
+                                             let-i="index">
+                                    <label class="ui-check m-1 mx-0">
+                                        <input type="radio" [value]="nature.masterType" name="nature"
+                                               formControlName="nature"><i></i> {{nature.name}}
+                                    </label>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div class="row">
+                        <div class="col-sm-12" [class.hide]="customForm.value.nature == 'service'">
+                            <select-dropdown [items]="productTypes"
+                                             title="Product Type"
+                                             (cb)="updateProductType($event)"
+                                             [control]="formProductTypeId"></select-dropdown>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="col-sm-12">
+                            <!--<h6 class="text-xs">Category</h6>
+                            <div class="list text-xs" formArrayName="categories">
+                                <ng-template ngFor let-category [ngForOf]="formCategories?.controls" let-i="index">
+                                    <div class="float-left m-0" [formGroup]="category">
+                                        <label class="ui-check m-1 mx-0">
+                                            <input type="checkbox" formControlName="categoryId"><i></i>
+                                            {{category.get('name').value}}
+                                        </label>
+                                    </div>
+                                </ng-template>
+                            </div>-->
+                            <select-dropdown [items]="lookupResolver?.masterType?.categoryTypes"
+                                             title="Category"
+                                             (cb)="onCategoryTypeChange($event)"
+                                             [control]="formCategoryTypeId"></select-dropdown>
+                        </div>
+                        <div class="col-sm-12">
+                            <multiselect-dropdown
+                                    [items]="activeCategories"
+                                    titleInfo="Sub Categories"
+                                    bindLabel="name" bindValue="id"
+                                    (cb)="updateCategory($event)"
+                                    [selected]="formCategories?.value"></multiselect-dropdown>
+                        </div>
+                        <!--<div class="col-sm-12">
+                            <select-dropdown [items]="lookupResolver?.masterType?.brands"
+                                             title="Brand"
+                                             [contentTemplate]="addBrandTemplate" addNewEnabled="true"
+                                             (cb)="updateProductBrand($event)"
+                                             [control]="formProductBrandId"></select-dropdown>
+                        </div>-->
+                        <div class="col-sm-12">
+                          <!--addNewEnabled="true"-->
+                            <select-dropdown [items]="lookupResolver?.masterType?.divisions"
+                                             title="Division"
+                                             (cb)="updateProductDivision($event)"
+                                             [control]="formProductDivisionId"></select-dropdown>
+                        </div>
+                        <div class="col-sm-12">
+                            <select-dropdown [items]="lookupResolver?.masterType?.taxMapper"
+                                             title="Tax" (cb)="updateTaxMapper($event)"
+                                             [control]="formProductTaxMapperId"></select-dropdown>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="col-sm-12">
+                            <select-dropdown [items]="lookupResolver?.masterType?.procurementTypes"
+                                             title="Procurement Type"
+                                             (cb)="updateProcurementType($event)"
+                                             [control]="formProcurementTypeId"></select-dropdown>
+                        </div>
+                        <div class="col-sm-12">
+                            <select-dropdown [items]="lookupResolver?.masterType?.supplyTypes"
+                                             title="Supply Type"
+                                             (cb)="updateSupplyType($event)"
+                                             [control]="formSupplyTypeId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                <div class="p-3 mt-auto"><span class="text-sm text-muted">Messages: 90+</span></div>
+            </div>
+        </div>
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex">
+                <div class="px-3 pt-3 pb-0">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                                <label>Group Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="md-form-group float-label"><input class="md-input" formControlName="code"><label> Code </label></div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="md-form-group float-label pb-0">
+                                <textarea class="md-input" rows="2" formControlName="description"></textarea>
+                                <label> Description </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="scrollable hover p-3">
+                    <!--<div class="row d-flex">
+                        <div class="col-sm-4">
+                            <form class="dropzone white b-a b-1x b-dashed b-primary p-a rounded text-center dz-clickable"
+                                  data-plugin="dropzone" data-option="{url: 'api/dropzone'}">
+                                <div class="dz-message"><h6 class="my-2">Drop files here or click to upload.</h6>
+                                    <span class="text-muted d-block mb-1">You can add up to 5 images, each not exceeding <strong>5 MB</strong>. </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>-->
+                    <!--<div class="flex flex-column" formArrayName="variants">
+                      <ng-template ngFor let-variant [ngForOf]="variantControls" let-i="index">
+                        <div [customForm]="variant" [submitted]="submitted" variant-row-ce></div>
+                      </ng-template>
+                    </div>-->
+                </div>
+                <div class="p-2 white lt b-t mt-auto text-center">
+                    <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                        actionType }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--<ng-template #addBrandTemplate>
+    <add-brand (cb)="brandCallback($event)"></add-brand>
+</ng-template>-->

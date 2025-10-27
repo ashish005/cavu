@@ -1,0 +1,18 @@
+<ng-template #actionTemplate>
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="content-main d-flex flex">
+    <div class="d-flex flex">
+        <ng-template ngFor let-trxnType [ngForOf]="apiResolver?.masterType?.trxnTypes" let-i="index">
+            <div trxn-type [id]="trxnType.id"></div>
+        </ng-template>
+    </div>
+    <div class="fade aside aside-sm" id="content-aside">
+        <trxn-type-allocation-list></trxn-type-allocation-list>
+    </div>
+</div>

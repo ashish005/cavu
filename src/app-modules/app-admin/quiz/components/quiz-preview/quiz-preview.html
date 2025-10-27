@@ -1,0 +1,33 @@
+<div class="p-4">
+  <div class="row no-gutters">
+    <div class="col-sm-5 lt p-3 mb-2 quiz-img" [ngClass]="qActiveStage.class"></div>
+    <div class="col-sm-7">
+      <div class="light">
+        <div class="p-4">
+          <h4 class="mb-2 text-lg">{{quizInfo?.title}} </h4>
+          <h5 class="mb-2 text-md">{{qActiveStage?.info}}</h5>
+        </div>
+        <div class="p-4 m-4">
+
+        </div>
+        <div class="p-4">
+          <span class="m-0" [innerHTML]="qActiveStage.description | highlight: qActiveStage['highlight']"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="lt p-3 text-center" [ngSwitch]="qStage">
+    <div *ngSwitchCase="'preview'" class="m-b btn-groups">
+      <button class="btn btn-fw primary m-2" (click)="quizAction()">Start</button>
+      <button class="btn btn-fw white m-2">Quit</button>
+    </div>
+    <div *ngSwitchCase="'pass'" class="m-b btn-groups">
+      <button class="btn btn-fw primary m-2" (click)="quizAction()">Review</button>
+      <button class="btn btn-fw white m-2">Done</button>
+    </div>
+    <div *ngSwitchCase="'fail'" class="m-b btn-groups">
+      <button class="btn btn-fw primary  m-2" (click)="quizAction()">Retake</button>
+      <button class="btn btn-fw white m-2">Done</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<ng-template #pageTitleTemplate>
+    <a class="no-shadow">
+        <h6 class="mb-0"> {{pageTitle }}</h6>
+        <small class="float-left">Management</small>
+    </a>
+</ng-template>
+<ng-template #actionTemplate>
+    <li class="nav-item mx-1">
+        <button class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-fw fa-plus"></i> Create</button>
+    </li>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+
+                </li>
+            </ul>
+            <ul class="nav nav-xs flex-row no-border float-right">
+                <li class="nav-item">
+
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title=""
+                            data-original-title="Sort"><i class="fa fa-sort"></i></button>
+                </li>
+            </ul>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <div class="animate fadeIn">
+                <div class="no-more-tables">
+                    <table class="p-0 table table-striped table-condensed cf">
+                        <thead class="cf">
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th colspan="2" scope="colgroup">Max Leave </th>
+                            <th>Leave Intimation</th>
+                            <th>Approval Required</th>
+                            <th>W/o Approval</th>
+                            <th colspan="2" scope="colgroup"> Carry Forward - Next Year</th>
+                            <th colspan="2" scope="colgroup"> Carry Forward - Next Month</th>
+                            <th style="width:30px"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="2"></th>
+                            <th>Yearly</th>
+                            <th>One time</th>
+                            <th>Min Days</th>
+                            <th></th>
+                            <th>Deduction Rate</th>
+                            <th>Allowed</th>
+                            <th>Yearly</th>
+                            <th>Allowed</th>
+                            <th>Monthly</th>
+                            <th style="width:30px"></th>
+                            <th style="width:30px"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="scroll-y">
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <tr>
+                                <td> {{row.name}}</td>
+                                <td> {{row.leaveCode}}</td>
+                                <td> {{row.maxLeaveCountInFinYear}}</td>
+                                <td> {{row.maxLeaveCountInOneTime}}</td>
+                                <td> {{row.minIntimationDays}}</td>
+                                <td> {{row.isApprovalRequired}}</td>
+                                <td> {{row.deductionRateWithoutApproval}}</td>
+                                <td> {{row.isCarryForwardToNextFinYear}}</td>
+                                <td> {{row.carryForwardAllowedToNextFinYear}}</td>
+                                <td> {{row.isCarryForwardToNextMonth}}</td>
+                                <td> {{row.carryForwardAllowedToNextMonth}}</td>
+                                <!--<td>
+                                    <a class="remove" *ngIf="(!row?.isLocked && options?.header?.delete)"
+                                       href="javascript:void(0)" (click)="remove(row)" title="Remove"><i
+                                            class="fa fa-trash"></i></a>
+                                    <a *ngIf="row?.isLocked" href="javascript:void(0)"><i class="fa fa-lock"></i></a>
+                                </td>
+                                <td *ngIf="(options?.header?.edit)">
+                                    <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" title="edit"
+                                       (click)="editRecord(row)">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>-->
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                    <loader [isLoading]="isLoading"></loader>
+                </div>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>
+

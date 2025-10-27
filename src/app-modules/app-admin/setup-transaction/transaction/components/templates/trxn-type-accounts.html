@@ -1,0 +1,50 @@
+<div class="d-flex flex-column flex px-2">
+    <div class="navbar flex-nowrap white lt box-shadow">
+        <span class="text-md text-ellipsis flex">{{trxnType?.name}}</span>
+        <!--<ul class="nav nav-xs flex-row no-border">
+            <li class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#profile"
+                                    data-modal="" data-pjax-state=""><span
+                    class="btn btn-sm btn-icon btn-rounded success"><i
+                    class="fa fa-user"></i></span></a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom"
+                                    title=""
+                                    data-original-title="Phone Call" data-pjax-state=""><span
+                    class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom"
+                                    title=""
+                                    data-original-title="Face Call" data-pjax-state=""><span
+                    class="btn btn-sm btn-icon btn-rounded white"><i
+                    class="fa fa-video-camera"></i></span></a>
+            </li>
+        </ul>-->
+    </div>
+    <div class="scrollable hover">
+        <div class="list">
+            <ng-template ngFor let-row [ngForOf]="list" let-i="index">
+                <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:row, index: i}"></ng-container>
+            </ng-template>
+        </div>
+    </div>
+    <div class="p-3 mt-auto">
+        <span class="text-sm text-muted">Messages: 90+</span>
+    </div>
+</div>
+<ng-template #groupRowTemplate let-row='row' let index="index">
+    <div class="list-item p-1">
+        <div class="list-body">
+            <a class="text-xs _500">{{row?.accountName}}</a>
+            <!--<div class="item-except text-sm text-muted h-1x">Detail</div>-->
+            <div class="item-tag tag hide"></div>
+        </div>
+        <div>
+            <span class="badge success mr-2"><b class="arrow right b-success pull-in"></b> {{ index }} </span>
+        </div>
+    </div>
+    <ng-template ngFor let-childRow [ngForOf]="row?.children" let-j="index">
+        <div class="b-l ml-2">
+            <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{ row:childRow, index: j }"></ng-container>
+        </div>
+    </ng-template>
+</ng-template>

@@ -1,0 +1,13 @@
+<div class="input-group">
+  <div>
+    <!--class="input-group-prepend"-->
+    <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-xs text-xs white dropdown-toggle">
+      <span *ngIf="activeItem">{{activeItem[options?.label]}}</span>
+      <span *ngIf="!activeItem"> -- Please Select {{options?.title}} -- </span>
+    </button>
+    <div class="dropdown-menu">
+      <div class="dropdown-item" *ngFor="let item of list;" (click)="changeItem(item)"><a> {{item[options?.label]}}</a></div>
+    </div>
+  </div>
+  <!--<input type="text" aria-label="Text input with dropdown button" class="form-control">-->
+</div>

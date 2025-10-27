@@ -1,0 +1,47 @@
+<!--
+<div class="flex p-2">
+    <ul class="nav nav-xs no-border">
+        <li class="nav-item text-xs mx-1">
+            <div class="input-group b-a px-1">
+                <div class="px-1"><small class="text-xs text-muted">Phase</small></div>
+                <div class="input-group-prepend pr-1">
+                    <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">{{process.processPhase?? '&#45;&#45;'}}</a>
+                    <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.processPhases | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="dropdown-item" (click)="onProcessPhasesChange(process, phase)" [class.active]="(process.processPhase == phase.name)">{{phase.name}}</a>
+                        </ng-template>
+                    </div>
+                </div>
+                <input type="date" class="md-input form-control no-border"
+                       [value]="process.processPhaseOn"
+                       (change)="onProcessPhaseDateChange(process, $event.target.value)"
+                       style="height: 20px;">
+            </div>
+        </li>
+        <li class="nav-item text-xs mx-1">
+            <div class="input-group b-a px-1">
+                <div class="px-1"><small class="text-xs text-muted">Status</small></div>
+                <div class="input-group-append pl-1">
+                    <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">{{process.manualStatus ?? '&#45;&#45;'}} </a>
+                    <div class="dropdown-menu" x-placement="bottom-start"
+                         style="position: absolute; transform: translate3d(1023px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <ng-template ngFor let-status [ngForOf]="apiResolver.masterType?.processStatus | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="dropdown-item" (click)="onProcessStatusChange(process, status)" [class.active]="(process.manualStatus == status.name)">{{status.name}}</a>
+                        </ng-template>
+                    </div>
+                </div>
+                <input type="date" class="md-input form-control no-border"
+                       [value]="process.manualStatusOn"
+                       (change)="onManualStatusOnDateChange(process, $event.target.value)"
+                       style="height: 20px;">
+            </div>
+        </li>
+    </ul>
+</div>-->
+{{context.voucherStatus}}
+<!--<voucher-phase-status-change-popup
+  [phases]="context.phases"
+  (cb)="callback()">
+</voucher-phase-status-change-popup>-->

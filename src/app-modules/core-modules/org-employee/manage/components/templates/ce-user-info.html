@@ -1,0 +1,125 @@
+<form [formGroup]="customForm" class="d-flex flex flex-column">
+  <div class="d-flex flex">
+    <div class="fade aside aside-md" id="content-aside-1">
+      <div class="modal-dialog d-flex flex-column w-lg">
+        <div class="p-3">
+          <avator-pic (cb)="updateOrgImage($event)" [docUrl]="profileUrl"></avator-pic>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex">
+      <div class="d-flex flex-column flex">
+        <div class="p-3">
+          <div class="row row-sm flex">
+            <div class="col-sm-4">
+              <div class="md-form-group float-label">
+                <input class="md-input" formControlName="registrationNo"
+                       [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+                <label>Registration No</label>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="md-form-group float-label">
+                <input class="md-input" type="date" formControlName="joiningDate"
+                       [ngClass]="{ 'is-invalid': submitted && f['joiningDate'].errors }">
+                <label>Joining Date</label>
+              </div>
+            </div>
+          </div>
+          <div class="row row-sm">
+            <div class="col-sm-4">
+              <div class="md-form-group float-label">
+                <input class="md-input" formControlName="fName"
+                       [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                <label>First Name</label>
+              </div>
+            </div>
+            <div class="col-sm-5">
+              <div class="md-form-group float-label">
+                <input class="md-input" formControlName="lName"
+                       [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                <label>Last Name</label>
+              </div>
+            </div>
+
+            <div class="col-sm-5">
+              <div class="md-form-group float-label">
+                <input class="md-input" type="email" formControlName="email"
+                       [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                <label>Primary E-mail</label>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="md-form-group float-label">
+                <input class="md-input" type="text" formControlName="phone"
+                       [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+                <label>Mobile No</label>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="dob"
+                       [ngClass]="{ 'is-invalid': submitted && f['dob'].errors }">
+                <label>Date Of Birth</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex flex-column">
+    <div class="row row-sm">
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.gender" title="Gender" (cb)="updateGender($event)"
+                         [control]="formGender"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.bloodGroup" title="Blood Group"
+                         (cb)="updateBloodGroup($event)"
+                         [control]="formBloodGroup"></select-dropdown>
+      </div>
+
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.nationality" title="Nationality"
+                         (cb)="updateNationality($event)"
+                         [control]="formNationality"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.maritalStatus" title="Marital Status"
+                         (cb)="updateMaritalStatus($event)"
+                         [control]="formMaritalStatus"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.religion" title="Religion" (cb)="updateReligion($event)"
+                         [control]="formReligion"></select-dropdown>
+      </div>
+      <!--<div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.caste" title="Caste" (cb)="updateCaste($event)"
+                         [control]="formCaste"></select-dropdown>
+      </div>-->
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.reservationCategory" title="Reservation Type"
+                         (cb)="updateReservation($event)" [control]="formReservation"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.employeePost" title="Employee Post"
+                         (cb)="updateEmployeePost($event)" [control]="formEmployeePost"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.dutyType" title="Duty Type" (cb)="updateDutyType($event)"
+                         [control]="formDutyType"></select-dropdown>
+      </div>
+      <!--<div class="col-sm-3">
+        <multiselect-dropdown
+                [items]="apiResolver?.masterType?.roles" titleInfo="Role"
+                bindLabel="name" bindValue="id" (cb)="updateRoles($event)" [selected]="formEmployeeRoles?.value"></multiselect-dropdown>
+      </div>-->
+    </div>
+  </div>
+    <button type="button" class="btn btn-sm btn-outline primary b-a float-right" (click)="updateOrgUser(customForm)"
+            [disabled]="!customForm?.valid || submitted">
+      <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+      {{ submitted ? 'Submitting...' : (id) ? 'Update' : 'Create' }}
+    </button>
+</form>

@@ -1,0 +1,18 @@
+<div class="box-tool">
+  <ul class="nav nav-xs">
+    <li class="nav-item px-1" *ngIf="options?.add"><button class="btn btn-xs btn-icon m-0" (click)="addRecord()"><i class="fa fa-fw fa-plus"></i></button></li>
+    <li class="nav-item px-1" *ngIf="options?.refresh"><button class="btn btn-xs btn-icon m-0" (click)="refresh()"><i class="fa fa-fw fa-refresh"></i></button></li>
+    <li class="nav-item px-1" *ngIf="options?.sort"><button class="btn btn-xs btn-icon m-0 sort" data-sort="item-title" data-toggle="tooltip" data-original-title="Sort"><i class="fa fa-sort"></i></button></li>
+    <li class="nav-item dropdown hide">
+      <a class="nav-link" data-toggle="dropdown"><i class="fa fa-fw fa-ellipsis-v"></i></a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <!--<a class="dropdown-item" *ngIf="options?.add" (click)="addRecord()"><i class="fa fa-fw fa-plus"></i>Add</a>-->
+        <!--<a class="dropdown-item">Action</a>
+        <a class="dropdown-item">Another action</a>
+        <a class="dropdown-item">Something else here</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item">Separated link</a>-->
+      </div>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,77 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap lt">
+        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+        </a>
+        <div class="no-shadow">
+            <h6 class="mb-0"> Process </h6>
+            <small class="float-left"> Management</small>
+        </div>
+        <!--<div class="nav-active-border b-theme px-4 px-md-0">
+            <ul class="nav nav-xs flex-row">
+                <li class="nav-item"><a class="nav-link" routerLink="advanced" routerLinkActive="active">Advanced</a></li>
+            </ul>
+        </div>-->
+    </div>
+    <div class="content-main d-flex flex" id="content-main">
+        <div class="d-flex flex">
+            <div class="fade aside aside-sm" id="content-aside">
+                <div class="d-flex flex-column w-xl modal-dialog">
+                    <a class="nav-link" (click)="createOrgProcess()">
+                        <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i>Process</span>
+                    </a>
+                    <div class="p-2 px-3">
+                        <span class="text-muted text-sm">Processes</span>
+                        <a class="btn btn-xs b-theme text-theme text-xs border-0 float-right" (click)="showProcessPhases()"><i class="fa fa-cogs"></i> Phases</a>
+                        <a class="btn btn-xs b-theme text-theme text-xs border-0 float-right" (click)="showScheduledTasks()"><i class="fa fa-tasks"></i> Tasks</a>
+                    </div>
+                    <div class="scrollable hover pt-2">
+                        <div class="list-group list-group-gap px-2">
+                            <ng-template ngFor let-row [ngForOf]="orgProcessList | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <div class="list-group-item p-1 pl-2 box">
+                                    <div class="float-right">
+                                        <a class="btn btn-xs btn-icon" (click)="routeToUrl(row)">
+                                            <i class="fa fa-chevron-right"></i>
+                                        </a>
+                                    </div>
+                                    <div class="list-body text-xs">
+                                        <b class="badge badge-pill text-success up" ><i class="fa fa-lock text-sm" *ngIf="row.isLocked"></i></b>
+                                        <a class="item-title _500">{{ row.name }}</a>
+                                        <div class="item-except text-xs">
+                                            <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showOrgProcessWorkflow(row)">
+                                                Workflow
+                                                <i class="fa fa-gears"></i>
+                                            </a>
+                                            <!--<a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showProcesses(row)">Processes</a>
+                                            <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showProcessTasks(row)">Tasks</a>
+                                            <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showTaskSchedules(row)">Schedules</a>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="no-result hide">
+                            <div class="p-4 text-center">No Results</div>
+                        </div>
+                    </div>
+                    <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+                </div>
+            </div>
+            <div class="d-flex flex" id="content-body">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap white lt box-shadow">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                           data-pjax-state="">
+                            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                        </a>
+                        <a class="no-shadow">
+                            <h6 class="mb-0">{{activeOrgProcess?.name}}</h6>
+                        </a>
+                        <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+                    </div>
+                    <router-outlet (activate)='onActivate($event)'></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,155 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" *ngIf="!userMasterType" id="notification_aside">
+            <div class="modal-dialog d-flex flex-column w-md">
+                <a class="nav-link" (click)="createNotification()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Notification</span>
+                </a>
+                <div class="scrollable hover px-3 py-2">
+                    <div class="list-group list-group-gap">
+                        <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType?.notificationTypes"
+                                     let-i="index">
+                            <div class="list-group-item box p-1 px-2"
+                                 [class.active]="(activeNotificationType?.id == row.id)">
+                                <div>
+                                    <i [ngClass]="row.icon"></i>
+                                    <b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
+                                            class="fa fa-lock"></i></b>
+                                    {{ row?.name }}
+                                    <span class="float-right" (click)="notificationByUserType(row)"><i
+                                            class="fa fa-chevron-right"></i></span>
+                                </div>
+                                <div class="p-0" *ngIf="row.children?.length">
+                                    <ng-template ngFor let-children [ngForOf]="row.children" let-i="index">
+                                        <div class="list-item py-1 px-0">
+                                            <a class="w-100 text-xs _500">{{ children.name }}</a>
+                                            <div class="float-right mr-0" (click)="notificationByUserType(children)"><i
+                                                    class="fa fa-chevron-right"></i></div>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+            </div>
+        </div>
+        <div class="d-flex flex">
+            <div class="d-flex flex-column flex">
+                <div class="navbar flex-nowrap box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"><span
+                            class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
+                    <span class="text-md text-ellipsis">{{activeNotificationType?.name}}</span>
+
+                    <ul class="nav nav-xs flex-row no-border">
+                        <li class="nav-item b-l pl-2">
+                            <button id="sort"
+                                    class="btn btn-sm white ml-1 sort"
+                                    data-sort="item-title" data-toggle="tooltip" title=""
+                                    data-original-title="Sort"><i class="fa fa-sort"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="scrollable hover d-flex flex-column flex">
+                    <div class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <div class="list-item">
+                                <a (click)="updateNotification(row)" *ngIf="!row.isReminder"><i class="fa fa-edit"></i></a>
+                                <div class="list-body">
+                                    <a class="item-title _500">{{ row.name }}</a>
+                                    <div class="item-except text-xs" *ngIf="row.hasTemplate && !row.isReminder">
+                                        <span class="float-left pr-2 mr-2 b-r" *ngIf="row.orgTaskId">
+                                            <a class="text-primary item-date"
+                                               (click)="checkActivity(row)">Activities</a>
+                                        </span>
+                                        <div *ngIf="!row.isEventBased">
+                                            <!--<span *ngIf="!row.orgTaskScheduleId"> Not yet Scheduled </span>
+                                            <a class="text-primary" *ngIf="row.orgTaskScheduleId" (click)="createNotificationReminder(row)">
+                                                <i class="fa fa-bell pr-1"></i>New Reminder
+                                            </a>-->
+                                            <ng-template ngFor let-reminder [ngForOf]="row.reminders" let-i="index">
+                                                <a class="text-primary b-a">{{reminder.name}}</a>
+                                            </ng-template>
+                                        </div>
+                                        <small *ngIf="row.isEventBased" class="text-xs">Template will be send on <a
+                                                class="b-theme text-success"> {{row.appEvent}} </a></small>
+                                        <div *ngIf="row.permissions?.length">
+                                            <span class="pr-2 ">Permissions:</span>
+                                            <ng-template ngFor let-permission [ngForOf]="row.permissions" let-i="index">
+                                                <span class="badge mx-1"
+                                                      [class]="(permission.isEnable)? 'green': 'red'">{{permission.userRoleName}}</span>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters text-center">
+                                    <!--<div *ngIf="row.isForVoucher && !row.isReminder">
+                                        <div class="input-group b-a px-1">
+                                            <div class="px-1">
+                                                <small class="text-xs text-muted">VoucherType: </small>
+                                            </div>
+                                            <div class="input-group-prepend pr-1">
+                                                <a type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                                    {{row.voucherTypeName || '&#45;&#45;'}}
+                                                </a>
+                                                <div x-placement="bottom-start" class="dropdown-menu"
+                                                     style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                    <ng-template ngFor let-voucherType [ngForOf]="coreLookup?.voucherTypes | sortBy:'asc': 'sortOrder'" let-i="index">
+                                                        <a class="dropdown-item" (click)="applyVoucherTypeToNotification(row, voucherType)">{{voucherType.name}}</a>
+                                                    </ng-template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                    <div *ngIf="!row.isReminder">
+                                        <a class="btn btn-xs text-xs mx-1" *ngIf="!row.isEventBased && row.hasTemplate"
+                                           (click)="showScheduler(row)"
+                                           [class.b-success]="(row.orgTaskScheduleId)"
+                                           [class.text-success]="(row.orgTaskScheduleId)">
+                                            <i class="fa fa-calendar"></i> {{(row.orgTaskScheduleId) ? 'Scheduled' :
+                                            'Schedule All'}}
+                                        </a>
+                                    </div>
+                                    <div class="text-center text-sm-right">
+                                        <ng-template ngFor let-template
+                                                     [ngForOf]="row?.templates | sortBy:'asc': 'sortOrder'"
+                                                     let-i="index">
+                                            <a class="d-inline-block px-1 text-center">
+                                                    <span class="d-block">
+                                                        <a class="btn btn-xs text-xs text-success"
+                                                           [class]="template.templateId ? 'text-success': 'text-warning'"
+                                                           (click)="showTemplateToCreateEdit(template)">
+                                                            <i class="fa"
+                                                               [class]="template.templateId? 'fa-check': 'fa-plus'"
+                                                               style="width: 16px"></i> {{ template?.name }}
+                                                        </a>
+                                                    </span>
+                                                <!--<small class="text-xs text-muted">
+                                                    <a class="btn btn-xs float-right" *ngIf="template.templateId"
+                                                       [class]="template.orgTaskScheduleId ? 'text-success': 'text-warning'"
+                                                       (click)="showMediaTypeScheduler(row, template)"><i class="fa fa-calendar"></i></a>
+                                                    <a class="btn btn-xs float-right" *ngIf="!template.templateId">&#45;&#45;</a>
+                                                </small>-->
+                                            </a>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                    <loader [isLoading]="isLoading"></loader>
+                </div>
+                <div class="mt-auto">
+                    <org-grid-pagination [count]="gridOptions?.total"
+                                         [perPage]="coreState?.take" [page]="coreState?.page"
+                                         (cb)="moveToPage($event)"></org-grid-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

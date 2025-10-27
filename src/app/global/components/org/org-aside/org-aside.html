@@ -1,0 +1,80 @@
+<div id="aside" class="app-aside fade nav-expand white light" style="display: none;" aria-hidden="true">
+  <div class="sidenav modal-dialog dk white light" ui-class="dark">
+    <div class="navbar dark-white" ui-class="dark-white">
+      <org-logo logoColor="#124f7acc"></org-logo>
+    </div>
+    @if (showInbox) {
+      <div class="light lt">
+        <div class="p-3">
+          <!--<div class="input-group d-block">
+              <div class="input-group-prepend">
+                  <button class="btn btn-sm theme text-theme btn-block" data-pjax-state=""><i class="fa fa-fw fa-plus"></i>
+                      <span class="hidden-folded d-inline">New Project</span></button>
+                  <button class="btn btn-sm theme dropdown-toggle dropdown-toggle-split"
+                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                          class="sr-only"></span></button>
+                  <div class="dropdown-menu dropdown-menu-right animate fadeIn">
+                      <div class="dropdown-header hidden-folded">
+                          <small class="title _500 text-muted">Create New</small>
+                      </div>
+                      <a [routerLink]="['client/create']" class="dropdown-item" data-pjax-state="">Client </a>
+                      <a [routerLink]="['project/create']" class="dropdown-item"
+                         data-pjax-state="">Project </a>
+                      <a [routerLink]="['quote/create']" class="dropdown-item" data-pjax-state="">Quote </a>
+                      <a [routerLink]="['vendor/create']" class="dropdown-item" data-pjax-state="">Vendor</a>
+                  </div>
+              </div>
+          </div>-->
+          <div class="d-flex flex-row text-center">
+            <div class="flex-column mx-auto">
+              <a [routerLink]="['my-task']">
+                <!--<span class="text-md d-block hidden-folded">2k</span>-->
+                <small class="text-xs text-muted"><i class="fa fa-tasks"></i><span class="hidden-folded"> my task</span>
+                </small>
+              </a>
+            </div>
+            <div class="flex-column d-inline-block mx-auto">
+              <a [routerLink]="['conversation','inbox']">
+                <!--<span class="text-md d-block hidden-folded">250</span>-->
+                <small class="text-xs text-muted"><i class="fa fa-envelope-open"></i><span
+                  class="hidden-folded"> my inbox</span></small>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    <div class="flex hide-scroll">
+      <div class="scroll">
+        <div class="nav-active-theme" data-nav="">
+          <ul class="nav bg" *ngFor="let nav of navList">
+            @if (nav?.key) {
+              <li class="nav-header hidden-folded">
+                <span class="text-xs">{{nav.key }}</span>
+              </li>
+            }
+            <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
+              <a [routerLink]="item.routeTo" [fragment]="item.code">
+                <span class="nav-icon"><i [class]="item?.icon"></i> </span>
+                <span class="nav-text">{{item?.key }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="no-shrink lt">
+      <div class="nav-fold">
+        <a class="d-flex p-2-3" data-toggle="dropdown" data-pjax-state="">
+          <span class="avatar w-28 theme text-theme circle" [attr.data-letters]="initials"></span>
+          <!--<img src="../assets/images/a0.jpg" alt="..." class="w-28 circle">-->
+        </a>
+        <div class="hidden-folded flex p-2-3 bg">
+          <div class="d-flex p-1">
+            <a class="px-2" data-toggle="tooltip" title="" (click)="signout()"><i class="fa fa-power-off text-muted"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

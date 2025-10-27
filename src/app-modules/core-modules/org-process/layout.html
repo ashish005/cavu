@@ -1,0 +1,18 @@
+<div class="app" id="app">
+    <div id="content" class="app-content" role="main">
+        <div class="content-header" id="content-header">
+            <div class="theme">
+                <div class="nav-active-border">
+                    <ul class="nav">
+                        <li class="nav-item" *ngFor="let item of navList" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{item?.key }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content-main" id="content-main">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>

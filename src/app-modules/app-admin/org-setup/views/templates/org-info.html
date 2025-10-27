@@ -1,0 +1,268 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover">
+            <div class="p-3">
+                <div class="row">
+                    <div class="col-3 orgImg">
+                        <avator-pic (cb)="updateOrgImage($event)" [docUrl]="service.org?.profileUrl"></avator-pic>
+                    </div>
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-sm-8 col-12">
+                                <div class="md-form-group">
+                                    <input class="md-input" formControlName="name"
+                                           [ngClass]="{ 'is-invalid': submitted && f.name?.errors }">
+                                    <label>
+                                        Business Name
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-12">
+                                <select-dropdown [items]="apiResolver?.masterType?.operatedBy"
+                                                 title="Operated By" (cb)="updateOperatedBy($event)"
+                                                 [control]="formOperatedBy"></select-dropdown>
+                            </div>
+                            <div class="col-sm-12 col-12">
+                                <div class="md-form-group">
+                                    <input class="md-input" formControlName="address"
+                                           [ngClass]="{ 'is-invalid': submitted && f.address?.errors }">
+                                    <label>
+                                        Address
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 col-12">
+                                <div class="md-form-group float-label">
+                                    <input class="md-input" type="date" formControlName="establishedDate"
+                                           [ngClass]="{ 'is-invalid': submitted && f.establishedDate?.errors }">
+                                    <label>Established Date</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-9 col-12">
+                                <div class="md-form-group">
+                                    <input class="md-input" formControlName="affiliatedName"
+                                           [ngClass]="{ 'is-invalid': submitted && f.affiliatedName?.errors }">
+                                    <label>Affiliated/ Authorized by</label>
+                                    <span class="md-input-msg right">0/100</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-9 col-12">
+                                <div class="row" [formGroup]="tenantForm">
+                                    <div class="col-sm-4">
+                                        <div class="md-form-group float-label">
+                                            <input type="text" formControlName="licenseNo" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.licenseNo?.errors }"/>
+                                            <label>Business License No</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="md-form-group float-label">
+                                            <input type="date" formControlName="validFromDate" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.validFromDate?.errors }"/>
+                                            <label>Valid From</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="md-form-group float-label">
+                                            <input type="date" formControlName="validToDate" class="md-input"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.validToDate?.errors }"/>
+                                            <label>Valid Till</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="box">
+                            <div class="box-header"><h3>Organization Contact Info</h3></div>
+                            <div class="box-body row py-0">
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="contactNo1"
+                                               [ngClass]="{ 'is-invalid': submitted && f.contactNo1.errors }">
+                                        <label>Contact No</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="emailId1"
+                                               [ngClass]="{ 'is-invalid': submitted && f.emailId1.errors }">
+                                        <label>Email Id</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="contactNo2">
+                                        <label>Contact No 2</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="emailId2">
+                                        <label>Alternate Email Id</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="row" [formGroup]="orgConfigForm">
+                            <div class="col-6">
+                                <select-dropdown [items]="apiResolver.masterType.languages"
+                                                 title="Language"
+                                                 (cb)="updateLanguageId($event)"
+                                                 [control]="formLanguageId"></select-dropdown>
+                            </div>
+                            <div class="col-6">
+                                <select-dropdown [items]="apiResolver.masterType.currencies"
+                                                 title="Currency"
+                                                 (cb)="updateCurrencyId($event)"
+                                                 [control]="formCurrencyId"></select-dropdown>
+                            </div>
+                            &lt;!&ndash;<div class="col-sm-12">
+                                <select-dropdown [items]="apiResolver.masterType?.timeZones"
+                                                 title="Time zone"
+                                                 (cb)="updateTimeZone($event)"
+                                                 [control]="formTimeZone"></select-dropdown>
+                            </div>&ndash;&gt;
+                            <div class="col-sm-12">
+                                <select-dropdown [items]="dateFormatList"
+                                                 title="Date Format"
+                                                 (cb)="onDateFormatChange($event)"
+                                                 [control]="formDateFormater"></select-dropdown>
+                            </div>
+                            <div class="col-sm-12">
+                                <h6 class="text-sm  m-0">Financial Year</h6>
+                                <div class="row no-gutters text-xs">
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend" style="max-width: 55px;">
+                                                <div class="md-form-group pb-0">
+                                                    <input class="md-input" type="number"
+                                                           formControlName="fyStartDay">
+                                                    <label>Start Day</label>
+                                                </div>
+                                            </div>
+                                            <div class="md-form-group">
+                                                <select class="md-input" formControlName="fyStartMonth"
+                                                        style="width: 65px;">
+                                                    <option *ngFor="let m of months" [value]="m.id">{{m.name}}
+                                                    </option>
+                                                </select>
+                                                <label>Start Month</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend" style="max-width: 55px;">
+                                                <div class="md-form-group pb-0">
+                                                    <input class="md-input" type="number"
+                                                           formControlName="fyCloseDay">
+                                                    <label>Close Day</label>
+                                                </div>
+                                            </div>
+                                            <div class="md-form-group">
+                                                <select class="md-input" formControlName="fyCloseMonth"
+                                                        style="width: 65px;">
+                                                    <option *ngFor="let m of months" [value]="m.id">{{m.name}}
+                                                    </option>
+                                                </select>
+                                                <label>Close Month</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <h6 class="text-sm m-0">Regular Office Hours</h6>
+                                <div class="row no-gutters text-xs">
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <div class="md-form-group">
+                                                <input class="md-input" style="width: 100px;" type="time"
+                                                       formControlName="ofcStartTime">
+                                                <label>Start Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <div class="md-form-group">
+                                                <input class="md-input" style="width: 100px;" type="time"
+                                                       formControlName="ofcEndTime">
+                                                <label>End Time</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                    <div class="col-6" [formGroup]="tenantForm">
+                        <div class="box">
+                            <div class="box-header"><h6>Contact Person</h6></div>
+                            <div class="box-body row py-0">
+                                <div class="col-sm-8">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="contactPersonName"
+                                               [ngClass]="{ 'is-invalid': submitted && f.contactPersonName?.errors }">
+                                        <label>Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="contactPersonMobile">
+                                        <label>Mobile</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="md-form-group float-label">
+                                        <input class="md-input" formControlName="contactPersonEmail"
+                                               [ngClass]="{ 'is-invalid': submitted && f.contactPersonEmail?.errors }">
+                                        <label>Email Id</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="box">
+                                    <div class="box-header"><h6>Referred By</h6></div>
+                                    <div class="box-body row py-0">
+                                        <div class="col-sm-8">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="referenceSource" class="md-input">
+                                                <label>Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="referenceMail" class="md-input"/>
+                                                <label>Mobile</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="md-form-group float-label">
+                                                <input type="text" formControlName="referenceContact" class="md-input"/>
+                                                <label>Email</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="white lt b-t mt-auto text-center">
+            <button type="button" class="btn btn-sm primary m-2" [disabled]="!customForm.valid"
+                    (click)="onOrgSubmit(customForm)">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                {{ submitted ? 'Submitting...' : 'Update' }}
+            </button>
+        </div>
+    </div>
+</form>

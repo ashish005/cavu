@@ -1,0 +1,135 @@
+<form [formGroup]="customForm" class="d-flex flex p-3">
+    <div class="flex flex-column">
+        <div class="row d-flex flex-row align-items-stretch">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="number">
+                    <label> Number </label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="quantity">
+                    <label> Quantity </label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="applicableFor">
+                    <label> Applicable For </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <select-dropdown [items]="apiResolver?.masterType?.tokenTypes" title="Token Type"
+                                 (cb)="updateTokenTypeId($event)"
+                                 [control]="formTokenTypeId"></select-dropdown>
+            </div>
+            <div class="col-sm-4">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="value">
+                    <label> value </label>
+                </div>
+            </div>
+            <!--<div class="col-sm-3">
+                <label class="md-switch">
+                    <input type="checkbox" checked="checked" formControlName="isFeatured"><i class="theme"></i> Featured
+                </label>
+            </div>-->
+            <!--<div class="col-sm-3">
+                <select-dropdown [items]="apiResolver?.masterType?.unitType"
+                                 title="Unit"
+                                 (cb)="updateUnitType($event)"
+                                 [control]="formUnitTypeId"></select-dropdown>
+            </div>-->
+        </div>
+        <!--<div class="box">
+            <div class="box-header"><h3>Variant Price</h3>
+                <small>Variant Price </small>
+            </div>
+            <div class="box-body">
+                <table class="table small-table text-xs mb-0">
+                    <thead>
+                    <tr>
+                        <th><span class="pl-2">Valid From</span></th>
+                        <th class="text-right">
+                            <small>MRP</small>
+                        </th>
+                        <th class="text-right">
+                            <small><span>Cost/ Retail</span></small>
+                        </th>
+                        <th class="text-right"> Selling Price</th>
+                        <th>
+                            <small>Tax Inclusive</small>
+                        </th>
+                        <th>
+                            <small>Fixed Price</small>
+                        </th>
+                        <th>
+                            <small>Status</small>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody formArrayName="prices">
+                    <ng-template ngFor let-item [ngForOf]="formVariantPrices?.controls" let-i="index">
+                        <tr [formGroup]="item">
+                            <td>
+                                <input class="md-input" type="date" formControlName="validFrom"
+                                       [ngClass]="{ 'is-invalid': submitted && f.validFrom.errors }">
+                            </td>
+                            <td>
+                                <input class="md-input text-right" type="number" formControlName="mrp"
+                                       [ngClass]="{ 'is-invalid': submitted && f.mrp.errors }">
+                            </td>
+                            <td>
+                                <input class="md-input text-right" type="number" formControlName="retailPrice"
+                                       [ngClass]="{ 'is-invalid': submitted && f.retailPrice.errors }">
+                            </td>
+                            <td>
+                                <input class="md-input text-right" type="number" formControlName="supplyPrice"
+                                       [ngClass]="{ 'is-invalid': submitted && f.supplyPrice.errors }">
+                            </td>
+                            <td>
+                                <label class="md-switch">
+                                    <input type="checkbox" checked="checked" formControlName="isTaxInclusive"><i
+                                        class="theme"></i>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="md-switch">
+                                    <input type="checkbox" checked="checked" formControlName="isFixedPrice"><i
+                                        class="theme"></i>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="md-switch">
+                                    <input type="checkbox" checked="checked" formControlName="status"><i class="theme"></i>
+                                </label>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot class="box" [class.hide]="!id">
+                    <tr>
+                        <td>
+                            <add-price [variant]="customForm.value" (onOk)="variantPriceCallback($event)">Add Price
+                            </add-price>
+                        </td>
+                        <td colspan="6"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>-->
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' :
+                    actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

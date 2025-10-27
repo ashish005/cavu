@@ -1,0 +1,204 @@
+<header class="m-2 my-lg-0 m-auto w-100">
+  <nav>
+    <div class="search-bar b-a">
+      <form class="search input-group">
+        <span class="input-group-btn"><button type="button" class="btn no-border no-bg no-shadow"><i class="fa fa-search"></i></button></span>
+        <input type="search" class="search__input form-control no-border no-bg no-shadow" name="search" placeholder="Filter & Search">
+        <i class="ion-ios-search search__icon"></i>
+        <a class="btn no-border no-bg no-shadow float-right text-sm b-l"><i class="fa fa-filter"></i></a>
+      </form>
+      <div class="suggestion box">
+        <div class="suggestion__content box-body">
+          <div class="row no-gutters w-100">
+            <div class="col-3 p-2">
+              <!--<div class="py-1"><a class="title _500">Popular Categories</a></div>
+              <div class="box-divider mx-1"></div>
+              <div class="list-info">
+                <ul>
+                  <ng-template ngFor let-category [ngForOf]="search?.categories" let-i="index">
+                    <li>{{category.name}}</li>
+                  </ng-template>
+                </ul>
+              </div>-->
+              <div>
+                <div class="py-1"><a class="title _500">Popular Keywords</a></div>
+                <div class="box-divider mx-1"></div>
+                <ul class="list no-border">
+                  <li class="list-item p-0">
+                    <div class="list-body py-1"><a>Chris Fox</a></div>
+                  </li>
+                  <li class="list-item p-0">
+                    <div class="list-body py-1"><a>Chris Fox</a></div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-9">
+              <div class="box">
+                <div class="box-header p-0">
+                  <div class="nav-active-border b-info">
+                    <ul class="nav">
+                      <li class="nav-item"><a class="nav-link active">Filter</a></li>
+                      <li class="nav-item"><a class="nav-link">Specific Search</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="box-body">
+                  <div class="input-group">
+                    <input type="text" class="form-control form-control-sm search"
+                           placeholder="Provide a Name to your search">
+                    <div class="columns columns-right btn-group float-right">
+                      <div class="keep-open btn-group" title="Columns">
+                        <button type="button" aria-label="columns"
+                                class="btn btn-default btn-sm no-shadow dropdown-toggle"
+                                style="border-right: 0px;border-left: 0px;"
+                                data-toggle="dropdown" aria-expanded="false">
+                          <i class="fa fa-th-list"></i>
+                          <span class="caret"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="width: 300px;">
+                          <div class="dropdown pl-3 pr-3">
+                            <ul>
+                              <ng-template ngFor let-category [ngForOf]="search?.categories" let-i="index">
+                                <li>{{category.name}}</li>
+                              </ng-template>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <span class="input-group-append">
+                        <button class="btn btn-default btn-sm no-shadow" style="border-left: 0px;" type="button">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                  </div>
+                </div>
+              </div>
+              <!--<div id="search-filter">
+                <div class="panel theme no-border mb-0">
+                  <div class="box-header p-2 p-y-sm">
+                    <a class="float-right text-sm" data-toggle="collapse" data-parent="#search-filter" data-target="#filter_panel" aria-expanded="false">
+                      <i class="fa fa-filter pr-1"></i> Filters
+                    </a>
+                    &lt;!&ndash;<div class="input-group">
+                      <input type="text" class="form-control form-control-sm search"
+                             placeholder="Provide a Name to your search">
+                      <div class="columns columns-right btn-group float-right">
+                        <div class="keep-open btn-group" title="Columns">
+                          <button type="button" aria-label="columns"
+                                  class="btn btn-default btn-sm no-shadow dropdown-toggle"
+                                  style="border-right: 0px;border-left: 0px;"
+                                  data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-th-list"></i>
+                            <span class="caret"></span>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="width: 300px;">
+                            <div class="dropdown pl-3 pr-3" (click)="hostListenerClick($event)">
+                              <ul>
+                                <ng-template ngFor let-category [ngForOf]="search?.categories" let-i="index">
+                                  <li>{{category.name}}</li>
+                                </ng-template>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="input-group-append">
+                        <button class="btn btn-default btn-sm no-shadow" style="border-left: 0px;" type="button">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                    </div>&ndash;&gt;
+                  </div>
+                  <div id="filter_panel" class="collapse show p-2">
+                    <app-filte (cb)="cbFilter($event)"></app-filte>
+                  </div>
+                  <div class="box-header p-2 p-y-sm">
+                    <a class="float-right text-sm" data-toggle="collapse" data-parent="#search-filter"
+                       data-target="#search_panel" aria-expanded="false">
+                      <i class="fa fa-search pr-1"></i> Popular Search
+                    </a>
+                  </div>
+                  <div id="search_panel" class="collapse show p-2">
+                    <div class="input-group">
+                      <input type="text" class="form-control form-control-sm search"
+                             placeholder="Provide a Name to your search">
+                      <div class="columns columns-right btn-group float-right">
+                        <div class="keep-open btn-group" title="Columns">
+                          <button type="button" aria-label="columns"
+                                  class="btn btn-default btn-sm no-shadow dropdown-toggle"
+                                  style="border-right: 0px;border-left: 0px;"
+                                  data-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-th-list"></i>
+                            <span class="caret"></span>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="width: 300px;">
+                            <div class="dropdown pl-3 pr-3" (click)="hostListenerClick($event)">
+                              <ul>
+                                <ng-template ngFor let-category [ngForOf]="search?.categories" let-i="index">
+                                  <li>{{category.name}}</li>
+                                </ng-template>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="input-group-append">
+                        <button class="btn btn-default btn-sm no-shadow" style="border-left: 0px;" type="button">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>-->
+              <div class="box-divider m-0"></div>
+            </div>
+            <div class="col-3 p-2">
+              <ul class="nav nav-xs flex-row no-border float-left">
+                <li class="nav-item"><a class="btn btn-outline b-a btn-xs my-1" (click)="close()"> Close </a></li>
+              </ul>
+            </div>
+            <div class="col-9 text-center p-2">
+              <ul class="nav nav-xs flex-row no-border float-left">
+                <li class="nav-item"><a class="btn btn-outline b-a btn-xs my-1"> Clear </a></li>
+              </ul>
+              <ul class="nav nav-xs flex-row no-border float-right">
+                <li>
+                  <div class="input-group">
+                    <div class="columns columns-right btn-group float-left">
+                      <div class="keep-open btn-group" title="Columns">
+                        <a type="button" aria-label="columns" class="btn-sm no-shadow dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                          <i class="fa fa-th-list"></i>
+                          <span class="caret"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="width: 300px;">
+                          <div class="dropdown px-2">
+                            <ng-template ngFor let-category [ngForOf]="search?.categories" let-i="index">
+                              <a class="dropdown-item">{{category.name}}</a>
+                            </ng-template>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <input type="text" class="form-control form-control-sm search" placeholder="Provide a Name to your search">
+                    <span class="input-group-append">
+                      <button class="btn btn-default btn-sm no-shadow" type="button">
+                        <i class="fa fa-search"></i> Apply
+                      </button>
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="message" style="display: none">
+  <p>Search with suggestion is supported for devices with width larger than 600px. You can click on the search icon to
+    show the search bar.</p>
+</div>

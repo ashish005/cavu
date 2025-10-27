@@ -1,0 +1,32 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar flex-nowrap">
+        <div class="navbar-text flex p-0">
+            <h6 class="mb-0"> {{page?.title}}</h6>
+            <small class="float-left">Management</small>
+        </div>
+        <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+        <!--<ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item">
+                <button class="btn white">Connect Bank</button>
+            </li>
+        </ul>-->
+        <div class="nav-active-border b-theme px-4 px-md-5">
+            <ul class="nav">
+                <ng-template ngFor let-userType [ngForOf]="lookupResolver.masterType.userTypes" let-i="index">
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="userMasterType==userType.masterType" (click)="showUserType(userType)">{{userType.name}}</a>
+                    </li>
+                </ng-template>
+            </ul>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <router-outlet (activate)='onActivate($event)'></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

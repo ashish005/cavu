@@ -1,0 +1,12 @@
+<form class="box collapse show m-0" [formGroup]="customForm" [class.hide]="id">
+    <div>
+        <textarea class="form-control no-border" rows="3" formControlName="content"></textarea>
+    </div>
+    <div class="box-footer clearfix py-1">
+        <button class="btn info float-right btn-xs" (click)="add(customForm)">Post</button>
+        <!--<ul class="nav nav-pills nav-xs">
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-camera text-muted"></i></a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-video-camera text-muted"></i></a></li>
+        </ul>-->
+    </div>
+</form>

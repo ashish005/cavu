@@ -1,0 +1,49 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <!--<div class="navbar flex-nowrap box-shadow">
+          <span *ngIf="(orgTaskId)">
+            <a class="btn btn-outline b-a btn-xs b-theme theme text-theme b-primary" [routerLink]="['../']">Clear Search</a>
+            <a class="p-2 active text-success"><i class="fa fa-check text-success d-none"></i> Search applied...</a>
+          </span>
+          <a class="ml-auto btn btn-outline b-a btn-sm b-theme" (click)="addRecord()"><i class="fa fa-fw fa-plus"></i> Org Task</a>
+        </div>-->
+        <div class="scrollable hover h-100">
+            <div class="box">
+                <div class="box-header">
+                    <h6>{{page?.name}} </h6>
+                    <small>{{page?.desc}}</small>
+                </div>
+                <div class="box-tool">
+                    <ul class="nav nav-xs">
+                        <li class="nav-item"><a class="btn btn-xs" (click)="newCommunicationTemplatePopup('email')">new</a></li>
+                        <!--<li class="nav-item"><a class="btn btn-xs" (click)="showReference(opt)">Reference</a></li>-->
+                    </ul>
+                </div>
+                <div class="box-body">
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th>Sender</th>
+                            <th>Primary</th>
+                            <th>Is API</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-row [ngForOf]="list" let-i="index">
+                            <tr>
+                                <td>{{ row.senderName }}</td>
+                                <td><i class="fa" [class]="(row.isPrimary)? 'fa-check text-success': 'fa-close text-danger'"></i></td>
+                                <td><i class="fa" [class]="(row.isAPI)? 'fa-check text-success': 'fa-close text-danger'"></i> </td>
+                                <td><i class="fa" [class]="(row.status)? 'fa-check text-success': 'fa-close text-danger'"></i></td>
+                                <td> <a class="text-primary" (click)="editCommunication(row)">Edit</a></td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<div id="content" class="app-content box-shadow-0" role="main">
+  <div class="navbar flex-nowrap box-shadow">
+    <a data-toggle="modal" data-target="#content-aside" data-modal=""
+       class="mr-1 d-md-none" data-pjax-state="">
+      <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+    </a>
+    <a class="no-shadow">
+      <h6 class="mb-0"> {{page?.title }}</h6>
+      <small class="float-left pl-4">{{page?.desc  }}</small>
+    </a>
+    <ul class="nav nav-xs flex-row no-border">
+      <li class="nav-item">
+        <div class="btn-group float-right">
+          <ng-template ngFor let-row [ngForOf]="menuItem" let-j="index">
+            <button type="button" class="btn btn-sm btn-outline b-primary" (click)="showData(row)">{{row.name}}</button>
+          </ng-template>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <!--<div class="content-main d-flex flex">
+    <div class="d-flex flex">
+      <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+
+          <div class="navbar flex-nowrap box-shadow">
+            <p> <span class="text-danger"><b>Notice</b>:</span> <span class="text-warning"> This Page is under construction... </span> </p>
+          </div>
+          <div class="scrollable hover d-flex flex-column flex box mb-0 bg-transparent">
+            <div class="p-3">
+              <calendar-day *ngIf="activeView  == 'd'"></calendar-day>
+              <calendar-week *ngIf="activeView  == 'w'"></calendar-week>
+              <calendar-month *ngIf="activeView  == 'm'"></calendar-month>
+              <calendar-year *ngIf="activeView  == 'y'"></calendar-year>
+              <calendar-timeline *ngIf="activeView  == 'timeline'"></calendar-timeline>
+            </div>
+            <loader [isLoading]="isLoading"></loader>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>-->
+  <div class="content-main d-flex flex">
+    <div class="d-flex flex">
+      <div class="scrollable hover d-flex flex-column flex box mb-0 bg-transparent">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

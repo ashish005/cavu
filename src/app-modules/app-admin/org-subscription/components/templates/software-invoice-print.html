@@ -1,0 +1,36 @@
+<div class="d-flex flex" role="main">
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap white lt box-shadow d-print-none">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                           data-pjax-state="">
+                            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                        </a>
+                        <span class="text-md text-ellipsis flex">Invoice #{{orgSetup?.license?.licenseNo}}</span>
+                        <ul class="nav nav-xs flex-row no-border">
+                            <li class="px-1">
+                                <button class="btn btn-xs b-theme theme float-right" (click)="printPage()">Print</button>
+                            </li>
+                            <li class="px-1">
+                                <button class="btn btn-xs b-theme theme float-right" (click)="downloadPdf()">Download PDF</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="scrollable container box-shadow-6 p-0">
+                        <subscription-html-print #docPrint></subscription-html-print>
+                    </div>
+
+                    <!--<subscription-pdf-print #docPrint></subscription-pdf-print>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>

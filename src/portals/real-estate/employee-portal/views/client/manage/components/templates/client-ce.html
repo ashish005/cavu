@@ -1,0 +1,139 @@
+<form [formGroup]="customForm" class="d-flex flex">
+    <div class="flex-column p-3">
+        <div class="row row-sm">
+            <div class="col-4">
+                <div class="row d-flex align-items-stretch">
+                    <div class="col-sm-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="companyName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['companyName'].errors }">
+                            <label> Company Name </label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="top-right text-xs">
+                            <label class="text-right md-check"  style="z-index: 1; right: 15px;">
+                                <input type="checkbox" formControlName="isRegistered"><i class="theme"></i> Is Registered
+                            </label>
+                        </div>
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="registrationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+                            <label> Registration No </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date" formControlName="registrationDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationDate'].errors }">
+                            <label> Registration Date </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="taxRegistrationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['taxRegistrationNo'].errors }">
+                            <label> Tax No </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="address"
+                                   [ngClass]="{ 'is-invalid': submitted && f['address'].errors }">
+                            <label> Address </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="pincode"
+                                   [ngClass]="{ 'is-invalid': submitted && f['pincode'].errors }">
+                            <label> Pin code </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 box">
+                <span class="_500 text-xs">Primary Contact</span>
+                <div class="box-body row d-flex flex-row align-items-stretch">
+                    <!--<div class="col-sm-2">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="title"
+                                   [ngClass]="{ 'is-invalid': submitted && f.title.errors }">
+                            <label> Title </label>
+                        </div>
+                    </div>-->
+                    <div class="col-sm-5">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="fName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+                            <label> First Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="lName"
+                                   [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+                            <label> Last Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date" formControlName="dob"
+                                   [ngClass]="{ 'is-invalid': submitted && f['dob'].errors }">
+                            <label> DOB </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="email"
+                                   [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+                            <label> Email </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" type="text" formControlName="phone"
+                                   [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+                            <label> Phone </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <select-dropdown [items]="apiResolver?.masterType?.gender"
+                                         title="Gender"
+                                         (cb)="updateGender($event)"
+                                         [control]="formGenderId"></select-dropdown>
+                    </div>
+                    <div class="col-sm-3">
+                        <select-dropdown [items]="apiResolver?.masterType?.maritalStatus"
+                                         title="Marital Status"
+                                         (cb)="updateMaritalStatus($event)"
+                                         [control]="formMaritalStatusId"></select-dropdown>
+                    </div>
+                    <div class="col-sm-2">
+                        <select-dropdown [items]="apiResolver?.masterType?.bloodGroup"
+                                         title="Blood Group"
+                                         (cb)="updateBloodGroup($event)"
+                                         [control]="formBloodGroupId"></select-dropdown>
+                    </div>
+                    <div class="col-sm-4">
+                        <select-dropdown [items]="apiResolver?.masterType?.nationality"
+                                         title="Nationality"
+                                         (cb)="updateNationality($event)"
+                                         [control]="formNationalityId"></select-dropdown>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

@@ -1,0 +1,18 @@
+<table class="table table-condensed m-0" style="background: none" [formGroup]="customForm">
+  <tbody formArrayName="modulePermission">
+    <ng-template ngFor let-rule [ngForOf]="formRuleItem?.controls" let-i="index">
+      <tr [formGroup]="rule">
+        <td style="width: 150px;"><span> {{rule.get('name').value}} </span></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="fullAccess" (change)="updateAllFields($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="view" (change)="onViewCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="modify" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="create" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="delete" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="destroy" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="import" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="export" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+        <td><label class="md-check"><input type="checkbox" formControlName="manage" (change)="onCheckChange($event.target.checked, rule)"><i></i><span></span></label></td>
+      </tr>
+    </ng-template>
+  </tbody>
+</table>

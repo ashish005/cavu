@@ -1,0 +1,92 @@
+<a class="text-primary" [ngbPopover]="content" placement="auto"
+   popoverTitle="New Variant"
+   container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Add Variant</a>
+<ng-template #content>
+    <form [formGroup]="customForm">
+        <div class="d-flex" style="width: 500px;">
+            <div class="flex-column">
+                <div class="row d-flex flex-row align-items-stretch" formGroupName="variant">
+                    <div class="col-sm-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="name">
+                            <label> Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="description">
+                            <label> Description </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="barCode">
+                            <label> Barcode </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="sku">
+                            <label> SKU </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="md-switch">
+                            <input type="checkbox" checked="checked" formControlName="isFeatured"><i class="theme"></i> Featured
+                        </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input class="md-input" formControlName="purchaseHoldingQty" placeholder="Stock" type="text">
+                    </div>
+                    <div class="col-sm-4">
+                        <select-dropdown [items]="apiResolver?.masterType?.unitTypes"
+                                         title="Unit"
+                                         (cb)="updateUnitType($event)"
+                                         [control]="formUnitTypeId"></select-dropdown>
+                    </div>
+                </div>
+                <div class="row lt d-flex align-items-stretch">
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" type="number" formControlName="mrp" [ngClass]="{ 'is-invalid': submitted && f['mrp'].errors }">
+                            <label> MRP </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="retailPrice" [ngClass]="{ 'is-invalid': submitted && f['retailPrice'].errors }">
+                            <label> Cost/ Retail Price </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" type="number" formControlName="supplyPrice" [ngClass]="{ 'is-invalid': submitted && f['supplyPrice'].errors }">
+                            <label> Supply Price </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date" formControlName="validFrom" [ngClass]="{ 'is-invalid': submitted && f['validFrom'].errors }">
+                            <label> Valid From </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="md-switch">
+                            <input type="checkbox" checked="checked" formControlName="isTaxInclusive"><i class="theme"></i> Tax Inclusive
+                        </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="md-switch">
+                            <input type="checkbox" checked="checked" formControlName="isFixedPrice"><i class="theme"></i> Fixed Price
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popover__controls d-flex justify-content-end">
+            <button class="btn btn-xs btn-success text-xs mx-2" (click)="saveForm(customForm, p);">Create</button>
+            <button class="btn btn-xs btn-danger text-xs" (click)="p.close()">Cancel</button>
+        </div>
+    </form>
+    <loader [isLoading]="submitted"></loader>
+</ng-template>

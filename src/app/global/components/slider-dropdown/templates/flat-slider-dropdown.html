@@ -1,0 +1,21 @@
+<div class="content">
+    <div *ngIf="hasNoChild"><a class="btn btn-xs title _500">{{activeItem?.name}}</a></div>
+    <div class="dropdown open" *ngIf="!hasNoChild">
+        <a class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{name || '-- Please Select --'}}</a>
+        <div class="dropdown-menu w-100" x-placement="bottom-start">
+            <ng-template ngFor let-record [ngForOf]="records" let-i="index">
+                <div class="dropdown-item">
+                    <div class="float-right py-1 text-xs _500">{{record?.name}}</div>
+                    <div class="nav-active-border">
+                        <ul class="nav text-xs _500">
+                            <ng-template ngFor let-item [ngForOf]="record?.children" let-i="index">
+<!--                              [class.active]="activeChild?.id === item?.id"-->
+                              <li class="nav-item" (click)="selectedChildData(record, item)"><a class="nav-link p-1"> {{item?.name}}</a></li>
+                            </ng-template>
+                        </ul>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

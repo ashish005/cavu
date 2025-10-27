@@ -1,0 +1,76 @@
+<div id="content" class="app-content box-shadow-0" role="main">
+  <div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex" data-plugin="mail">
+      <div class="fade aside aside-sm" id="content-aside">
+        <div class="modal-dialog d-flex flex-column w-md light lt" id="mail-nav">
+          <div class="navbar no-shadow">
+            <a>
+              <h6 class="mb-0"> My Conversation</h6>
+              <small class="float-left pl-4"></small>
+            </a>
+          </div>
+          <div class="d-block p-3">
+            <button class="btn btn-sm btn-block btn-rounded theme" (click)="newConversation()"><i class="fa fa-plus float-left"></i> New</button>
+          </div>
+          <div class="scrollable hover">
+            <div class="sidenav my-3">
+              <nav class="nav-border b-theme" data-nav="">
+                <ul class="nav">
+                  <li [class.active]="isInbox">
+                    <a [routerLink]="['inbox']">
+                      <!--<span class="nav-badge"><b class="badge badge-pill success">15</b> </span>-->
+                      <span class="nav-icon"><i class="fa fa-inbox"></i> </span>
+                      <span class="nav-text name">Inbox</span>
+                    </a>
+                  </li>
+                  <li [class.active]="isSent">
+                    <a [routerLink]="['sent']" >
+                      <!--<span class="nav-badge"><b class="badge badge-pill">4</b> </span>-->
+                      <span class="nav-icon"><i class="fa fa-paper-plane"></i></span>
+                      <span class="nav-text name">Sent</span>
+                    </a>
+                  </li>
+                  <li [class.active]="isOutbox">
+                    <a [routerLink]="['outbox']" >
+                      <span class="nav-icon"><i class="fa fa-pencil-square"></i> </span>
+                      <span class="nav-text name">Outbox</span>
+                    </a>
+                  </li>
+                  <li [class.active]="isDraft">
+                    <a [routerLink]="['draft']" >
+                      <span class="nav-icon"><i class="fa fa-pencil-square"></i> </span>
+                      <span class="nav-text name">Draft</span>
+                    </a>
+                  </li>
+                  <!--<li><a ><span class="nav-icon"><i class="fa fa-trash"></i> </span><span class="nav-text name">Trash</span></a></li>
+                  <li class="nav-header"> <div class="b-t mt-3 pt-3 pb-2 text-muted">Labels</div> </li>-->
+                </ul>
+              </nav>
+            </div>
+          </div>
+          <div class="p-3 mt-auto">
+            <!--<div class="input-group">
+            <input type="text" class="form-control form-control-sm" id="newField" placeholder="New label" required="">
+            <span class="input-group-append"><button class="btn btn-default btn-sm no-shadow" type="button" id="newBtn"><i class="fa fa-plus text-muted"></i></button></span>
+            </div>-->
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex box-shadow">
+          <div class="navbar flex-nowrap box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+              <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+          </div>
+          <div class="content-main d-flex flex">
+            <div class="d-flex flex">
+              <router-outlet (activate)='onActivate($event)'></router-outlet>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="d-flex flex h-100">
+    <div id="content-body" class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="navbar flex-nowrap lt box-shadow">
+                <span class="_500 flex text-theme">{{software?.name}}</span>
+                <div class="nav-active-border b-warning bottom">
+                    <div class="nav nav-sm">
+                        <ng-template ngFor let-entity [ngForOf]="software?.licenseTypes | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="nav-link" [class.active]="licenseType?.id == entity.id" (click)="getModulesByLicense(entity)">{{ entity.name }}</a>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            <form [formGroup]="customForm">
+                <div formArrayName="modules" class="p-2 d-flex flex-wrap">
+                    <ng-template ngFor let-entity [ngForOf]="moduleForm.controls" let-i="index">
+                        <div class="dropdown" [formGroupName]="i">
+                            <div class="dropdown-menu pos-stc d-block m-1" role="menu">
+                                <p class="px-2 mb-0">
+                                    {{ entity.get('name').value }}
+                                    <label class="ui-switch primary float-right"><input type="checkbox"
+                                                                                        formControlName="status"><i></i></label>
+                                </p>
+                                <div class="dropdown-divider"></div>
+                                <div formArrayName="children">
+                                    <!--<ng-template ngFor let-item [ngForOf]="entity.get('children').controls" let-j="index">
+                                        <div [formGroupName]="j" class="px-2">
+                                            {{ item.get('name').value }}
+                                            <label class="ui-switch primary float-right">
+                                                <input type="checkbox" formControlName="status"><i></i>
+                                            </label>
+                                        </div>
+                                    </ng-template>-->
+                                    <div class="list">
+                                        <ng-template ngFor let-item [ngForOf]="entity.get('children').controls" let-j="index">
+                                            <div class="list-item p-0" data-id="item-1">
+                                                <div class="list-body">
+                                                    <a class="item-title _500">{{ item.get('name').value }}</a>
+                                                </div>
+                                                <div [formGroupName]="j">
+                                                    <!--<label class="ui-switch primary float-right">
+                                                        <input type="checkbox" formControlName="status"><i></i>
+                                                    </label>-->
+                                                    <label class="md-check"><input type="checkbox" formControlName="status"> <i class="green"></i></label>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<ng-template #footerTemplate>
+    <!--<ul class="nav nav-xs  no-border float-left">
+        <li class="nav-item mx-2">
+            <button class="btn white">{{ data.softwareLicense?.licenseType }} {{ data.softwareLicense?.licenseNo }} <i class="fa fa-check"></i></button>
+        </li>
+    </ul>-->
+    <ul class="nav nav-xs flex-row no-border float-right">
+        <!--<li class="nav-item mx-2">
+            <button class="btn btn-sm float-center" [disabled]="submitted" (click)="updateModules()">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin pr-2'></i>
+                {{ submitted ? 'Updating...' : 'Update Permission' }}
+            </button>
+        </li>-->
+        <li class="nav-item mx-2">
+            <button class="btn btn-sm float-center" [disabled]="submitted" (click)="updateModulesByLicenseType()">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin pr-2'></i>
+                {{ submitted ? 'Updating...' : 'Apply ' + licenseType?.name + ' License Permission' }}
+            </button>
+        </li>
+    </ul>
+</ng-template>

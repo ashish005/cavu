@@ -1,0 +1,69 @@
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="padding">
+            <div class="row m-2">
+                <div class="col-4">
+                    <small class="text-muted">Company Name</small>
+                    <div class="_500">{{apiResolver?.client?.companyName}}</div>
+                </div>
+                <div class="col-4">
+                    <small class="text-muted">Registration Date</small>
+                    <!--<div class="_500">{{apiResolver?.client?.registrationDate }}</div>-->
+                </div>
+                <div class="col-4">
+                    <small class="text-muted">Tax Registration No</small>
+                    <div class="_500">{{apiResolver?.client?.taxRegistrationNo}}</div>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-6">
+                    <small class="text-muted">Address</small>
+                    <div class="_500">
+                      <!--{{apiResolver?.client?['address']}}
+                      {{apiResolver?.client?['city']}}
+                      {{apiResolver?.client?['pinCode']}}-->
+                    </div>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-4">
+                    <small class="text-muted">Primary Contact</small>
+                    <div class="_500">{{apiResolver?.client?.name}}</div>
+                </div>
+                <div class="col-4">
+                    <small class="text-muted">Email</small>
+                    <div class="_500">
+<!--                      {{apiResolver?.client?.email}}-->
+                    </div>
+                </div>
+                <div class="col-4">
+                    <small class="text-muted">Phone</small>
+                    <div class="_500">
+                      <!--{{ apiResolver?.client['phone'] }}-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <!--<ng-template ngFor let-summary [ngForOf]="clientSummaryItems" let-i="index">
+                <div class="col-sm-6 col-lg-3">
+                    <dashboard-summary [id]="accountId" [type]="summary.type"></dashboard-summary>
+                </div>
+            </ng-template>-->
+        </div>
+        <!--<div class="row no-gutters">
+            <div class="col-sm-6 light lt">
+                <task-status-chart [id]="id" type="status" endpoint="customerDashboard"></task-status-chart>
+            </div>
+            <div class="col-sm-6">
+                <budget-chart [id]="id" type="accountanalysis" endpoint="customerDashboard"></budget-chart>
+            </div>
+        </div>-->
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="d-flex flex">
+    <div class="d-flex flex p-3">
+        <form [formGroup]="customForm" class="d-flex flex-column flex">
+            <div class="row row-sm">
+                <div class="col-sm-8">
+                    <ng-template ngFor let-trxnMode [ngForOf]="apiResolver?.masterType?.trxnModes" let-j="index">
+                        <label class="md-check">
+                            <input type="radio" name="modeTypeId" formControlName="modeTypeId" [value]="trxnMode.id"><i class="theme"></i>{{trxnMode?.name}}
+                        </label>
+                    </ng-template>
+                </div>
+                <div class="col-sm-6"><label class="md-switch"><input type="checkbox" formControlName="isDefault"><i class="theme"></i>Default</label></div>
+                <div class="col-sm-6"><label class="md-switch"><input type="checkbox" formControlName="isAllowed"><i class="theme"></i>Allowed</label></div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="row">
+                    <div class="col-sm-12 text-right">
+                        <button type="button" (click)="onSubmit(customForm)" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                            {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+<div>
+  <button type="button" class="btn btn-success" (click)="reset()">Reset Grid</button>
+  <br />
+  <br />
+  <div class="grid">
+    <org-grid [data]="data" [options]="gridOptions" (cb)="actionCb($event)" (update)="updateGrid($event)"></org-grid>
+    <div class="grid-msg-overlay" [hidden]="data.length">
+      <div class="msg">
+        <div class="center">
+          <span class="muted">Select Spreadsheet File</span>
+          <br />
+          <input type="file" accept=".xls,.xlsx,.ods" multiple="false" (change)="onFileChange($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

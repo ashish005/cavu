@@ -1,0 +1,65 @@
+<div class="app-content box-shadow-0" role="main">
+  <div class="navbar light lt p-0">
+    <div class="navbar flex-nowrap">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+    </div>
+    <ul class="nav nav-xs flex-row no-border">
+      <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['../../client']" routerLinkActive="active"><i class="fa fa-fw fa-magic"></i> Manage Clients</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" (click)="showProjectOrgProcess()"><i class="fa fa-hand-grab-o pr-2"></i>Project Stages</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" (click)="showMasterTypePopup()"><i class="fa fa-hand-grab-o pr-2"></i>Master Type</a>
+      </li>
+    </ul>
+  </div>
+  <div class="content-main d-flex flex">
+    <div class="d-flex flex">
+      <div class="d-flex flex-column flex">
+        <div class="d-flex flex scroll-y">
+          <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+      </div>
+      <!--<div class="fade aside aside-sm" id="next-schedule-nav">
+        <div class="d-flex flex-column w-xl b-r white modal-dialog">
+          <div class="navbar box-shadow">
+            <div class="input-group flex">Top Projects</div>
+            <select>
+              <option value="7">Next 7 Days</option>
+              <option value="30">Next 30 Days</option>
+              <option value="90">Next 3 Month</option>
+            </select>
+          </div>
+          <div class="scrollable hover">
+            <div class="list inset">
+              <div class="p-2 px-3 text-muted text-sm">Sale</div>
+              <ng-template ngFor let-row [ngForOf]="nextTaskRecords" let-j="index">
+                <div class="list-item">
+                  <div class="list-body">
+                    <a class="item-title _500" data-pjax-state="">{{row?.orgTaskName}}</a>
+                    <div class="item-except text-xs text-muted h-1x"><small>{{ row?.courseName }}</small></div>
+                    <div class="item-tag tag hide"></div>
+                  </div>
+                  <div class=" text-right">
+                    <span class="item-meta text-xs badge badge-sm badge-pill lt">  {{ row?.scheduleDate  }}</span>
+                    <span class="item-except text-xs text-muted h-1x"><small>{{row?.modifiedDate }} </small></span>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+            <div class="no-result">
+              <div class="p-4 text-center">No Results</div>
+            </div>
+          </div>
+          <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+        </div>
+      </div>-->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,171 @@
+<form [formGroup]="customForm" class="p-3">
+    <div class="row row-sm">
+        <div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="vehicleNo"
+                       [ngClass]="{ 'is-invalid': submitted && f['vehicleNo'].errors }">
+                <label> Vehicle No </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="registrationValidity"
+                       [ngClass]="{ 'is-invalid': submitted && f['registrationValidity'].errors }">
+                <label>Registration Validity</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.fuelTypes"
+                             title="Fuel Type"
+                             (cb)="updateFuelType($event)"
+                             [control]="formFuelTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-6">
+            <select-dropdown [items]="models"
+                             title="Model No"
+                             bindLabel="showName"
+                             (cb)="updateModel($event)"
+                             [control]="formModelId"></select-dropdown>
+        </div>
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input text-right" style="width: calc(100% - 70px);" formControlName="mileage" [ngClass]="{ 'is-invalid': submitted && f['mileage'].errors }">
+                <select class="md-input" formControlName="mileageType" style="width: 70px">
+                    <option *ngFor="let entity of apiResolver.masterType?.mileageTypes;" [ngValue]="entity.id"> {{entity.name}}</option>
+                </select>
+                <label class="text-xs text-muted m-0">Mileage</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-6">
+            <div class="box align-items-stretch">
+                <div class="box-header py-2">
+                    <h4 class="m-0 text-md"><span class="text-sm">Owner Information</span></h4>
+                </div>
+                <div class="box-body p-0 px-2">
+                    <div class="row row-sm">
+                        <div class="col-sm-12">
+                            <div class="top-right text-xs">
+                                Drive By Owner
+                                <label class="md-switch"><input type="checkbox" checked="checked"
+                                                                formControlName="isDriveByOwner"> <i class="theme"></i></label>
+                            </div>
+                            <div class="md-form-group float-label">
+                                <input class="md-input" formControlName="ownerName"
+                                       [ngClass]="{ 'is-invalid': submitted && f['ownerName'].errors }">
+                                <label>Owner Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="email" formControlName="ownerEmail"
+                                       [ngClass]="{ 'is-invalid': submitted && f['ownerEmail'].errors }">
+                                <label>Owner E-mail</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text" formControlName="ownerPhone"
+                                       [ngClass]="{ 'is-invalid': submitted && f['ownerPhone'].errors }">
+                                <label>Owner Mobile No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="box align-items-stretch">
+                <div class="box-header py-2">
+                    <h4 class="m-0 text-md"><span class="text-sm">Contractor Information</span></h4>
+                </div>
+                <div class="box-body p-0 px-2">
+                    <div class="row row-sm">
+                        <div class="col-sm-12">
+                            <user-type-ahead controlTitle="Contractor"
+                                             userType="vendor"
+                                             (cb)="updateContractorId($event)"
+                                             [controlId]="formContractorId.value"
+                                             [controlValue]="formContractor.value"></user-type-ahead>
+                        </div>
+                        <div class="col-sm-12">
+                            <select-dropdown [items]="apiResolver?.masterType?.contractTypes"
+                                             title="Contract Type"
+                                             (cb)="updateContractType($event)"
+                                             [control]="formContractTypeId"></select-dropdown>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="number" formControlName="contractAmount"
+                                       [ngClass]="{ 'is-invalid': submitted && f['contractAmount'].errors }">
+                                <label>Contract Amount</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <select-dropdown [items]="apiResolver?.masterType?.inspectionFrequencies"
+                                             title="Inspection Frequency"
+                                             (cb)="updateInspectionFrequency($event)"
+                                             [control]="formInspectionFrequency"></select-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-3">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="insuranceNo"
+                       [ngClass]="{ 'is-invalid': submitted && f['insuranceNo'].errors }">
+                <label>Insurance No</label>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="insuranceValidity"
+                       [ngClass]="{ 'is-invalid': submitted && f['insuranceValidity'].errors }">
+                <label>Insurance Validity</label>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.insuranceTypes"
+                             title="Insurance Type"
+                             (cb)="updateInsuranceType($event)"
+                             [control]="formInsuranceTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-4">
+            <select-dropdown [items]="apiResolver?.masterType?.insuranceCompanies"
+                             title="Insurance Companies"
+                             (cb)="updateInsuranceCompany($event)"
+                             [control]="formInsuranceCompanyId"></select-dropdown>
+        </div>
+    </div>
+    <div class="row row-sm">
+        <div class="col-sm-4">
+            <select-dropdown [items]="apiResolver?.masterType?.reportTypes"
+                             title="Report Type"
+                             (cb)="updateReportType($event)"
+                             [control]="formReportTypeId"></select-dropdown>
+        </div>
+        <div class="col-sm-4">
+            <select-dropdown [items]="apiResolver?.masterType?.plans"
+                             title="Payout Plan"
+                             (cb)="updatePlan($event)"
+                             [control]="formPlanId"></select-dropdown>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

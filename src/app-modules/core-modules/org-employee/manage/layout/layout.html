@@ -1,0 +1,19 @@
+<div class="app-content box-shadow-0" role="main">
+  <div class="navbar light lt p-0">
+    <div class="navbar flex-nowrap">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+    </div>
+    <ul class="nav nav-xs flex-row no-border">
+      <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['../master']"><i class="fa fa-hand-grab-o pr-2"></i>Master Type</a>
+      </li>
+    </ul>
+  </div>
+  <div class="content-main d-flex flex">
+    <router-outlet (activate)='onActivate($event)'></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="d-flex flex">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl b-r modal-dialog">
+            <div class="navbar box-shadow">
+                <div class="input-group flex">
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search"
+                           required="">
+                    <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                            class="fa fa-search text-muted"></i></button></span>
+                </div>
+            </div>
+            <a class="nav-link" (click)="createNewProduct()">
+               <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span>
+            </a>
+            <div class="scrollable hover">
+                <nav class="nav-border right b-theme" data-nav="">
+                    <ul class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <li class="list-item" (click)="activeProductClick(row)">
+                                <div class="list-body">
+                                    <a class="item-title _500">{{row?.name}}</a>
+                                    <div class="item-except text-sm text-muted h-1x">
+                                        <a class="d-inline-block text-center">
+                                            <a *ngIf="!row?.vendorId" class="text-xs text-danger" (click)="addToVendor(row)">Add Me</a>
+                                            <small class="text-xs"> {{row?.productType}}</small>
+                                            {{row?.vendor}}
+                                        </a>
+                                        <a class="d-inline-block px-2 b-l text-center b"> Executives
+                                            <small class="text-xs">{{row?.marginPercentage}}</small>
+                                        </a>
+                                    </div>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </nav>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                     [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="navbar flex-nowrap white nav-active-border box-shadow">
+                <a data-toggle="modal" data-target="#content-aside" data-modal="" data-pjax-state="" class="mr-1 d-md-none">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                </a>
+                <span class="text-xs text-ellipsis">
+                    {{data?.tradeName}}
+                    <div class="item-except text-xs h-1x">
+                        Reg No. <span class="text-muted">{{data?.registrationNo}} </span>
+                        Reg Date <span class="text-muted">{{data?.registrationDate }}</span>
+                        TaxNo <span class="text-muted">{{data?.taxNo}}</span>
+                    </div>
+                </span>
+            </div>
+            <div class="scroll-y d-flex flex-column flex">
+                <div class="d-flex flex-column flex">
+                    <product-ce #product [id]="gridRow?.id"
+                                (onOk)="productCallBack($event)"
+                    ></product-ce>
+                </div>
+            </div>
+            <div class="mt-auto b-t">
+                <ng-template *ngTemplateOutlet="product?.footerTemplate"></ng-template>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+$asset-svg-path: '/src/assets/svg';
+
+.quiz-img{
+  //background-image: url('#{$asset-svg-path}/quiz-q.svg');
+  -webkit-mask: url('/src/assets/svg/quiz-q.svg') no-repeat 50% 50%;
+  -webkit-filter: hue-rotate(220deg) saturate(5);
+  filter: hue-rotate(220deg) saturate(5);
+ }
+
+.preview {
+  filter: opacity(1);
+  background-color: #863788;
+}
+
+.pass {
+  filter: opacity(1);
+  background-color: #1C7E12;
+}
+
+.fail {
+  filter: opacity(1);
+  background-color: #D0011B;
+}

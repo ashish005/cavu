@@ -1,0 +1,63 @@
+<div class="login-container m-auto">
+    <div class="card boxshadow">
+        <div class="header">
+            <p class="lead">Login to your account</p>
+        </div>
+        <div class="body">
+            <div class="form-group" *ngIf="activeOrg">
+                <div class="dropdown dropup">
+                    <button class="btn white w-100">
+                        <span> {{activeOrg?.name}} </span>
+                    </button>
+                </div>
+            </div>
+            <form class="form-auth-small" name="loginForm" #f="ngForm" novalidate
+                  (ngSubmit)="f.form?.valid ? login(userLogin) :
+                          (!userName?.valid && showErrorAlert('UserName is required', 'Please enter a valid userName'));
+                          (!password?.valid && showErrorAlert('Password is required', 'Please enter a valid password'))">
+                <div class="form-group has-feedback">
+                    <label class="control-label sr-only" for="login-email">Email:</label>
+                    <div [ngClass]="{'has-success': f.submitted && userName?.valid, 'has-error' : f.submitted && !userName?.valid}">
+                        <input type="text" id="login-email" name="userName" placeholder="Enter email or username"
+                               autocomplete="username email" class="form-control" [(ngModel)]="userLogin.userName"
+                               #userName="ngModel"
+                               required/>
+                        <span *ngIf="f.submitted" class="glyphicon form-control-feedback"
+                              [ngClass]="{'glyphicon-ok ': userName?.valid, 'glyphicon-remove' : !userName?.valid}"
+                              aria-hidden="true"></span>
+                        <span class="errorMessage"
+                              *ngIf="f.submitted && !userName?.valid"> User Name is required </span>
+                    </div>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="control-label  sr-only" for="login-password">Password:</label>
+                    <div [ngClass]="{'has-success': f.submitted && password?.valid, 'has-error' : f.submitted && !password?.valid}">
+                        <input type="password" id="login-password" name="password" placeholder="Enter password"
+                               autocomplete="current-password" class="form-control" [(ngModel)]="userLogin.password"
+                               #password="ngModel" required/>
+                        <span *ngIf="f.submitted" class="glyphicon form-control-feedback"
+                              [ngClass]="{'glyphicon-ok ': password?.valid, 'glyphicon-remove' : !password?.valid}"
+                              aria-hidden="true"></span>
+                        <span class="errorMessage"
+                              *ngIf="f.submitted && !password?.valid"> Password is required </span>
+                    </div>
+                </div>
+                <div class="mb-3"><label class="md-check" style="opacity: 0.7;"><input type="checkbox"
+                                                                                       name="rememberMe"
+                                                                                       [(ngModel)]="userLogin.rememberMe"><i
+                        class="primary"></i> Keep me signed in</label></div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary btn-sm btn-block" [disabled]="isLoading"><i
+                            *ngIf="isLoading" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{isLoading ? 'Loggin in...' : 'Login'}}
+                    </button>
+                    <span class="text-danger pl-4" *ngIf="userLogin.message">{{userLogin.message}}</span>
+                </div>
+                <div class="form-group">
+                    <a [routerLink]="['/password-recover']" class="text-sm text-primary _500 float-left" data-pjax-state="">Forgot password?</a>
+                    <a *ngIf="!activeOrg" [routerLink]="['/trial']" class="text-sm text-primary _500 float-right" data-pjax-state="">Setup your Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

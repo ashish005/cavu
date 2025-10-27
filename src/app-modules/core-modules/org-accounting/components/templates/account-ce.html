@@ -1,0 +1,127 @@
+<form class="flex flex-row p-3" [formGroup]="customForm">
+    <div class="row row-sm">
+        <div class="col-sm-6">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                <label> Name </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="printName"
+                       [ngClass]="{ 'is-invalid': submitted && f['printName'].errors }">
+                <label> Print Name </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <select-dropdown [items]="flatAccountGroup"
+                             title="Account Group"
+                             (cb)="updateAccountGroup($event)"
+                             [control]="formAccountGroup"></select-dropdown>
+        </div>
+        <div class="col-sm-6">
+            <label class="py-2 md-switch">
+                <input type="checkbox" checked="checked" formControlName="billByBill"><i class="theme"></i>
+                <small>Bill By Bill</small>
+            </label>
+        </div>
+        <div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" type="number" formControlName="openingBalance"
+                       [ngClass]="{ 'is-invalid': submitted && f['openingBalance'].errors }">
+                <label> Opening Balance </label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" type="date" formControlName="openingBalanceDate"
+                       [ngClass]="{ 'is-invalid': submitted && f['openingBalanceDate'].errors }">
+                <label> Opening Balance Date </label>
+            </div>
+        </div>
+        <!--<div class="col-sm-4">
+            <div class="md-form-group">
+                <input class="md-input" type="number" formControlName="balance"
+                       [ngClass]="{ 'is-invalid': submitted && f.balance.errors }">
+                <label> Balance </label>
+            </div>
+        </div>-->
+    </div>
+    <div class="row row-xs mt-2 d-flex align-items-stretch">
+        <div class="col-sm-4">
+            <h6 class="text-sm text-muted">Credit</h6>
+            <div class="p-2 b-a light lt">
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="creditDaysSale"
+                               [ngClass]="{ 'is-invalid': submitted && f['creditDaysSale'].errors }">
+                        <label> Sale Credit Days </label>
+                    </div>
+                </div>
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="creditDaysPurchase"
+                               [ngClass]="{ 'is-invalid': submitted && f['creditDaysPurchase'].errors }">
+                        <label> Purchase Credit Days </label>
+                    </div>
+                </div>
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="creditLimit"
+                               [ngClass]="{ 'is-invalid': submitted && f['creditLimit'].errors }">
+                        <label> Credit Limit </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <h6 class="text-sm text-muted"> Year Wise Balance</h6>
+            <div class="p-2 b-a light lt">
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="currentYearBalance"
+                               [ngClass]="{ 'is-invalid': submitted && f['currentYearBalance'].errors }">
+                        <label> Current Year Balance </label>
+                    </div>
+                </div>
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="previousYearBalance"
+                               [ngClass]="{ 'is-invalid': submitted && f['previousYearBalance'].errors }">
+                        <label> Previous Year Balance </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <h6 class="text-sm text-muted">Qtr Balance</h6>
+            <div class="p-2 b-a light lt">
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="currentQtrBalance"
+                               [ngClass]="{ 'is-invalid': submitted && f['currentQtrBalance'].errors }">
+                        <label> Current Qtr Balance </label>
+                    </div>
+                </div>
+                <div class="d-block">
+                    <div class="md-form-group">
+                        <input class="md-input" type="number" formControlName="previousQtrBalance"
+                               [ngClass]="{ 'is-invalid': submitted && f['previousQtrBalance'].errors }">
+                        <label> Previous Qtr Balance </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                        [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

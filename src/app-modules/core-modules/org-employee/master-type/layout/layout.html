@@ -1,0 +1,35 @@
+<div class="d-flex flex">
+    <div class="fade aside aside-sm" id="content-aside">
+        <div class="modal-dialog d-flex flex-column w-md">
+            <div class="scrollable hover px-3">
+                <div class="list-group list-group-gap">
+                    <ng-template ngFor let-group [ngForOf]="items | sortBy:'asc': 'sortOrder'" let-i="index">
+                        <span *ngIf="group.isHeading" class="p-1 text-muted">{{group.key}}</span>
+                        <a *ngIf="!group.isHeading" class="list-group-item box p-1 px-2"
+                           [routerLink]="[group.route]" routerLinkActive="active">
+                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                            <i [class]="group.icon" class="pr-2"></i>{{group.key}}
+                        </a>
+                        <ng-template ngFor let-item [ngForOf]="group.children | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="list-group-item box p-1 px-2" [routerLink]="[item.route]" routerLinkActive="active">
+                                <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                                <i [class]="item.icon" class="pr-2"></i>{{item.key}}
+                            </a>
+                        </ng-template>
+                        <div class="p-2"></div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>
+<ng-template #pageTitleTemplate>
+    <a class="no-shadow">
+        <h6 class="mb-0">pageTitle</h6>
+        <small class="float-left">Management</small>
+    </a>
+</ng-template>

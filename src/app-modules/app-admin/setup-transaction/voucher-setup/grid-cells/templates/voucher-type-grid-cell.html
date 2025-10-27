@@ -1,0 +1,10 @@
+<a [ngbPopover]="content" placement="auto" popoverTitle="Phases"
+   container="body" #p="ngbPopover"
+   (mouseenter)="p.open()" (mouseleave)="p.close()">
+    {{ context.phases?.length }}
+</a>
+<ng-template #content>
+    <div class="list-group text-xs">
+        <a class="list-group-item p-1" [style.color]="phase.color" *ngFor="let phase of context.phases | sortBy:'asc': 'sortOrder'">{{phase.name}}</a>
+    </div>
+</ng-template>

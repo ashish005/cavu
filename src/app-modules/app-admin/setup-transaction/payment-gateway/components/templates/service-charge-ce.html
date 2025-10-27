@@ -1,0 +1,82 @@
+<form [formGroup]="customForm" class="content-main d-flex flex">
+    <div class="d-flex flex">
+        <div class="d-flex flex-column w-md" *ngIf="gateway?.isPOS">
+            <div class="navbar">
+                <div class="input-group flex">
+                    <!--<input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required=""> <span class="input-group-btn"><button
+                    class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>-->
+                    <span class="item-title _500">  </span>
+                </div>
+            </div>
+            <div class="scrollable hover px-3">
+                <div class="list-group list-group-gap">
+                    <span class="p-1 text-muted">Card  Types</span>
+                    <ng-template ngFor let-cardType
+                                 [ngForOf]="apiResolver.masterType?.cardTypes | sortBy:'asc': 'sortOrder'"
+                                 let-i="index">
+                        <a class="list-group-item box p-1 px-2" (click)="showCardTypes(cardType)">
+                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>{{cardType.name}}
+                        </a>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>
+        </div>
+        <div class="d-flex flex">
+            <div class="d-flex flex-column flex">
+                <div class="navbar no-radius box-shadow pos-rlt">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                       data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                    </a>
+                    <div class="no-shadow">
+                        <h6 class="mb-0">{{gateway?.name}}</h6>
+                        <small class="float-left">{{ modeMapper?.modeName }}</small> <small *ngIf="cardType" class="float-left px-2 text-success _500">Card: {{cardType?.name}}</small>
+                    </div>
+                    <ul class="nav nav-xs flex-row no-border float-right">
+                        <li class="nav-item b-l pl-2">
+                            <button class="btn btn-sm btn-block b-a b-theme text-theme btn-rounded theme"
+                                    (click)="addCharges()">
+                                <i class="fa fa-plus pr-2"></i> Add New
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="px-3">
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th *ngIf="gateway?.isPOS">Card</th>
+                            <th>Service Charge %</th>
+                            <th>Tax Rate %</th>
+                            <th>Trxn Amount From</th>
+                            <th>Trxn Amount To</th>
+                            <th>Status</th>
+                            <th *ngIf="!customForm.disabled"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="scrollable hover h-100" formArrayName="serviceCharges">
+                        <ng-template ngFor let-charge [ngForOf]="formGatewayServiceCharges.controls" let-i="index">
+                            <ng-container [formGroup]="charge">
+                                <tr>
+                                    <td *ngIf="gateway?.isPOS">{{charge.value.cardTypeName}}</td>
+                                    <td><input class="md-input" formControlName="serviceChargeRate"></td>
+                                    <td><input class="md-input" formControlName="taxRate"></td>
+                                    <td><input class="md-input" formControlName="trxnAmountFrom"></td>
+                                    <td><input class="md-input" formControlName="trxnAmountTo"></td>
+                                    <td><label class="md-switch float-right">
+                                        <input type="checkbox" formControlName="status"><i class="theme"></i></label>
+                                    </td>
+                                    <td *ngIf="!customForm.disabled">
+                                        <a class="btn btn-xs text-xs text-primary" (click)="applyCharges(charge)">Apply</a>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

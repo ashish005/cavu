@@ -1,0 +1,22 @@
+<div class="nav-active-border">
+  <ul class="nav">
+    <li class="nav-item" *ngFor="let nav of data">
+      <a class="nav-link" [routerLink]="nav.routeTo" routerLinkActive="active">{{nav?.name}}</a>
+    </li>
+  </ul>
+</div>
+<!--
+<div class="nav-active-border b-info">
+  <ul class="nav" >
+    <li class="nav-item" *ngFor="let item of activeNav?.children" [routerLink]="item.routeTo" routerLinkActive="active" >
+      <a class="nav-link">
+        <span class="nav-icon" *ngIf="item?.icon">
+          <i [class]="item?.icon"></i>
+        </span>
+        <span class="nav-icon" style="width: .5rem !important;" *ngIf="!item?.icon"></span>
+        <span class="nav-text">{{ item?.name }}</span>
+      </a>
+    </li>
+  </ul>
+</div>
+-->

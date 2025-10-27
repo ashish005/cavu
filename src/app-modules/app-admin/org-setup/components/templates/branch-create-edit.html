@@ -1,0 +1,101 @@
+<form class="d-flex flex"  [formGroup]="customForm" (submit)="onSubmit(customForm)">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover">
+            <div class="p-3">
+                <div class="row row-sm">
+                    <div class="col-sm-8">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="name"
+                                   [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                            <label> Name </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="branchCode"
+                                   [ngClass]="{ 'is-invalid': submitted && f.branchCode.errors }">
+                            <label> Branch Code </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="md-form-group">
+                            <input type="text" class="md-input" formControlName="address"
+                                   [ngClass]="{ 'is-invalid': submitted && f.address.errors }">
+                            <label> Address </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input type="date" class="md-input" formControlName="establishedDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f.establishedDate.errors }">
+                            <label> Established Date </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="box">
+                            <div class="box-body">
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <div class="md-form-group">
+                                            <input type="text" class="md-input" formControlName="contactName"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.contactName.errors }">
+                                            <label> Contact Person Name </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-sm-4">
+                                        <div class="md-form-group">
+                                            <input type="text" class="md-input" formControlName="contactNo1"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.contactNo1.errors }">
+                                            <label> Contact No 1 </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="md-form-group">
+                                            <input type="text" class="md-input" formControlName="emailId1"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.emailId1.errors }">
+                                            <label> Contact Email 1 </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-sm-4">
+                                        <div class="md-form-group">
+                                            <input type="text" class="md-input" formControlName="contactNo2"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.contactNo2.errors }">
+                                            <label> Contact No 2 </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="md-form-group">
+                                            <input type="text" class="md-input" formControlName="emailId2"
+                                                   [ngClass]="{ 'is-invalid': submitted && f.emailId2.errors }">
+                                            <label> Contact Email 2 </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="col-sm-4">
+                      <div class="md-form-group">
+                        <input type="checkbox" class="md-input" formControlName="isSelfAdministration" [ngClass]="{ 'is-invalid': submitted && f.isSelfAdministration.errors }">
+                        <label> Is Self Administration </label>
+                      </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div class="white lt b-t mt-auto">
+            <div class="float-left p-2">
+                <status-check [customForm]="customForm"></status-check>
+            </div>
+            <div class="float-right">
+                <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,8 @@
+<div class="list-group list-group-gap">
+    <ng-template ngFor let-row [ngForOf]="entities" let-j="index">
+        <div class="list-group-item box">{{row.name}}</div>
+    </ng-template>
+</div>
+<div class="no-result b-a" *ngIf="!entities?.length">
+    <div class="p-4 text-center">No Results</div>
+</div>

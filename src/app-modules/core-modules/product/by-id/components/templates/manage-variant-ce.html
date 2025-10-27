@@ -1,0 +1,81 @@
+<div class="d-flex flex">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl b-r modal-dialog">
+            <div class="navbar box-shadow">
+                <div class="input-group flex">
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required="">
+                    <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>
+                </div>
+            </div>
+            <a class="nav-link" (click)="createNew()"><span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span></a>
+            <div class="scrollable hover">
+                <nav class="nav-border right b-theme" data-nav="">
+                    <ul class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <li class="list-item" (click)="onRowClick(row)">
+                                <div class="list-body">
+                                    <a class="item-title _500">{{row?.name}}</a>
+                                    <small class="float-right">{{row?.barCode}}</small>
+                                    <div class="item-except text-sm text-muted h-1x">
+                                        <!--<a class="d-inline-block text-xs text-center pr-2 b-r">
+                                            MRP <small class="text-xs">{{row?.mrp}}</small>
+                                        </a>
+
+                                        <a class="d-inline-block text-center px-2 b">
+                                            <small *ngIf="!row?.isTaxInclusive" class="text-l-t">Tax Inclusive</small>
+                                            <small *ngIf="row?.isTaxInclusive" class="text-success">Tax Inclusive</small>
+                                        </a>
+                                        <a class="d-inline-block px-2 b-l text-center b">
+                                            <small *ngIf="!row?.isFixedPrice" class="text-l-t">Tax Inclusive</small>
+                                            <small *ngIf="row?.isFixedPrice" class="text-success">Fixed Price</small>
+                                        </a>-->
+                                    </div>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </nav>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <div class="mt-auto">
+                <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                     [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="navbar flex-nowrap white nav-active-border box-shadow">
+                <a data-toggle="modal" data-target="#content-aside" data-modal="" data-pjax-state="" class="mr-1 d-md-none">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                </a>
+                <span class="text-sm text-ellipsis">
+                    {{ data?.name }}
+                    <small class="text-xs">{{ data?.code }}</small>
+                    <div class="item-except text-xs h-1x">
+                        <a class="d-inline-block text-xs text-center pr-2 b-r text-muted">{{data?.productType}} Product</a>
+                        <a class="d-inline-block text-xs text-center pr-2">Vendor: <span class="text-muted">{{data?.vendorName}}</span></a>
+                    </div>
+                </span>
+                <div class="float-right">
+                    Tax:<small class="text-right">{{ data?.taxInfo?.name }}</small>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="scroll-y">
+                        <product-variant-ce #variant [id]="gridRow?.id" [productId]="productId"
+                                            [data]="gridRow" (onOk)="callback($event)"
+                        ></product-variant-ce>
+                    </div>
+                    <div class="mt-auto b-t">
+                        <ng-template *ngTemplateOutlet="variant?.footerTemplate"></ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

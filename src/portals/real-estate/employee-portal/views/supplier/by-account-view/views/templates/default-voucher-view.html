@@ -1,0 +1,58 @@
+<ng-template #actionTemplate>
+    <li class="nav-item mr-2">
+        <button class="btn btn-sm btn-block btn-rounded theme" (click)="addNew()">
+            <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+        </button>
+    </li>
+    <li class="nav-item mr-2">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-plus pr-2"></i> New Invoice
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                <li class="dropdown-item"
+                    *ngFor="let voucherType of lookups?.voucherOptionTypes; let i = index;">
+                    <i class="fa fa-dot-circle-o text-success"></i>
+                    <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt">
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+                </li>
+            </ul>
+            <ul class="nav nav-xs flex-row no-border float-right">
+                <!--<li class="nav-item">
+                    <master-search></master-search>
+                </li>-->
+                <li class="nav-item">
+                    <button class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title="" data-original-title="Sort"><i class="fa fa-sort"></i></button>
+                </li>
+            </ul>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      [isLoading]="isLoading"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="d-flex flex">
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex">
+            <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+                <org-grid [data]="gridData"
+                          [options]="gridOptions"
+                          [isLoading]="isLoading"
+                          (cb)="actionCb($event)"
+                          (update)="updateGrid($event)"></org-grid>
+            </div>
+        </div>
+    </div>
+    <div class="fade aside aside-sm" id="content-aside">
+        <div class="d-flex flex-column w-xl b-r white modal-dialog" id="chat-nav">
+            <div class="navbar box-shadow">
+                <div class="input-group flex"><input type="text"
+                                                     class="form-control px-0 no-bg no-border no-shadow search"
+                                                     placeholder="Search" required=""> <span class="input-group-btn"><button
+                        class="btn no-bg no-border no-shadow" type="button"><i
+                        class="fa fa-search text-muted"></i></button></span></div>
+            </div>
+            <div class="scrollable hover">
+                <div class="list inset">
+                    <div class="p-2 px-3 text-muted text-sm">App Supported Currencies</div>
+                    <ng-template ngFor let-d
+                                 [ngForOf]="apiResolver.masterType.currencies | sortBy:'asc': 'sortOrder'"
+                                 let-i="index">
+                        <div class="list-item p-1">
+                            <div class="list-body p-0">
+                                <a class="item-title text-xs _500">
+                                    {{ d.name }} {{ d.currencyCode }} {{ d.symbol }}
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn btn-xs text-xs text-success border" (click)="add(d)"><i class="fa fa-plus pr-1"></i>Add to my Org</a>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #actionTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{pageTitle  }} </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
+<ng-template #routerActionTemplate>
+    <div class="nav-active-border b-theme px-4 px-md-0">
+        <ul class="nav nav-xs flex-row">
+            <li class="nav-item"><a class="nav-link" [routerLink]="['../language']">Language</a></li>
+            <li class="nav-item"><a class="nav-link active">Currency</a></li>
+        </ul>
+    </div>
+</ng-template>

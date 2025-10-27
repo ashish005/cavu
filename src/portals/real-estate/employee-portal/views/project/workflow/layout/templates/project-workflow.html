@@ -1,0 +1,11 @@
+<!--<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-xs">
+            <li class="nav-item" (click)="openTab(tabs.process)"><a class="nav-link" [class.active]="tabs.process == activeTab">Process</a></li>
+            <li class="nav-item" (click)="openTab(tabs.task)"><a class="nav-link" [class.active]="tabs.task == activeTab">Task</a></li>
+        </ul>
+    </div>
+</ng-template>-->
+<div class="d-flex flex">
+    <project-workflow-manage [projectId]="projectId" [moduleId]="moduleId"></project-workflow-manage>
+</div>

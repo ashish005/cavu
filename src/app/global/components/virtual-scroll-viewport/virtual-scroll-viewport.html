@@ -1,0 +1,19 @@
+<cdk-virtual-scroll-viewport #scrollViewport [itemSize]="10" [style.height.vh]="100" class="list-container list-group" autosize>
+  <div *cdkVirtualFor="let row of list; let even = even; let i = index" class="list-group-item p-0">
+    <dynamic-content [context]="row" [component]="rowTemplate" [class.even]="even"></dynamic-content>
+  </div>
+  <!--(scrolledIndexChange)="scrollIndexChanged($event)"-->
+  <!--<table>
+    <thead>
+    <tr>
+      <th [style.transform]="inverseTranslation">Header 1</th>
+      <th [style.transform]="inverseTranslation">Header 2</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *cdkVirtualFor="let row of list; let i = index" [class.even]="even">
+      <dynamic-content [context]="row" [component]="rowTemplate" [class.even]="even"></dynamic-content>
+    </ng-container>
+    </tbody>
+  </table>-->
+</cdk-virtual-scroll-viewport>

@@ -1,0 +1,421 @@
+{
+  "app": {
+    "Welcome": "Welcome",
+    "Notifications": "Notifications",
+    "New": "New",
+    "NoNetwork": "No Network",
+    "ServerCannotBeReached": "The server cannot be reached",
+    "AccessDenied": "Access Denied!",
+    "alerts": {
+      "SessionExpired": "Session Expired",
+      "SessionExpiredLoginAgain": "Your Session has expired. Please log in again",
+      "SessionExpiredLoginToRenewSession": "Your Session has expired. Please log in again to renew your session",
+      "Login": "Login",
+      "WelcomeBack": "Welcome back {{username}}!",
+      "SessionEnded": "Session Ended!",
+      "LoadingError": "Loading Error",
+      "LoadingNewNotificationsFailed": "Loading new notifications from the server failed!",
+      "NotificationError": "Notification Error",
+      "MarkingReadNotificationsFailed": "Marking read notifications failed",
+      "OK": "OK",
+      "Cancel": "Cancel"
+    }
+  },
+  "mainLayout": {
+    "heading": {
+      "main": "Main",
+      "contact": "Contact",
+      "acc_fin": "Account & Finance",
+      "inv_trxn": "Invoices & Tansaction",
+      "admin": "Administration",
+      "license": "License",
+      "others": "Others"
+    },
+    "dashboard": "Dashboard",
+    "associates": "Associates",
+    "invoice": "Invoice",
+    "quote": "Quote",
+    "sale_order": "sale_order",
+    "purchase_order": "purchase_order",
+    "services": "Services",
+    "executives": "Executives",
+    "project": "Project",
+    "svc_product": "Service/ Product",
+    "ofc_expense": "Office Expense",
+    "user": { "employee": "employee", "supplier": "Supplier", "client": "Client", "student": "Student" },
+    "acct": { "account": "Accounts",  "book": "Account book", "invoice": "Vouchers", "inventory": "Inventory Trxn", "fin_report": "Financial Report", "mng_report": "Management Report" },
+    "integration": "Integration",
+    "reminder": "Reminder",
+    "calendar": "Org Calendar",
+    "edu": { "fee" : "Student fee", "plan": "Fee Plan", "class": "class", "course": "course", "batch_session": "Batch & session" },
+    "license": { "info" : "Plan & License Info", "payment": "Payment", "history": "License History", "invoice": "S/w Invoices" },
+    "my": { "task" : "My Task", "inbox": "My Inbox" },
+    "setting_options": { "profile": "Profile", "sign_out": "Sign Out", "scheduler": "Scheduler" },
+    "logout": "Logout"
+  },
+  "pageHeader": {
+    "Dashboard": "Dashboard",
+    "Customers": "Customers",
+    "Products": "Products",
+    "Orders": "Orders",
+    "NotFound": "Not-Found",
+    "About": "About",
+    "Settings": "Settings"
+  },
+  "login": {
+    "Login": "Login",
+    "LoggingIn": "Logging in...",
+    "Username": "Username:",
+    "UsernamePlaceholder": "Enter username",
+    "UsernameRequired": "Username is required",
+    "Password": "Password:",
+    "PasswordPlaceholder": "Enter password",
+    "PasswordRequired": "Password is required",
+    "RememberMe": "Remember me",
+    "ConnectWith": "or Connect with:",
+    "RegisterIntro": "Don't have an account?",
+    "Register": "Register",
+    "RecoverPassword": "Forgot password?",
+    "alerts": {
+      "UsernameRequired": "Username is required",
+      "EnterValidUsername": "Please enter a valid username",
+      "PasswordRequired": "Password is required",
+      "EnterValidPassword": "Please enter a valid password",
+      "AttemptingLogin": "Attempting login...",
+      "Login": "Login",
+      "RedirectingToGoogle": "Redirecting to google...",
+      "RedirectingToFacebook": "Redirecting to facebook...",
+      "RedirectingToTwitter": "Redirecting to twitter...",
+      "RedirectingToMicrosoft": "Redirecting to microsoft...",
+      "Welcome": "Welcome {{username}}!",
+      "UserSessionRestored": "Session for {{username}} restored!",
+      "SessionRestored": "Session Restored",
+      "RetryLastOperation": "Please try your last operation again",
+      "UnableToLogin": "Unable to login",
+      "LoginErrorOccurred": "An error occurred whilst logging in, please try again later.\nError: {{error}}",
+      "InvalidUsernameOrPassword": "Invalid username or password",
+      "AccountDisabled": "This account has been disabled",
+      "DeveloperDemoApiNotice": "Dear Developer!\nIt appears your backend Web API service is not running...\nWould you want to temporarily switch to the online Demo API below?(Or specify another)",
+      "ApiChanged": "API Changed!",
+      "ApiChangedTo": "The target Web API has been changed to: {{API}}"
+    }
+  },
+  "authCallback": {
+    "LinkAccount": "Link {{provider}} account",
+    "ExistingAccountFound": "We found an account with this email address. Login with your existing password to link with your {{provider}} account.",
+    "Email": "Email:",
+    "googleProvider": "google",
+    "facebookProvider": "facebook",
+    "twitterProvider": "twitter",
+    "microsoftProvider": "microsoft",
+    "ConnectingToTwitter": "Connecting to twitter...",
+    "Processing": "Processing...",
+    "Error": "Error.",
+    "alerts": {
+      "InvalidLogin": "Invalid login",
+      "NoValidTokensFound": "No valid tokens found",
+      "SigningIn": "Signing in...",
+      "UserAlreadyExists": "User already exists"
+    }
+  },
+  "register": {
+    "RegisterUser": "Register new user",
+    "Username": "Username:",
+    "UsernamePlaceholder": "Enter username",
+    "UsernameRequired": "Username is required",
+    "Email": "Email:",
+    "EmailPlaceholder": "Enter email",
+    "EmailRequired": "Email is required",
+    "InvalidEmail": "Invalid email address",
+    "Password": "Password:",
+    "PasswordPlaceholder": "Enter password",
+    "PasswordRequired": "Password is required",
+    "ConfirmPassword": "Confirm Password:",
+    "ConfirmPasswordPlaceholder": "Enter confirmation password",
+    "ConfirmPasswordRequired": "Confirmation password is required",
+    "PasswordMismatch": "Password does not match confirmation password",
+    "Register": "Register",
+    "Processing": "Processing...",
+    "LoginIntro": "Already have an account?",
+    "Login": "Login",
+    "RecoverPassword": "Forgot password?",
+    "alerts": {
+      "UsernameRequired": "User name is required",
+      "EnterUsername": "Please enter a user name (minimum of 2 and maximum of 200 characters)",
+      "EmailRequired": "Email is required",
+      "EnterEmail": "Please enter an email address (maximum of 200 characters)",
+      "InvalidEmail": "Invalid Email",
+      "EnterValidEmail": "Please enter a valid email address",
+      "NewPasswordRequired": "New password is required",
+      "EnterNewValidPassword": "Please enter the new password (minimum of 6 characters)",
+      "ConfirmationPasswordRequired": "Confirmation password is required",
+      "EnterConfirmationPassword": "Please enter the confirmation password",
+      "PasswordMismatch": "Passwword mismatch",
+      "NewAndConfirmationPasswordMismatch": "New password and confirmation password do not match",
+      "RegisteringUser": "Registering new user...",
+      "Success": "Success",
+      "UserCreatedSuccessfully": "User account \"{{username}}\" was created successfully",
+      "SaveError": "Save Error",
+      "BelowRegistrationErrorsOccurred": "The below errors occurred during registration:",
+      "AttemptingLogin": "Attempting login...",
+      "Login": "Login",
+      "WelcomeUser": "Welcome {{username}}!",
+      "YourAccountCreatedSuccessfully": "Your account was created successfully",
+      "UnableToLogin": "Unable to login",
+      "LoginErrorOccurred": "An error occurred whilst logging in, please try again later.\nError: {{error}}",
+      "InvalidUsernameOrPassword": "Invalid username or password",
+      "AccountDisabled": "This account has been disabled"
+    }
+  },
+  "confirmEmail": {
+    "ConfirmEmail": "Confirm Email",
+    "Finish": "Finish",
+    "alerts": {
+      "ConfirmingEmail": "Confirming account email...",
+      "ThankYouForConfirmingEmail": "Thank you for confirming your email.",
+      "EmailConfirmed": "Email Confirmed",
+      "EmailSuccessfullyConfirmed": "Your email address was successfully confirmed",
+      "EmailConfirmationForUserFailed": "We were unable to confirm the email for user with ID \"{{userId}}\"",
+      "EmailNotConfirmed": "Email Not Confirmed",
+      "UserWithIdNotFound": "No user with id \"{{userId}}\" was found",
+      "EmailConfirmationErrorOccurred": "An error occurred whilst confirming your email.\nError: {{error}}"
+    }
+  },
+  "recoverPassword": {
+    "RecoverPassword": "Recover forgotten password",
+    "EnterUsernameOrEmail": "Please enter your username or email to reset your password.",
+    "CheckYourMail": "Please check your email to reset your password.",
+    "UsernameOrEmailPlaceholder": "Username or email address",
+    "UsernameOrEmailRequired": "Username or email is required",
+    "Finish": "Finish",
+    "Cancel": "Cancel",
+    "Processing": "Processing...",
+    "Send": "Send",
+    "alerts": {
+      "UsernameOrEmailRequired": "Username/email is required",
+      "EnterValidUsernameOrEmail": "Please enter a valid username or email address",
+      "GeneratingPasswordEmail": "Generating password reset mail...",
+      "RecoverPassword": "Recover Password",
+      "PasswordEmailSent": "Password reset email sent",
+      "PasswordRecoveryFailed": "Password Recovery Failed",
+      "PasswordRecoveryErrorOccurred": "An error occurred whilst recovering your password.\nError: {{error}}"
+    }
+  },
+  "resetPassword": {
+    "ResetPassword": "Reset your password",
+    "PasswordResetSuccessful": "Your password has been reset. Please",
+    "ClickToLogin": "click here to login",
+    "UsernameOrEmail": "Username/Email:",
+    "UsernameOrEmailPlaceholder": "Enter username or email address",
+    "UsernameOrEmailRequired": "Username or email is required",
+    "NewPassword": "New Password:",
+    "NewPasswordPlaceholder": "Enter a new password",
+    "NewPasswordRequired": "Password is required",
+    "ConfirmPassword": "Confirm Password:",
+    "ConfirmPasswordPlaceholder": "Enter confirmation password",
+    "ConfirmPasswordRequired": "Confirmation password is required",
+    "PasswordMismatch": "Password does not match confirmation password",
+    "Cancel": "Cancel",
+    "Saving": "Saving...",
+    "Submit": "Submit",
+    "alerts": {
+      "UsernameOrEmailRequired": "Username/email is required",
+      "EnterUsernameOrEmail": "Please enter a valid username or email address",
+      "NewPasswordRequired": "New password is required",
+      "EnterNewValidPassword": "Please enter the new password (minimum of 6 characters)",
+      "ConfirmationPasswordRequired": "Confirmation password is required",
+      "EnterConfirmationPassword": "Please enter the confirmation password",
+      "PasswordMismatch": "Passwword mismatch",
+      "NewAndConfirmationPasswordMismatch": "New password and confirmation password do not match",
+      "ResettingPassword": "Resetting password...",
+      "PasswordChange": "Password Change",
+      "PasswordSuccessfullyReset": "Your password was successfully reset",
+      "PasswordResetFailed": "Password Reset Failed",
+      "PasswordResetErrorOccurred": "An error occurred whilst resetting your password.\nError: {{error}}"
+    }
+  },
+  "notFound": {
+    "404": "404",
+    "pageNotFound": "The page you are looking for does not exist",
+    "backToHome": "Back to home"
+  },
+  "layout": {
+    "help": "Help",
+    "new_voucher": "New Voucher"
+  },
+  "dashboard": {
+    "grid": {
+      "RoleSummary": { "title": "", "desc": "", "post": "Post", "no_employee": "Employees" },
+      "PaymentSummary": { "title": "", "desc": "", "pay_mode": "", "paid" : "Total Paid"},
+      "EmployeeSummary": { "title": "", "desc": "" },
+      "MonthlyProfit": { "title": "", "desc": "", "duration": "Duration", "income": "Income", "expense": "Expense", "profit": "Profit" },
+      "ProjectRevenue": { "title": "", "desc": "", "name": "Project", "expense": "Expense", "revenue": "Revenue" },
+      "SupportTicketSummary": { "title": "", "desc": "", "name": "Support Type", "total_tkt": "Total", "open_tkt": "Open", "closed_tkt": "Closed" },
+      "EventCalendarSummary": { "title": "", "desc": "" },
+      "OrgSummary": { "title": "", "desc": "" },
+      "CustomerSummary": { "title": "", "desc": "" },
+      "ProjectSummary": { "title": "", "desc": "" },
+      "ReceiptSummary": { "title": "", "desc": "" },
+      "ExpenseSummary": { "title": "", "desc": "" }
+    }
+  },
+  "setup": {
+    "mod":{
+      "emp": {
+        "title": "Employee Master Types", "header": "Employee Master Types",
+        "department": { "name": "Department", "title": "Department", "header": "Department" },
+        "duty": { "name": "Duty Type", "title": "Duty Type", "header": "Duty Type" },
+        "post": { "name": "Post Type", "title": "Post Type", "header": "Post Type" },
+        "grade": { "name": "Grade", "title": "Grade", "header": "Grade" },
+        "leave": { "name": "Leave", "title": "Leave", "header": "Leave" }
+      }
+    }
+  },
+  "modules": {
+    "conversation": {
+      "title": "Conversation",
+      "inbox": { "title": "Inbox", "desc": "" },
+      "sent": { "title": "Sent", "desc": "" },
+      "outbox": { "title": "Outbox", "desc": "" },
+      "draft": { "title": "Drafted", "desc": "" }
+    },
+    "org_setup": {
+      "title": "Setup", "header": "Setup", "desc": "Setup",
+      "sub_module": {
+        "org": {
+          "name": "Org",
+          "info": { "name": "Info", "title": "Info", "header": "Info" },
+          "host": { "name": "Host Setting", "title": "Host Setting", "header": "Host Setting" },
+          "branch": { "name": "Branch", "title": "Branch", "header": "Branch" }
+        },
+        "config": {
+          "general": { "name": "General", "title": "General", "header": "General" },
+          "entry": { "name": "Voucher Entry", "title": "Voucher Entry", "header": "Voucher Entry" },
+          "invoice": { "name": "Invoice", "title": "Invoice", "header": "Invoice" }
+        },
+        "feature": {
+          "name": "Feature",
+          "account": { "name": "Account", "title": "Account", "header": "Account" },
+          "inventory": { "name": "Inventory", "title": "Inventory", "header": "Inventory" }
+        },
+        "global": {
+          "name": "Global",
+          "currency": { "name": "currency", "title": "currency", "header": "currency" },
+          "language": { "name": "language", "title": "language", "header": "language" },
+          "one": { "name": "one", "title": "one", "header": "one" }
+        }
+      }
+    },
+    "project": {
+      "title": "Project", "header": "Project", "desc": "Project",
+      "manage": {
+        "grid": {
+          "name": "Name", "type": "Type", "estimate": "Estimate", "approved": "Approved", "advance": "Advance", "expense": "Expense",
+          "due": "Due",
+          "receipt": "receipt", "audit": "Audit"
+        }
+      },
+      "sub_module": {
+        "dashboard": { "name": "Dashboard", "title": "Dashboard", "header": "Dashboard" },
+        "module": { "name": "Modules", "title": "Modules", "header": "Modules" },
+        "resource": { "name": "Resource", "title": "Resource", "header": "Resource" },
+        "supplier": { "name": "Supplier", "title": "Supplier", "header": "Supplier" },
+        "invoice": { "name": "Invoice", "title": "Invoice", "header": "Invoice" },
+        "quote": { "name": "Quote", "title": "Quote", "header": "Quote" },
+        "rec_invoice": { "name": "Rec. Invoice", "title": "Rec. Invoice", "header": "Rec. Invoice" },
+        "workflow": { "name": "Workflow", "title": "Workflow", "header": "Workflow" },
+        "tracking": { "name": "Module Tracking", "title": "Module Tracking", "header": "Module Tracking" }
+      }
+    },
+    "product": {
+      "title": "Product", "header": "Product", "desc": "Product",
+      "manage": {
+        "grid": {
+          "name": "Name", "type": "Type", "estimate": "Estimate", "approved": "Approved", "advance": "Advance", "expense": "Expense",
+          "due": "Due",
+          "receipt": "receipt", "audit": "Audit"
+        }
+      },
+      "sub_module": {
+        "dashboard": { "name": "Dashboard", "title": "Dashboard", "header": "Dashboard" },
+        "module": { "name": "Modules", "title": "Modules", "header": "Modules" },
+        "resource": { "name": "Resource", "title": "Resource", "header": "Resource" },
+        "supplier": { "name": "Supplier", "title": "Supplier", "header": "Supplier" },
+        "invoice": { "name": "Invoice", "title": "Invoice", "header": "Invoice" },
+        "quote": { "name": "Quote", "title": "Quote", "header": "Quote" },
+        "rec_invoice": { "name": "Rec. Invoice", "title": "Rec. Invoice", "header": "Rec. Invoice" },
+        "workflow": { "name": "Workflow", "title": "Workflow", "header": "Workflow" },
+        "tracking": { "name": "Module Tracking", "title": "Module Tracking", "header": "Module Tracking" }
+      }
+    },
+    "invoice": {
+      "title": "Invoice", "header": "Invoice", "desc": "Manage Invoices",
+      "nav": {
+        "sale_group": "Invoices for Sale",
+        "purchase_group": "Invoices for Purchase",
+        "accounting_group": "Invoices for Accounting",
+        "b2b_group": "B2B Transactions"
+      },
+      "ofc_expense": {
+        "nav": {
+          "main": "Main",
+          "all_ledger": "All Ledger"
+        },
+        "sub_module": {
+          "dashboard": { "name": "Dashboard", "title": "Dashboard", "header": "Dashboard" },
+          "manage": { "name": "Expenses", "title": "Expenses", "header": "Expenses" },
+          "acc_group": { "name": "Account Group", "title": "Account Group", "header": "Account Group" },
+          "template": { "name": "Template", "title": "Template", "header": "Template" },
+          "ledger": { "name": "Ledger", "title": "Ledger", "header": "Ledger" }
+        }
+      }
+    },
+    "transaction": {
+      "title": "Transaction", "header": "Transaction", "desc": "Manage Transaction",
+      "bank": {
+        "nav": {
+          "main": "Main",
+          "all_ledger": "All Ledger"
+        },
+        "sub_module": {
+          "dashboard": { "name": "Dashboard", "title": "Dashboard", "header": "Dashboard" },
+          "manage": { "name": "Expenses", "title": "Expenses", "header": "Expenses" },
+          "acc_group": { "name": "Account Group", "title": "Account Group", "header": "Account Group" },
+          "template": { "name": "Template", "title": "Template", "header": "Template" },
+          "ledger": { "name": "Ledger", "title": "Ledger", "header": "Ledger" }
+        }
+      }
+    }
+  },
+  "trxn_setup": {
+    "nav_name": "Configure Transactions",
+    "banking": {
+      "page": { "title": "Banking", "header": "Banking", "desc": "Manage Banking" },
+      "nav_name": "Banking",
+      "grid": {
+        "header": {}
+      }
+    },
+    "bank_acc": {
+      "page": { "title": "Bank Account", "header": "Bank Account", "desc": "Manage Bank Accounts" },
+      "nav_name": "Bank Account",
+      "grid": {
+        "header": {}
+      }
+    },
+    "voucher": {
+      "page": { "title": "Voucher", "header": "Voucher", "desc": "Manage Vouchers" },
+      "nav_name": "Voucher",
+      "grid": {
+        "header": {}
+      }
+    },
+    "gateway": {
+      "page": { "title": "Gateway", "header": "Gateway", "desc": "Manage Gateways" },
+      "nav_name": "Gateway",
+      "grid": {
+        "header": {}
+      }
+    }
+  }
+}

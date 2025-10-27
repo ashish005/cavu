@@ -1,0 +1,112 @@
+<form [formGroup]="customForm" class="d-flex flex">
+    <div class="d-flex flex-column flex p-3">
+        <div class="row">
+            <div class="col-4">
+                <avator-pic (cb)="updateImage($event)" [docUrl]="imageUrl"></avator-pic>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="number" formControlName="marginRatio"
+                                   [ngClass]="{ 'is-invalid': submitted && f['marginRatio'].errors }">
+                            <label> Margin Ratio (%) </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" type="number" formControlName="monthlyTargetValue"
+                                   [ngClass]="{ 'is-invalid': submitted && f['monthlyTargetValue'].errors }">
+                            <label> Monthly Target Value </label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="remark"
+                                   [ngClass]="{ 'is-invalid': submitted && f['remark'].errors }">
+                            <label> Remark </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="box no-border">
+                    <div class="top-right" style="z-index: 1; right: 15px;">
+                        <a class="btn btn-xs  text-xs" style="float: right; position: absolute; top: 0px; right: 0;"
+                           (click)="toggleNewBrand()">
+                            <small *ngIf="!isNewBrand">New Brand</small>
+                            <small *ngIf="isNewBrand">Use Existing</small>
+                            <span class="caret"></span>
+                        </a>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="!isNewBrand">
+                        <div class="col-md-12">
+                            <select-dropdown [items]="apiResolver.masterType?.brands"
+                                             title="Brand" bindLabel="'action'"
+                                             (cb)="updateBrandId($event)"
+                                             [control]="formBrandId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row no-gutters p-2"  *ngIf="isNewBrand">
+                        <div class="col-md-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text-area" formControlName="brandName"
+                                       [ngClass]="{ 'is-invalid': submitted && f['brandName'].errors }">
+                                <label>Brand Name</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="box no-border">
+                    <div class="top-right" style="z-index: 1; right: 15px;" *ngIf="brand?.divisions.length">
+                        <a class="btn btn-xs  text-xs" style="float: right; position: absolute; top: 0px; right: 0;"
+                           (click)="toggleNewDivision(!isNewDivision)">
+                            <small *ngIf="!isNewDivision">New Division</small>
+                            <small *ngIf="isNewDivision">Use Existing</small>
+                            <span class="caret"></span>
+                        </a>
+                    </div>
+                    <div class="row no-gutters p-2" *ngIf="!isNewDivision">
+                        <div class="col-md-12">
+                            <select-dropdown [items]="brand?.divisions"
+                                             title="Brand" bindLabel="'action'"
+                                             (cb)="updateBrandId($event)"
+                                             [control]="formBrandId"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row no-gutters p-2"  *ngIf="isNewDivision">
+                        <div class="col-md-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text-area" formControlName="divisionName"
+                                       [ngClass]="{ 'is-invalid': submitted && f['divisionName'].errors }">
+                                <label>Brand Division</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text-area" formControlName="divisionDescription"
+                                       [ngClass]="{ 'is-invalid': submitted && f['divisionDescription'].errors }">
+                                <label>Division Description</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <button (click)="onSubmit(customForm)" class="btn btn-sm primary m-2"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</form>

@@ -1,0 +1,22 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap box-shadow">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <button id="sort" class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title=""
+              data-original-title="Sort"><i class="fa fa-sort"></i></button>
+    </div>
+    <div class="scroll-y">
+      <org-grid [data]="gridData"
+                [options]="gridOptions"
+                (cb)="actionCb($event)"
+                (update)="updateGrid($event)">
+      </org-grid>
+    </div>
+    <div class="mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                           (cb)="moveToPage($event)"></org-grid-pagination>
+    </div>
+  </div>
+</div>

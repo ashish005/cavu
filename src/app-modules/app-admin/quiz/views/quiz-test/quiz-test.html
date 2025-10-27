@@ -1,0 +1,79 @@
+<div class="content-header">
+  <div class="navbar lt box-shadow-0">
+    <div>
+      <h3>Quiz</h3>
+      <small>Quiz description can go here</small>
+    </div>
+    <ul class="nav nav-xs flex-row no-border">
+      <li class="nav-item">
+        <a class="nav-link" data-modal="" data-target="#quiz-all-details" data-toggle="modal">
+          <span class="btn btn-sm white">
+          Q All
+        </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-modal="" data-target="#quiz-test-details" data-toggle="modal">
+          <span class="btn btn-sm white">
+          Progress
+        </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="d-flex flex white">
+  <div class="d-flex flex">
+    <div class="d-flex flex-column flex" *ngIf="quizActiveStage">
+      <quiz-preview *ngIf="quizActiveStage?.isPreviewed" [qStage]="quizActiveStage?.stage" (cb)="performAction($event)"></quiz-preview>
+      <div class="box-body p-0 text-sm" *ngIf="!quizActiveStage.isPreviewed">
+        <multiple-choice [qPerms]="quizPerms" [qItem]="quizItem"></multiple-choice>
+        <!--<single-choice *ngSwitchCase="2"></single-choice>-->
+        <!--<open-ended *ngSwitchCase="3"></open-ended>-->
+        <!--<fill-in-the-blank *ngSwitchCase="4"></fill-in-the-blank>-->
+        <!--<matching *ngSwitchCase="5"></matching>-->
+        <!--<definitions *ngSwitchCase="6"></definitions>-->
+        <div class="lt p-3 text-center">
+          <div class="m-b btn-groups">
+            <button class="btn btn-fw primary m-2" (click)="finishQuiz()">Finish</button>
+            <button class="btn btn-fw white m-2" (click)="nextQuestion()">Next Question</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="quiz-test-details" aria-hidden="true">
+        <div class="modal-dialog modal-right w-50 w-auto-sm white dk b-l">
+          <div class="d-flex flex-column h-100 w-100 white b-r p-4">
+            <div class="pb-3 b-b d-flex no-shrink">
+              <div class="p-2 px-3 text-muted text-sm">Your Progress</div>
+              <a data-dismiss="modal" class="ml-auto">
+                <span class="text-lg l-h-1x">×</span>
+              </a>
+            </div>
+            <div class="list-item">
+              <div class="list-body">
+                <div class="badge text-sm w-40" *ngFor="let it of _quizList; let i = index;">{{i+1}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" aria-hidden="true" id="quiz-all-details">
+        <div class="modal-dialog modal-right w-50 w-auto-sm white dk b-l">
+          <div class="d-flex flex-column h-100 w-100 white b-r">
+            <div class="p-2 b-b d-flex no-shrink">
+              <div class="p-2 px-3 text-muted text-sm">Your Progress</div>
+              <a data-dismiss="modal" class="ml-auto">
+                <span class="text-lg l-h-1x">×</span>
+              </a>
+            </div>
+          </div>
+          <div class="scroll-y">
+            <q-table></q-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

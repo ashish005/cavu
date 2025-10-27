@@ -1,0 +1,129 @@
+<ng-template #popupOptionsTemplate></ng-template>
+
+<div class="flex p-2">
+    <!--<div class="float-right text-xs">
+        <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block"><i class="fa fa-plus pr-1"></i> Process </a>
+    </div>-->
+    <ul class="timeline" [class.timeline-center]="isCenterAlign">
+        <ng-template [ngTemplateOutlet]="orgProcessTimelineTemplateRef" [ngTemplateOutletContext]="{ list: processList }"></ng-template>
+    </ul>
+    <loader [isLoading]="isLoading"></loader>
+</div>
+<ng-template #orgProcessTimelineTemplateRef let-list="list">
+    <li class="tl-header">
+        <div class="btn btn-xs" data-toggle-class="timeline-center" data-target=".timeline">Default Workflow</div>
+    </li>
+    <li class="tl-item" *ngFor="let process  of list | sortBy:'asc': 'sortOrder'; let i = index"
+        [class.tl-left]="(i%2 == 0)">
+        <div class="tl-wrap b-info" style="float: none;">
+            <!--<span class="tl-date text-muted"><i class="fa fa-green text-success">N/A</i></span>-->
+            <div class="tl-content box-color b-a text-color block w-xl w-auto-xs mb-0">
+                <span class="arrow b-white left pull-top hidden-left"></span>
+                <span class="arrow b-white right pull-top visible-left"></span>
+                <div>
+                    <a class="text-primary collapsed">{{process?.name}}</a>
+                    <div class="py-2" style="top: -20px; position: relative;">
+                        <ng-template [ngTemplateOutlet]="processActionsTemplateRef"
+                                     [ngTemplateOutletContext]="{ process: process, isParent: true }"></ng-template>
+                    </div>
+                </div>
+                <ng-template [ngTemplateOutlet]="subProcessTemplateRef"
+                             [ngTemplateOutletContext]="{ data: process }"></ng-template>
+            </div>
+            <!--<div class="tl-content box-color block b-a">
+                <span class="arrow b-info left pull-top hidden-left"></span>
+                <span class="arrow b-info right pull-top visible-left"></span>
+                <div class="box-header font-bold primary">{{subProcess.name}}</div>
+                <div class="box-divider"></div>
+                <div class="box-body text-muted">{{subProcess | json}}</div>
+            </div>-->
+        </div>
+    </li>
+    <!--</ng-template>-->
+    <li class="tl-header">
+        <div class="btn btn-sm white btn-rounded">End</div>
+    </li>
+</ng-template>
+<ng-template #subProcessTemplateRef let-data="data">
+    <div class="streamline streamline-xs streamline-dotted">
+        <ng-template ngFor let-subProcess [ngForOf]="data?.childItems | sortBy:'asc': 'sortOrder'" let-i="index">
+            <div class="sl-item b-info">
+                <div class="sl-content text-xs">
+                    <div class="sl-author b-b">
+                        {{subProcess.name}}
+                        <div class="h-1x" class="input-group px-1">
+                            <div class="px-1"><small class="text-xs text-muted">Next Process</small></div>
+                            <!--<org-process-options
+                                    [id]="subProcess.nextOrgProcessId"
+                                    [val]="subProcess.nextOrgProcessName"
+                                    [masterType]="masterType"
+                                    (cb)="updateOrgProcess(subProcess)"></org-process-options>-->
+                        </div>
+                    </div>
+                    <ng-template [ngTemplateOutlet]="processActionsTemplateRef"
+                                 [ngTemplateOutletContext]="{ process: subProcess }"></ng-template>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</ng-template>
+<ng-template #processActionsTemplateRef let-process="process" let-isParent="isParent">
+    <div class="box-tool" style="right: 0px;top: 0px;">
+        <ul class="nav nav-xs no-border">
+            <li class="nav-item text-xs mx-1">
+                <div class="input-group px-1">
+                    <div class="px-1">
+                        <small class="text-xs text-muted">Start Phase</small>
+                    </div>
+                    <div class="input-group-prepend pr-1">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">{{process.startPhaseName?? '&#45;&#45;'}}</a>
+                        <div class="dropdown-menu  text-xs" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <a class="dropdown-item"
+                                   (click)="onProcessStartPhasesChange(process, phase)"
+                                   [class.active]="(process.startPhaseId == phase.id)">{{phase.name}}</a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item text-xs mx-1">
+                <div class="input-group px-1">
+                    <div class="px-1">
+                        <small class="text-xs text-muted">End Phase</small>
+                    </div>
+                    <div class="input-group-prepend pr-1">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">{{process.endPhaseName?? '&#45;&#45;'}}</a>
+                        <div class="dropdown-menu  text-xs" x-placement="bottom-start"
+                             style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <ng-template ngFor let-phase
+                                         [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'"
+                                         let-i="index">
+                                <a class="dropdown-item" (click)="onProcessEndPhasesChange(process, phase)"
+                                   [class.active]="(process.endPhaseId == phase.id)">{{phase.name}}</a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <!--<li class="nav-item text-xs mx-1">
+                <div class="input-group px-1">
+                    <div class="px-1"><small class="text-xs text-muted">Next Process</small></div>
+                    <org-process-options
+                               [id]="process.nextOrgProcessId"
+                               [val]="process.nextOrgProcessName"
+                               [masterType]="masterType"
+                               (cb)="updateOrgProcess($event)"></org-process-options>
+                </div>
+            </li>-->
+            <!--<li class="nav-item" *ngIf="isParent">
+                <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block"><i class="fa fa-plus pr-1"></i> Process </a>
+            </li>
+            <li class="nav-item">
+                <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block" (click)="addProjectTask(process)"><i class="fa fa-plus pr-1"></i> Task </a>
+            </li>-->
+        </ul>
+    </div>
+</ng-template>

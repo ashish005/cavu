@@ -1,0 +1,55 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover h-100 p-2">
+            <div id="inspectionStructures">
+                <span *ngIf="!gridData?.length"> No Schedule found... </span>
+                <div class="animate fadeIn">
+                    <div class="no-more-tables">
+                        <table class="table small-table text-xs">
+                            <thead>
+                                <tr>
+                                    <th>Due Date/ Head</th>
+                                    <th>Status</th>
+                                    <th>Certificate*</th>
+                                </tr>
+                            </thead>
+                            <tbody class="scroll-y">
+                                <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                                    <tr>
+                                        <td>
+                                            <a data-toggle="collapse" data-parent="#inspectionStructures" [attr.data-target]="'#fps_'+i">
+                                                <!--<a class="float-left pr-2"><i class="text-xs fa fa-chevron-right"></i></a>-->
+                                                <span class="btn btn-xs"> {{row.dueDate | dateFormat }} - {{ row.headCount }}</span>
+                                                <span *ngIf="!row.heads?.length" class="text-danger text-xs"> No details available... </span>
+                                            </a>
+                                        </td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr id="fps_{{i}}" class="collapse">
+                                        <td colspan="3" class="p-0">
+                                            <table class="table small-table text-xs mb-0">
+                                                <tbody>
+                                                    <tr *ngFor="let detail of row.heads">
+                                                        <td><span class="pl-2">{{ detail.headName }}</span></td>
+                                                        <td><span>{{detail.serviceStatus}}</span></td>
+                                                        <td><span>{{detail.certificateRequired}}</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </tbody>
+                        </table>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total"
+                                 [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>

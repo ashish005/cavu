@@ -1,0 +1,61 @@
+<ng-template #actionTemplate></ng-template>
+<ng-template #pageTitleTemplate>
+    <!--<div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>-->
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="padding">
+            <div class="row">
+                <div class="col-8">
+                    <small class="text-muted">Name/ code/ Description</small>
+                    <div class="_500">{{apiResolver.product?.name}}{{apiResolver.product?.code}}</div>
+                    <div class="_500">{{apiResolver.product?.description}}</div>
+                </div>
+                <div class="col-4">
+                    <small class="text-muted">Short Name</small>
+                    <div class="_500">{{apiResolver.product?.shortName}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <small class="text-muted">Product Type</small>
+                    <div class="_500">{{apiResolver?.product?.productType}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <small class="text-muted">Supply Type</small>
+                    <div class="_500">{{apiResolver?.product?.supplyType}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <small class="text-muted">Procurement Type</small>
+                    <div class="_500">{{apiResolver?.product?.procurementType}}
+                    </div>
+                </div>
+                <div class="col-3">
+                    <small class="text-muted">Nature</small>
+                    <div class="_500">{{apiResolver?.product?.nature}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-3" *ngIf="id">
+            <ng-template ngFor let-summary [ngForOf]="projectSummaryItems" let-i="index">
+                <div class="col-sm-6 col-lg-3">
+                    <dashboard-summary [id]="id" [type]="summary.type"></dashboard-summary>
+                </div>
+            </ng-template>
+        </div>
+        <!--<div class="row no-gutters">
+            <div class="col-sm-6">
+                <task-status-chart #statusChart [id]="id" type="status" endpoint="productDashboard"></task-status-chart>
+            </div>
+            <div class="col-sm-6 light lt">
+                <budget-chart #budgetChart [id]="id" type="accountanalysis" endpoint="productDashboard"></budget-chart>
+            </div>
+        </div>-->
+    </div>
+</div>

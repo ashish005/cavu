@@ -1,0 +1,167 @@
+<header class="org-header theme flex-nowrap box-shadow">
+  <org-header></org-header>
+</header>
+<div id="content" class="app-content box-shadow-0" role="main">
+  <div class="content-header white box-shadow" id="content-header">
+    <!--d-lg-none-->
+    <div class="navbar navbar-expand-lg">
+      <a class="d-lg-none mx-2" data-toggle="modal" data-target="#aside">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512">
+          <path d="M80 304h352v16H80zM80 248h352v16H80zM80 192h352v16H80z"></path>
+        </svg>
+      </a>
+      <div class="navbar-text nav-title flex" id="pageTitle"></div>
+      <ul class="nav flex-row order-lg-2">
+        <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
+        <li class="dropdown d-flex align-items-center show">
+          <a href="#" data-toggle="dropdown" class="d-flex align-items-center" data-pjax-state="">
+            <span class="theme text-theme circle"></span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right pt-0 mt-2 animate fadeIn">
+            <a class="dropdown-item text-truncate"></a>
+            <a class="dropdown-item" (click)="routeToUrl('profile')"><span>{{'layout.profile'}}</span></a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-truncate" [routerLink]="['support','ticket']" title="Tickets">Tickets</a>
+            <a class="dropdown-item" (click)="routeToUrl('scheduler')">{{'mainLayout.setting_options.scheduler' }}</a>
+            <a class="dropdown-item">{{'mainLayout.setting_options.sign_out' }}</a>
+          </div>
+        </li>
+        <!--<li class="d-lg-none d-flex align-items-center">
+            <a href="#" class="mx-2" data-toggle="collapse" data-target="#navbarToggler" data-pjax-state="">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512">
+                    <path d="M64 144h384v32H64zM64 240h384v32H64zM64 336h384v32H64z"></path>
+                </svg>
+            </a>
+        </li>-->
+      </ul>
+      <!--<div class="collapse navbar-collapse no-grow order-lg-1" id="navbarToggler">
+          <form class="input-group m-2 my-lg-0"><span class="input-group-btn"><button type="button"
+                                                                                      class="btn no-border no-bg no-shadow"><i
+                  class="fa fa-search"></i></button> </span><input type="text"
+                                                                   class="form-control no-border no-bg no-shadow"
+                                                                   placeholder="Search projects..."></form>
+      </div>-->
+    </div>
+  </div>
+  <!--<div class="pl-3 pr-3 py-2">
+      <breadcrumb></breadcrumb>
+  </div>-->
+  <div class="content-main d-flex flex" id="content-main">
+    <router-outlet (activate)='onActivate($event)'></router-outlet>
+  </div>
+</div>
+<ng-template #navbarRightTemplate>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown"
+                aria-expanded="false">
+            <span class="hidden-folded d-inline">External Links</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a href="https://www.google.com" target="_blank">Google</a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown"
+                aria-expanded="false">
+            <span class="hidden-folded d-inline">Payout Plan</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['payout-plan', 'driver-plan']">
+                    <small class="d-block _500 title">Driver Payout Plan</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['payout-plan', 'vehicle-plan']">
+                    <small class="d-block _500 title">Vehicle Payout Plan</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">Account & Finance</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['accounting', 'ledger']">
+                    <small class="d-block _500 title">Account</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['accounting', 'book']">
+                    <small class="d-block _500 title">Account Book</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['accounting', 'report']">
+                    <small class="d-block _500 title">Financial Report</small>
+                </a>
+            </li>
+            <li class="dropdown-divider"></li>
+            <li class="dropdown-item">
+                <a [routerLink]="['office-expense']">
+                    <small class="d-block _500 title">Office Expenses</small>
+                </a>
+            </li>
+            <li class="dropdown-divider"></li>
+            <li class="dropdown-item">
+                <a [routerLink]="['accounting', 'trxn']">
+                    <small class="d-block _500 title">Trxn Report</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['manage-invoice']">
+                    <small class="d-block _500 title">Invoices</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">Reports</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['reports', 'sale']">
+                    <small class="d-block _500 title">Sale Report</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['reports', 'purchase']">
+                    <small class="d-block _500 title">Purchase Report</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['reports', 'payment']">
+                    <small class="d-block _500 title">Payment Report</small>
+                </a>
+            </li>
+            <li class="dropdown-item">
+                <a [routerLink]="['reports', 'receipt']">
+                    <small class="d-block _500 title">Receipt Report</small>
+                </a>
+            </li>
+            <li class="dropdown-divider"></li>
+            <li class="dropdown-item">
+                <a [routerLink]="['reports', 'inventory']">
+                    <small class="d-block _500 title">Inventory Report</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">Audit & Compliance</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['compliance']">
+                    <small class="d-block _500 title">Compliance</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ng-template>

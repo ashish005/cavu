@@ -1,0 +1,24 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="navbar light lt p-0">
+        <div class="navbar flex-nowrap">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+        </div>
+        <ul class="nav nav-xs flex-row no-border">
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+            <li class="nav-item mx-1"><a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['../../product']" routerLinkActive="active"><i class="fa fa-fw fa-magic"></i>Manage Product/ Service</a></li>
+            <ng-template ngFor let-item [ngForOf]="navigations | sortBy:'asc': 'sortOrder'" let-i="index">
+                <li class="nav-item" (click)="navigateTo(item)">
+                    <a class="list-group-item box p-1 px-2">
+                        <span class="nav-text py-0"><i class="fa fa-calendar" class="pr-2"></i>{{item.name}}</span>
+                    </a>
+                </li>
+            </ng-template>
+        </ul>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>
