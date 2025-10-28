@@ -6,6 +6,7 @@ import {PaymentService} from "../services/payment.service";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/payment.html'
 })
 export class PaymentView implements OnInit, OnDestroy {

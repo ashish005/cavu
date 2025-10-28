@@ -9,7 +9,7 @@ export class PaymentService extends CoreEndpointBase {
     getLicenseInfoEndpoint(){
         const { businessMasterType, sectorMasterType, softwareId} = this.orgSetup;
         return this.httpClient
-            .get(this.baseAPIUrl+`license/${softwareId}/org/${this.coreService.apiVersion}`, this.requestHeaders)
+            .get(this.baseAPIUrl+`license/${softwareId}/org/${this.apiVersion}`, this.requestHeaders)
             .pipe(
                 catchError(error => { return this.handleError(error, () => this.getLicenseInfoEndpoint()); })
             );

@@ -10,6 +10,7 @@ import {NotificationMediaTypeTemplate, OrgNotification} from "../domains/notific
 import {NotificationTemplate} from "../domains/notification-template.serializer";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/template-ce-view.html',
   providers: [NotificationTemplateService],
   styles:[`:host { display: contents; }`]
@@ -21,16 +22,17 @@ export class TemplateCeView extends TemplateForm implements OnInit {
   isLoading: boolean;
   notification: OrgNotification;
   routeConfig: any;
+    submitted: false;
   get actionType(){ return (this.formId.value) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder, public activatedRoute: ActivatedRoute,
+  constructor(public override fb: FormBuilder, public activatedRoute: ActivatedRoute,
               public service: NotificationTemplateService,
               public apiResolver: OrgNotificationAPIResolver) {
       super(fb);
   }
 
   ngOnInit() {
-      const { routeConfig, data } = this.activatedRoute.snapshot;
-      this.notification = data.notification.data;
+      const { routeConfig, data: { notification } } = this.activatedRoute.snapshot;
+      this.notification = notification.data;
       this.routeConfig = routeConfig;
       //OrgNotification
       this.mediaType = this.apiResolver.masterType.getMediaTypeByMaster(routeConfig.path);

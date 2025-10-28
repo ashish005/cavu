@@ -32,7 +32,7 @@
                                 <th>Export</th>-->
                             </tr>
                             </thead>
-                            <tbody formArrayName="moduleRight">
+                            <!--<tbody formArrayName="moduleRight">
                             <ng-template ngFor let-rule [ngForOf]="formModuleRight?.controls" let-i="index">
                                 <ng-container [formGroup]="rule">
                                     <tr>
@@ -46,18 +46,39 @@
                                         <ng-container *ngIf="k==0">
                                             <td [attr.rowspan]="rule.get('modulePermission')?.controls.length"
                                                 style="border-top: none;border-right: 1px solid #e9ebed;">
-                                                <!--
+                                                &lt;!&ndash;
                                                 {{rule.get('name').value}}
                                                  <label class="ui-switch primary float-right mr-2">
                                                    <input type="checkbox" [checked]="rule.get('allowed').value" (change)="allowedChanges($event.target.checked, rule)"> <i></i>
                                                  </label>
-                                                 -->
+                                                 &ndash;&gt;
                                             </td>
                                         </ng-container>
                                         <sub-module-permission-row [customForm]="ruleItem"></sub-module-permission-row>
                                     </tr>
                                 </ng-container>
                             </ng-template>
+                            </tbody>-->
+                            <tbody formArrayName="moduleRight">
+                            <ng-container *ngFor="let rule of formModuleRight.controls; let i = index">
+                                <ng-container [formGroup]="rule">
+                                    <tr>
+                                        <module-permission-row [customForm]="rule"></module-permission-row>
+                                    </tr>
+                                    <!-- Sub-permissions -->
+                                    <ng-container *ngIf="getModulePermissions(rule) as subPerms">
+                                        <tr *ngFor="let ruleItem of subPerms.controls; let k = index" [formGroup]="ruleItem">
+                                            <ng-container *ngIf="k === 0">
+                                                <td [attr.rowspan]="subPerms.controls.length"
+                                                    style="border-top: none; border-right: 1px solid #e9ebed;"></td>
+                                            </ng-container>
+
+                                            <sub-module-permission-row [customForm]="ruleItem"></sub-module-permission-row>
+                                        </tr>
+                                    </ng-container>
+
+                                </ng-container>
+                            </ng-container>
                             </tbody>
                         </table>
                         <loader [isLoading]="isLoading"></loader>

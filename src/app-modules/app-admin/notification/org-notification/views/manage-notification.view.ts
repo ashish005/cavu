@@ -19,7 +19,8 @@ export class NotificationExtension extends ViewExtender<OrgNotification> {
                 public override service: NotificationService,
                 public lookupResolver: NotificationAPIResolver){
         super(activatedRoute, service);
-        this.userMasterType = activatedRoute.snapshot.parent.data.userType;
+        const { userType } = activatedRoute.snapshot.parent.data;
+        this.userMasterType = userType;
         (<OrgNotificationQueryOptions>this.coreState).userMasterType = this.userMasterType;
         if (this.userMasterType) {
             this.activeNotificationType = this.lookupResolver.masterType.getNotificationTypeByUserType(this.userMasterType);
@@ -136,18 +137,21 @@ export class NotificationExtension extends ViewExtender<OrgNotification> {
     }
 }
 
-@Component({ templateUrl: './templates/manage-notification.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/manage-notification.html'
+})
 export class ManageNotificationView extends NotificationExtension implements OnInit, OnDestroy {
-    constructor(public activatedRoute: ActivatedRoute,
-                public service: NotificationService,
-                public lookupResolver: NotificationAPIResolver){
+    constructor(public override activatedRoute: ActivatedRoute,
+                public override service: NotificationService,
+                public override lookupResolver: NotificationAPIResolver){
         super(activatedRoute, service, lookupResolver);
     }
 
     ngOnInit(){
         super.populateGrid();
     }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     notificationByUserType(row: NotificationTypeLookup){
         this.activeNotificationType = row;
@@ -156,7 +160,10 @@ export class ManageNotificationView extends NotificationExtension implements OnI
     }
 }
 
-@Component({ templateUrl: './templates/manage-grid-notification.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/manage-grid-notification.html'
+})
 export class ManageGridNotificationView extends NotificationExtension implements OnInit, OnDestroy {
     constructor(public override activatedRoute: ActivatedRoute,
                 public override service: NotificationService,
@@ -167,7 +174,7 @@ export class ManageGridNotificationView extends NotificationExtension implements
     ngOnInit(){
         super.populateGrid();
     }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     notificationByUserType(row: NotificationTypeLookup){
         this.activeNotificationType = row;
@@ -223,5 +230,4 @@ export class ManageGridNotificationView extends NotificationExtension implements
         /!*let modal$ = this.popupService.showCustomPopup(SchedulerInfoComponent, popup, inputData);
         modal$.then(success, error);*!/
     }*/
-    actionRemoveCb(e){}
 }

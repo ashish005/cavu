@@ -67,8 +67,8 @@ export class PipelineAPIResolver {
     }*/
 
     showTaskStatusChangePopup(inputData, popupHeaderOption){
-        const success = (resp: any) => { this.pluginFactory.destroy(); };
-        const failure = (resp: any) => { this.pluginFactory.destroy();  };
-        this.pluginFactory.showTaskStatusChangePopup(inputData, popupHeaderOption).then(success, failure);
+        // const success = (resp: any) => { this.pluginFactory.destroy(); };
+        // const failure = (resp: any) => { this.pluginFactory.destroy();  };
+        // this.pluginFactory.showTaskStatusChangePopup(inputData, popupHeaderOption).then(success, failure);
     }
 }

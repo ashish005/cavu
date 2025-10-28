@@ -8,6 +8,7 @@ export enum AUTH_Action {
 }
 
 @Component({
+    standalone: false,
   selector: 'module-ce',
   templateUrl: './module-ce.html'
 })
@@ -19,7 +20,6 @@ export class ModuleCeComponent {
   constructor(public fb: FormBuilder, public service: RolePermissionService) {}
 
   get f() { return this.customForm.controls; }
-
   get id() { return this.customForm.get('id'); }
 
   onSubmit(row: any){

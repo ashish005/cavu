@@ -134,7 +134,7 @@ export class NotificationReminderTemplate {
 }
 
 export class NotificationReminder extends CoreResource {
-    id: number;
+    //id: number;
     name: string;
 
     orgTaskId: number;

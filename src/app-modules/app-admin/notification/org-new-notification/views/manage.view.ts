@@ -9,7 +9,10 @@ import {
 } from "../domains/notification.serializer";
 import {NotificationAPIResolver} from "../services/api.resolver";
 
-@Component({ templateUrl: './templates/manage.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/manage.html'
+})
 export class ManageNotificationView extends ViewExtender<OrgNotification> implements OnInit, OnDestroy {
   override coreState: OrgNotificationQueryOptions = new OrgNotificationQueryOptions();
   constructor(public router: Router,
@@ -18,7 +21,7 @@ export class ManageNotificationView extends ViewExtender<OrgNotification> implem
         super(activatedRoute, service);
     }
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     routeTo = (item: OrgNotification) => {this.router.navigate([item.id], {relativeTo: this.activatedRoute.parent}); }
 

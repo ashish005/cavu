@@ -4,6 +4,7 @@ import {DynamicComponent} from "@app-global";
 import {ContactAPIResolver} from "../services/api.resolver";
 
 @Component({
+    standalone: false,
     template: `<a [class]="(context.orgUserId)? 'text-success': 'text-warning'" (click)="grantAccess()">
         <span *ngIf="grantAccessInProgress"><i class="pr-2 fa fa-refresh"></i> In Progress</span>
         <span *ngIf="!grantAccessInProgress">{{context.orgUserId ? 'Allowed': 'Grant Access'}} </span>

@@ -8,19 +8,19 @@
                         <label class="md-switch"><input type="checkbox" checked="checked" formControlName="isPrimary"> <i class="theme"></i></label>
                     </div>
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
                         <label>Voucher Name</label>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="voucherNoDisplay" [ngClass]="{ 'is-invalid': submitted && f.voucherNoDisplay.errors }">
+                        <input class="md-input" formControlName="voucherNoDisplay" [ngClass]="{ 'is-invalid': submitted && f['voucherNoDisplay'].errors }">
                         <label>Display Name</label>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="voucherDateDisplay" [ngClass]="{ 'is-invalid': submitted && f.voucherDateDisplay.errors }">
+                        <input class="md-input" formControlName="voucherDateDisplay" [ngClass]="{ 'is-invalid': submitted && f['voucherDateDisplay'].errors }">
                         <label>Display Date</label>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                         <label class="md-switch"><input type="checkbox" checked="checked" formControlName="startWithZero"> <i class="theme"></i></label>
                     </div>
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="voucherNoStartingFrom" [ngClass]="{ 'is-invalid': submitted && f.voucherNoStartingFrom.errors }">
+                        <input class="md-input" formControlName="voucherNoStartingFrom" [ngClass]="{ 'is-invalid': submitted && f['voucherNoStartingFrom'].errors }">
                         <label>Starting From</label>
                     </div>
                 </div>
@@ -42,25 +42,25 @@
                         <label class="md-switch"><input type="checkbox" checked="checked" formControlName="startWithPrefix"> <i class="theme"></i></label>
                     </div>
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="prefix" [ngClass]="{ 'is-invalid': submitted && f.prefix.errors }">
+                        <input class="md-input" formControlName="prefix" [ngClass]="{ 'is-invalid': submitted && f['prefix'].errors }">
                         <label>Prefix</label>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="suffix" [ngClass]="{ 'is-invalid': submitted && f.suffix.errors }">
+                        <input class="md-input" formControlName="suffix" [ngClass]="{ 'is-invalid': submitted && f['suffix'].errors }">
                         <label>Suffix</label>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="voucherNoLength" [ngClass]="{ 'is-invalid': submitted && f.voucherNoLength.errors }">
+                        <input class="md-input" formControlName="voucherNoLength" [ngClass]="{ 'is-invalid': submitted && f['voucherNoLength'].errors }">
                         <label> Length </label>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="md-form-group">
-                        <input class="md-input" type="date" formControlName="validFrom" [ngClass]="{ 'is-invalid': submitted && f.validFrom.errors }">
+                        <input class="md-input" type="date" formControlName="validFrom" [ngClass]="{ 'is-invalid': submitted && f['validFrom'].errors }">
                         <label> Valid From </label>
                     </div>
                 </div>

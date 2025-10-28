@@ -1,9 +1,8 @@
 import {ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Observable} from "rxjs";
 
 @Component({
-  templateUrl: './templates/core.html',
+  template: `./templates/core.html`,
   styles: [`::ng-deep ng-component{ display: contents;}`],
   standalone: false
 })

@@ -5,6 +5,7 @@ import {ModuleWithProviders, NgModule} from "@angular/core";
 import {DASHBOARD_PORTLET_COMPONENTS} from "./components";
 import {DashboardPortletView} from "./views/dashboard-portlet.view";
 import {DashboardPortletService} from "./services/dashboard-portlet.service";
+import {ReactiveFormsModule} from "@angular/forms";
 
 const MASTER_DASHBOARD_VIEW = [ DashboardPortletView ];
 
@@ -14,7 +15,7 @@ const MasterDashboardRoutes: Array<any> = [
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, ReactiveFormsModule,
     RouterModule.forChild(MasterDashboardRoutes),
     GlobalModule
   ],

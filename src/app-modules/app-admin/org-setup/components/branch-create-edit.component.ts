@@ -46,6 +46,7 @@ class BranchFormComponent {
 }
 
 @Component({
+    standalone: false,
   selector: 'org-branch-create-edit',
   templateUrl: './templates/branch-create-edit.html',
   styles: [`:host { display: contents; }`]
@@ -61,7 +62,7 @@ export class OrgBranchCreateEditComponent extends BranchFormComponent {
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
   submitted: boolean;
-  constructor(public fb: FormBuilder, public service: OrgBranchService) {
+  constructor(public override fb: FormBuilder, public service: OrgBranchService) {
     super(fb);
   }
 

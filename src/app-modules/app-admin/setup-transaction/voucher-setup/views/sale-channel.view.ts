@@ -4,7 +4,10 @@ import {SaleChannelService} from "../services/voucher-type.service";
 import {SaleChannel, SaleChannelQueryOptions} from "../domains/sale-channel.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class SaleChannelView extends ViewExtender<SaleChannel> implements OnInit
 {
   override coreState: SaleChannelQueryOptions = new SaleChannelQueryOptions();

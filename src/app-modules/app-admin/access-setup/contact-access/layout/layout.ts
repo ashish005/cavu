@@ -5,6 +5,7 @@ import {UserAccessSetupAPIResolver} from "../services/api.resolver";
 import {AccessSetupUserType} from "../domains/lookup.serializer";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/layout.html'
 })
 export class Layout implements OnInit, OnDestroy {
@@ -19,17 +20,15 @@ export class Layout implements OnInit, OnDestroy {
 
   @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
   public userMasterType: string;
-  public pageTitle: string;
   constructor(public injector: Injector, public router: Router, public activatedRoute: ActivatedRoute,
               public lookupResolver: UserAccessSetupAPIResolver) {
-      this.pageTitle = this.activatedRoute.snapshot.data.header;
   }
   ngOnInit() {}
 
   ngOnDestroy() {}
 
     onActivate(componentRef) {
-        this.userMasterType = componentRef.activatedRoute.snapshot.data.userType;
+        //this.userMasterType = componentRef.activatedRoute.snapshot.data.userType;
         this.actionTemplate = componentRef.actionTemplate;
     }
 

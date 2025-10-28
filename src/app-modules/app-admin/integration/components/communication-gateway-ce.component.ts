@@ -12,7 +12,6 @@ import {CommunicationGatewayService} from "../services/communication-gateway.ser
 })
 export class CommunicationGatewayCEComponent extends CommunicationGatewayForm implements OnInit
 {
-  @Input() id: string;
   @Input() set data(item: CommunicationGateway)
   {
     super.populateForm(item || <CommunicationGateway>{});

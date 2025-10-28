@@ -11,7 +11,7 @@
                         </label>
                     </div>
                     <input class="md-input" formControlName="name"
-                           [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
                     <label> Name </label>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import {RouterModule, ROUTES} from "@angular/router";
 import {NgModule} from "@angular/core";
-import {CoreLayout, SetupLayout} from "./layouts";
+import {CoreLayout, SetupLayout} from "./org-admin/layouts";
 import {CommonModule} from "@angular/common";
 import {AppSetupService, GlobalModule} from "@app-global";
 

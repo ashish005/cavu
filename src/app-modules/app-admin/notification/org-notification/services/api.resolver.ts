@@ -5,7 +5,7 @@ import {NotificationTypeCEComponent} from "../components/notification-type-ce.co
 import {ACTION_ENUM, ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService} from "@app-global";
 import {NotificationService} from "./notification.service";
 import {TemplateCeView} from "../components/template-ce-view";
-import {NotificationReminderView} from "../components/notification-reminder-view";
+// import {NotificationReminderView} from "../components/notification-reminder-view";
 
 export enum NotificationEvent {
     ON_SCHEDULER = 'on_scheduler',
@@ -16,7 +16,7 @@ export enum NotificationEvent {
 export class NotificationAPIResolver extends OrgResourceService<NotificationLookup> implements Resolve<any> {
     masterType: NotificationLookup;
     //coreLookup: OrgLookup;
-    constructor(public injector: Injector, public service: NotificationService,
+    constructor(public override injector: Injector, public service: NotificationService,
                 private sharedService: SharedService) {
         super(injector, 'notificationLookup', new NotificationLookupSerializer());
         //this.coreLookup = this.coreService.orgLookup;
@@ -82,7 +82,7 @@ export class NotificationAPIResolver extends OrgResourceService<NotificationLook
         const success = (resp: any) => { this.sharedService.destroy(); cb(); };
         const failure = (err)=> { this.sharedService.destroy(); };
 
-        this.sharedService.showCustomPopup(NotificationReminderView, popupOptions, inputData).then(success, failure);
+        // this.sharedService.showCustomPopup(NotificationReminderView, popupOptions, inputData).then(success, failure);
     }
 
     showEventTaskActivityPopup(inputData, popupHeaderOption){

@@ -5,7 +5,7 @@
         </a>
         <a class="no-shadow">
             <h6 class="mb-0">{{pageTitle }}</h6>
-            <small class="float-left pl-4">{{page?.desc }}</small>
+<!--             <small class="float-left pl-4">{{page?.desc }}</small>-->
         </a>
     </div>
 </ng-template>
@@ -27,7 +27,7 @@
                         <div class="px-1 text-muted"> User Group </div>
                     </div>
                     <div class="input-group-append">
-                        <input style="width: 50px;" class="md-input mt-1 title _600" formControlName="reminderValue" [ngClass]="{ 'is-invalid': f.reminderValue.errors }">
+                        <input style="width: 50px;" class="md-input mt-1 title _600" formControlName="reminderValue" [ngClass]="{ 'is-invalid': f['reminderValue'].errors }">
                         <a class="dropdown-toggle min-w-50 title _600" data-toggle="dropdown" aria-expanded="false">{{formReminderFrequencyType?.value}}</a>
                         <div class="dropdown-menu animate fadeIn" x-placement="bottom-start" style="position: absolute; left: 0px;">
                             <a class="dropdown-item" *ngFor="let duration of durationType; let i=index" (click)="updateDurationType(duration.key)">
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <h4 class="p-4">prior to it's scheduled time.</h4>
-            <notification-create-edit></notification-create-edit>
+<!--            <notification-create-edit></notification-create-edit>-->
         </div>
         <div class="p-3 b-t mt-auto">
             <div class="d-flex align-items-center float-right">

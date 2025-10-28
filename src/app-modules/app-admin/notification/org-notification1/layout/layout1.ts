@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {OrgNotificationAPIResolver} from "../services/api.resolver";
-import {ORG_PROCESS_TYPE} from "@app-base/enums";
 import {
     NotificationMediaTypeTemplate,
     OrgNotification
@@ -9,7 +8,11 @@ import {
 import {NotificationService} from "../services/notification.service";
 import {NotificationTypeLookup} from "../domains/lookup.serializer";
 
-@Component({templateUrl: './templates/layout1.html', styles: [`::ng-deep ng-component{ display: contents;}`]})
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout1.html',
+    styles: [`::ng-deep ng-component{ display: contents;}`]
+})
 export class Layout1 implements OnInit, OnDestroy {//extends ViewExtender<OrgNotificationShortList>
     @ViewChild('actionTemplate', {static: true}) public actionTemplate: TemplateRef<any>;
     notificationType: NotificationTypeLookup;

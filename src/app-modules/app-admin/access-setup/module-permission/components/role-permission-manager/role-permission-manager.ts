@@ -7,7 +7,6 @@ import {UserManagementAPIResolver} from "../../services/api.resolver";
 import {User} from "../../domains/user.model";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
 import {UserRoleCeComponent} from "../user-role-ce/user-role-ce.component";
-enum ACTION_ENUM { saveRoles = "saveRoles", checkRoles = "checkRoles" }
 
 @Component({
   standalone: false,
@@ -61,7 +60,7 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
   }
 
   updateRoles(){
-    let dataIds = this.formRoles.controls.reduce((accu, curr) => {
+    let dataIds = this.formRoles.controls.reduce((accu: Array<any>, curr) => {
       if(curr.get('hasRole'). value) {
         accu.push(curr.get('id').value);
       }
@@ -73,10 +72,10 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
       dataIds = [ this.activeUserType.id ];
     }
 
-    const modulesRight = (this.formModuleRight.getRawValue() || []).reduce((result, curr)=>{
-       (curr.modulePermission || []).map(child => {
+    const modulesRight = (this.formModuleRight.getRawValue() || []).reduce((result: Array<any>, curr)=>{
+       /*(curr.modulePermission || []).map(child => {
          result.push(child);
-       });
+       });*/
       //delete curr.modulePermission;
       result.push(curr);
       return result;
@@ -123,7 +122,7 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
     this.userRolePermSvc.getModuleByRoleId(this.activeUserType.id).subscribe(success, error);
   }
 
-  clearFilter() { this.activeUserType = null; }
+  clearFilter(e) { this.activeUserType = null; }
   submitRoleForm(data){}
 
   onCreateEditRoleSubmit(){

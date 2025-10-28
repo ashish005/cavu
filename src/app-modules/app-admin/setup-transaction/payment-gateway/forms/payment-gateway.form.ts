@@ -5,7 +5,6 @@ import {PaymentGateway} from "../domains/payment-gateway.serializer";
 @Directive()
 export class PaymentGatewayForm {
     customForm: FormGroup;
-    @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(public fb: FormBuilder) {
         this.customForm = this.fb.group(<any>{
@@ -41,7 +40,7 @@ export class PaymentGatewayForm {
     get formProviderAccount(){ return this.customForm.get('providerAccountName'); }
     get formRealizationAccountId(){ return this.customForm.get('realizationAccountId'); }
     get formRealizationAccount(){ return this.customForm.get('realizationAccountName'); }
-    get formModeGatewayMapper(){ return <FormArray>this.customForm.get('modeGatewayMapper'); }
+    get formModeGatewayMapper(){ return this.customForm.get('modeGatewayMapper') as FormArray<FormGroup>; }
 
     get formIsPOS(){ return this.customForm.get('isPOS'); }
     get formHasOptionalRefNo(){ return this.customForm.get('hasOptionalRefNo'); }

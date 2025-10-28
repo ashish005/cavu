@@ -2,6 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
+    standalone: false,
   templateUrl: './layout.html',
   styles: [`:host { display: contents;}`]
 })

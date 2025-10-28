@@ -25,4 +25,5 @@ export class ProcessPhaseView extends ViewExtender<ProcessPhase> implements OnIn
   }
 
   ngOnInit() { super.populateGrid(); }
+    actionCb(e){}
 }

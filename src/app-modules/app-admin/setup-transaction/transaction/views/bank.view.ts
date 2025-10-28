@@ -13,6 +13,7 @@ import {
 import {BankAccount, BankAccountQueryOptions} from "../domains/bank-account.serializer";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/bank.html',
     styles: [`:host { display: contents; }`],
 })
@@ -32,4 +33,6 @@ export class BankView extends ViewExtender<BankAccount> implements OnInit {
         ]
     }
     ngOnInit() { super.populateGrid(); }
+    actionCb(e){}
+    createNew(){}
 }

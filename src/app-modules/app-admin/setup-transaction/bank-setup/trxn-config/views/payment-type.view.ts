@@ -26,4 +26,5 @@ export class PaymentSystemTypeView extends ViewExtender<PaymentSystemType> imple
     }
 
     ngOnInit(){ super.populateGrid(); }
+    actionCb(e){}
 }

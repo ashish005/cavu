@@ -3,6 +3,7 @@ import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import { startWith, pairwise } from "rxjs";
 
 @Component({
+    standalone: false,
     selector: 'module-permission-row',
     templateUrl: './templates/module-permission-row.html',
     styles: [':host { display: contents; }']

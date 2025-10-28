@@ -6,7 +6,7 @@ import {ConfigLookup, ConfigLookupSerializer} from "../domains/lookup.serializer
 @Injectable()
 export class OrgSetupAPIResolver extends OrgResourceService<ConfigLookup> implements Resolve<any> {
     masterType: ConfigLookup;
-    constructor(public injector: Injector) { super(injector, 'orgLookup/setup', new ConfigLookupSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'orgLookup/setup', new ConfigLookupSerializer()); }
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => {

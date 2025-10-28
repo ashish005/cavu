@@ -4,6 +4,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OrgService} from "../services/org.service";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/org-host.html'
 })
 export class OrgHostView implements OnInit{
@@ -25,7 +26,7 @@ export class OrgHostView implements OnInit{
 
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-    get hostConfigsForm(): FormArray { return <FormArray>this.customForm.get('hostConfigs'); }
+    get hostConfigsForm() { return this.customForm.get('hostConfigs') as FormArray<FormGroup>; }
     addHostConfig() { this.hostConfigsForm.push(this.formHostConfig({}));}
     removeHostConfig(index) { this.hostConfigsForm.removeAt(index); }
 

@@ -13,7 +13,7 @@
                                 </label>
                             </div>
                             <input class="md-input" formControlName="name"
-                                   [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+                                   [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
                                    onkeyup="this.setAttribute('value', this.value);" required="">
                             <label>Name</label>
                         </div>
@@ -75,7 +75,7 @@
                     <div class="col-4">
                         <div class="md-form-group" *ngIf="formIsPOS.value">
                             <input class="md-input" formControlName="identificationNo"
-                                   [ngClass]="{ 'is-invalid': submitted && f.identificationNo.errors }">
+                                   [ngClass]="{ 'is-invalid': submitted && f['identificationNo'].errors }">
                             <label>POS No </label>
                         </div>
                         <div class="m-3" *ngIf="formHasOptionalRefNo.value">

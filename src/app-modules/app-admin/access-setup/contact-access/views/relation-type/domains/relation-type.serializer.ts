@@ -2,7 +2,7 @@ import {CoreQueryOptions, STATUS_ENUM} from "@app-global";
 
 export class RelationTypeQueryOptions extends CoreQueryOptions {
     userMasterType: string;
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             userMasterType:this.userMasterType
         };

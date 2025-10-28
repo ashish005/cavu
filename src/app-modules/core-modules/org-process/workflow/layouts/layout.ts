@@ -137,7 +137,7 @@ export class SubLayout implements OnInit {
         //this.service.syncProcess$.emit(processId);
     }
 
-    addProcess(row: OrgProcess){
+    addProcess(){
         const inputData: any = {
             id: null,
             parentId: this.processId,
@@ -148,7 +148,7 @@ export class SubLayout implements OnInit {
             this.call(this.activatedRoute.snapshot.params.processId);
         });*/
     }
-    addTask(row: OrgProcess){
+    addTask(){
         const inputData: any = {
             id: null,
             processId: this.processId,

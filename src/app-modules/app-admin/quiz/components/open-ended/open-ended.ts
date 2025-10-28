@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output} fr
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 
 @Component({
+    standalone: false,
   selector: 'open-ended',
   templateUrl: './open-ended.html'
 })

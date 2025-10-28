@@ -6,11 +6,14 @@ import {take} from "rxjs";
   template: `<router-outlet (activate)='onActivate($event)'></router-outlet>`,
   styles: [`::ng-deep ng-component{ display: contents;}`]
 })*/
-@Component({ templateUrl: './templates/layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
+})
 export class OrgSetupLayout implements OnInit, OnDestroy {
   public navList: Array<any>;
   constructor(public injector: Injector, public router: Router, public activatedRoute: ActivatedRoute){
-      const translatePath = this.activatedRoute.snapshot.data.translatePath;
+      const { translatePath } = this.activatedRoute.snapshot.data;
       this.navList = [
           {
               //id:'setting',

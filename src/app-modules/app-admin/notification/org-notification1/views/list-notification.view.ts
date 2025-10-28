@@ -24,7 +24,7 @@ export class ListNotificationView extends ViewExtender<OrgNotification> implemen
 
     ngOnInit() { super.populateGrid(); }
 
-    ngOnDestroy() { super.ngOnDestroy(); }
+    override ngOnDestroy() { super.ngOnDestroy(); }
 
     showTemplateToCreateEdit(row: OrgNotification, template: NotificationMediaTypeTemplate) {
         this.router.navigate([row.id, template.masterType], {relativeTo: this.activatedRoute});

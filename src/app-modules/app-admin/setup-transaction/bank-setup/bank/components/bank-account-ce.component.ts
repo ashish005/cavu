@@ -39,6 +39,7 @@ class BankAccountForm {
 }
 
 @Component({
+    standalone: false,
     templateUrl: './templates/bank-account-ce.html',
     styles:[`:host { display: contents; }`]
 })
@@ -54,9 +55,6 @@ export class BankAccountCeComponent extends BankAccountForm implements  OnInit{
     constructor(public override fb: FormBuilder, public service: BankAccountService){
         super(fb);
     }
-
-    // convenience getter for easy access to form fields
-    get f() { return this.customForm.controls; }
 
     ngOnInit(){}
 

@@ -36,7 +36,7 @@ export class TeamUserGroupRule {
 }
 
 export class TeamUserGroup extends CoreResource {
-    id: string;
+    //id: string;
     name: string;
     categoryId: number;
     userTypeId: number; //Just to filter out rules

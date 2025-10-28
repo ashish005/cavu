@@ -9,6 +9,7 @@ import {ActivatedRoute} from "@angular/router";
 import {NotificationAPIResolver} from "../services/api.resolver";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/notification-ce.html',
   styles: [ `:host { display: contents;}`]
 })
@@ -25,7 +26,7 @@ export class NotificationCeComponent extends NotificationRuleForm implements OnI
   options: any = { showClear: false };
   eventOptions: any = { title: 'Event', label: 'name', key: 'appEvent', listKey: 'masterType' };
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
-  constructor(public fb: FormBuilder, public activatedRoute: ActivatedRoute,
+  constructor(public override fb: FormBuilder, public activatedRoute: ActivatedRoute,
               public service: NotificationService, public lookupResolver: NotificationAPIResolver) {
     super(fb);
       const itemFormValueChange = ([prev, next]: [any, any]) =>

@@ -6,10 +6,11 @@ import {TEAM_VIEW, TeamRoutes} from "./team-manage.routing";
 import {TEAM_SERVICES} from "./services";
 import {TEAM_COMPONENT} from "./components";
 import {TEAM_CELL_COMPONENT} from "./grid-cells";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild(TeamRoutes),
     GlobalModule
   ],

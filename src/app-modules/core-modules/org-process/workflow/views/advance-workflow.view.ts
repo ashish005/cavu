@@ -9,7 +9,8 @@ import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-    template: `<setup-advance-workflow #setupWorkflow></setup-advance-workflow>`
+    standalone: false,
+    template: ``//<setup-advance-workflow #setupWorkflow></setup-advance-workflow>`
 })
 export class AdvanceWorkflowView implements OnInit, OnDestroy {
     @ViewChild('setupWorkflow', { static: true }) public setupWorkflow: any;

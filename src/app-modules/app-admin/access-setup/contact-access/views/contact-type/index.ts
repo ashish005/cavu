@@ -6,6 +6,7 @@ import {GlobalModule} from "@app-global";
 import {ContactTypeView} from "./views/contact-type.view";
 import {CONTACT_MASTER_COMPONENTS} from "./components";
 import {ContactTypeService} from "./services/contact-type.service";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 const MasterDocumentRoutes: Array<any> = [
   { path: '', component: ContactTypeView, data: {title: 'master_type.modules.document.category.title'} }
@@ -13,7 +14,7 @@ const MasterDocumentRoutes: Array<any> = [
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],

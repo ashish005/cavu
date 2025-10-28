@@ -4,11 +4,11 @@ import {GlobalModule} from "@app-global";
 import {RouterModule} from "@angular/router";
 import {TASK_BY_ID_VIEWS, TaskByIdRoutes} from "./task-by-id.routing";
 import {TASK_SERVICES} from "./services";
-import {CommonPluginModule} from "@app-plugins";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild(TaskByIdRoutes),
       GlobalModule
     ],

@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Output} from "@angular/core";
 
 @Component({
+    standalone: false,
   selector: 'user-list-search',
   templateUrl: './user-list-search.html'
 })

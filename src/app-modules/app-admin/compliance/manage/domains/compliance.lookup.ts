@@ -42,17 +42,17 @@ export class RegulatoryLookup
 export class ComplianceLookup  extends CoreResource {
   complianceTypes: Array<ComplianceTypeLookup>;
   regulatories: Array<RegulatoryLookup>;
-  calculationTypes: Array<CalculationTypeLookup>;
-  orgTaskConfigs: Array<OrgTaskConfigLookup>;
-  taxRegimes: Array<TaxRegimeLookup>;
+  calculationTypes: Array<any>;
+  orgTaskConfigs: Array<any>;
+  taxRegimes: Array<any>;
   constructor(model: any = {}){
     super();
     const { complianceTypes, regulatories, calculationTypes, taxRegimes, orgTaskConfigs } = model;
     this.complianceTypes = (complianceTypes || []).map(r => new ComplianceTypeLookup(r));
     this.regulatories = (regulatories || []).map(r => new RegulatoryLookup(r));
-    this.calculationTypes = (calculationTypes || []).map(r => new CalculationTypeLookup(r));
+    /*this.calculationTypes = (calculationTypes || []).map(r => new CalculationTypeLookup(r));
     this.taxRegimes = (taxRegimes || []).map(r => new TaxRegimeLookup(r));
-    this.orgTaskConfigs = (orgTaskConfigs || []).map(r => new OrgTaskConfigLookup(r));
+    this.orgTaskConfigs = (orgTaskConfigs || []).map(r => new OrgTaskConfigLookup(r));*/
   }
 
   getSubscriptionsByComplianceType=(complianceTypeId) => (this.complianceTypes || []).find(r => r.id == complianceTypeId)?.subscriptions || [];

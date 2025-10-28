@@ -15,12 +15,12 @@ import { ViewExtender } from "@app-global";
   templateUrl: './templates/task-reminder.html'
 })
 export class TaskReminderView extends ViewExtender<TaskReminder> implements OnInit, OnDestroy {
-  override coreState = TaskReminderQueryOptions = new TaskReminderQueryOptions();
-    constructor(public override taskService: TaskReminderService,
+  override coreState :TaskReminderQueryOptions = new TaskReminderQueryOptions();
+    constructor(public override service: TaskReminderService,
                 public router: Router,
                 public override activatedRoute: ActivatedRoute,
                 public lookupResolver: PipelineAPIResolver) {
-        super(activatedRoute, taskService);
+        super(activatedRoute, service);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name', cellTemplate: ReminderNameActionCell },
             {headerName: 'Group', field: 'lastRunLog', cellTemplate: ReminderGroupActionCell },
@@ -31,10 +31,10 @@ export class TaskReminderView extends ViewExtender<TaskReminder> implements OnIn
     }
 
     onActivate(componentRef){
-      super.actionTemplate = componentRef.actionTemplate;
+      this.actionTemplate = componentRef.actionTemplate;
     }
 
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     ngOnInit(){
         //this.orgTaskId = this.activatedRoute.snapshot.params.taskId;

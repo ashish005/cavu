@@ -5,7 +5,7 @@ export class ComplianceRegulatoryQueryOptions extends CoreQueryOptions {
 }
 
 export class ComplianceRegulatory extends CoreResource {
-    public id: number;
+    //public id: number;
     public name: string;
     public registrationNo: string;
     public registrationDate: string;

@@ -6,7 +6,10 @@ import {GridUISwitchCellComponent, ViewExtender, ASIDE_CLASS, ASIDE_SIZE, Shared
 import {VoucherConfigComponent} from "../components/voucher-config.component";
 import {VoucherTypePhaseCellComponent} from "../grid-cells";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class VoucherTypeView extends ViewExtender<VoucherType> implements OnInit{
   override coreState: VoucherTypeQueryOptions = new VoucherTypeQueryOptions();
   constructor(public override service: VoucherTypeService,

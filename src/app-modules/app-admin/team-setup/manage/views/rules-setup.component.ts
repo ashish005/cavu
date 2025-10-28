@@ -6,12 +6,15 @@ import {TeamGroupForm} from "../forms/team-group.form";
 import {TeamSetupAPIResolver} from "../services";
 import { pairwise, startWith, Subscription } from "rxjs";
 
-@Component({ templateUrl: './templates/rule-setup.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/rule-setup.html'
+})
 export class RulesSetupComponent extends TeamGroupForm implements OnInit, OnDestroy {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     submitted: boolean;
     subscription: Subscription;
-    constructor(public fb: FormBuilder,
+    constructor(public override fb: FormBuilder,
                 public apiResolver: TeamSetupAPIResolver,
                 protected service: TeamSetupService)
     {

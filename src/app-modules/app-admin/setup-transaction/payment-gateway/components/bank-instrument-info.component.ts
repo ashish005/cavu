@@ -14,6 +14,7 @@ import {ActivatedRoute} from "@angular/router";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/bank-instrument-info.html',
     styles:[`:host { display: contents; }`]
 })
@@ -47,5 +48,6 @@ export class BankInstrumentInfoComponent extends ViewExtender<PaymentMode> imple
         super.populateGrid();
     }
 
-    ngOnDestroy(){super.ngOnDestroy();}
+    override ngOnDestroy(){super.ngOnDestroy();}
+    actionCb(e){}
 }

@@ -17,6 +17,7 @@ import {Subscription} from "rxjs";
 import { TaxManagementModuleAPIResolver, TaxCategoryService } from "../services";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/tax-category-create-edit.html',
   styles: [`:host{ display: contents; }`]
 })
@@ -34,7 +35,7 @@ export class TaxCategoryCreateEditComponent extends TaxCategoryForm implements O
   filterRule = (r: any) => { return (r.value.taxGroupId == this.formTaxGroupId.value); }
 
   subscription: Subscription;
-  constructor(public fb: FormBuilder,
+  constructor(public override fb: FormBuilder,
               public apiResolver: TaxManagementModuleAPIResolver,
               private service: TaxCategoryService,
               public sharedService: SharedService) {

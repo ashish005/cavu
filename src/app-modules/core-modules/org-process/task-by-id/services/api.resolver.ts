@@ -1,6 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from "@angular/router";
-import {CoreSchedulerFactory, OrgResourceService} from "@app-global";
+import {OrgResourceService} from "@app-global";
 import {TaskLookup, TaskLookupSerializer} from "../domains/task.lookup";
 import {TaskSummaryRow, TaskSummaryRowSerializer} from "../domains/task-summary.serializer";
 
@@ -21,11 +21,12 @@ export class TaskAPIResolver extends OrgResourceService<TaskLookup> implements R
 @Injectable()
 export class TaskByIdAPIResolver extends OrgResourceService<TaskSummaryRow> implements Resolve<any> {
     data: TaskSummaryRow;
-    constructor(public override injector: Injector, private schedulerFactory: CoreSchedulerFactory) { super(injector, 'orgTask', new TaskSummaryRowSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'orgTask', new TaskSummaryRowSerializer()); }
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const success = (results) => { this.data = results.data; };
         const failure = (err: any) => {};
-        const setup = super.read(`${route.params.taskId}`);
+        const { taskId } = route.params;
+        const setup = super.read(`${taskId}`);
         return this.performRouteResolver(route.data, setup, success, failure);
     }
 

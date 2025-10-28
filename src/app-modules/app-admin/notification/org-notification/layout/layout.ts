@@ -4,7 +4,10 @@ import {NotificationAPIResolver} from "../services/api.resolver";
 import {OrgNotification} from "../domains/notification.serializer";
 import {NotificationTypeLookup} from "../domains/lookup.serializer";
 
-@Component({templateUrl: './templates/layout.html'})
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
+})
 export class Layout {
     @ViewChild('actionTemplate', {static: true}) public actionTemplate: TemplateRef<any>;
     userMasterType: string;
@@ -12,8 +15,9 @@ export class Layout {
     activeNotificationType: NotificationTypeLookup;
 
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: NotificationAPIResolver) {
-        this.userMasterType = this.activatedRoute.snapshot.data.userType;
-        this.hideHeader = this.activatedRoute.snapshot.data.hideHeader;
+        const { userType, hideHeader } = this.activatedRoute.snapshot.data;
+        this.userMasterType = userType;
+        this.hideHeader = hideHeader;
     }
 
     menuItems: Array<any> = [

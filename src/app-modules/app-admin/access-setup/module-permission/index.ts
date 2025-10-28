@@ -5,10 +5,10 @@ import {PERMISSION_MANAGEMENT_COMPONENT, USER_MANAGEMENT_COMPONENT} from "./comp
 import {MANAGE_USER_SERVICES} from "./services";
 import {USER_MANAGEMENT_GRID_CELl} from "./grid-cells";
 import {UserManagementAPIResolver} from "./services/api.resolver";
-import {UsersManagementView} from "./views/user-management.view";
 import {RolePermissionManager} from "./views/role-permission-manager";
 import {PermissionLayout} from "./layout/layout";
 import {GlobalModule} from "@app-global";
+import { ReactiveFormsModule} from "@angular/forms";
 
 /*@Component({template: '<router-outlet></router-outlet>'})
 export class Layout {
@@ -26,18 +26,19 @@ export class Layout {
 }*/
 
 export const MANAGE_USER_VIEWS = [
-    UsersManagementView, RolePermissionManager
+    //UsersManagementView,
+    RolePermissionManager
 ];
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild([
             {
                 path: '', component: PermissionLayout, resolve: [UserManagementAPIResolver],
                 children:[
                     {path: '', redirectTo: 'role-module', pathMatch: 'full'},
                     { path: 'role-module', component: RolePermissionManager, data: { title: 'modules.authorization.title'} },
-                    { path: 'users', component: UsersManagementView, data: {title: 'User Permission'} }
+                    //{ path: 'users', component: UsersManagementView, data: {title: 'User Permission'} }
                 ]
             }
         ]),

@@ -41,7 +41,7 @@
                 <div class="col-sm-12">
                     <div class="md-form-group">
                         <input class="md-input" formControlName="name"
-                               [class]="{ 'is-invalid': submitted && f.name.errors }">
+                               [class]="{ 'is-invalid': submitted && f['name'].errors }">
                         <label> Name </label>
                     </div>
                 </div>

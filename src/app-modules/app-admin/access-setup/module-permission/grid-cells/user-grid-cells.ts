@@ -4,6 +4,7 @@ import {UserManagementAPIResolver} from "../services/api.resolver";
 import {User} from "../domains/user.model";
 
 @Component({
+    standalone: false,
     template: `<div>
     <a class="text-xs _500"> {{ context.name }}</a>
     <div class="item-except text-xs">
@@ -60,6 +61,7 @@ export class UserNameCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <a class="text-xs _500"></a>
         <div class="d-block text-xs">
@@ -76,6 +78,7 @@ export class UserContactCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <span class="text-xs">{{context.userName}}</span>
         <div class="text-xs">

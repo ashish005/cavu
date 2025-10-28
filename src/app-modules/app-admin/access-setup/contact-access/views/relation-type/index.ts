@@ -5,6 +5,7 @@ import {GlobalModule} from "@app-global";
 import {RelationTypeView} from "./views/relation-type.view";
 import {RELATION_TYPE_MASTER_COMPONENTS} from "./components";
 import {RelationTypeService} from "./services/relation-type.service";
+import {ReactiveFormsModule} from "@angular/forms";
 
 const MasterDocumentRoutes: Array<any> = [
   { path: '', component: RelationTypeView, data: {title: 'master_type.modules.document.category.title'} }
@@ -12,7 +13,7 @@ const MasterDocumentRoutes: Array<any> = [
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, ReactiveFormsModule,
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],

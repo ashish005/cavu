@@ -4,14 +4,14 @@ import {SalaryHeadQueryOptions} from "../../domains/salary-head.serializer";
 import {SalaryHeadService} from "../../services/employee-salary.service";
 
 @Component({
+    standalone: false,
   selector: 'salary-head',
   templateUrl: './salary-head.html'
 })
 export class SalaryHeadComponent extends ListLoaderComponent implements OnInit {
-  title: string = "Salary Head";
   gridOptions: any = {};
 
-  constructor(public service: SalaryHeadService) {
+  constructor(public override service: SalaryHeadService) {
     super(service, new SalaryHeadQueryOptions());
   }
 

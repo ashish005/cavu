@@ -3,7 +3,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PaymentGatewayLookupAPIResolver} from "../services/api.resolver";
 import {PaymentSystemTypeLookup} from "../domains/lookup.serializer";
 
-@Component({ templateUrl: './layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './layout.html'
+})
 export class PaymentGatewayLayout implements OnInit {
     systemType: PaymentSystemTypeLookup;
     menuItems: Array<any> = [

@@ -12,7 +12,9 @@
                                     <div class="item-except text-xs" *ngIf="row.hasTemplate && !row.isReminder">
                                         <span class="float-left pr-2 mr-2 b-r" *ngIf="row.orgTaskId">
                                             <a class="text-primary item-date"
-                                               (click)="checkActivity(row)">Activities</a>
+                                               >Activities
+<!--                                            (click)="checkActivity(row)"-->
+                                            </a>
                                         </span>
                                         <div *ngIf="!row.isEventBased">
                                             <!--<span *ngIf="!row.orgTaskScheduleId"> Not yet Scheduled </span>

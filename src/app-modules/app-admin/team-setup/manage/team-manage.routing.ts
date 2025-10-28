@@ -10,7 +10,10 @@ import {TeamSetupService} from "./services/team.service";
 import {TeamUserGroup} from "./domains/user-group.serializer";
 import {TeamView} from "./views/team.view";
 
-@Component({templateUrl: './layout/sub-layout.html'})
+@Component({
+    standalone: false,
+    templateUrl: './layout/sub-layout.html'
+})
 export class TeamSubLayout implements OnInit {
     public actionTemplate: TemplateRef<any>;
     isLoading: boolean = false;

@@ -3,6 +3,7 @@ import {Component, Input, OnInit, Output} from "@angular/core";
 import {RolePermissionService} from "../../services/role-permission.service";
 
 @Component({
+    standalone: false,
   selector: 'module-permission',
   templateUrl: './module-permission.html'
 })
@@ -15,8 +16,8 @@ export class ModulePermissionComponent implements OnInit{
 
   get f() { return this.customForm.controls; }
 
-  get formRuleItem(): FormArray{
-    return <FormArray>this.customForm.get('modulePermission');
+  get formRuleItem(){
+    return this.customForm.get('modulePermission') as FormArray<FormGroup>;
   }
 
   updateAllFields(isChecked: boolean, formPermission: FormGroup){

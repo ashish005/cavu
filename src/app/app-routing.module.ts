@@ -16,16 +16,6 @@ export const appSetupGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   if (setupService.hasAppSetup()) {
     return true;
-    /*return authService.checkAuthentication().pipe(
-      take(1), // Important: take only the first value and complete the observable.
-      map(isAuthenticated => {
-        if (isAuthenticated) { return true; }
-        else {
-          // Optional: Redirect the user if they are not authenticated.
-          return router.createUrlTree(['/login']);
-        }
-      })
-    );*/
   }
   // Redirect to the login page if not authenticated
   return router.createUrlTree(['/setup/trial']);

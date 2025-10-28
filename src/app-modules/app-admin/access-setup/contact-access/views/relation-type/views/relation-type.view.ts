@@ -5,17 +5,20 @@ import {RelationTypeService} from "../services/relation-type.service";
 import {RelationType, RelationTypeQueryOptions} from "../domains/relation-type.serializer";
 import {RelationTypeCeComponent} from "../components/relation-type-ce.component";
 
-@Component({ templateUrl: './templates/relation-type.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/relation-type.html'
+})
 export class RelationTypeView extends ViewExtender<RelationType> implements OnInit, OnDestroy {
   public userMasterType: string;
   override coreState: RelationTypeQueryOptions = new RelationTypeQueryOptions();
-  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
 
   constructor(public override service: RelationTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
-      this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    const { userType } = this.activatedRoute.snapshot.data;
+      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
@@ -27,7 +30,7 @@ export class RelationTypeView extends ViewExtender<RelationType> implements OnIn
     super.populateGrid();
   }
 
-  ngOnDestroy(){
+  override ngOnDestroy(){
     super.ngOnDestroy();
   }
 

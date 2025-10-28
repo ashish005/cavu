@@ -5,6 +5,7 @@ import {ModuleRightsForm} from "../../forms/module-rights.form";
 import {RolePermissionService, UserPermissionService} from "../../services/role-permission.service"
 
 @Component({
+    standalone: false,
   selector: 'role-permission',
   templateUrl: './templates/role-permission.html',
   styles: [':host { display: contents; }']
@@ -12,7 +13,7 @@ import {RolePermissionService, UserPermissionService} from "../../services/role-
 export class RolePermissionView extends ModuleRightsForm implements OnInit {
   isLoading: boolean;
   @Input() orgUserId: string;
-  constructor(public fb: FormBuilder,
+  constructor(public override fb: FormBuilder,
               public service: UserPermissionService) {
     super(fb);
   }

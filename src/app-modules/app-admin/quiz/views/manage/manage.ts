@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
+    standalone: false,
   templateUrl: './manage.html'
 })
 export class ManageComponent implements OnInit {

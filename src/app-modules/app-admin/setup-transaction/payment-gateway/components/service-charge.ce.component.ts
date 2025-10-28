@@ -15,6 +15,7 @@ import {CardTypeLookup, ModeGatewayMapperLookup} from "../domains/lookup.seriali
 import {ServiceCharge} from "../domains/gateway-service-charge.serializer";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/service-charge-ce.html',
     styles:[`:host { display: contents; }`]
 })
@@ -29,7 +30,7 @@ export class ServiceChargeCeComponent extends PaymentGatewayServiceChargeForm im
 
     @Input() set data(item: PaymentGateway) { this.gateway = item; }
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public fb: FormBuilder,
+    constructor(public override fb: FormBuilder,
                 public apiResolver: PaymentGatewayLookupAPIResolver,
                 public service: PaymentGatewayChargeService){
         super(fb);
@@ -74,7 +75,7 @@ export class ServiceChargeCeComponent extends PaymentGatewayServiceChargeForm im
 
     ngOnDestroy(){this.subscribe?.unsubscribe();}
 
-    applyCharges(form: FormGroup){
+    applyCharges(form: any){
         const data = form.getRawValue();
         data.status = (data.status)? 1: 2;
         this.submitted = true;

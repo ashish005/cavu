@@ -5,17 +5,20 @@ import {ContactTypeService} from "../services/contact-type.service";
 import {ContactType, ContactTypeQueryOptions} from "../domains/contact-type.serializer";
 import {ContactTypeRuleCeComponent} from "../components/contact-type.rule-ce.component";
 
-@Component({ templateUrl: './templates/contact-type.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/contact-type.html'
+})
 export class ContactTypeView extends ViewExtender<ContactType> implements OnInit, OnDestroy {
   public userMasterType: string;
   override coreState: ContactTypeQueryOptions = new ContactTypeQueryOptions();
-  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
 
   constructor(public override service: ContactTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
-      this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    const { userType } = this.activatedRoute.snapshot.data;
+      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent},
@@ -30,7 +33,7 @@ export class ContactTypeView extends ViewExtender<ContactType> implements OnInit
     super.populateGrid();
   }
 
-  ngOnDestroy(){
+  override ngOnDestroy(){
     super.ngOnDestroy();
   }
 

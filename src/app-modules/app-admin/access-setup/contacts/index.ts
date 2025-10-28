@@ -7,10 +7,11 @@ import {ContactAPIResolver} from "./services/api.resolver";
 import {ContactService} from "./services/contact.service";
 import {CONTACTS_GRID_CELl} from "./grid-cells";
 import {CONTACTS_COMPONENTS} from "./components";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild(ContactRoutes),
         GlobalModule
     ],

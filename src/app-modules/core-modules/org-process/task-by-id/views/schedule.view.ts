@@ -12,8 +12,8 @@ import {TaskAPIResolver, TaskByIdAPIResolver} from "../services/api.resolver";
 })
 export class ScheduleView extends ViewExtender<Scheduler> implements OnInit, OnDestroy {
   override coreState: SchedulerQueryOptions = new SchedulerQueryOptions();
-  constructor(public activatedRoute: ActivatedRoute,
-              public service: SchedulerService,
+  constructor(public override activatedRoute: ActivatedRoute,
+              public override service: SchedulerService,
               public resolver: TaskByIdAPIResolver){
   super(activatedRoute, service);
         this.gridOptions.columnDefs = [
@@ -29,10 +29,10 @@ export class ScheduleView extends ViewExtender<Scheduler> implements OnInit, OnD
     }
 
     onActivate(componentRef){
-        super.actionTemplate = componentRef.actionTemplate;
+        this.actionTemplate = componentRef.actionTemplate;
     }
 
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     ngOnInit(){
         this.coreState.orgTaskId = this.resolver.data.id;

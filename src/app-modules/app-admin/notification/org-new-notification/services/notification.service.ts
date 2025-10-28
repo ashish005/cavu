@@ -1,4 +1,4 @@
-import {OrgResourceService} from "@app-global";
+import { OrgResourceService, CoreEndpointBase } from "@app-global";
 import { map, tap } from "rxjs/operators";
 import {EventEmitter, Injectable, Injector} from "@angular/core";
 import {OrgNotification, OrgNotificationSerializer} from "../domains/notification.serializer";
@@ -33,13 +33,15 @@ export class NotificationService extends OrgResourceService<OrgNotification>{
 }
 
 @Injectable()
-export class NotificationByIdResolver implements Resolve<any> {
-    constructor(public service: NotificationService) {}
+export class NotificationByIdResolver extends CoreEndpointBase implements Resolve<any> {
+    constructor(public override injector: Injector,
+                public service: NotificationService) { super(injector);}
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => {};
         const failure = (err: any) => {};
-        const setup = this.service.read(route.params.notificationId);
+        const { notificationId } = route.params;
+        const setup = this.service.read(notificationId);
         return this.performRouteResolver(route.data, setup, success, failure);
     }
 }

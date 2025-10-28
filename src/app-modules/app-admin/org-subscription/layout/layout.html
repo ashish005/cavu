@@ -27,7 +27,7 @@
                     <ul class="nav flex-column nav-sm" *ngFor="let nav of navList">
                         <li class="nav-header hidden-folded"><span class="nav-item px-1 text-muted" *ngIf="nav?.key">{{nav.key  }}</span></li>
                         <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{item?.key  }}</a>
+                            <a class="nav-link" [routerLink]="item.routeTo">{{item?.key  }}</a>
                         </li>
                     </ul>
                 </div>

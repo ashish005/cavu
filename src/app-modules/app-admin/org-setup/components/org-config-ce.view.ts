@@ -103,18 +103,19 @@ class OrgConfigInfoForm {
     }
 }
 @Component({
+    standalone: false,
     selector: 'org-config',
     templateUrl: './templates/org-config-ce.html'
 })
 export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
     orgSetup: AppSetup;
-    constructor(public fb: FormBuilder,
+    constructor(public override fb: FormBuilder,
                 public apiResolver: OrgSetupAPIResolver,
                 public service: OrgSettingService,
                 public appSetupService: AppSetupService
                 ){
         super(fb);
-        this.orgSetup = appSetupService.orgSetup;
+        this.orgSetup = appSetupService.appSetup;
     }
 
     /*itemFormLanguageValueChange = ([prev, next]: [any, any]) =>

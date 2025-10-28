@@ -1,7 +1,10 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 
-@Component({ templateUrl: './layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './layout.html'
+})
 export class TrxnConfigLayout implements OnInit {
     public actionTemplate: TemplateRef<any>;
     public pageTitleTemplate: TemplateRef<any>;

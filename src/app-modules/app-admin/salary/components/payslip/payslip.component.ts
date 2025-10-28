@@ -4,14 +4,14 @@ import {PayslipQueryOptions} from "../../domains/payslip.serializer";
 import {PayslipService} from "../../services/employee-salary.service";
 
 @Component({
+    standalone: false,
   selector: 'payslip',
   templateUrl: './payslip.html'
 })
 export class PayslipComponent extends ListLoaderComponent implements OnInit {
-  title: string = "Payslip";
   gridOptions: any = {};
 
-  constructor(public service: PayslipService) {
+  constructor(public override service: PayslipService) {
     super(service, new PayslipQueryOptions());
   }
 

@@ -5,6 +5,7 @@ import {NotificationAPIResolver} from "../services/api.resolver";
 import {NotificationReminder, NotificationReminderTemplate} from "../domains/reminder.serializer";
 
 @Component({
+    standalone: false,
     template: `<div>
         <a class="text-xs _500">{{ context.orgTaskName }} {{ context.name }} </a>
         <div class="item-except text-xs h-1x">
@@ -69,6 +70,7 @@ export class ReminderNameActionCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <a class="text-xs _500"> {{ context.userGroupName }} </a>
         <div class="item-except text-xs h-1x">
@@ -83,6 +85,7 @@ export class ReminderGroupActionCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <a class="text-xs _500"> {{ context.notificationName }} </a>
         <div class="item-except text-xs h-1x">
@@ -97,6 +100,7 @@ export class ReminderNotificationActionCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <div class="list inset" *ngIf="context[col.field]">
             <div class="list-item p-0 text-xs">

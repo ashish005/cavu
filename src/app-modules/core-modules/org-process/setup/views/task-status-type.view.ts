@@ -25,4 +25,5 @@ export class TaskStatusTypeView extends ViewExtender<TaskStatusType> implements 
   }
 
   ngOnInit() { super.populateGrid(); }
+    actionCb(e){}
 }

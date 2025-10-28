@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {CommunicationGateway} from "../domains/communication-gateway.serializer";
 
 @Directive()
-export class CommunicationGatewayForm implements OnInit
+export class CommunicationGatewayForm
 {
     @Input() id: any;
     customForm: FormGroup;
@@ -57,8 +57,6 @@ export class CommunicationGatewayForm implements OnInit
             mediaMasterType: [''],// for ui controlling
         });
     }
-
-    ngOnInit(){}
 
     get formMediaTypeId() { return <FormGroup>this.customForm.get('mediaTypeId'); }
     get formMediaMasterType() { return <FormGroup>this.customForm.get('mediaMasterType'); }

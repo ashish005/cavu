@@ -15,7 +15,7 @@ export class NotificationTemplateQueryOptions extends CoreQueryOptions{
     this.templateId = model.templateId || '';
   }
 
-  toQueryString (){
+  override toQueryString (){
     const obj = {
       notificationId:this.notificationId,
       notificationTypeId:this.notificationTypeId,

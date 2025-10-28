@@ -1,6 +1,5 @@
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Compliance} from "../domains/compliance.serializer";
-import {CALC_TYPE} from "@app-global";
 
 export class ComplianceForm {
     customForm: FormGroup;
@@ -86,7 +85,7 @@ export class ComplianceForm {
         this.customForm.get('taxRebateRate').setValue(taxRebateRate);
         this.customForm.get('isExemptedForTaxation').setValue(isExemptedForTaxation);
 
-        this.customForm.get('calculationType').setValue(calculationType || CALC_TYPE.PERCENTAGE);
+        this.customForm.get('calculationType').setValue(calculationType);// || CALC_TYPE.PERCENTAGE
         this.customForm.get('rate').setValue(rate ||  '0.00');
 
         this.customForm.get('taskId').setValue(taskId);

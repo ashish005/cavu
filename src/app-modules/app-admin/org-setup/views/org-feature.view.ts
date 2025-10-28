@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 
-@Component({ templateUrl: './templates/features/org-accounting-feature.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/features/org-accounting-feature.html'
+})
 export class OrgAccountingFeatureView implements OnInit{
     pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute){
@@ -88,7 +91,10 @@ export class OrgAccountingFeatureView implements OnInit{
     ngOnInit(){}
 }
 
-@Component({ templateUrl: './templates/features/org-inventory-feature.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/features/org-inventory-feature.html'
+})
 export class OrgInventoryFeatureView implements OnInit{
     pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute){
@@ -159,7 +165,10 @@ export class OrgInventoryFeatureView implements OnInit{
     ngOnInit(){}
 }
 
-@Component({ templateUrl: './templates/features/org-voucher-config.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/features/org-voucher-config.html'
+})
 export class OrgVoucherConfigView implements OnInit{
     pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute){
@@ -224,7 +233,10 @@ export class OrgVoucherConfigView implements OnInit{
     ngOnInit(){}
 }
 
-@Component({ templateUrl: './templates/features/org-voucher-entry-config.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/features/org-voucher-entry-config.html'
+})
 export class OrgVoucherEntryConfigView implements OnInit{
     pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute){

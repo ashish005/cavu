@@ -4,14 +4,15 @@ import {ContactAPIResolver} from "../services/api.resolver";
 import {UserTypeLookup} from "../domains/lookup.serializer";
 
 @Component({
+    standalone: false,
   templateUrl: './layout.html',
   styles: [`:host { display: contents;}`]
 })
 export class ContactsLayout implements OnInit {
   public actionTemplate: TemplateRef<any>;
-  page: any;
-  constructor(private router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: ContactAPIResolver) {
-    this.page = this.activatedRoute.snapshot.data;
+  constructor(private router: Router,
+              public activatedRoute: ActivatedRoute,
+              public lookupResolver: ContactAPIResolver) {
   }
 
     onActivate(componentRef){

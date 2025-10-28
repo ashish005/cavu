@@ -49,7 +49,7 @@ export class PaymentGatewayByModeView extends ViewExtender<PaymentGatewayByMode>
         super.populateGrid();
     }
 
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     actionCb(row: PaymentGatewayByMode){
         const inputData: any = { id: row.id, data: row };

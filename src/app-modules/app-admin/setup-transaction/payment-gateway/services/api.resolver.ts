@@ -14,7 +14,7 @@ import {BankInstrumentInfoComponent} from "../components/bank-instrument-info.co
 export class PaymentGatewayLookupAPIResolver extends OrgResourceService<PaymentGatewayLookup> implements Resolve<any> {
   masterType: PaymentGatewayLookup;
   allSystemType = new PaymentSystemTypeLookup({name: 'All', masterType: 'all'});
-  constructor(public injector: Injector, private sharedService: SharedService, public service: PaymentGatewayService) {
+  constructor(public override injector: Injector, private sharedService: SharedService, public service: PaymentGatewayService) {
       super(injector, 'paymentGatewayLookup', new PaymentGatewayLookupSerializer());
   }
 

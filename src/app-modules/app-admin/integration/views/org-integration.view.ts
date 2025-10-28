@@ -7,6 +7,7 @@ import {OrgIntegrationAPIResolver} from "../services/api.resolver";
 import {CommunicationGatewayCEComponent} from "../components/communication-gateway-ce.component";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/org-integration.html'
 })
 export class OrgIntegrationView implements OnInit {

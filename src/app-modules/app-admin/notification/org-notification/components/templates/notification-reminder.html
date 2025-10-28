@@ -1,6 +1,8 @@
 <div class="content-main d-flex flex-column flex">
     <div class="d-flex flex">
-        <form class="d-flex flex-column flex" *ngIf="activeTab == tabs.reminder" [formGroup]="customForm"
+        <!--*ngIf="activeTab == tabs.reminder"-->
+        <form class="d-flex flex-column flex"
+              [formGroup]="customForm"
               (submit)="onReminderSubmit(customForm)">
             <div class="scroll-y h-100 m-auto text-center">
                 <h4 class="p-4"> Remind </h4>
@@ -18,7 +20,7 @@
                             <div class="px-1 text-muted"> User Group </div>
                         </div>
                         <div class="input-group-append">
-                            <input style="width: 50px;" class="md-input mt-1 title _600" formControlName="reminderValue" [ngClass]="{ 'is-invalid': f.reminderValue.errors }">
+                            <input style="width: 50px;" class="md-input mt-1 title _600" formControlName="reminderValue">
                             <a class="dropdown-toggle min-w-50 title _600" data-toggle="dropdown" aria-expanded="false">{{formReminderFrequencyType?.value}}</a>
                             <div class="dropdown-menu animate fadeIn" x-placement="bottom-start" style="position: absolute; left: 0px;">
                                 <a class="dropdown-item" *ngFor="let duration of durationType; let i=index" (click)="updateDurationType(duration.key)">
@@ -41,7 +43,7 @@
             </div>
         </form>
         <div class="d-flex flex-column flex" *ngIf="activeTab == tabs.userGroup">
-            <group-ce></group-ce>
+<!--            <group-ce></group-ce>-->
         </div>
     </div>
 </div>

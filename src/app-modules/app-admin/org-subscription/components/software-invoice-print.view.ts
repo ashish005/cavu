@@ -7,6 +7,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AppSetup, AppSetupService} from "@app-global";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/software-invoice-print.html',
     providers: [SoftwareInvoiceReportService],
     styles: [`:host { display: contents; }`]

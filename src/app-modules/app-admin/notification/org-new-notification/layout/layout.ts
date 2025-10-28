@@ -7,7 +7,11 @@ import {
 import {NotificationService} from "../services/notification.service";
 import {NotificationAPIResolver} from "../services/api.resolver";
 
-@Component({templateUrl: './templates/layout.html', styles: [`::ng-deep ng-component{ display: contents;}`]})
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html',
+    styles: [`::ng-deep ng-component{ display: contents;}`]
+})
 export class Layout implements OnInit, OnDestroy {
     @ViewChild('actionTemplate', {static: true}) public actionTemplate: TemplateRef<any>;
     activeView: string;

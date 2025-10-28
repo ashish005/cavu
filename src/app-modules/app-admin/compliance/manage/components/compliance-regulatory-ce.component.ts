@@ -31,7 +31,7 @@ export class ComplianceRegulatoryCeComponent extends ComplianceRegulatoryForm im
     submitted: boolean = false;
     get actionType(){ return this.id ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; };
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public fb: FormBuilder,
+    constructor(public override fb: FormBuilder,
                 private service: ComplianceRegulatoryService,
                 public apiResolver: ComplianceAPIResolver) { super(fb); }
 

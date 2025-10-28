@@ -1,7 +1,7 @@
 import {CoreResource} from "@app-global";
 
 export class OrgModuleModel extends CoreResource{
-  public id: string;
+  //public id: string;
   public name: string;
   public description: string;
   public parentId: number;

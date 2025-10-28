@@ -6,6 +6,7 @@ import {OrgService} from "../services/org.service";
 import {pairwise, startWith} from "rxjs";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/org-info.html',
     styles: [
         `:host { display: content; }

@@ -5,10 +5,11 @@ import {GlobalModule} from "@app-global";
 import {TEAM_VIEW, TeamRoutes} from "./team.routing";
 import {TEAM_SERVICES} from "./services";
 import {TEAM_COMPONENT} from "./components";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, ReactiveFormsModule,
     RouterModule.forChild(TeamRoutes),
     GlobalModule
   ],

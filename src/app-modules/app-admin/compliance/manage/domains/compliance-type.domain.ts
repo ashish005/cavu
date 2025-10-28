@@ -3,14 +3,14 @@ import {CoreQueryOptions, CoreResource} from "@app-global";
 export class ComplianceTypeQueryOptions extends CoreQueryOptions {
     constructor(model: any = {}){super(model);}
 
-    toQueryString (){
+    override toQueryString (){
         const obj = {};
         return super.getParamByObject(obj);
     }
 }
 
 export class ComplianceSubscription  extends CoreResource {
-    public id: number;
+    //public id: number;
     public name: string;
 
     constructor(model: any = {}){
@@ -22,7 +22,7 @@ export class ComplianceSubscription  extends CoreResource {
 }
 
 export class ComplianceType  extends CoreResource {
-    public id: number;
+    //public id: number;
     public name: string;
     public countryId: number;
     public subscriptions: Array<ComplianceSubscription>;

@@ -1,9 +1,10 @@
 import {Component, ElementRef, ViewChild, ViewEncapsulation} from "@angular/core";
 import {DomSanitizer} from "@angular/platform-browser";
-import { saveAs } from 'file-saver';
+//import { saveAs } from 'file-saver';
 import {SoftwareInvoiceReportService} from "../../services/software-invoice-report.service";
 
 @Component({
+    standalone: false,
     template: `<div [innerHTML]="innerHTML"></div>`,
     selector: 'subscription-html-print',
     encapsulation: ViewEncapsulation.ShadowDom
@@ -35,7 +36,7 @@ export class SubscriptionHtmlPrintView
         const pdfSuccess = (fileStream) => {
             this.isLoading = false;
             let blob = new Blob([fileStream], { type: fileStream.type });
-            saveAs(blob, `${voucherNo}.pdf`);
+            //saveAs(blob, `${voucherNo}.pdf`);
         };
         this.service.getVoucherPDF(invoiceId, licenseId).toPromise().then(pdfSuccess, failure);
     }

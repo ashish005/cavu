@@ -12,7 +12,7 @@
                 <div class="nav-active-border b-theme px-4 px-md-0">
                     <ul class="nav nav-xs flex-row" *ngFor="let nav of navList">
                         <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{ item?.key
+                            <a class="nav-link" [routerLink]="item.routeTo">{{ item?.key
                                 }}</a>
                         </li>
                     </ul>

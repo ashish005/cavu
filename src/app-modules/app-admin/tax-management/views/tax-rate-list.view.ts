@@ -6,15 +6,16 @@ import {ActivatedRoute} from "@angular/router";
 import {TaxRateCellComponent} from "../grid-cells/tax-category-grid.cell";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/tax-rate-list.html',
     styles: [`:host{ display: contents; }`]
 })
 export class TaxRateListComponent extends ViewExtender<TaxTypeRate> implements OnInit {
   override coreState: TaxTypeRateQueryOptions = new TaxTypeRateQueryOptions();
-  constructor(public override activeRoute: ActivatedRoute,
+  constructor(public override activatedRoute: ActivatedRoute,
               public override service: TaxTypeRateService,
               public apiResolver: TaxManagementModuleAPIResolver) {
-    super(activeRoute, service);
+    super(activatedRoute, service);
     this.coreState = new TaxTypeRateQueryOptions();
       this.gridOptions.header = { title: 'Tax Rates', hide: true, footerHide: true, desc: 'Tax Rates information here', add: false, refresh: true, edit: false, delete: false };
       this.gridOptions.columnDefs = [
@@ -34,4 +35,6 @@ export class TaxRateListComponent extends ViewExtender<TaxTypeRate> implements O
     this.coreState.taxGroupId = taxGroupId;
     super.populateGrid();
   }
+
+    actionCb(e){}
 }

@@ -9,7 +9,7 @@ import {Observable} from "rxjs";
 export class OrgIntegrationAPIResolver extends OrgResourceService<OrgIntegration> implements Resolve<any> {
     masterType: OrgIntegration;
 
-    constructor(public injector: Injector) { super(injector, 'integrationLookup', new OrgIntegrationSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'integrationLookup', new OrgIntegrationSerializer()); }
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => {

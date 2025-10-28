@@ -4,7 +4,10 @@ import {StockTransferTypeService} from "../services/voucher-type.service";
 import {StockTransferType, StockTransferTypeQueryOptions} from "../domains/stock-transfer-type.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class StockTransferTypeView extends ViewExtender<StockTransferType> implements OnInit
 {
   override coreState: StockTransferTypeQueryOptions = new StockTransferTypeQueryOptions();

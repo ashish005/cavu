@@ -1,7 +1,6 @@
 import {CoreResource} from "@app-global";
 
 export class DocumentCategoryLookup extends CoreResource {
-    id: string;
     name: string;
 
     constructor(model: any = <any>{}){

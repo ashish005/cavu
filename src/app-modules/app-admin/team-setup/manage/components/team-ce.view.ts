@@ -6,7 +6,10 @@ import {TeamGroupForm} from "../forms/team-group.form";
 import {TeamSetupAPIResolver} from "../services/api.resolver";
 import {TeamSetupService, TeamUserRecordsService} from "../services/team.service";
 
-@Component({ templateUrl: './templates/team-ce.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/team-ce.html'
+})
 export class TeamCeView extends TeamGroupForm implements OnInit {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
 
@@ -17,7 +20,7 @@ export class TeamCeView extends TeamGroupForm implements OnInit {
         this.populateUserGroup(val || new TeamUserGroup({}))
     };
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public fb: FormBuilder, public apiResolver: TeamSetupAPIResolver,
+    constructor(public override fb: FormBuilder, public apiResolver: TeamSetupAPIResolver,
                 private userRecordsService: TeamUserRecordsService,
                 protected service: TeamSetupService) {
         super(fb);

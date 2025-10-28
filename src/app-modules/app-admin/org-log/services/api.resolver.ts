@@ -8,7 +8,7 @@ export class LogAPIResolver extends OrgResourceService<LogLookup> implements Res
   masterType: LogLookup;
   private listData: any = { title: 'Admin Portal', navList: [] };
 
-  constructor(public injector: Injector) { super(injector, 'masterlookup/log', new LogLookupSerializer()); }
+  constructor(public override injector: Injector) { super(injector, 'masterlookup/log', new LogLookupSerializer()); }
 
   resolve(route: ActivatedRouteSnapshot) {
     const success = (results) => {

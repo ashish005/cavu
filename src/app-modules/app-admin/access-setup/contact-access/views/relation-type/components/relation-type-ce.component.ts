@@ -5,6 +5,7 @@ import {RelationTypeForm} from "../form/relation-type.form";
 import {RelationTypeService} from "../services/relation-type.service";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/relation-type.html',
   styles: [`:host{ display: contents; }`]
 })
@@ -17,7 +18,7 @@ export class RelationTypeCeComponent extends RelationTypeForm {
 
   submitted: boolean = false;
   categories: Array<any>;
-  constructor(public fb: FormBuilder, public service: RelationTypeService) {
+  constructor(public override fb: FormBuilder, public service: RelationTypeService) {
     super(fb);
   }
 

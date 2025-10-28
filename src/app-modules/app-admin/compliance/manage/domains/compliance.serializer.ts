@@ -5,7 +5,6 @@ export class ComplianceQueryOptions extends CoreQueryOptions {
 }
 
 export class Compliance  extends CoreResource {
-  public id: number;
   public name: string;
   public description: string;
 

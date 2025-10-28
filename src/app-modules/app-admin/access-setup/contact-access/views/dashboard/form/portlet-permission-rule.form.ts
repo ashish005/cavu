@@ -33,7 +33,7 @@ export class PortletPermissionRuleForm {
   // convenience getter for easy access to form fields
   get f() { return this.customForm.controls; }
 
-  get formRule() { return <FormArray>this.customForm.get('permissions'); }
+  get formRule() { return this.customForm.get('permissions') as FormArray<FormGroup>; }
   get formUserType() { return <FormGroup>this.customForm.get('userTypeId'); }
 
   addToFormRule(item){

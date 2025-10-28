@@ -7,7 +7,7 @@ import {LookupBanking, LookupBankingSerializer} from "../domains/banking.lookup"
 export class BankingAPIResolver extends OrgResourceService<LookupBanking> implements Resolve<any> {
   masterType: LookupBanking;
   refreshTrxnAlloationList: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public injector: Injector) { super(injector, 'trxnMasterLookup', new LookupBankingSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'trxnMasterLookup', new LookupBankingSerializer()); }
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => {

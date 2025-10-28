@@ -3,7 +3,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {TaxManagementModuleAPIResolver} from "../services";
 import {TaxGroupLookup} from "../domains/lookup";
 
-@Component({ templateUrl: './templates/layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
+})
 export class Layout {
   public actionTemplate: TemplateRef<any>;
   public pageTitleTemplate: TemplateRef<any>;
@@ -31,7 +34,10 @@ export class Layout {
     }
 }
 
-@Component({ templateUrl: './templates/sub-layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/sub-layout.html'
+})
 export class SubLayout implements OnInit {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;

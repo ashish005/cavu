@@ -2,9 +2,10 @@ import {Component, Input, OnInit} from '@angular/core';
 import {OrgSetupAPIResolver} from "../services/api.resolver";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OrgSettingService} from "../services/org-setting.service";
-import {AppSetup} from "@app-global";
+import {AppSetup, AppSetupService} from "@app-global";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/org-config.html'
 })
 export class OrgConfigView implements OnInit{
@@ -12,7 +13,7 @@ export class OrgConfigView implements OnInit{
     customForm: FormGroup;
     orgSetup: AppSetup;
     constructor(public fb: FormBuilder, public apiResolver: OrgSetupAPIResolver,
-                public service: OrgSettingService){
+                public service: OrgSettingService, public appSetupService: AppSetupService) {
         this.customForm = this.fb.group({
             id: [null],
             passwordChangeOnFirstLoginEnabled: [null],
@@ -28,16 +29,17 @@ export class OrgConfigView implements OnInit{
             hasMultiProjectModule: [null],
             hasProjectWorkFlow: [null]
         });
+        this.orgSetup = appSetupService.appSetup;
     }
 
     // convenience getter for easy access to form fields
-    get fo() { return this.customForm.controls; }
+    get f() { return this.customForm.controls; }
 
     ngOnInit() {
         //this.orgSetup = this.coreService.orgSetup;
         //const { orgConfig, options } = this.coreService.orgSetup;
 
-        this.customForm.patchValue(<any>options);
+        //this.customForm.patchValue(<any>options);
     }
 
     educationalFeatures = [

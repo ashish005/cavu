@@ -49,8 +49,8 @@ export class NotificationRuleForm {
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
 
-    get formPermissions() { return <FormArray>this.customForm.get('permissions'); }
-    get formTemplates() { return <FormArray>this.customForm.get('templates'); }
+    get formPermissions() { return this.customForm.get('permissions') as FormArray<FormGroup>; }
+    get formTemplates() { return this.customForm.get('templates') as FormArray<FormGroup>; }
     get formNotificationTypeId() { return <FormGroup>this.customForm.get('notificationTypeId'); }
     get formAppEventType() { return <FormGroup>this.customForm.get('appEvent'); }
 

@@ -10,6 +10,7 @@ import {NotificationMediaTypeTemplate, OrgNotification} from "../domains/notific
 import {NotificationTemplate} from "../domains/notification-template.serializer";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/template-ce.html',
   providers: [NotificationTemplateService],
   styles:[`:host { display: contents; }`]
@@ -18,6 +19,8 @@ export class NotificationTemplateCeComponent extends TemplateForm implements OnI
   @Input() id: any;
   @Input() data : { mediaMasterType: any, notificationId: any };
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
+
+  submitted: boolean = false;
   @ViewChild('popupOptionsTemplate', { static: true }) public popupOptionsTemplate: TemplateRef<any>;
 
   gateways: Array<CommGateway>;
@@ -25,7 +28,7 @@ export class NotificationTemplateCeComponent extends TemplateForm implements OnI
   isLoading: boolean;
   notification: OrgNotification;
   get actionType(){ return (this.id) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder,
+  constructor(public override fb: FormBuilder,
               public notificationService: NotificationService,
               public service: NotificationTemplateService,
               public apiResolver: OrgNotificationAPIResolver) { super(fb);

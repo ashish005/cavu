@@ -6,10 +6,11 @@ import {VOUCHER_SETUP_VIEWS, VoucherSetupRoutes} from "./voucher-setup.routing";
 import {VOUCHER_TYPE_SERVICES} from "./services";
 import {VoucherTypePhaseCellComponent} from "./grid-cells";
 import {GlobalModule} from "@app-global";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild(VoucherSetupRoutes),
         GlobalModule
     ],

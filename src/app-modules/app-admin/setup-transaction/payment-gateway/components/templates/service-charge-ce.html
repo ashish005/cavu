@@ -55,7 +55,7 @@
                             <th *ngIf="!customForm.disabled"></th>
                         </tr>
                         </thead>
-                        <tbody class="scrollable hover h-100" formArrayName="serviceCharges">
+                        <!--<tbody class="scrollable hover h-100" formArrayName="serviceCharges">
                         <ng-template ngFor let-charge [ngForOf]="formGatewayServiceCharges.controls" let-i="index">
                             <ng-container [formGroup]="charge">
                                 <tr>
@@ -73,6 +73,29 @@
                                 </tr>
                             </ng-container>
                         </ng-template>
+                        </tbody>-->
+                        <tbody class="scrollable hover h-100" formArrayName="serviceCharges">
+                        <ng-container *ngFor="let charge of formGatewayServiceCharges.controls; let i = index">
+                            <tr [formGroup]="charge">
+                                <td *ngIf="gateway?.isPOS">{{ charge.value.cardTypeName }}</td>
+
+                                <td><input class="md-input" formControlName="serviceChargeRate" /></td>
+                                <td><input class="md-input" formControlName="taxRate" /></td>
+                                <td><input class="md-input" formControlName="trxnAmountFrom" /></td>
+                                <td><input class="md-input" formControlName="trxnAmountTo" /></td>
+
+                                <td>
+                                    <label class="md-switch float-right">
+                                        <input type="checkbox" formControlName="status" />
+                                        <i class="theme"></i>
+                                    </label>
+                                </td>
+
+                                <td *ngIf="!customForm.disabled">
+                                    <a class="btn btn-xs text-xs text-primary" (click)="applyCharges(charge)">Apply</a>
+                                </td>
+                            </tr>
+                        </ng-container>
                         </tbody>
                     </table>
                 </div>

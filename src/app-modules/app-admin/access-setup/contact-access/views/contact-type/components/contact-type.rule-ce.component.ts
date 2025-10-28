@@ -5,6 +5,7 @@ import {ContactTypeRuleForm} from "../form/contact-type-rule.form";
 import {ContactTypeService} from "../services/contact-type.service";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/contact-type-rule.html',
   styles: [`:host{ display: contents; }`]
 })
@@ -17,7 +18,7 @@ export class ContactTypeRuleCeComponent extends ContactTypeRuleForm {
 
   submitted: boolean = false;
   categories: Array<any>;
-  constructor(public fb: FormBuilder, public service: ContactTypeService) {
+  constructor(public override fb: FormBuilder, public service: ContactTypeService) {
     super(fb);
   }
 

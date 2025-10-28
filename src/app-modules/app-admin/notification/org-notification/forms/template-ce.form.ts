@@ -1,9 +1,7 @@
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Directive, Input, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {debounceTime, of, switchMap} from "rxjs";
 import {map, Observable, startWith, Subject, takeUntil} from "rxjs";
 import {pairwise} from "rxjs";
-import {NotificationUser} from "@app-base/public";
 import {NotificationTemplate} from "../domains/notification-template.serializer";
 
 @Directive()
@@ -101,9 +99,9 @@ export class TemplateForm {
     get f() { return this.customForm.controls; }
 
     get formRecipients(): FormArray { return <FormArray>this.customForm.get('recipients'); }
-    addFormRecipients(data: NotificationUser){ this.formRecipients.push(this.recipientForm(data)); }
+    addFormRecipients(data: any){ this.formRecipients.push(this.recipientForm(data)); }
 
-    populateFormRecipients(data: Array<NotificationUser>) { (data || []).map((r: NotificationUser) => this.addFormRecipients(r)); }
+    populateFormRecipients(data: Array<any>) { (data || []).map((r: any) => this.addFormRecipients(r)); }
 
     populateForm(item: NotificationTemplate) {
         const {

@@ -9,14 +9,17 @@ import {
 } from "../domains/notification.serializer";
 import {OrgNotificationAPIResolver} from "../services/api.resolver";
 
-@Component({ templateUrl: './templates/grid-notification.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/grid-notification.html'
+})
 export class GridNotificationView extends ViewExtender<OrgNotification> implements OnInit, OnDestroy {
   override coreState: OrgNotificationQueryOptions = new OrgNotificationQueryOptions();
     constructor(public override activatedRoute: ActivatedRoute,
                 public override service: NotificationService,
                 public lookupResolver: OrgNotificationAPIResolver){ super(activatedRoute, service); }
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
     updateNotification = (row: OrgNotification) => this.lookupResolver.notificationUpdatePopup(row, ()=> super.populateGrid());
     showScheduler = (row: OrgNotification) => this.lookupResolver.showSchedulerPopup(row, (orgTaskScheduleId) => {
         //row.orgTaskScheduleId = orgTaskScheduleId;

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/role-permission-manager.html',
   styles: [':host { display: contents; }']
 })

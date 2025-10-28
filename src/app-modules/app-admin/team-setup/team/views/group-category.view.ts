@@ -6,7 +6,10 @@ import {Team, TeamQueryOptions} from "../domains/team.serializer";
 import {TeamSetupAPIResolver} from "../services";
 import {TeamUserGroup} from "../domains/user-group.serializer";
 
-@Component({ templateUrl: './templates/group-category.html', styles: [':host { display: contents; }'] })
+@Component({
+    standalone: false,
+    templateUrl: './templates/group-category.html', styles: [':host { display: contents; }']
+})
 export class GroupCategoryView extends ViewExtender<Team> implements OnInit{
     @ViewChild('groupList', { static: true }) groupList;
     submitted: boolean;
@@ -58,4 +61,5 @@ export class GroupCategoryView extends ViewExtender<Team> implements OnInit{
         this.apiResolver.showUserFilterTypePopup({}, {text: `User Filter Type`, desc: ''});
     }
 
+    actionCb(e){}
 }

@@ -13,8 +13,8 @@
                                  [class.active]="(activeNotificationType?.id == row.id)">
                                 <div>
                                     <i [ngClass]="row.icon"></i>
-                                    <b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
-                                            class="fa fa-lock"></i></b>
+                                    <!--<b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
+                                            class="fa fa-lock"></i></b>-->
                                     {{ row?.name }}
                                     <span class="float-right" (click)="notificationByUserType(row)"><i
                                             class="fa fa-chevron-right"></i></span>

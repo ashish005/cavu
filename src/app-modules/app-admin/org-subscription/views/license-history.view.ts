@@ -5,6 +5,7 @@ import {OrgLicenseHistoryService} from "../services/license-history.service";
 import {DateFormatCell, ViewExtender} from "@app-global";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/pricing-history.html'
 })
 export class LicenseHistoryView extends ViewExtender<OrgLicenseHistory> implements OnInit {
@@ -30,8 +31,9 @@ export class LicenseHistoryView extends ViewExtender<OrgLicenseHistory> implemen
         super.populateGrid();
     }
 
-    ngOnDestroy()
+    override ngOnDestroy()
     {
         super.ngOnDestroy();
     }
+    actionCb(e){}
 }

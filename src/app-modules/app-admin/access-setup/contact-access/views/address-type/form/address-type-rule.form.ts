@@ -27,7 +27,7 @@ export class AddressTypeRuleForm {
   // convenience getter for easy access to form fields
   get f() { return this.customForm.controls; }
 
-  get formRules() { return <FormArray>this.customForm.get('rules'); }
+  get formRules() { return this.customForm.get('rules') as FormArray<FormGroup>; }
   get formDocumentCategory() { return <FormGroup>this.customForm.get('categoryId'); }
 
   updateDocumentCategory(val){ this.formDocumentCategory.setValue(val); }

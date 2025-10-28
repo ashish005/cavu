@@ -13,6 +13,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {Subscription} from "rxjs";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/process-phase.html', styles: [`:host{ display: contents; }`]
 })
 export class ProcessPhase implements OnInit, OnDestroy{
@@ -35,7 +36,7 @@ export class ProcessPhase implements OnInit, OnDestroy{
 
     expandProcess(processId){ this.open_process_id = processId; }
 
-    /*onStartChange(stage: PipelineProcessPhaseLookup, dt: string, isStarted: boolean){
+    onStartChange(stage: any, dt: string, isStarted: boolean){
         this.isLoading = true;
         const success = (resp)=> {
             this.isLoading = false;
@@ -48,11 +49,11 @@ export class ProcessPhase implements OnInit, OnDestroy{
         const data = {
             processId: null,
             statusId: stage.id,
-            moduleId: this.moduleId,
+            //moduleId: this.moduleId,
             dt: dt,
-            orgUserId: this.coreService.currentUser.id,
+            //orgUserId: this.coreService.currentUser.id,
             isStarted: isStarted
         };
-        this.service.updateStatus(data).toPromise().then(success, error);
-    }*/
+        //this.service.updateStatus(data).toPromise().then(success, error);
+    }/**/
 }

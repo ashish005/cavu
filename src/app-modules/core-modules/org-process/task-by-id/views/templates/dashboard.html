@@ -1,15 +1,15 @@
 <ng-template #pageTitleTemplate>
-    <div class="no-shadow">
+    <!--<div class="no-shadow">
         <h6 class="mb-0"> {{ pageTitle }} </h6>
         <small class="float-left"><i [class]="pageIcon"></i> Management</small>
-    </div>
+    </div>-->
 </ng-template>
 <div class="d-flex flex app-content box-shadow-4">
     <div class="d-flex flex-column flex">
         <div class="row px-3">
             <ng-template ngFor let-summary [ngForOf]="items" let-i="index">
                 <div class="col-sm-6 col-lg-3">
-                    <dashboard-summary [id]="id" [type]="summary.type"></dashboard-summary>
+<!--                    <dashboard-summary [id]="id" [type]="summary.type"></dashboard-summary>-->
                 </div>
             </ng-template>
         </div>

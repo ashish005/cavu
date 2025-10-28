@@ -11,6 +11,7 @@ import {NotificationTemplate} from "../domains/template.serializer";
 import {NotificationTemplateService} from "../services/template.service";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/template-ce.html',
   providers: [NotificationTemplateService],
   styles:[`:host { display: contents; }`]
@@ -25,8 +26,9 @@ export class NotificationTemplateCeComponent extends TemplateForm implements OnI
   mediaType: MediaTypeLookup;
   isLoading: boolean;
   notification: OrgNotification;
+  submitted: boolean = false;
   get actionType(){ return (this.id) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder,
+  constructor(public override fb: FormBuilder,
               public notificationService: NotificationService,
               public service: NotificationTemplateService,
               public apiResolver: NotificationAPIResolver) { super(fb);

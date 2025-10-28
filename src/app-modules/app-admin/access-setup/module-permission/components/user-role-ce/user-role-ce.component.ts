@@ -6,6 +6,7 @@ import {UserManagementAPIResolver} from "../../services/api.resolver";
 import {Subscription} from "rxjs";
 
 @Component({
+    standalone: false,
   templateUrl: './user-role-ce.html',
 })
 export class UserRoleCeComponent extends RoleForm implements OnInit, OnDestroy {
@@ -17,7 +18,7 @@ export class UserRoleCeComponent extends RoleForm implements OnInit, OnDestroy {
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
   private subscriber: Subscription;
-  constructor(public fb: FormBuilder, private service: RolePermissionService, public apiResolver: UserManagementAPIResolver) { super(fb); }
+  constructor(public override fb: FormBuilder, private service: RolePermissionService, public apiResolver: UserManagementAPIResolver) { super(fb); }
 
   ngOnInit(){}
   ngOnDestroy(){

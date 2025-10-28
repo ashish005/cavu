@@ -4,7 +4,10 @@ import {SaleTypeService} from "../services/voucher-type.service";
 import {SaleType, SaleTypeQueryOptions} from "../domains/sale-type.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class SaleTypeView extends ViewExtender<SaleType> implements OnInit
 {
   override coreState: SaleTypeQueryOptions = new SaleTypeQueryOptions();

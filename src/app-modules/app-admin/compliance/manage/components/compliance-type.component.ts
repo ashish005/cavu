@@ -6,6 +6,7 @@ import {ComplianceType, ComplianceTypeQueryOptions} from "../domains/compliance-
 import {SubscriptionCellComponent} from "../grid-cells/compliance-grid-cell.component";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/compliance-type.html',
     providers: [ ComplianceTypeService ]
 })

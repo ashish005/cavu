@@ -10,14 +10,14 @@ export class OrgProcessWorkflowService extends OrgResourceService<OrgProcessWork
   }
 
     getRootOrgProcessLookups() {
-        const url: string = this.viewUrl + `/lookup/${this.coreService.apiVersion}`;
-        return this.httpClient.get(url, this.requestHeaders)
+        const url: string = this.viewUrl + `/lookup/${super.apiVersion}`;
+        return this.httpClient.get(url, super.requestHeaders)
             .pipe(
                 map(
                     (resp: any) => resp,
                     tap(
                         (error) => {
-                            this.handleError(error, () => this.getRootOrgProcessLookups())
+                            super.handleError(error, () => this.getRootOrgProcessLookups())
                         }
                     )
                 )

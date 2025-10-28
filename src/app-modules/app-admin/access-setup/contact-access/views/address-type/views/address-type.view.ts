@@ -5,17 +5,19 @@ import {AddressType, AddressTypeQueryOptions} from "../domains/address-type.seri
 import {AddressTypeService} from "../services/address-type.service";
 import {AddressTypeRuleCeComponent} from "../components/address-type.rule-ce.component";
 
-@Component({ templateUrl: './templates/address-type.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/address-type.html'
+})
 export class AddressTypeView extends ViewExtender<AddressType> implements OnInit, OnDestroy {
   public userMasterType: string;
   override coreState: AddressTypeQueryOptions = new AddressTypeQueryOptions();
-  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
 
   constructor(public override service: AddressTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
-      this.userMasterType = this.activatedRoute.snapshot.data.userType;
+      //this.userMasterType = this.activatedRoute.snapshot.data.userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent },
@@ -30,7 +32,7 @@ export class AddressTypeView extends ViewExtender<AddressType> implements OnInit
     super.populateGrid();
   }
 
-  ngOnDestroy(){
+  override ngOnDestroy(){
     super.ngOnDestroy();
   }
 

@@ -41,7 +41,7 @@ export class LoginGrantForm {
 
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-    get formRoles() { return <FormArray>this.customForm.get('roles'); }
+    get formRoles() { return this.customForm.get('roles') as FormArray<FormGroup>; }
     addToFormRole(item: ContactRole){ this.formRoles.push(this.getRoleFormGroup(item)); }
 
     populateForm(item: Contact) {

@@ -6,6 +6,7 @@ import {ErrorLog, ErrorLogQueryOptions} from "../domains/error-log.serializer";
 import {ErrorLogService} from "../services/log.service";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/error-log-view.html'
 })
 export class ErrorLogView extends ViewExtender<ErrorLog> implements OnInit, OnDestroy{
@@ -23,5 +24,5 @@ export class ErrorLogView extends ViewExtender<ErrorLog> implements OnInit, OnDe
     }
 
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 }

@@ -40,13 +40,13 @@ export class SearchFilterPipe implements PipeTransform {
 
 @Pipe({ name: 'filterFunction', pure: true, standalone: true })
 export class FilterFunctionPipe implements PipeTransform {
-    transform(items: any[], filter: any, searchObj: any): any {
+    transform(items: any[], filter: any, compareObj: any): any {
         if (!items || !filter) {
             return items;
         }
         // filter items array, items which match and return true will be
         // kept, false will be filtered out
-        return (items || []).filter(r => filter(r, searchObj));
+        return (items || []).filter(r => filter(r, compareObj));
     }
 }
 

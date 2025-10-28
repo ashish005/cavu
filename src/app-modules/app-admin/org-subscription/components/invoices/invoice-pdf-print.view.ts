@@ -1,9 +1,10 @@
 import {Component, ElementRef, Input, Renderer2, ViewChild, ViewEncapsulation} from "@angular/core";
 import {DomSanitizer} from "@angular/platform-browser";
-import { saveAs } from 'file-saver';
+//import { saveAs } from 'file-saver';
 import {SoftwareInvoiceReportService} from "../../services/software-invoice-report.service";
 
 @Component({
+    standalone: false,
     template: `<embed #pdf src="" WMODE="transparent" frameBorder="0" scrolling="auto" class="scrollable hover box-shadow p-3" height="100%" width="100%"/>`,
     selector: 'subscription-pdf-print',
     styles: [`:host {display: contents;}`],
@@ -41,7 +42,7 @@ export class SubscriptionPdfPrintView
         const pdfSuccess = (fileStream) => {
             this.isLoading = false;
             let blob = new Blob([fileStream], { type: fileStream.type });
-            saveAs(blob, `${invoiceNo}.pdf`);
+            //saveAs(blob, `${invoiceNo}.pdf`);
         };
         this.service.getVoucherPDF(invoiceId, licenseId).toPromise().then(pdfSuccess, failure);
     }

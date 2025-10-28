@@ -1,7 +1,7 @@
 <div class="content">
-    <div *ngIf="hasNoChild"><a class="btn btn-xs title _500">{{activeItem?.name}}</a></div>
+    <!--<div *ngIf="hasNoChild"><a class="btn btn-xs title _500">{{activeItem?.name}}</a></div>
     <div class="dropdown open" *ngIf="!hasNoChild">
-        <a class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{name || '-- Please Select --'}}</a>
+        <a class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{name || '&#45;&#45; Please Select &#45;&#45;'}}</a>
         <div class="dropdown-menu w-100" x-placement="bottom-start">
             <ng-template ngFor let-record [ngForOf]="records" let-i="index">
                 <div class="dropdown-item">
@@ -9,7 +9,7 @@
                     <div class="nav-active-border">
                         <ul class="nav text-xs _500">
                             <ng-template ngFor let-item [ngForOf]="record?.children" let-i="index">
-<!--                              [class.active]="activeChild?.id === item?.id"-->
+&lt;!&ndash;                              [class.active]="activeChild?.id === item?.id"&ndash;&gt;
                               <li class="nav-item" (click)="selectedChildData(record, item)"><a class="nav-link p-1"> {{item?.name}}</a></li>
                             </ng-template>
                         </ul>
@@ -17,5 +17,5 @@
                 </div>
             </ng-template>
         </div>
-    </div>
+    </div>-->
 </div>

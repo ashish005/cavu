@@ -5,14 +5,14 @@ import {SalaryService} from "../../services/employee-salary.service";
 import {SalaryActionCellComponent} from "../grid-cell.component";
 
 @Component({
+    standalone: false,
   selector: 'salary',
   templateUrl: './salary.html'
 })
 export class SalaryComponent extends ListLoaderComponent implements OnInit {
-  title: string = "Salary";
   gridOptions: any = {};
 
-  constructor(public service: SalaryService) {
+  constructor(public override service: SalaryService) {
     super(service, new SalaryQueryOptions());
   }
 

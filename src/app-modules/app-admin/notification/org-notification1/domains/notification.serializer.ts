@@ -152,7 +152,7 @@ export class OrgNotificationQueryOptions extends CoreQueryOptions {
     super(model);
   }
 
-  toQueryString (){
+  override toQueryString (){
     const obj = {
       notificationTypeId:this.notificationTypeId,
       userMasterType: this.userMasterType

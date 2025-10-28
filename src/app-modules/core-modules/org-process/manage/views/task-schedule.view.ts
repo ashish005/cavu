@@ -16,7 +16,7 @@ import {PipelineAPIResolver} from "../resolver/api.resolver";
   styles: [':host { display: contents; }']
 })
 export class TaskScheduleView extends ViewExtender<Scheduler> implements OnInit, OnDestroy {
-  coreState: SchedulerQueryOptions = new SchedulerQueryOptions();
+  override coreState: SchedulerQueryOptions = new SchedulerQueryOptions();
   constructor(private router: Router,
               public override activatedRoute: ActivatedRoute,
               public override service: SchedulerService,
@@ -36,9 +36,9 @@ export class TaskScheduleView extends ViewExtender<Scheduler> implements OnInit,
         ];
     }
 
-    onActivate(componentRef){ super.actionTemplate = componentRef.actionTemplate; }
+    onActivate(componentRef){ this.actionTemplate = componentRef.actionTemplate; }
 
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     ngOnInit(){ super.populateGrid(); }
 

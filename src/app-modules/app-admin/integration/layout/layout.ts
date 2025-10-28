@@ -5,7 +5,10 @@ import {Subscription} from "rxjs";
 import {AllSection, CommunicationSection, OrgIntegration} from "../domains/org-integration.serializer";
 import {OrgIntegrationAPIResolver} from "../services/api.resolver";
 
-@Component({ templateUrl: './templates/layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
+})
 export class IntegrationLayout implements OnInit {
     public actionTemplate: TemplateRef<any>;
     page: any;

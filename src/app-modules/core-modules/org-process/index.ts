@@ -1,9 +1,12 @@
 import {Component, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
-import {CoreModule, ModuleGuard} from "@app-global";
+import {GlobalModule} from "@app-global";
 
-@Component({ templateUrl: './layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './layout.html'
+})
 export class ProcessLayout {
     public navList = [
         { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'mainLayout.dashboard' },
@@ -18,7 +21,7 @@ export class ProcessLayout {
         { routeTo: ['setup'], icon:"fa fa-bell", key: 'Setup' }
     ];
     constructor(){}
-    onActivate(componentRef){}
+    onActivate(e: any){}
 }
 
 @NgModule({
@@ -41,14 +44,14 @@ export class ProcessLayout {
                         loadChildren: () => import('app-modules/core-modules/org-process/workflow').then(m => m.ProcessWorkflowModule)
                     },
                     {
-                        path: 'setup', canLoad:[ModuleGuard],
+                        path: 'setup', //canLoad:[ModuleGuard],
                         loadChildren: () => import('app-modules/core-modules/org-process/setup').then(m => m.ProcessSetupModule),
                         data: {title: 'Process', header:'Process', name: "Process", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
                     },
                 ]
             }
         ]),
-        CoreModule.forChild()
+        GlobalModule
     ],
     providers: [],
     declarations: [ProcessLayout]

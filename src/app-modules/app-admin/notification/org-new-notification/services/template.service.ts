@@ -6,7 +6,7 @@ import {NotificationTemplate, NotificationTemplateSerializer} from "../domains/t
 @Injectable()
 export class NotificationTemplateService extends OrgResourceService<NotificationTemplate> {
     public syncTemplate: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public injector: Injector) {
+    constructor(public override injector: Injector) {
         super(injector, `template`, new NotificationTemplateSerializer());
     }
 

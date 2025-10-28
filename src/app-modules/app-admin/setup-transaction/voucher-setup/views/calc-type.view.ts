@@ -4,7 +4,10 @@ import {VoucherCalcType, VoucherCalcTypeQueryOptions} from "../domains/calc-type
 import {VoucherCalcTypeService} from "../services/voucher-type.service";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class CalcTypeView extends ViewExtender<VoucherCalcType> implements OnInit
 {
   override coreState: VoucherCalcTypeQueryOptions = new VoucherCalcTypeQueryOptions();

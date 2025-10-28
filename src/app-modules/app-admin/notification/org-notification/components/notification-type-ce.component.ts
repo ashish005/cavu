@@ -9,6 +9,7 @@ import {pairwise, startWith} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/notification-type-ce.html',
   styles: [ `:host { display: contents;}`]
 })
@@ -24,9 +25,10 @@ export class NotificationTypeCEComponent extends NotificationRuleForm implements
   userMasterType: string;
   eventOptions: any = {title: 'Event', label: 'name', key: 'appEvent', listKey: 'masterType'};
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
-  constructor(public fb: FormBuilder, public activatedRoute: ActivatedRoute, public service: NotificationService, public lookupResolver: NotificationAPIResolver) {
+  constructor(public override fb: FormBuilder, public activatedRoute: ActivatedRoute, public service: NotificationService, public lookupResolver: NotificationAPIResolver) {
     super(fb);
-    this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    const { userType } = this.activatedRoute.snapshot.data;
+    this.userMasterType = userType;
       const itemFormValueChange = ([prev, next]: [any, any]) =>
       {
           const notificationTypes = this.lookupResolver.masterType.getNotificationTypeLookups();

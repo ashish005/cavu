@@ -5,7 +5,12 @@ import { ViewExtender } from "@app-global";
 import {TeamGroupService} from "../services";
 import {GroupCategory, GroupCategoryQueryOptions} from "../domains/group-category.serializer";
 
-@Component({ selector: 'group-list', templateUrl: './templates/group-list.html', styles: [`:host{ display: contents; }`] })
+@Component({
+    standalone: false,
+    selector: 'group-list',
+    templateUrl: './templates/group-list.html',
+    styles: [`:host{ display: contents; }`]
+})
 export class GroupListComponent extends ViewExtender<GroupCategory> implements OnInit
 {
     @Output() cb: EventEmitter<any> =  new EventEmitter<any>();

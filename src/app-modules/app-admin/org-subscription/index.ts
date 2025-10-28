@@ -5,10 +5,11 @@ import {SUBSCRIPTION_VIEWS, SubscriptionRoutes} from "./org-subscription.routing
 import {PRICING_COMPONENT} from "./components";
 import {SUBSCRIPTION_SERVICES} from "./services";
 import {GlobalModule} from "@app-global";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild(SubscriptionRoutes),
         GlobalModule
     ],

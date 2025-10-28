@@ -26,7 +26,7 @@ export class TaxCategoryQueryOptions extends CoreQueryOptions{
         this.taxGroupId = model.taxGroupId || '';
     }
 
-    toQueryString (){
+    override toQueryString (){
         const obj = { taxGroupId: this.taxGroupId };
         return super.getParamByObject(obj);
     }

@@ -1,7 +1,9 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
 
-@Component({templateUrl: './layout.html'})
+@Component({
+    standalone: false,
+    templateUrl: './layout.html'
+})
 export class Layout implements OnInit {
     public actionTemplate: TemplateRef<any>;
     @ViewChild('layoutNavigationTemplate', { static: true }) public layoutNavigationTemplate: TemplateRef<any>;

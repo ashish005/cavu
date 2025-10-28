@@ -6,7 +6,11 @@ import {TeamSetupService} from "../services/team.service";
 import {TeamRuleCellComponent} from "../grid-cells/team-grid.cell";
 import {TeamSetupAPIResolver} from "../services";
 
-@Component({ templateUrl: './templates/team.html', styles: [':host { display: contents; }'] })
+@Component({
+    standalone: false,
+    templateUrl: './templates/team.html',
+    styles: [':host { display: contents; }']
+})
 export class TeamView extends ViewExtender<TeamUserGroup> implements OnInit{
     submitted: boolean;
     override coreState: TeamUserGroupQueryOptions = new TeamUserGroupQueryOptions();

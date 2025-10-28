@@ -339,6 +339,9 @@ export class AppSetup extends Org {
   getDefaultHeadBranch=() => (this.branches || []).find(r => r.isHeadBranch);
   getActiveBranchById=(branchId) => (this.branches || []).find(r => r.id == branchId);
   hasValidOrgSetup=()=>(this.countryId && this.masterBranch.isMasterSeedApplied && this.orgConfig.hasValidConfig);
+
+  get isEducational() { return true; }
+  get isRealEstate() { return true; }
 }
 export class AppSetupSerializer {
   fromJson(json: any): AppSetup { return new AppSetup(json); }

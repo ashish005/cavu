@@ -9,6 +9,7 @@ import {NotificationTemplateService} from "../services/notification.service";
 import {TemplateForm} from "../forms/template-ce.form";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/template-ce-view.html',
   providers: [NotificationTemplateService],
   styles:[`:host { display: contents; }`]
@@ -21,8 +22,9 @@ export class TemplateCeView extends TemplateForm implements OnInit {
   gateways: Array<CommGateway>;
   mediaType: MediaTypeLookup;
   isLoading: boolean;
+  submitted: boolean = false;
   get actionType(){ return (this.id) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder,
+  constructor(public override fb: FormBuilder,
               public service: NotificationTemplateService,
               public apiResolver: NotificationAPIResolver) { super(fb);
       const mediaTypeChanges = ([prev, next]: [any, any]) =>

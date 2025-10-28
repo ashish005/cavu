@@ -6,10 +6,10 @@ import {TeamUserGroup, TeamUserGroupQueryOptions} from "../domains/user-group.se
 import {TeamSetupAPIResolver} from "../services";
 
 @Component({
+    standalone: false,
   templateUrl: './layout.html'
 })
 export class TeamLayout extends ViewExtender<TeamUserGroup> implements OnInit{
-  public actionTemplate: TemplateRef<any>;
   override coreState: TeamUserGroupQueryOptions = new TeamUserGroupQueryOptions();
 
   constructor(public router: Router,

@@ -4,14 +4,14 @@ import {PaygradeQueryOptions} from "../../domains/paygrade.serializer";
 import {PaygradeService} from "../../services/employee-salary.service";
 
 @Component({
+    standalone: false,
   selector: 'paygrade',
   templateUrl: './paygrade.html'
 })
 export class PaygradeComponent extends ListLoaderComponent implements OnInit {
-  title: string = "Paygrade";
   gridOptions: any = {};
 
-  constructor(public service: PaygradeService) {
+  constructor(public override service: PaygradeService) {
     super(service, new PaygradeQueryOptions());
   }
 

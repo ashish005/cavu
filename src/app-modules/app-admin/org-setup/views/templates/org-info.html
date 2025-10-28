@@ -11,7 +11,7 @@
                             <div class="col-sm-8 col-12">
                                 <div class="md-form-group">
                                     <input class="md-input" formControlName="name"
-                                           [ngClass]="{ 'is-invalid': submitted && f.name?.errors }">
+                                           [ngClass]="{ 'is-invalid': submitted && f['name']?.errors }">
                                     <label>
                                         Business Name
                                     </label>
@@ -25,7 +25,7 @@
                             <div class="col-sm-12 col-12">
                                 <div class="md-form-group">
                                     <input class="md-input" formControlName="address"
-                                           [ngClass]="{ 'is-invalid': submitted && f.address?.errors }">
+                                           [ngClass]="{ 'is-invalid': submitted && f['address']?.errors }">
                                     <label>
                                         Address
                                     </label>
@@ -34,14 +34,14 @@
                             <div class="col-sm-3 col-12">
                                 <div class="md-form-group float-label">
                                     <input class="md-input" type="date" formControlName="establishedDate"
-                                           [ngClass]="{ 'is-invalid': submitted && f.establishedDate?.errors }">
+                                           [ngClass]="{ 'is-invalid': submitted && f['establishedDate']?.errors }">
                                     <label>Established Date</label>
                                 </div>
                             </div>
                             <div class="col-sm-9 col-12">
                                 <div class="md-form-group">
                                     <input class="md-input" formControlName="affiliatedName"
-                                           [ngClass]="{ 'is-invalid': submitted && f.affiliatedName?.errors }">
+                                           [ngClass]="{ 'is-invalid': submitted && f['affiliatedName']?.errors }">
                                     <label>Affiliated/ Authorized by</label>
                                     <span class="md-input-msg right">0/100</span>
                                 </div>
@@ -51,21 +51,21 @@
                                     <div class="col-sm-4">
                                         <div class="md-form-group float-label">
                                             <input type="text" formControlName="licenseNo" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f.licenseNo?.errors }"/>
+                                                   [ngClass]="{ 'is-invalid': submitted && f['licenseNo']?.errors }"/>
                                             <label>Business License No</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="md-form-group float-label">
                                             <input type="date" formControlName="validFromDate" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f.validFromDate?.errors }"/>
+                                                   [ngClass]="{ 'is-invalid': submitted && f['validFromDate']?.errors }"/>
                                             <label>Valid From</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="md-form-group float-label">
                                             <input type="date" formControlName="validToDate" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f.validToDate?.errors }"/>
+                                                   [ngClass]="{ 'is-invalid': submitted && f['idToDate']?.errors }"/>
                                             <label>Valid Till</label>
                                         </div>
                                     </div>
@@ -82,14 +82,14 @@
                                 <div class="col-sm-4">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="contactNo1"
-                                               [ngClass]="{ 'is-invalid': submitted && f.contactNo1.errors }">
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactNo1'].errors }">
                                         <label>Contact No</label>
                                     </div>
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="emailId1"
-                                               [ngClass]="{ 'is-invalid': submitted && f.emailId1.errors }">
+                                               [ngClass]="{ 'is-invalid': submitted && f['emailId1'].errors }">
                                         <label>Email Id</label>
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@
                                 <div class="col-sm-8">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="contactPersonName"
-                                               [ngClass]="{ 'is-invalid': submitted && f.contactPersonName?.errors }">
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactPersonName']?.errors }">
                                         <label>Name</label>
                                     </div>
                                 </div>
@@ -220,7 +220,7 @@
                                 <div class="col-sm-8">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="contactPersonEmail"
-                                               [ngClass]="{ 'is-invalid': submitted && f.contactPersonEmail?.errors }">
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail']?.errors }">
                                         <label>Email Id</label>
                                     </div>
                                 </div>

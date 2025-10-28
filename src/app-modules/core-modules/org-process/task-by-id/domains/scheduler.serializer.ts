@@ -11,7 +11,7 @@ export class SchedulerQueryOptions extends CoreQueryOptions{
 }
 
 export class SchedulerLogSummary extends CoreResource {
-    id: any;
+    //id: any;
     startDate: string;
     endDate: string;
     dueDate: string;
@@ -50,7 +50,6 @@ export class SchedulerLogSummary extends CoreResource {
     }
 }
 export class Scheduler extends CoreResource {
-    id: any;
     name: string;
     description: string;
     startDate: string;

@@ -7,6 +7,7 @@ import {DocumentTypeView} from "./views/document.view";
 import {DocumentTypeService} from "./services/document-type.service";
 import {DOCUMENT_MASTER_COMPONENTS} from "./components";
 import {DocumentAccessAPIResolver} from "./services/api.resolver";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 const MasterDocumentRoutes: Array<any> = [
   //{ path: '', pathMatch: 'full', redirectTo:'category' },
@@ -15,7 +16,7 @@ const MasterDocumentRoutes: Array<any> = [
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],

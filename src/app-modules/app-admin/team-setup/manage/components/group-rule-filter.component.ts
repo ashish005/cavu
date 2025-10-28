@@ -6,6 +6,7 @@ import {TeamSetupAPIResolver} from "../services/api.resolver";
 import {TeamSetupService} from "../services/team.service";
 
 @Component({
+    standalone: false,
   selector: '[group-rule-filter]',
   templateUrl: './templates/group-rule-filter.html'
 })

@@ -15,13 +15,13 @@
               <i class="blue"></i>
             </label>
           </div>
-          <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+          <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
           <label> Name </label>
         </div>
       </div>
       <div class="col-md-4">
         <div class="md-form-group">
-          <input class="md-input" formControlName="taxCode" [ngClass]="{ 'is-invalid': submitted && f.taxCode.errors }">
+          <input class="md-input" formControlName="taxCode" [ngClass]="{ 'is-invalid': submitted && f['taxCode'].errors }">
           <label> Tax Code </label>
         </div>
       </div>
@@ -35,7 +35,7 @@
           </tr>
           </thead>
           <tbody formArrayName="rateMapperRule">
-          <ng-template ngFor let-rule [ngForOf]="formRateMapperRule?.controls | filterFunction: filterRule" let-i="index">
+          <!--<ng-template ngFor let-rule [ngForOf]="formRateMapperRule?.controls | filterFunction: filterRule: rule" let-i="index">
             <ng-container [formGroup]="rule">
               <tr>
                 <td><span> {{rule.value.name}} </span></td>
@@ -57,7 +57,41 @@
                 </td>
               </tr>
             </ng-container>
-          </ng-template>
+          </ng-template>-->
+          <ng-container *ngFor="let rule of formRateMapperRule?.controls | filterFunction: filterRule: null; let i = index" [formGroupName]="i">
+
+              <!-- Parent Rule Row -->
+              <tr>
+                  <td><span>{{ rule.value.name }}</span></td>
+                  <td>
+        <span>
+          {{ rule.value.rate }}
+            <small *ngIf="rule.value.hasExtraTaxRate">+ Extra {{ rule.value.extraTaxRate }}%</small>
+        </span>
+                  </td>
+                  <td>
+                      <label class="md-check">
+                          <input type="checkbox" formControlName="status">
+                          <i class="theme"></i><span></span>
+                      </label>
+                  </td>
+              </tr>
+
+              <!-- Child Rules (nested) -->
+              <ng-container *ngIf="rule.value.children?.length">
+                  <tr *ngFor="let child of rule.value.children; let k = index">
+                      <td colspan="3">
+                          <span>{{ child.name }} Rate: {{ child.rate }}</span>
+                          <div *ngIf="child.extraTaxRate">
+                              <div class="md-form-group pb-0 pt-0">
+                                  <div class="md-input">{{ child.extraTaxRate }}</div>
+                              </div>
+                          </div>
+                      </td>
+                  </tr>
+              </ng-container>
+
+          </ng-container>
           </tbody>
         </table>
         <!--<div formArrayName="rateMapperRule">

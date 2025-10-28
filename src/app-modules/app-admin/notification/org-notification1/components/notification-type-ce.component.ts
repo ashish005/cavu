@@ -9,6 +9,7 @@ import {pairwise, startWith} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/notification-type-ce.html',
   styles: [ `:host { display: contents;}`]
 })
@@ -25,7 +26,7 @@ export class NotificationTypeCEComponent extends NotificationRuleForm implements
   options: any = { showClear: false };
   eventOptions: any = { title: 'Event', label: 'name', key: 'appEvent', listKey: 'masterType' };
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
-  constructor(public fb: FormBuilder, public activatedRoute: ActivatedRoute,
+  constructor(public override fb: FormBuilder, public activatedRoute: ActivatedRoute,
               public service: NotificationService, public lookupResolver: OrgNotificationAPIResolver) {
     super(fb);
       const itemFormValueChange = ([prev, next]: [any, any]) =>

@@ -6,6 +6,7 @@ import {DataLog, DataLogQueryOptions} from "../domains/data-log.serializer";
 import {DataLogService} from "../services/log.service";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/data-log-view.html'
 })
 export class DataLogView extends ViewExtender<DataLog> implements OnInit, OnDestroy{
@@ -23,5 +24,5 @@ export class DataLogView extends ViewExtender<DataLog> implements OnInit, OnDest
     }
 
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 }

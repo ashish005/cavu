@@ -9,6 +9,7 @@ import {ViewExtender, FullDateFormatCell, NumberCell} from "@app-global";
 import {SoftwareInvoiceCellComponent} from "../grid-action-cell/software-invoice-cell.component";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/software-invoice.html'
 })
 export class SoftwareInvoiceView extends ViewExtender<OrgSoftwareInvoiceReceipt> implements OnInit {
@@ -34,8 +35,9 @@ export class SoftwareInvoiceView extends ViewExtender<OrgSoftwareInvoiceReceipt>
         super.populateGrid();
     }
 
-    ngOnDestroy()
+   override ngOnDestroy()
     {
         super.ngOnDestroy();
     }
+    actionCb(e){}
 }

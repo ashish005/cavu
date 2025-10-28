@@ -133,7 +133,6 @@ export class ReminderTemplate {
 
 export class TaskReminder extends CoreResource
 {
-    id: number;
     name: string;
 
     orgTaskId: number;

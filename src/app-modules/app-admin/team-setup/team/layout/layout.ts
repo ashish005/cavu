@@ -2,6 +2,7 @@ import {Component, OnInit, TemplateRef, ViewChild, ViewContainerRef} from "@angu
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
+    standalone: false,
   templateUrl: './layout.html'
 })
 export class TeamLayoutComponent implements OnInit{

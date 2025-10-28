@@ -1,7 +1,7 @@
 import {Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 import { NotificationLookup, NotificationLookupSerializer } from "../domains/lookup.serializer";
-import { ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService } from "@app-global";
+import { ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService, CoreEndpointBase } from "@app-global";
 import {NotificationService} from "./notification.service";
 import {NotificationTypeCEComponent} from "../components/notification-type-ce.component";
 import {NotificationMediaTypeTemplate, OrgNotification} from "../domains/notification.serializer";
@@ -152,13 +152,14 @@ export class OrgNotificationAPIResolver extends OrgResourceService<NotificationL
 }
 
 @Injectable()
-export class NotificationByIdResolver implements Resolve<any> {
-    constructor(public service: NotificationService) {}
+export class NotificationByIdResolver extends CoreEndpointBase implements Resolve<any> {
+    constructor(public override injector: Injector, public service: NotificationService) { super(injector); }
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => {};
         const failure = (err: any) => {};
-        const setup = this.service.read(route.params.id);
+        const { id } = route.params;
+        const setup = this.service.read(id);
         return this.performRouteResolver(route.data, setup, success, failure);
     }
 }

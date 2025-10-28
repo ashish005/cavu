@@ -19,12 +19,9 @@ export class TrxnTypeAllocationCeComponent extends TrxnTypeAllocationForm implem
 
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public fb: FormBuilder, public apiResolver: BankingAPIResolver, public service: TrxnTypeAllocationService){
+    constructor(public override fb: FormBuilder, public apiResolver: BankingAPIResolver, public service: TrxnTypeAllocationService){
         super(fb);
     }
-
-    // convenience getter for easy access to form fields
-    get f() { return this.customForm.controls; }
 
     ngOnInit(){}
 

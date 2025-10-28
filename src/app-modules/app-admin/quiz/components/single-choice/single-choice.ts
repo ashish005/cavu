@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output} fr
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 
 @Component({
+    standalone: false,
   selector: 'single-choice',
   templateUrl: './single-choice.html'
 })

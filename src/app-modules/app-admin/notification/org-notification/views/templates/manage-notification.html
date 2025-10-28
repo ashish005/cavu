@@ -12,8 +12,8 @@
                                [class.active]="(activeNotificationType?.id == row.id)"
                                (click)="notificationByUserType(row)">
                                 <i [ngClass]="row.icon"></i>
-                                <b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
-                                        class="fa fa-lock"></i></b>
+                                <!--<b class="badge badge-pill danger up" *ngIf="row.isLocked"><i
+                                        class="fa fa-lock"></i></b>-->
                                 {{ row?.name }}
                                 <span class="float-right"><i class="fa fa-chevron-right"></i></span>
                             </a>
@@ -44,7 +44,7 @@
                                         <ng-template ngFor let-template [ngForOf]="row?.templates | sortBy:'asc': 'sortOrder'" let-i="index">
                                             <a class="btn btn-xs text-xs text-success"
                                                [class]="template.templateId ? 'text-success': 'text-warning'"
-                                               (click)="showTemplateToCreateEdit(row, template)">{{ template?.name }}
+                                               (click)="showTemplateToCreateEdit(template)">{{ template?.name }}
                                             </a>
                                         </ng-template>
                                         <div *ngIf="!row.isEventBased && !row.isReminder" class="float-right">
@@ -158,7 +158,9 @@
                                                     </a>
                                                 </td>
 
-                                                <td><drop-down [list]="lookupResolver.masterType?.orgEvents" [options]="eventOptions" [id]="mediaType?.value?.appEvent" [data]="mediaType?.value"></drop-down></td>
+                                                <td>
+<!--                                                    <drop-down [list]="lookupResolver.masterType?.orgEvents" [options]="eventOptions" [id]="mediaType?.value?.appEvent" [data]="mediaType?.value"></drop-down>-->
+                                                </td>
                                                 <td><label class="md-check my-1"
                                                            [class]="template.hasTemplate ? 'text-success': 'text-warning'">
                                                     {{template.hasTemplate? 'Yes': 'No'}}</label></td>

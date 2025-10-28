@@ -4,8 +4,10 @@ import {ActivatedRoute} from "@angular/router";
 import {ComplianceAPIResolver} from "../services";
 import {ComplianceRegulatory} from "../domains/compliance-regulatory.serializer";
 import {Compliance} from "../domains/compliance.serializer";
+import {FormArray, FormGroup} from "@angular/forms";
 
 @Component({
+    standalone: false,
     templateUrl: './layout.html',
     //styles: [`::ng-deep ng-component{ display: contents;} :host { display: contents;}`]
 })

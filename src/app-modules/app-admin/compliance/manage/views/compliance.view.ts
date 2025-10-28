@@ -14,7 +14,6 @@ import {
 })
 export class ComplianceView extends ViewExtender<Compliance> implements OnInit{
     enabled: boolean = true;
-    pageTitle: string;
     override coreState: ComplianceQueryOptions = new ComplianceQueryOptions();
   constructor(public override activatedRoute: ActivatedRoute,
                 public override service: ComplianceService,

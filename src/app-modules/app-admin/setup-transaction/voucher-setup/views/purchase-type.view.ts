@@ -4,7 +4,10 @@ import {PurchaseTypeService} from "../services/voucher-type.service";
 import {PurchaseType, PurchaseTypeQueryOptions} from "../domains/purchase-type.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class PurchaseTypeView extends ViewExtender<PurchaseType> implements OnInit
 {
   override coreState: PurchaseTypeQueryOptions = new PurchaseTypeQueryOptions();

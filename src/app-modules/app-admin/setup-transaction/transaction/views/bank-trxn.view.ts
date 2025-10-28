@@ -29,7 +29,9 @@ export class BankTrxnView extends ViewExtender<BankTrxn> implements OnInit {
     }
 
     ngOnInit() {
-        this.coreState.status = this.activatedRoute.snapshot.data.key;
+      const { key } = this.activatedRoute.snapshot.data;
+        this.coreState.status = key;
         super.populateGrid();
     }
+    actionCb(e){}
 }

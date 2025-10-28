@@ -3,7 +3,7 @@ import {CoreQueryOptions} from "@app-global";
 export class BankAccountQueryOptions extends CoreQueryOptions {
     bankId: number;
     constructor(model: any = <any>{}){ super(); }
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             bankId: this.bankId
         };

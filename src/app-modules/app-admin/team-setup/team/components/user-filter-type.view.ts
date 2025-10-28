@@ -1,7 +1,10 @@
 import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {TeamSetupAPIResolver} from "../services/api.resolver";
 
-@Component({ templateUrl: './templates/team-user-filter-type.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/team-user-filter-type.html'
+})
 export class TeamUserFilterTypeView implements OnInit {
   public userMasterTypeId: string;
   filterList: Array<any> = [];

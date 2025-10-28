@@ -6,10 +6,11 @@ import {PAYMENT_GATEWAY_ENTRY_COMPONENT} from "./grid-cell";
 import {PAYMENT_GATEWAY_VIEWS, PaymentGatewayRoutes} from "./payment-gateway.routing";
 import {PAYMENT_GATEWAY_COMPONENT} from "./components";
 import {GlobalModule} from "@app-global";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, FormsModule, ReactiveFormsModule,
         RouterModule.forChild(PaymentGatewayRoutes),
         GlobalModule
     ],

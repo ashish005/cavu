@@ -165,7 +165,7 @@ export class OrgProcessWorkflowQueryOptions extends CoreQueryOptions{
         super(model);
     }
 
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             parentId:this.parentId
         };

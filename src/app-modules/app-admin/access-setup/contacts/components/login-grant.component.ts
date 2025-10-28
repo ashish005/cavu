@@ -7,6 +7,7 @@ import {LoginGrantForm} from "../forms/login-grant.form";
 import {Contact} from "../domains/contact.serializer";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/login-grant.html',
     styles:[`:host { display: contents; }`]
 })
@@ -19,7 +20,7 @@ export class LoginGrantComponent extends LoginGrantForm implements OnInit {
     submitted: boolean;
     @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
     get actionType(){ return (this.id) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-    constructor(public fb: FormBuilder, public service: ContactService, public apiResolver: ContactAPIResolver) {
+    constructor(public override fb: FormBuilder, public service: ContactService, public apiResolver: ContactAPIResolver) {
         super(fb);
     }
 

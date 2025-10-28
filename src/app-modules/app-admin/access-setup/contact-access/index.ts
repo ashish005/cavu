@@ -4,10 +4,11 @@ import {Router, RouterModule} from "@angular/router";
 import {GlobalModule} from "@app-global";
 import {User_Acccess_Setup_Routes, USER_ACCESS_SETUP_VIEWS} from "./contact-access-setup.routing";
 import {UserAccessSetupAPIResolver} from "./services/api.resolver";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, FormsModule, ReactiveFormsModule,
         RouterModule.forChild(User_Acccess_Setup_Routes),
         GlobalModule
     ],

@@ -101,6 +101,7 @@ export class ReminderNotificationActionCell extends DynamicComponent {
 }
 
 @Component({
+    standalone: false,
     template: `<div>
         <div class="list inset" *ngIf="context[col.field]">
             <div class="list-item p-0 text-xs">

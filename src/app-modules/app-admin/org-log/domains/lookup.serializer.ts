@@ -1,7 +1,7 @@
 import {CoreResource} from "@app-global";
 
 export class LogLookup extends CoreResource{
-  id: number | string;
+  //id: number | string;
 
   constructor(model: any = <any>{}){
     super();

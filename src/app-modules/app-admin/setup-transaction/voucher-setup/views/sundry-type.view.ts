@@ -4,7 +4,10 @@ import {VoucherSundryType, VoucherSundryTypeQueryOptions} from "../domains/sundr
 import {VoucherSundryTypeService} from "../services/voucher-type.service";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class SundryTypeView extends ViewExtender<VoucherSundryType> implements OnInit
 {
   override coreState: VoucherSundryTypeQueryOptions = new VoucherSundryTypeQueryOptions();

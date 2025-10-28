@@ -6,6 +6,7 @@ import {OrgTaskLogService} from "../services/log.service";
 import {OrgTaskLog, OrgTaskLogQueryOptions} from "../domains/org-task-log.serializer";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/org-task-log-view.html'
 })
 export class OrgTaskLogView extends ViewExtender<OrgTaskLog> implements OnInit, OnDestroy{
@@ -28,5 +29,6 @@ export class OrgTaskLogView extends ViewExtender<OrgTaskLog> implements OnInit, 
   }
 
   ngOnInit(){ super.populateGrid(); }
-  ngOnDestroy(){ super.ngOnDestroy(); }
+  override ngOnDestroy(){ super.ngOnDestroy(); }
+    actionCb(e){}
 }

@@ -4,7 +4,7 @@
       <div class="nav nav-md">
         <a class="nav-link text-center" [class.active]="!coreState.taxGroupId" (click)="changeByTaxGroup(null)">All</a>
         <ng-template ngFor let-taxGroup [ngForOf]="apiResolver.masterType.taxGroups" let-i="index">
-          <a class="nav-link text-center" [class.active]="taxGroupId == taxGroup.id" (click)="changeByTaxGroup(taxGroup.id)">{{taxGroup?.name}}</a>
+          <a class="nav-link text-center" (click)="changeByTaxGroup(taxGroup.id)">{{taxGroup?.name}}</a>
         </ng-template>
       </div>
     </div>

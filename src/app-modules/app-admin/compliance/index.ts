@@ -59,11 +59,11 @@ export class ComplianceLayout implements OnInit {
                     { path: '', pathMatch: 'full', redirectTo:'report' },
                     {
                         path: 'report', data: { translatePath: 'modules.project.manage' },
-                        loadChildren: () => import('app-common/compliance/report').then(m => m.ComplianceReportModule)
+                        loadChildren: () => import('app-modules/app-admin/compliance/report').then(m => m.ComplianceReportModule)
                     },
                     {
                         path: 'manage', data: { title: 'Compliance', header:'Compliance'},
-                        loadChildren: () => import('app-common/compliance/manage').then(m => m.ComplianceManageModule)
+                        loadChildren: () => import('app-modules/app-admin/compliance/manage').then(m => m.ComplianceManageModule)
                     }
                 ]
             }

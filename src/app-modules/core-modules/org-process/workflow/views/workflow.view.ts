@@ -3,7 +3,8 @@ import { pairwise, startWith, Subscription } from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-  template: `<setup-workflow #setupWorkflow></setup-workflow>`
+    standalone: false,
+  template: ``//<setup-workflow #setupWorkflow></setup-workflow>`
 })
 export class ProcessWorkflowView implements OnInit, OnDestroy {
     @ViewChild('setupWorkflow', { static: true }) public setupWorkflow: any;

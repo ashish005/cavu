@@ -4,10 +4,11 @@ import {TemplateForm} from "../forms/template-ce.form";
 import {ActivatedRoute} from "@angular/router";
 import {ACTION_ENUM} from "@app-global";
 import {NotificationAPIResolver} from "../services/api.resolver";
-import {NotificationMediaTypeTemplate, OrgNotification} from "../domains/notification.serializer";
+import {OrgNotification} from "../domains/notification.serializer";
 import {NotificationTemplateService} from "../services/template.service";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/notification-setting-ce.html',
   styles:[`:host { display: contents; }`]
 })
@@ -16,15 +17,15 @@ export class NotificationSettingCeView extends TemplateForm implements OnInit {
   isLoading: boolean;
   notification: OrgNotification;
   get actionType(){ return (this.formId.value) ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder, public activatedRoute: ActivatedRoute,
+  constructor(public override fb: FormBuilder, public activatedRoute: ActivatedRoute,
               public service: NotificationTemplateService,
               public apiResolver: NotificationAPIResolver) {
       super(fb);
   }
 
   ngOnInit() {
-      const { data } = this.activatedRoute.snapshot;
-      this.notification = data.notification.data;
+      const { notification: { data} } = this.activatedRoute.snapshot.data;
+      this.notification = data;
   }
 
     showScheduler = (row: OrgNotification) => this.apiResolver.showSchedulerPopup(row, (orgTaskScheduleId) => {

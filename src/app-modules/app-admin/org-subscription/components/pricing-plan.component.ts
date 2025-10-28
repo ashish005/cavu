@@ -2,6 +2,7 @@ import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
 import {ACTION_ENUM} from "@app-global";
 
 @Component({
+    standalone: false,
     selector: 'pricing-plan',
     templateUrl: `./templates/pricing-plan.html`
 })

@@ -20,10 +20,10 @@
                             <ng-template ngFor let-item [ngForOf]="hostConfigsForm?.controls" let-i="index">
                                 <tr [formGroup]="item">
                                     <td>
-                                        <input class="md-input" formControlName="hostName" [ngClass]="{ 'is-invalid': submitted && f.hostName.errors }">
+                                        <input class="md-input" formControlName="hostName" [ngClass]="{ 'is-invalid': submitted && f['hostName'].errors }">
                                     </td>
                                     <td>
-                                        <input class="md-input" formControlName="tenantPoint" [ngClass]="{ 'is-invalid': submitted && f.tenantPoint.errors }">
+                                        <input class="md-input" formControlName="tenantPoint" [ngClass]="{ 'is-invalid': submitted && f['tenantPoint'].errors }">
                                     </td>
                                     <!--<td>
                                         <select-dropdown [items]="apiResolver?.masterType?.dbTypes"

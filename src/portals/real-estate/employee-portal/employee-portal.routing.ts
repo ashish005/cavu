@@ -3,6 +3,7 @@ import {DashboardView} from "./views/dashboard/dashboard";
 import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
 import {DashboardAPIResolver} from "@app-global";
 import {MainLayout} from "./layout/layout";
+import {ADMIN_SETUP} from "../../org-admin";
 
 export const EMPLOYEE_Routes: Routes = [
   {
@@ -20,7 +21,9 @@ export const EMPLOYEE_Routes: Routes = [
 
         // { path: 'quotation', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: { code:'PERM_QUOTATION', title: 'modules.quotation.title', header: 'modules.quotation.header', icon: 'fa fa-shield', hideSidebar: true, vMasterType: 'QUOTATION' } },
         ...PortalCommonModuleRoutes,
-        ...CoreCommonModuleRoutes
-    ]
+        ...CoreCommonModuleRoutes,
+
+    ],
+    ...ADMIN_SETUP
   }
 ];

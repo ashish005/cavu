@@ -28,7 +28,7 @@ export class ContactTypeRuleForm {
   // convenience getter for easy access to form fields
   get f() { return this.customForm.controls; }
 
-  get formRules() { return <FormArray>this.customForm.get('rules'); }
+  get formRules() { return this.customForm.get('rules') as FormArray<FormGroup>; }
 
   addToFormRule(item) { this.formRules.push(this.getRuleFormGroup(item)); }
 

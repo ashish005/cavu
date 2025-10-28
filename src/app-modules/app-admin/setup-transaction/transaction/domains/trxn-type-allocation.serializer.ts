@@ -1,4 +1,4 @@
-import {CoreQueryOptions} from "@app-global";
+import { CoreQueryOptions, CoreResource } from "@app-global";
 
 export class TrxnTypeAllocationQueryOptions extends CoreQueryOptions {
     modeTypeId: string;
@@ -9,8 +9,8 @@ export class TrxnTypeAllocationQueryOptions extends CoreQueryOptions {
     }
 }
 
-export class TrxnTypeAllocation {
-    id: string;
+export class TrxnTypeAllocation extends CoreResource{
+    //id: string;
     modeTypeId: number;
     accountGroupId: number;
     accountId: string;
@@ -23,7 +23,7 @@ export class TrxnTypeAllocation {
     //children: Array<TrxnTypeAllocation>;
 
     constructor(model: any = <any>{}){
-        super(model);
+        super();
         const { id, modeTypeId, accountGroupId, accountId, isDefault, isAllowed, sortNo, accountGroupName, accountName }  = model;
         this.id = id;
         this.modeTypeId = modeTypeId;

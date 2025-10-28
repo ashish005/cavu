@@ -1,6 +1,6 @@
 <td [formGroup]="customForm" style="padding: 5px;">
     <label class="ui-switch float-left primary">
-        <input type="checkbox" formControlName="allowed" (change)="allowedChanges($event.target.checked, customForm)">
+        <input type="checkbox" #allowed formControlName="allowed" (change)="allowedChanges(allowed.checked, customForm)">
         <i></i>
     </label>
     <div class="float-left ml-2">{{customForm.value.name}}</div>

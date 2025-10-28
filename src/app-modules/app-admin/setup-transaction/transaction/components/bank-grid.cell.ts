@@ -99,7 +99,7 @@ export class AmountInBookCell extends DynamicComponent{
             </ng-template>
             <ng-template ngFor let-item [ngForOf]="context?.serviceCharges" let-i="index">
                 <a class="d-block">
-                    <small class="d-block text-muted mt-0">{{ item | json }}</small>
+                    <small class="d-block text-muted mt-0">{{ item }}</small>
                 </a>
             </ng-template>
         </div>

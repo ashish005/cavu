@@ -2,7 +2,7 @@ import { CoreQueryOptions, STATUS_ENUM } from "@app-global";
 
 export class AddressTypeQueryOptions extends CoreQueryOptions {
     userMasterType: string;
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             userMasterType:this.userMasterType
         };

@@ -19,7 +19,8 @@ export class DocumentTypeView extends ViewExtender<DocumentType> implements OnIn
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService, public lookupResolver: DocumentAccessAPIResolver) {
     super(activatedRoute, service);
-      this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    const { userType } = this.activatedRoute.snapshot.data;
+      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent },
@@ -34,7 +35,7 @@ export class DocumentTypeView extends ViewExtender<DocumentType> implements OnIn
     super.populateGrid();
   }
 
-  ngOnDestroy(){
+  override ngOnDestroy(){
     super.ngOnDestroy();
   }
 

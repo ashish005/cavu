@@ -4,13 +4,14 @@ import {RouterModule} from "@angular/router";
 import {INTEGRATION_VIEWS, IntegrationRoutes} from "./integration.routing";
 import {INTEGRATION_SERVICES} from "./services";
 import {CommunicationGatewayCEComponent} from "./components/communication-gateway-ce.component";
-import {CoreModule} from "@app-global";
+import {GlobalModule} from "@app-global";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
-        CoreModule.forChild(),
-        RouterModule.forChild(IntegrationRoutes)
+        CommonModule, ReactiveFormsModule,
+        RouterModule.forChild(IntegrationRoutes),
+        GlobalModule
     ],
     providers: [INTEGRATION_SERVICES],
     declarations: [INTEGRATION_VIEWS, CommunicationGatewayCEComponent]

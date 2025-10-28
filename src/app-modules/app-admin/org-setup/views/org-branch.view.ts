@@ -14,11 +14,11 @@ import {
 import {OrgBranchCreateEditComponent} from "../components/branch-create-edit.component";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/org-branch.html',
   styles: [`:host { display: contents; }`]
 })
 export class OrgBranchView extends ViewExtender<Branch> implements OnInit {
-    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     @ViewChild('routerActionTemplate', { static: true }) public routerActionTemplate: TemplateRef<any>;
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     override coreState: BranchQueryOptions = new BranchQueryOptions();
@@ -44,7 +44,7 @@ export class OrgBranchView extends ViewExtender<Branch> implements OnInit {
     ngOnInit(){
         super.populateGrid();
     }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
   actionCb(data: Branch){
     const { id } = this.orgService.org;

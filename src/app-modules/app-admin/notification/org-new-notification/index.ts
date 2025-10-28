@@ -1,4 +1,4 @@
-import {CoreModule, PortalAuthGuard} from "@app-global";
+import {GlobalModule} from "@app-global";
 import {Component, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
@@ -10,13 +10,12 @@ import {NotificationByIdResolver, NotificationService} from "./services/notifica
 import {NotificationTemplateService} from "./services/template.service";
 import {Layout} from "./layout/layout";
 import {TemplateCeView} from "./views/template-ce.view";
-import {ORG_NOTIFICATION_MEDIA_TYPE} from "@app-base/enums/process-enums";
 import {NotificationSettingCeView} from "./views/notification-setting-ce.view";
-import {CommonPluginModule} from "@app-plugins";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild([
             {
                 path: '', component: Layout, resolve: { items: NotificationAPIResolver },
@@ -24,28 +23,29 @@ import {CommonPluginModule} from "@app-plugins";
                 children: [
                     { path: '', pathMatch: 'full', redirectTo:'manage' },
                     {
-                        path: 'manage', canLoad:[PortalAuthGuard], component: ManageNotificationView,
+                        path: 'manage', //canLoad:[PortalAuthGuard],
+                        component: ManageNotificationView,
                         data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
                     },
                     {
-                        path: 'workflow', canLoad:[PortalAuthGuard], component: NotificationWorkflowView,
+                        path: 'workflow', //canLoad:[PortalAuthGuard],
+                        component: NotificationWorkflowView,
                         data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
                     },
                     {
                         path: ':notificationId', resolve: { notification: NotificationByIdResolver },
                         children: [
-                            { path: '', pathMatch: 'full', redirectTo: ORG_NOTIFICATION_MEDIA_TYPE.DASHBOARD },
-                            { path: ORG_NOTIFICATION_MEDIA_TYPE.DASHBOARD, component: TemplateCeView },
-                            { path: ORG_NOTIFICATION_MEDIA_TYPE.SMS, component: TemplateCeView },
-                            { path: ORG_NOTIFICATION_MEDIA_TYPE.EMAIL, component: TemplateCeView },
+                            { path: '', pathMatch: 'full', redirectTo: "DASHBOARD" },
+                            { path: "DASHBOARD", component: TemplateCeView },
+                            { path: "SMS", component: TemplateCeView },
+                            { path: "EMAIL", component: TemplateCeView },
                             { path: 'setting', component: NotificationSettingCeView }
                         ]
                     }
                 ]
             }
         ]),
-        CoreModule.forChild(),
-        CommonPluginModule.forChild()
+        GlobalModule
     ],
     providers: [NotificationAPIResolver, NotificationByIdResolver, NotificationService, NotificationTemplateService],
     declarations: [Layout, NotificationWorkflowView, ManageNotificationView, TemplateCeView, NotificationSettingCeView, NOTIFICATION_COMPONENT]

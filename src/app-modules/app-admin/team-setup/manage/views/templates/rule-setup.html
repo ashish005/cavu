@@ -4,7 +4,7 @@
             <div class="row flex">
                 <div class="col-sm-6">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f.name.errors }">
+                        <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
                         <label> Name </label>
                     </div>
                 </div>
@@ -32,10 +32,10 @@
                     <th width="20px"></th>
                 </tr>
                 </thead>
-                <tbody formArrayName="rules">
+                <!--<tbody formArrayName="rules">
                 <tr *ngFor="let item of formFilterOptions.controls; let i = index;"
                     group-rule-filter [customForm]="item" [index]="i" (onOk)="cb($event)"></tr>
-                </tbody>
+                </tbody>-->
                 <tfoot class="box">
                 <tr>
                     <td colspan="4"><a class="text-primary" (click)="addFilterOptions()"><i class="fa fa-plus"></i> Add

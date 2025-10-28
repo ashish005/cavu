@@ -6,6 +6,7 @@ import {SoftwareInvoicePrintView} from "../components/software-invoice-print.vie
 import {PaymentService} from "../services/payment.service";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/pricing-info.html'
 })
 export class PricingInfoView extends CoreEndpointBase implements OnInit {

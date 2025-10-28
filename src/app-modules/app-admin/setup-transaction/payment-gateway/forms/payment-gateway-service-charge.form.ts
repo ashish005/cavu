@@ -30,7 +30,7 @@ export class PaymentGatewayServiceChargeForm {
 
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-    get formGatewayServiceCharges (): FormArray{ return <FormArray>this.customForm.get('serviceCharges'); }
+    get formGatewayServiceCharges (){ return this.customForm.get('serviceCharges') as FormArray<FormGroup>;; }
     addGatewayServiceCharge(val){ this.formGatewayServiceCharges.push(this.formGatewayServiceCharge(val)); }
 
     populateForm(item: PaymentGateway) {

@@ -22,15 +22,15 @@
             <div class="row row-sm" *ngIf="!isSMS">
                 <div class="col-sm-12">
                     <div class="md-form-group">
-                        <input class="md-input" formControlName="header" [ngClass]="{ 'is-invalid': submitted && f.header.errors }">
+                        <input class="md-input" formControlName="header" [ngClass]="{ 'is-invalid': submitted && f['header'].errors }">
                         <label> Subject </label>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="md-form-group pt-0 pb-0">
-                        <angular-editor class="md-input" style="white-space: pre-wrap;" formControlName="content" [config]="config"></angular-editor>
+<!--                        <angular-editor class="md-input" style="white-space: pre-wrap;" formControlName="content" [config]="config"></angular-editor>-->
                         <label> Message </label>
-                        <div style="margin-top: -20px;border-top: none !important; padding: .5rem .8rem 1rem;  border: 1px solid #ddd;  background-color: transparent;  overflow-x: hidden; overflow-y: auto; position: relative;" [innerHTML]="footer"></div>
+<!--                        <div style="margin-top: -20px;border-top: none !important; padding: .5rem .8rem 1rem;  border: 1px solid #ddd;  background-color: transparent;  overflow-x: hidden; overflow-y: auto; position: relative;" [innerHTML]="footer"></div>-->
                     </div>
                 </div>
             </div>

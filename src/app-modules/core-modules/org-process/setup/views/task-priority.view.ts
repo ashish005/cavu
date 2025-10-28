@@ -25,4 +25,5 @@ export class TaskPriorityView extends ViewExtender<TaskPriority> implements OnIn
   }
 
   ngOnInit() { super.populateGrid(); }
+  actionCb(e){}
 }

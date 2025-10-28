@@ -7,10 +7,11 @@ import {NOTIFICATION_COMPONENT} from "./components";
 import { NOTIFICATION_VIEWS, NotificationRoutes } from "./notification.routing";
 import {NOTIFICATION_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 import {GlobalModule} from "@app-global";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, FormsModule, ReactiveFormsModule,
         RouterModule.forChild(NotificationRoutes),
         GlobalModule
     ],

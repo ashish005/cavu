@@ -15,15 +15,15 @@ import {GroupListComponent} from "../components/group-list.component";
 export class TeamView extends ViewExtender<TeamUserGroup> implements OnInit, OnDestroy {
   public userMasterType: string;
   override coreState: TeamUserGroupQueryOptions = new TeamUserGroupQueryOptions();
-  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
   @ViewChild('groupCE', { static: true }) public groupCE;
 
   constructor(public override service: TeamSetupService,
               public override activatedRoute: ActivatedRoute,
               private sharedService: SharedService) {
     super(activatedRoute, service);
-    this.gridOptions.header.edit = false;
-    this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    const { userType } = this.activatedRoute.snapshot.data;
+    this.userMasterType = userType;
+      this.gridOptions.header.edit = false;
     this.gridOptions.columnDefs = [
         {headerName: 'Name', field: 'name'},
         {headerName: 'Category', field: 'categoryName'},
@@ -37,7 +37,7 @@ export class TeamView extends ViewExtender<TeamUserGroup> implements OnInit, OnD
     super.populateGrid();
   }
 
-  ngOnDestroy(){ super.ngOnDestroy(); }
+  override ngOnDestroy(){ super.ngOnDestroy(); }
 
   showGroup(group: TeamUserGroup) { this.groupCE.populateUserGroup(group); }
   groupUpdated(e) { super.populateGrid(); }

@@ -17,7 +17,7 @@ export class GroupCategoryQueryOptions extends CoreQueryOptions{
 }
 
 export class GroupCategory extends CoreResource {
-    id: string;
+    //id: string;
     name: string;
     hasDynamicRules: boolean;
     userGroups: Array<TeamUserGroup>;

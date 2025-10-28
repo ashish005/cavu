@@ -7,11 +7,14 @@ import {TeamGroupForm} from "../forms/team-group.form";
 import {TeamSetupAPIResolver} from "../services/api.resolver";
 import {TeamSetupService} from "../services/team.service";
 
-@Component({ selector: 'group-ce', templateUrl: './templates/team-group-ce.html', styles: [':host { display: contents; }'] })
+@Component({
+    standalone: false,
+    selector: 'group-ce',
+    templateUrl: './templates/team-group-ce.html',
+    styles: [':host { display: contents; }']
+})
 export class TeamGroupCeView extends TeamGroupForm implements OnInit {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
-
-    pageTitle: string;
     userList: Array<any>;
     submitted: boolean;
     @Input() hideDynamicResult: boolean;
@@ -19,13 +22,11 @@ export class TeamGroupCeView extends TeamGroupForm implements OnInit {
         this.populateUserGroup(val || new TeamUserGroup({}))
     };
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public fb: FormBuilder, private router: Router,
+    constructor(public override fb: FormBuilder, private router: Router,
                 public apiResolver: TeamSetupAPIResolver,
                 protected service: TeamSetupService, private activatedRoute: ActivatedRoute)
     {
         super(fb);
-        const { data, parent} = this.activatedRoute.snapshot;
-        this.pageTitle = data.title || parent?.data?.title;
         const itemFormValueChange = ([prev, next]: [any, any]) =>
         {
             if(prev != next)

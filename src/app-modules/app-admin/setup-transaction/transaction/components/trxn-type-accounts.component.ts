@@ -75,6 +75,7 @@ class TrxnTypeAllocation {
 }
 
 @Component({
+    standalone: false,
     selector: '[trxn-type]',
     templateUrl: './templates/trxn-type-accounts.html',
     styles:[`:host { display: contents; }`]
@@ -90,7 +91,7 @@ export class TrxnTypeAccountsComponent extends CoreEndpointBase implements OnIni
 
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public injector: Injector, public apiResolver: BankingAPIResolver){ super(injector); }
+    constructor(public override injector: Injector, public apiResolver: BankingAPIResolver){ super(injector); }
 
     ngOnInit() {
         this.trxnType = this.apiResolver.masterType.trxnTypes.find(r => r.id == this.id);
@@ -124,6 +125,7 @@ export class TrxnTypeAccountsComponent extends CoreEndpointBase implements OnIni
 }
 
 @Component({
+    standalone: false,
     selector: 'trxn-type-allocation-list',
     templateUrl: './templates/trxn-type-allocation-list.html',
     styles:[`:host { display: contents; }`]
@@ -141,7 +143,7 @@ export class TrxnTypeAllocationListComponent extends CoreEndpointBase implements
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
 
     subscriber: Subscription;
-    constructor(public injector: Injector, public apiResolver: BankingAPIResolver, public service: TrxnTypeAllocationService){ super(injector); }
+    constructor(public override injector: Injector, public apiResolver: BankingAPIResolver, public service: TrxnTypeAllocationService){ super(injector); }
 
     ngOnInit() {
         this.callService();

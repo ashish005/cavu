@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ACTION_ENUM, CoreOrgProcessFactory, DynamicComponent} from "@app-global";
+import {DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {OrgTaskSummaryRow} from "../domains/org-task-summary.serializer";
 
@@ -47,27 +47,27 @@ import {OrgTaskSummaryRow} from "../domains/org-task-summary.serializer";
     </div>`
 })
 export class TaskSummaryNameActionCell extends DynamicComponent {
-    constructor(public router: Router, public activatedRoute: ActivatedRoute, public processFactory: CoreOrgProcessFactory, public lookupResolver: PipelineAPIResolver) {
+    constructor(public router: Router, public activatedRoute: ActivatedRoute) {
         super();
     }
 
     eventTaskCalendar(task: OrgTaskSummaryRow) {
-        const {id} = task;
-        const inputData: any = {
-            id: id,
-            orgTaskId: id
-        };
-        this.processFactory.showEventTaskPopup(inputData, {text: `${task.name}`, desc: `Manage Task`}, ()=>{});
+        // const {id} = task;
+        // const inputData: any = {
+        //     id: id,
+        //     orgTaskId: id
+        // };
+        // this.processFactory.showEventTaskPopup(inputData, {text: `${task.name}`, desc: `Manage Task`}, ()=>{});
     }
 
     checkActivity(task: OrgTaskSummaryRow) {
-        const {id} = task;
-
-        const popupHeaderOption = {text: `Activity for ${task.name}`, desc: `Activity`};
-        const inputData: any = {
-            orgTaskId: id
-        };
-        this.lookupResolver.showEventTaskActivityPopup(inputData, popupHeaderOption);
+        // const {id} = task;
+        //
+        // const popupHeaderOption = {text: `Activity for ${task.name}`, desc: `Activity`};
+        // const inputData: any = {
+        //     orgTaskId: id
+        // };
+        // this.lookupResolver.showEventTaskActivityPopup(inputData, popupHeaderOption);
     }
 }
 

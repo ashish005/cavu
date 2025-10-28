@@ -6,10 +6,11 @@ import {COMPLIANCE_VIEWS, ComplianceRoutes} from "./compliance.routing";
 import {COMPLIANCE_COMPONENTS} from "./components";
 import {ComplianceAPIResolver, ComplianceRegulatoryService, ComplianceService} from "./services";
 import {COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, ReactiveFormsModule,
     RouterModule.forChild(ComplianceRoutes),
     GlobalModule
   ],

@@ -27,7 +27,7 @@ export class ContactRole {
 
 export class Contact extends CoreResource
 {
-    id: string;
+    //id: string;
     accountId: string;
     email: string;
     fName: string;

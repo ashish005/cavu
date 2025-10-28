@@ -5,7 +5,10 @@ import {DashboardPortletService} from "../services/dashboard-portlet.service";
 import {DashboardPortlet, DashboardPortletQueryOptions} from "../domains/dashboard-portlet.serializer";
 import {DashboardPortletRuleComponent} from "../components/dashboard-portlet.rule.component";
 
-@Component({ templateUrl: './templates/dashboard.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/dashboard.html'
+})
 export class DashboardPortletView extends ViewExtender<DashboardPortlet> implements OnInit, OnDestroy {
   userMasterType: string;
   override coreState: DashboardPortletQueryOptions = new DashboardPortletQueryOptions();
@@ -13,7 +16,7 @@ export class DashboardPortletView extends ViewExtender<DashboardPortlet> impleme
               public override activatedRoute: ActivatedRoute,
               private sharedService: SharedService) {
     super(activatedRoute, service);
-    this.userMasterType = this.activatedRoute.snapshot.data.userType;
+    //this.userMasterType = this.activatedRoute.snapshot.data.userType;
     this.gridOptions.columnDefs = [
       {headerName: 'Name', field: 'name' },
       {headerName: 'Sort Order', field: 'sortOrder' },
@@ -28,7 +31,7 @@ export class DashboardPortletView extends ViewExtender<DashboardPortlet> impleme
     super.populateGrid();
   }
 
-  ngOnDestroy(){
+  override ngOnDestroy(){
       super.ngOnDestroy();
   }
 

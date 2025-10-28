@@ -6,12 +6,14 @@ import {BankService} from "../services/bank-account.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
+    standalone: false,
     selector: 'bank',
     templateUrl: './templates/bank.html',
     styles: [`:host { display: contents; }`],
 })
 export class BankComponent extends ViewExtender<Bank> implements OnInit {
     customForm: FormGroup;
+    submitted: boolean = false;
     @Output() cb: EventEmitter<any> = new EventEmitter<any>();
     @Output() addAccount: EventEmitter<any> = new EventEmitter<any>();
 
@@ -24,6 +26,8 @@ export class BankComponent extends ViewExtender<Bank> implements OnInit {
             name: ['', Validators.required]
         });
     }
+
+    get f() { return this.customForm.controls; }
 
     ngOnInit() {  super.populateGrid(); }
 

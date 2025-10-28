@@ -5,6 +5,7 @@ import {DashboardPortletService} from "../services/dashboard-portlet.service";
 import {PortletPermissionRuleForm} from "../form/portlet-permission-rule.form";
 
 @Component({
+    standalone: false,
   styles: [`:host{ display: contents; }`],
   templateUrl: './templates/dashboard-portlet-rule.html'
 })
@@ -17,7 +18,7 @@ export class DashboardPortletRuleComponent extends PortletPermissionRuleForm {
 
   submitted: boolean = false;
   get actionType(){ return (this.id)? ACTION_ENUM.UPDATE: ACTION_ENUM.ADD; }
-  constructor(public fb: FormBuilder, private service: DashboardPortletService) { super(fb); }
+  constructor(public override fb: FormBuilder, private service: DashboardPortletService) { super(fb); }
 
   onSubmit(form) {
     // stop here if form is invalid

@@ -71,6 +71,7 @@ export class VoucherTypeForm {
 }
 
 @Component({
+    standalone: false,
     templateUrl: './templates/voucher-config.html',
     styles:[`:host { display: contents; }`]
 })
@@ -81,7 +82,7 @@ export class VoucherConfigComponent extends VoucherTypeForm implements OnInit{
     @Input() id: string;
     @Input() set data (val){ super.populateVoucherType(val); }
     get actionType() { return this.id? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; };
-    constructor(public fb: FormBuilder, public service: VoucherTypeService){ super(fb); }
+    constructor(public override fb: FormBuilder, public service: VoucherTypeService){ super(fb); }
 
     ngOnInit(){}
     onSubmit(row: any){

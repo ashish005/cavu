@@ -4,7 +4,7 @@ export class BankTrxnQueryOptions extends CoreQueryOptions {
     status: string;
     constructor(model: any = <any>{}){ super(); }
 
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             status: this.status
         };

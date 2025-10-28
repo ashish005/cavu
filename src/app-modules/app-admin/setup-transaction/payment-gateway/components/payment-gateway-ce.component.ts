@@ -15,6 +15,7 @@ import {ACTION_ENUM} from "@app-global";
 import {PaymentGatewayService} from "../services/payment-gateway.service";
 
 @Component({
+    standalone: false,
     templateUrl: './templates/payment-gateway-ce.html',
     styles:[`:host { display: contents; }`]
 })
@@ -28,7 +29,6 @@ export class PaymentGatewayCeComponent extends PaymentGatewayForm implements  On
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
 
     submitted: boolean = false;
-    customForm: FormGroup;
 
     //modes: Array<PaymentModeLookup> = [];
     subscribe: Subscription;

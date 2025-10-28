@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from "@angular/core";
 
 @Component({
+    standalone: false,
   selector: 'quiz-preview',
   templateUrl: './quiz-preview.html',
   styleUrls:['./quiz-preview.scss']

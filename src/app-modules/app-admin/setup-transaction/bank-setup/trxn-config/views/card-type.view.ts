@@ -10,7 +10,7 @@ import {PaymentCardTypeService} from "../services/card-type.service";
 })
 export class CardTypeView extends ViewExtender<PaymentCardType> implements OnInit{
   override coreState: PaymentCardTypeQueryOptions = new PaymentCardTypeQueryOptions();
-  constructor(public service: PaymentCardTypeService, public activatedRoute: ActivatedRoute,){
+  constructor(public override service: PaymentCardTypeService, public override activatedRoute: ActivatedRoute,){
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
@@ -19,4 +19,5 @@ export class CardTypeView extends ViewExtender<PaymentCardType> implements OnIni
     }
 
     ngOnInit(){ super.populateGrid(); }
+    actionCb(e){}
 }

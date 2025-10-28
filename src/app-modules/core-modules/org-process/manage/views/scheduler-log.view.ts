@@ -37,10 +37,10 @@ export class SchedulerLogView extends ViewExtender<ScheduleLog> implements OnIni
   }
 
     onActivate(componentRef){
-      super.actionTemplate = componentRef.actionTemplate;
+      this.actionTemplate = componentRef.actionTemplate;
     }
 
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
     ngOnInit(){ super.populateGrid(); }
 
     actionCb(schedule: ScheduleLog){

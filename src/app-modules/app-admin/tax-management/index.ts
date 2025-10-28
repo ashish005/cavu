@@ -7,10 +7,11 @@ import {TAX_MANAGEMENT_SERVICES} from "./services";
 import {TAX_MANAGEMENT_CELL_COMPONENT} from "./grid-cells";
 import {TaxRateListComponent} from "./views/tax-rate-list.view";
 import {GlobalModule} from "@app-global";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, ReactiveFormsModule,
         RouterModule.forChild(TaxManagementRoutes),
         GlobalModule
     ],

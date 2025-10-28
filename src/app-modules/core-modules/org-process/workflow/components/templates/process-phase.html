@@ -17,17 +17,19 @@
                             <span class="arrow b-white right pull-top visible-left"></span>
                             <div>
                                 <a class="text-primary item-title _500"> {{process?.name || '--'}}</a>
-                                <div class="float-right text-xs px-1 b-r" *ngIf="moduleId">
+                                <!--*ngIf="moduleId"-->
+                                <div class="float-right text-xs px-1 b-r">
                                     <small class="text-primary pr-2">End Date</small>
                                     <div class="md-form-group p-0 float-right">
-                                        <input type="date" class="md-input" [attr.value]="process.toDate" (change)="onStartChange(process, $event.target.value, false)" style="height: 20px;">
+                                        <input #toDate type="date" class="md-input" [attr.value]="process.toDate" (change)="onStartChange(process, toDate.value, false)" style="height: 20px;">
                                         <!--<label>End Date</label>-->
                                     </div>
                                 </div>
-                                <div class="float-right text-xs px-1 b-l"  *ngIf="moduleId">
+<!--                                *ngIf="moduleId"-->
+                                <div class="float-right text-xs px-1 b-l">
                                     <small class="text-primary pr-2">Start Date</small>
                                     <div class="md-form-group p-0 float-right">
-                                        <input type="date" class="md-input" [attr.value]="process.fromDate" (change)="onStartChange(process, $event.target.value, true)" style="height: 20px;">
+                                        <input #fromDate type="date" class="md-input" [attr.value]="process.fromDate" (change)="onStartChange(process, fromDate.value, true)" style="height: 20px;">
                                         <!--<label>Start Date</label>-->
                                     </div>
                                 </div>

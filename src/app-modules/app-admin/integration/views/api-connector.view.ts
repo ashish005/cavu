@@ -2,7 +2,10 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {ConnectorService} from "../services/connector.service";
 
-@Component({ templateUrl: './templates/api-connector.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/api-connector.html'
+})
 export class ApiConnectorView implements OnInit {
     constructor(public service: ConnectorService,
                 public activatedRoute: ActivatedRoute){}

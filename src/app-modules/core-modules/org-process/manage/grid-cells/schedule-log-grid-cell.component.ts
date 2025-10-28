@@ -1,11 +1,10 @@
-/*
 import {Component} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ACTION_ENUM, DynamicComponent} from "@app-core";
 import {Scheduler} from "../domains/scheduler.serializer";
-import {PipelineAPIResolver} from "../resolver/api.resolver";
 
 @Component({
+    standalone: false,
     template: `<div>
         <a class="text-xs _500"> {{ context.name }} </a>
         <div class="item-except text-xs h-1x">
@@ -17,7 +16,7 @@ import {PipelineAPIResolver} from "../resolver/api.resolver";
     </div>`
 })
 export class ScheduleLogNameActionCell extends DynamicComponent {
-    constructor(private router: Router, public lookupResolver: PipelineAPIResolver) {
+    constructor(private router: Router) {
         super();
     }
 
@@ -26,7 +25,7 @@ export class ScheduleLogNameActionCell extends DynamicComponent {
     }
 
     addTaskScheduler(task) {
-        const {id, isManual, isFeeTask, isPeriodType, name} = task;
+        /*const {id, isManual, isFeeTask, isPeriodType, name} = task;
         const popupHeaderOption = {text: `${name}`, desc: `Schedule a tasks - ${ACTION_ENUM.UPDATE} Scheduler`};
         const inputData: any = {
             id: null, //Schedular ID
@@ -35,19 +34,19 @@ export class ScheduleLogNameActionCell extends DynamicComponent {
             isFeeTask: isFeeTask,
             isPeriodType: isPeriodType
         };
-        this.lookupResolver.showSchedulerPopup(inputData, popupHeaderOption);
+        this.lookupResolver.showSchedulerPopup(inputData, popupHeaderOption);*/
     }
 
-    /!*createReminder(task: OrgMyTask){
+    createReminder(task: OrgMyTask){
         const { id,orgReminders } = task;
 
-        const popupHeaderOption = { text: `Reminder for ${task.name}`, desc: `Reminder will be send to user prior to scheduled time` };
+        /*const popupHeaderOption = { text: `Reminder for ${task.name}`, desc: `Reminder will be send to user prior to scheduled time` };
         const inputData: any = {
             notificationId: null,
             taskId: id,
             list: orgReminders,
             activeView: 'reminder'
         };
-        this.apiResolver.showNotificationReminder(inputData, popupHeaderOption);
-    }*!/
-}*/
+        this.apiResolver.showNotificationReminder(inputData, popupHeaderOption);*/
+    }
+}

@@ -5,6 +5,7 @@ import {AddressTypeRuleForm} from "../form/address-type-rule.form";
 import {AddressTypeService} from "../services/address-type.service";
 
 @Component({
+  standalone: false,
   templateUrl: './templates/address-type-rule.html',
   styles: [`:host{ display: contents; }`]
 })

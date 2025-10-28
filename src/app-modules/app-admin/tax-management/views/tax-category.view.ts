@@ -3,19 +3,21 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {TaxCategory, TaxCategoryQueryOptions} from "../domains/tax-category.serializer";
 import {TaxManagementModuleAPIResolver, TaxCategoryService} from "../services";
 import {TaxGroupLookup} from "../domains/lookup";
-import {take} from "rxjs";
 import {TaxRateMapperCellComponent} from "../grid-cells/tax-category-grid.cell";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ templateUrl: './templates/tax-category.html', styles: [`:host{ display: contents; }`] })
+@Component({
+    standalone: false,
+    templateUrl: './templates/tax-category.html',
+    styles: [`:host{ display: contents; }`]
+})
 export class TaxCategoryView extends ViewExtender<TaxCategory> implements OnInit, OnDestroy {
-  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
   taxGroup: TaxGroupLookup;
   override coreState: TaxCategoryQueryOptions = new TaxCategoryQueryOptions();
-  constructor(public override activeRoute: ActivatedRoute,
+  constructor(public override activatedRoute: ActivatedRoute,
               public override service: TaxCategoryService,
               public apiResolver: TaxManagementModuleAPIResolver) {
-    super(activeRoute, service);
+    super(activatedRoute, service);
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Tax Code', field: 'taxCode' },
@@ -23,7 +25,7 @@ export class TaxCategoryView extends ViewExtender<TaxCategory> implements OnInit
           {headerName: 'Tax Rates', class: 'text-center', cellTemplate: TaxRateMapperCellComponent},
           {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ];
-      this.activeRoute.parent.paramMap.subscribe((params: ParamMap) => {
+      this.activatedRoute.parent.paramMap.subscribe((params: ParamMap) => {
           const id: any = +params.get('id');
           this.taxGroup = this.apiResolver.masterType.taxGroups.find(r => r.id == id);
           this.coreState.taxGroupId = this.taxGroup?.id;
@@ -34,7 +36,7 @@ export class TaxCategoryView extends ViewExtender<TaxCategory> implements OnInit
   ngOnInit() {
   }
 
-  ngOnDestroy(){ super.ngOnDestroy(); }
+  override ngOnDestroy(){ super.ngOnDestroy(); }
 
   refresh=()=>{
     super.populateGrid();

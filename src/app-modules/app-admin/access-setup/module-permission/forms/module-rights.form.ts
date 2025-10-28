@@ -15,12 +15,12 @@ export class ModuleRightsForm {
         });
     }
 
-    createForm(data){
+    createForm(data: any){
         return this.fb.group({
             id: [data.id],
             name: [data.name],
             hasRole: [data.hasRole || null]
-        });
+        }) as FormGroup;
     }
 
     updateBaseRoles(data: Array<any>){
@@ -61,7 +61,7 @@ export class ModuleRightsForm {
         });
 
         (data.children || []).map(r => {
-            (<FormArray>dataItem.get('modulePermission')).push(this.getModulePermissionFormGroup(r));
+            (dataItem.get('modulePermission') as FormArray<FormGroup>).push(this.getModulePermissionFormGroup(r));
         });
 
         return dataItem;
@@ -96,19 +96,13 @@ export class ModuleRightsForm {
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
 
-    public get formRoles() {
-        return <FormArray>this.customForm.get('roles');
-    }
+    public get formRoles() { return this.customForm.get('roles') as FormArray<FormGroup>; }
+    public get formModuleRight() { return this.customForm.get('moduleRight') as FormArray<FormGroup>; }
 
-    get formModuleRight() {
-        return <FormArray>this.customForm.get('moduleRight');
-    }
+    addToModuleRightFormRule(item){ this.formModuleRight.push(this.getModuleRightFormGroup(item)); }
+    addToFormRule(item){ this.formRoles.push(this.createForm(item)); }
 
-    addToModuleRightFormRule(item){
-        this.formModuleRight.push(this.getModuleRightFormGroup(item));
-    }
-
-    addToFormRule(item){
-        this.formRoles.push(this.createForm(item));
+    getModulePermissions(rule): FormArray<FormGroup> {
+        return rule.get('modulePermission') as FormArray<FormGroup>;
     }
 }

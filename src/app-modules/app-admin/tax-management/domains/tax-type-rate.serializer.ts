@@ -23,7 +23,7 @@ export class TaxTypeRateQueryOptions extends CoreQueryOptions{
     taxGroupId: string;
     constructor(model: any = {}){ super(model);}
 
-    toQueryString (){
+    override toQueryString (){
         const obj = { taxGroupId: this.taxGroupId };
         return super.getParamByObject(obj);
     }

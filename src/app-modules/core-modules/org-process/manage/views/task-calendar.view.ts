@@ -1,16 +1,14 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Subscription} from "rxjs";
-import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {TaskCalendarService} from "../services/task-calendar.service";
-
 import {
     CalendarEndDateCell,
     CalendarNameActionCell,
     CalendarStartDateCell
 } from "../grid-cells/task-calendar-grid-cell.component";
 import {ViewExtender} from "@app-global";
-import {OrgTaskCalendar, OrgTaskCalendarQueryOptions} from "@app-plugins";
+import { OrgTaskCalendarQueryOptions, OrgTaskCalendar } from "../domains/org-task-calendar.serializer";
+import {PipelineAPIResolver} from "../resolver/api.resolver";
 
 @Component({
   standalone: false,
@@ -19,7 +17,7 @@ import {OrgTaskCalendar, OrgTaskCalendarQueryOptions} from "@app-plugins";
 export class TaskCalendarView extends ViewExtender<OrgTaskCalendar> implements OnInit, OnDestroy {
   override coreState: OrgTaskCalendarQueryOptions = new OrgTaskCalendarQueryOptions();
   constructor(public override activatedRoute: ActivatedRoute,
-                public override service: TaskCalendarService,
+              public override service: TaskCalendarService,
               public lookupResolver: PipelineAPIResolver){
         super(activatedRoute, service);
         this.gridOptions.columnDefs = [
@@ -31,10 +29,9 @@ export class TaskCalendarView extends ViewExtender<OrgTaskCalendar> implements O
     }
 
     onActivate(componentRef){
-      super.actionTemplate = componentRef.actionTemplate;
+      this.actionTemplate = componentRef.actionTemplate;
     }
-
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     ngOnInit(){
         //this.orgTaskId = this.activatedRoute.snapshot.params.taskId;

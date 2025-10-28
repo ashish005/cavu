@@ -53,16 +53,18 @@ class ReminderForm {
         this.customForm.get('userGroupName').setValue(userGroupName);
     };
 }
-@Component({ templateUrl: './templates/reminder.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/reminder.html'
+})
 export class ReminderView extends ReminderForm implements OnInit {
     @ViewChild('popupOptionsTemplate', { static: true }) public popupOptionsTemplate: TemplateRef<any>;
     orgTaskId: number;
     pageTitle: string;
     submitted: boolean = false;
-    constructor(public fb: FormBuilder, private activatedRoute: ActivatedRoute, public lookupResolver: TaskAPIResolver,
+    constructor(public override fb: FormBuilder, private activatedRoute: ActivatedRoute, public lookupResolver: TaskAPIResolver,
                 public service: TaskReminderService, public resolver: TaskByIdAPIResolver) {
         super(fb);
-        this.pageTitle = this.activatedRoute.snapshot.data?.title;
     }
 
     ngOnInit(){ this.orgTaskId = this.resolver.data.id; }

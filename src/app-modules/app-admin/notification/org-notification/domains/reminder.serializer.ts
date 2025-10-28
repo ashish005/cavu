@@ -7,7 +7,7 @@ export class NotificationReminderQueryOptions extends CoreQueryOptions {
         super(model);
     }
 
-    toQueryString (){
+    override toQueryString (){
         const obj = {
             orgUserId: this.orgUserId,
             userMasterType: this.userMasterType
@@ -135,7 +135,7 @@ export class NotificationReminderTemplate {
 
 export class NotificationReminder extends CoreResource
 {
-    id: number;
+    //id: number;
     name: string;
 
     orgTaskId: number;

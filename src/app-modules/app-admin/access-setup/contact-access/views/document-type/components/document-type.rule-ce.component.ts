@@ -5,6 +5,7 @@ import {DocumentTypeService} from "../services/document-type.service";
 import {DocumentTypeRuleForm} from "../form/document-type-rule.form";
 
 @Component({
+    standalone: false,
   templateUrl: './templates/document-type-rule.html',
   styles: [`:host{ display: contents; }`]
 })
@@ -17,7 +18,7 @@ export class DocumentTypeRuleCeComponent extends DocumentTypeRuleForm {
 
   submitted: boolean = false;
   categories: Array<any>;
-  constructor(public fb: FormBuilder, public service: DocumentTypeService) {
+  constructor(public override fb: FormBuilder, public service: DocumentTypeService) {
     super(fb);
   }
 

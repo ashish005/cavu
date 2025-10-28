@@ -5,7 +5,11 @@ import {Team, TeamQueryOptions} from "../domains/team.serializer";
 import {TeamUserGroup} from "../domains/user-group.serializer";
 import {TeamUserRecordsService} from "../services/team.service";
 
-@Component({ templateUrl: './templates/team-records.html', styles: [':host { display: contents; }'] })
+@Component({
+    standalone: false,
+    templateUrl: './templates/team-records.html',
+    styles: [':host { display: contents; }']
+})
 export class TeamRecordsComponent extends ViewExtender<Team> implements OnInit{
     teamId: string;
     override coreState: TeamQueryOptions = new TeamQueryOptions();
@@ -14,7 +18,8 @@ export class TeamRecordsComponent extends ViewExtender<Team> implements OnInit{
                 public override activatedRoute: ActivatedRoute)
     {
         super(activatedRoute, service);
-        this.teamId = this.activatedRoute.parent.snapshot.params.teamId;
+        const { teamId } = this.activatedRoute.parent.snapshot.params;
+        this.teamId = teamId;
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name' },
@@ -58,4 +63,5 @@ export class TeamRecordsComponent extends ViewExtender<Team> implements OnInit{
         const input = {};
         this.apiResolver.showUserFilterTypePopup({}, {text: `User Filter Type`, desc: ''});
     }*/
+    actionCb(e){}
 }

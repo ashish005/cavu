@@ -1,12 +1,15 @@
 import {ActivatedRoute, Router, Routes} from "@angular/router";
-import {ModuleGuard, PortalAuthGuard} from "@app-global";
+//import {ModuleGuard, PortalAuthGuard} from "@app-global";
 import {Component, Injector} from "@angular/core";
 
-@Component({ templateUrl: './layout.html' })
+@Component({
+    standalone: false,
+    templateUrl: './layout.html'
+})
 export class TransactionSetupLayout {
     public navList: Array<any>;
     constructor(public injector: Injector, public router: Router, public activatedRoute: ActivatedRoute){
-        const translatePath = this.activatedRoute.snapshot.data.translatePath;
+        const { translatePath } = this.activatedRoute.snapshot.data;
         this.navList = [
             {
                 key: `${translatePath}.bank`, isFLatChildren: true,
@@ -43,18 +46,18 @@ export const SetupTransactionRoutes: Routes = [
         path: '', component: TransactionSetupLayout, data: { translatePath: 'trxn_setup' },
         children: [
             {
-                path: 'bank-setup', canLoad:[ModuleGuard],
-                loadChildren: () => import('app-common/setup-transaction/bank-setup').then(m => m.BankingModule),
+                path: 'bank-setup', //canLoad:[ModuleGuard],
+                loadChildren: () => import('app-modules/app-admin/setup-transaction/bank-setup').then(m => m.BankingModule),
                 data: {title: 'Bank', header:'Bank', name: "Banking", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
             },
             {
-                path: 'voucher-setup', canLoad:[ModuleGuard],
-                loadChildren: () => import('app-common/setup-transaction/voucher-setup').then(m => m.VoucherSetupModule),
+                path: 'voucher-setup', //canLoad:[ModuleGuard],
+                loadChildren: () => import('app-modules/app-admin/setup-transaction/voucher-setup').then(m => m.VoucherSetupModule),
                 data: {title: 'Bank', header:'Bank', name: "Banking", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
             },
             {
-                path: 'payment-gateway', canLoad:[PortalAuthGuard],
-                loadChildren: () => import('app-common/setup-transaction/payment-gateway/index').then(m => m.PaymenyGatewayModule),
+                path: 'payment-gateway', //canLoad:[PortalAuthGuard],
+                loadChildren: () => import('app-modules/app-admin/setup-transaction/payment-gateway/index').then(m => m.PaymenyGatewayModule),
                 data: { code: "ACCESS_TAX_MGT", title: 'Paymeny Gateway', header:'Paymeny Gateway'}
             }
         ]

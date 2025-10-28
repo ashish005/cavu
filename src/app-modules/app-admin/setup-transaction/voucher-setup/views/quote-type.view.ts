@@ -4,7 +4,10 @@ import {QuoteType, QuoteTypeQueryOptions} from "../domains/quotation-type.serial
 import {QuoteTypeService} from "../services/voucher-type.service";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
-@Component({ standalone: false, templateUrl: './templates/common-grid.html' })
+@Component({
+    standalone: false,
+    templateUrl: './templates/common-grid.html'
+})
 export class QuoteTypeView extends ViewExtender<QuoteType> implements OnInit
 {
   override coreState: QuoteTypeQueryOptions = new QuoteTypeQueryOptions();

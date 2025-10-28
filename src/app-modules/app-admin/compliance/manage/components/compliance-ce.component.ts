@@ -33,7 +33,7 @@ export class ComplianceCeComponent extends ComplianceForm implements OnInit {
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
   subscriptions = [];
-  constructor(public fb: FormBuilder, private service: ComplianceService, public apiResolver: ComplianceAPIResolver) {
+  constructor(public override fb: FormBuilder, private service: ComplianceService, public apiResolver: ComplianceAPIResolver) {
     super(fb);
     const ComplianceTypeValueChange = ([prev, next]: [any, any]) =>
     {

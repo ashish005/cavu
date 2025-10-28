@@ -99,10 +99,10 @@ export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> 
     // }
 
     showSchedulerPopup(complianceId, inputData, popupHeaderOption) {
-        const failure = (err) => this.schedulerFactory.destroy();
-        const schedulerSuccess = (resp: any) => this.schedulerFactory.destroy();
-
-        const success = (resp: any) => this.updateComplianceScheduler(complianceId, resp).toPromise().then(schedulerSuccess, failure);
-        this.schedulerFactory.showSchedulerPopup(inputData, popupHeaderOption).then(success, failure);
+        // const failure = (err) => this.schedulerFactory.destroy();
+        // const schedulerSuccess = (resp: any) => this.schedulerFactory.destroy();
+        //
+        // const success = (resp: any) => this.updateComplianceScheduler(complianceId, resp).toPromise().then(schedulerSuccess, failure);
+        // this.schedulerFactory.showSchedulerPopup(inputData, popupHeaderOption).then(success, failure);
     }
 }

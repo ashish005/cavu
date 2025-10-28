@@ -6,6 +6,7 @@ import {GlobalModule} from "@app-global";
 import {AddressTypeService} from "./services/address-type.service";
 import {AddressTypeView} from "./views/address-type.view";
 import {ADDRESS_MASTER_COMPONENTS} from "./components";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 const MasterDocumentRoutes: Array<any> = [
   //{ path: '', pathMatch: 'full', redirectTo:'category' },
@@ -14,7 +15,7 @@ const MasterDocumentRoutes: Array<any> = [
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],

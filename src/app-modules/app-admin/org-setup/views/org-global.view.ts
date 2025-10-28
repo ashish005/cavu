@@ -8,10 +8,10 @@ import {OrgSetupAPIResolver} from "../services/api.resolver";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 
 @Component({
+    standalone: false,
     templateUrl: `./templates/global/org-currency.html`
 })
 export class OrgCurrencyView extends ViewExtender<OrgCurrency> implements OnInit {
-    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     @ViewChild('routerActionTemplate', { static: true }) public routerActionTemplate: TemplateRef<any>;
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     override coreState: OrgCurrencyQueryOptions = new OrgCurrencyQueryOptions();
@@ -32,7 +32,7 @@ export class OrgCurrencyView extends ViewExtender<OrgCurrency> implements OnInit
     }
 
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     add(row){
         const { id, isDisplayed, isDefault, name, currencyCode, symbol } = row;
@@ -60,15 +60,17 @@ export class OrgCurrencyView extends ViewExtender<OrgCurrency> implements OnInit
 }
 
 @Component({
+    standalone: false,
     templateUrl: `./templates/global/org-language.html`
 })
 export class OrgLanguageView extends ViewExtender<OrgLanguage> implements OnInit {
-    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     @ViewChild('routerActionTemplate', { static: true }) public routerActionTemplate: TemplateRef<any>;
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-    constructor(public router: Router, public activatedRoute: ActivatedRoute,
-                public service: OrgLanguageService, public apiResolver: OrgSetupAPIResolver) {
-        super(new OrgLanguageQueryOptions(), activatedRoute, service);
+    override coreState: OrgLanguageQueryOptions = new OrgLanguageQueryOptions();
+    constructor(public router: Router,
+                public override activatedRoute: ActivatedRoute,
+                public override service: OrgLanguageService, public apiResolver: OrgSetupAPIResolver) {
+        super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name' },
@@ -79,7 +81,7 @@ export class OrgLanguageView extends ViewExtender<OrgLanguage> implements OnInit
     }
 
     ngOnInit(){ super.populateGrid(); }
-    ngOnDestroy(){ super.ngOnDestroy(); }
+    override ngOnDestroy(){ super.ngOnDestroy(); }
 
     add(row){
         const { id, isDisplayed, isDefault, name, languageCode, cultureCode } = row;
