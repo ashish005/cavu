@@ -41,22 +41,14 @@ export class SetupLayout {
             name: "Others", isFLatChildren: true,
             children:[
                 { routeTo: ['integration'], icon:"fa fa-graduation-cap", key: 'Other Integration' },
-                { routeTo: ['quiz'], icon:"fa fa-question-circle", key: 'Quiz' },
-
+                { routeTo: ['quiz'], icon:"fa fa-question-circle", key: 'Quiz' }
             ]
         }
     ];
-    constructor(public router: Router, public activatedRoute: ActivatedRoute,
+    constructor(public router: Router,
+                public activatedRoute: ActivatedRoute,
                 public cdref: ChangeDetectorRef){
-
     }
     ngAfterContentChecked() { this.cdref.detectChanges(); }
     onActivate(componentRef) {}
-    // get userName(): string { return this.coreService.currentUser?.userName; }
-    // get fullName(): string { return this.coreService.currentUser ? this.coreService.currentUser.fullName : ''; }
-
-    // showBellPopup = () => this.coreService.showBellPopup();
-    // createSupportTicket = () => this.coreService.createSupportTicket();
-    // showSurveyPopup = () => this.coreService.showSurveyPopup();
-    // toggleThemeSwitcher = () => this.coreService.toggleThemeSwitcher();
 }

@@ -1,29 +1,8 @@
-<header class="app-header theme">
-    <div class="navbar navbar-expand-lg">
-        <!--<org-logo logoColor="#fff"></org-logo>
-        <ul class="nav flex-row order-lg-2">
-            <li class="d-flex align-items-center">
-                <org-header isAdminPortal="true"></org-header>
-            </li>
-        </ul>-->
-        <div class="collapse navbar-collapse order-lg-1" id="navbarToggler">
-            <ul class="navbar-nav mt-2 mt-lg-0 mx-0 mx-lg-2">
-                <li class="nav-item"><a href="dashboard.9.html" class="nav-link" data-pjax-state="">Dashboard</a></li>
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" data-pjax-state="anchor-empty" aria-expanded="false">Apps</a>
-                    <div class="dropdown-menu mt-2 w pt-2 mt-2 animate fadeIn">
-                        <a href="app.user.html" class="dropdown-item" data-pjax-state="">Users </a>
-                        <a href="app.message.html" class="dropdown-item" data-pjax-state="">Messages </a>
-                        <a href="app.inbox.html" class="dropdown-item" data-pjax-state="">Inbox </a>
-                        <a href="ui.calendar.html" class="dropdown-item" data-pjax-state="">Calendar</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+<header class="org-header theme flex-nowrap box-shadow">
+    <org-header [isAdminView]="true"></org-header>
 </header>
 <div class="app" id="app">
-    <!--<org-aside hideLogo="true" [data]="navList"></org-aside>-->
+    <org-aside [data]="navList"></org-aside>
     <div id="content" class="app-content">
         <div id="content-main" class="content-main d-flex flex">
             <router-outlet (activate)='onActivate($event)'></router-outlet>

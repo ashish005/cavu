@@ -17,6 +17,7 @@ export class OrgHeaderComponent implements OnInit {
   appSetup!: AppSetup;
   orgOptions!: any;
   orgLookup!: any;
+  @Input() isAdminView: boolean = false;
     constructor(public injector: Injector, public appSetupService: AppSetupService,
                 public router: Router, public activatedRoute: ActivatedRoute,
                 private authService: AuthService) {
@@ -30,6 +31,7 @@ export class OrgHeaderComponent implements OnInit {
     routeToSupportPortal = (path) => this.router.navigate(['support', path], {relativeTo: this.activatedRoute.parent});
     routeToPath = (path) => this.router.navigate([path], {relativeTo: this.activatedRoute.parent});
     routeToSetupPath = (path) => this.router.navigate(['setup', path], {relativeTo: this.activatedRoute.parent});
+    goBackToEmployeePortal = () => this.router.navigate(['app'], {relativeTo: this.activatedRoute.root});
 
     logout = () => this.authService.logout();
 

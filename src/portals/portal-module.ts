@@ -1,8 +1,9 @@
 import {RouterModule, ROUTES} from "@angular/router";
 import {NgModule} from "@angular/core";
-import {CoreLayout, SetupLayout} from "./org-admin/layouts";
+import {SetupLayout} from "./org-admin/layouts";
 import {CommonModule} from "@angular/common";
 import {AppSetupService, GlobalModule} from "@app-global";
+import {ADMIN_SETUP} from "./org-admin";
 
 enum ORG_SECTOR {
   SETUP_ORG = "setup_organizations",
@@ -85,6 +86,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                       return [];
                     }
                 },
+                ...ADMIN_SETUP
                 /*{
                     path: 'setup',
                     component: SetupLayout,
@@ -181,8 +183,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
 };
 
 @NgModule({
-  declarations: [CoreLayout, SetupLayout],
-    //imports: [RouterModule.forChild([])],
+  declarations: [SetupLayout],
   imports: [RouterModule, CommonModule, GlobalModule],
     providers: [
         { provide: ROUTES, useFactory: setupRoutesFactory, multi: true, deps: [ AppSetupService ] }

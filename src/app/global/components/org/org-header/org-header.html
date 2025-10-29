@@ -1,163 +1,141 @@
 <div class="theme flex-nowrap box-shadow">
-  <!--*ngIf="coreService.hasValidAppHeader && !coreService.isRootUser"-->
   <div class="px-2">
     <div class="d-inline-block float-center">
-            <span class="text-sm title _600 px-2">
-                Welcome to our Beta website<!-- - Tell us what you think!-->
-              {{appSetup?.software?.name}}
-            </span>
+        <span class="text-sm title _600 px-2">
+           Welcome to our Beta website {{appSetup?.software?.name}}
+        </span>
       <!--<button class="btn btn-xs btn-rounded theme border mx-2 b-light" (click)="showFeedback()">Feedback</button>-->
     </div>
-    <div class="d-inline-block float-right">
-      <ul class="nav nav-xs float-right _600">
-        <li class="nav-item align-items-center">
-          <a title="Support Ticket?" class="btn btn-xs btn-icon btn-rounded" (click)="createSupportTicket()">
-            <i class="fa fa-support"></i>
-          </a>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="btn btn-xs text-xs theme text-theme" data-pjax-state="" (click)="toggleThemeSwitcher()" title="Theme Switcher"><i class="fa fa-wrench"></i></a>
-        </li>
-        <li class="nav-item align-items-center px-2 b-r b-l">
-          <a class="text-xs"><i class="fa fa-globe"></i> {{ appSetup?.countryName }}</a>
-        </li>
-        <li class="nav-item dropdown align-items-center"
-            *ngIf="orgOptions?.hasMultiLanguage">
-          <button class="btn btn-xs btn-outline border dropdown-toggle" data-toggle="dropdown"
-                  aria-expanded="false">
-            <span class="hidden-folded d-inline">Language</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-right w pt-0 mt-2 animate fadeIn" x-placement="bottom-start">
-            <li class="dropdown-item"
-                *ngFor="let lan of orgLookup?.languages; let i = index;">
-              <i class="fa fa-dot-circle-o text-success"></i>
-              <a (click)="updateLanguage(lan)">{{lan?.name}}</a>
+      @if (isAdminView) {
+          <ul class="nav nav-xs float-right _600">
+              <li class="nav-item">
+                  <a class="text-danger text-xs px-2" (click)="goBackToEmployeePortal()">Go Back to App</a>
+              </li>
+              <li class="nav-item align-items-center px-2 b-r b-l" *ngIf="isAuthenticated$ | async">
+                  <span id="email">{{email}}</span>
+              </li>
+              <li class="nav-item align-items-center px-2 b-r b-l" *ngIf="isAuthenticated$ | async">
+                  <a class="btn btn-xs text-xs theme text-theme" (click)="logout()"><i class="fa fa-power-off px-1"></i>Sign Out</a>
+              </li>
+          </ul>
+      }
+        <div class="d-inline-block float-right" *ngIf="!isAdminView">
+            <ul class="nav nav-xs float-right _600">
+            <li class="nav-item align-items-center">
+              <a title="Support Ticket?" class="btn btn-xs btn-icon btn-rounded" (click)="createSupportTicket()">
+                <i class="fa fa-support"></i>
+              </a>
+            </li>
+            <li class="nav-item align-items-center">
+              <a class="btn btn-xs text-xs theme text-theme" data-pjax-state="" (click)="toggleThemeSwitcher()" title="Theme Switcher"><i class="fa fa-wrench"></i></a>
+            </li>
+            <li class="nav-item align-items-center px-2 b-r b-l">
+              <a class="text-xs"><i class="fa fa-globe"></i> {{ appSetup?.countryName }}</a>
+            </li>
+            <li class="nav-item dropdown align-items-center"
+                *ngIf="orgOptions?.hasMultiLanguage">
+              <button class="btn btn-xs btn-outline border dropdown-toggle" data-toggle="dropdown"
+                      aria-expanded="false">
+                <span class="hidden-folded d-inline">Language</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right w pt-0 mt-2 animate fadeIn" x-placement="bottom-start">
+                <li class="dropdown-item"
+                    *ngFor="let lan of orgLookup?.languages; let i = index;">
+                  <i class="fa fa-dot-circle-o text-success"></i>
+                  <a (click)="updateLanguage(lan)">{{lan?.name}}</a>
+                </li>
+              </ul>
+            </li>
+                <!--<li class="nav-item align-items-center px-2 b-r b-l" *ngIf="isAuthenticated$ | async">
+                  <a class="btn btn-xs text-xs theme text-theme" (click)="logout()"><i class="fa fa-power-off px-1"></i>Sign Out</a>
+                </li>-->
+            <li class="nav-item dropdown d-flex mx-2 px-2 b-a">
+              <a href="#" data-toggle="dropdown" class="d-flex align-items-center theme text-theme dropdown-toggle" *ngIf="isAuthenticated$ | async">
+                  <span id="email">{{email}}</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right w animate fadeIn">
+<!--                <a class="dropdown-item text-truncate" *ngIf="isAuthenticated$ | async">{{email}}</a>-->
+                <a class="dropdown-item" (click)="routeToUrl('profile')">profile</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" [routerLink]="['setup']">Admin</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-truncate" [routerLink]="['support','ticket']" title="Tickets">Tickets</a>
+                <a class="dropdown-item" (click)="routeToUrl('scheduler')">scheduler</a>
+                <a class="dropdown-item" (click)="logout()" *ngIf="isAuthenticated$ | async"><i class="fa fa-power-off px-1"></i>Sign Out</a>
+              </div>
             </li>
           </ul>
-        </li>
-        <!--<li class="nav-item align-items-center px-2 b-r b-l" *ngIf="isAuthenticated$ | async">
-          <span id="email">{{email}}</span>
-        </li>
-        <li class="nav-item align-items-center px-2 b-r b-l" *ngIf="isAuthenticated$ | async">
-          <a class="btn btn-xs text-xs theme text-theme" (click)="logout()"><i class="fa fa-power-off px-1"></i>Sign Out</a>
-        </li>-->
-        <li class="nav-item dropdown d-flex mx-2 px-2 b-a">
-          <a href="#" data-toggle="dropdown" class="d-flex align-items-center theme text-theme dropdown-toggle"  data-toggle="dropdown">
-            <span class="theme text-theme circle avatar w-25" [attr.data-letters]="initials">{{initials}}</span>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right w animate fadeIn">
-            <a class="dropdown-item text-truncate" *ngIf="isAuthenticated$ | async">{{email}}</a>
-            <a class="dropdown-item" (click)="routeToUrl('profile')">profile</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" [routerLink]="['admin']">Admin</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-truncate" [routerLink]="['support','ticket']" title="Tickets">Tickets</a>
-            <a class="dropdown-item" (click)="routeToUrl('scheduler')">scheduler</a>
-            <a class="dropdown-item" (click)="logout()" *ngIf="isAuthenticated$ | async"><i class="fa fa-power-off px-1"></i>Sign Out</a>
-          </div>
-        </li>
-      </ul>
-      <ul class="nav nav-xs float-right _600">
-        <li class="nav-item" *ngIf="appSetup?.license?.showExpiryWarning">
-          <a class="btn btn-xs text-xs text-danger" [routerLink]="['subscription', 'payment']">
-            Renew License {{appSetup?.license?.validityInDays}} days
-          </a>
-        </li>
-        <!--<li class="nav-item d-flex align-items-center" *ngIf="coreService?.activeOrgSession">
-            <a class="btn btn-xs text-xs border theme dropdown-toggle mx-2" data-toggle="dropdown">
-                {{coreService?.activeOrgSession?.name}}
-            </a>
-            <div class="dropdown-menu dropdown-menu-right w pt-0 mt-2 animate fadeIn">
-                <a class="dropdown-item" *ngFor="let item of orgLookup?.orgSessions"
-                   (click)="updateAppSession(item)">{{ item?.name }}</a>
-            </div>
-        </li>-->
-        <li class="nav-item align-items-center">
-          <a class="btn btn-xs text-xs theme text-theme" (click)="showGlobalFilterPopup()">
-            <i class="fa fa-filter"></i>
-          </a>
-        </li>
-        <li class="nav-item align-items-center px-2 b-r b-l">
-          <div class="dropdown d-flex">
-            <a href="#" class="d-flex align-items-center theme text-theme dropdown-toggle" data-toggle="dropdown"
-               data-pjax-state="">Links</a>
-            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-              <li class="dropdown-item">
-                <a href="https://www.google.com" target="_blank">Google</a>
-              </li>
-            </ul>
-          </div>
-        </li>
-        <li class="nav-item align-items-center px-2 b-r b-l">
-          <div class="dropdown d-flex">
-            <a href="#" class="d-flex align-items-center theme text-theme dropdown-toggle" data-toggle="dropdown"
-               data-pjax-state="">Modules</a>
-            <div class="dropdown-menu dropdown-menu-right w w-xxl animate fadeIn" style="width: 500px"
-                 [ngSwitch]="appSetup?.softwareCode">
-              <div *ngSwitchCase="'IMS'">
-                <ng-container *ngTemplateOutlet="educationModuleTemplate"></ng-container>
+            <ul class="nav nav-xs float-right _600">
+            <li class="nav-item" *ngIf="appSetup?.license?.showExpiryWarning">
+              <a class="btn btn-xs text-xs text-danger" [routerLink]="['subscription', 'payment']">
+                Renew License {{appSetup?.license?.validityInDays}} days
+              </a>
+            </li>
+            <!--<li class="nav-item d-flex align-items-center" *ngIf="coreService?.activeOrgSession">
+                <a class="btn btn-xs text-xs border theme dropdown-toggle mx-2" data-toggle="dropdown">
+                    {{coreService?.activeOrgSession?.name}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right w pt-0 mt-2 animate fadeIn">
+                    <a class="dropdown-item" *ngFor="let item of orgLookup?.orgSessions"
+                       (click)="updateAppSession(item)">{{ item?.name }}</a>
+                </div>
+            </li>-->
+            <li class="nav-item align-items-center">
+              <a class="btn btn-xs text-xs theme text-theme" (click)="showGlobalFilterPopup()">
+                <i class="fa fa-filter"></i>
+              </a>
+            </li>
+            <li class="nav-item align-items-center px-2 b-r b-l">
+              <div class="dropdown d-flex">
+                <a href="#" class="d-flex align-items-center theme text-theme dropdown-toggle" data-toggle="dropdown"
+                   data-pjax-state="">Links</a>
+                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                  <li class="dropdown-item">
+                    <a href="https://www.google.com" target="_blank">Google</a>
+                  </li>
+                </ul>
               </div>
-              <div *ngSwitchCase="'RMS'">
-                <ng-container *ngTemplateOutlet="constructionModuleTemplate"></ng-container>
+            </li>
+            <li class="nav-item align-items-center px-2 b-r b-l">
+              <div class="dropdown d-flex">
+                <a href="#" class="d-flex align-items-center theme text-theme dropdown-toggle" data-toggle="dropdown"
+                   data-pjax-state="">Modules</a>
+                <div class="dropdown-menu dropdown-menu-right w w-xxl animate fadeIn" style="width: 500px"
+                     [ngSwitch]="appSetup?.softwareCode">
+                  <div *ngSwitchCase="'IMS'">
+                    <ng-container *ngTemplateOutlet="educationModuleTemplate"></ng-container>
+                  </div>
+                  <div *ngSwitchCase="'RMS'">
+                    <ng-container *ngTemplateOutlet="constructionModuleTemplate"></ng-container>
+                  </div>
+                  <div *ngSwitchCase="'TMS'">
+                    <ng-container *ngTemplateOutlet="transportationModuleTemplate"></ng-container>
+                  </div>
+                  <div *ngSwitchDefault>
+                    <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
+                  </div>
+                </div>
               </div>
-              <div *ngSwitchCase="'TMS'">
-                <ng-container *ngTemplateOutlet="transportationModuleTemplate"></ng-container>
-              </div>
-              <div *ngSwitchDefault>
-                <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item align-items-center">
-          <a class="btn btn-xs text-xs theme text-theme" (click)="showBellPopup()">
-            <i class="fa fa-bell text-muted"></i>
-            <!--<span class="badge badge-pill up danger" style="left: -0.3rem;top: -0.5rem;"
-                  *ngIf="newNotificationCount > 0">{{newNotificationCount}}</span>-->
-          </a>
-        </li>
-      </ul>
-    </div>
+            </li>
+            <li class="nav-item align-items-center">
+              <a class="btn btn-xs text-xs theme text-theme" (click)="showBellPopup()">
+                <i class="fa fa-bell text-muted"></i>
+                <!--<span class="badge badge-pill up danger" style="left: -0.3rem;top: -0.5rem;"
+                      *ngIf="newNotificationCount > 0">{{newNotificationCount}}</span>-->
+              </a>
+            </li>
+          </ul>
+        </div>
   </div>
 </div>
 <ng-template #educationModuleTemplate>
-  <div>
-    <div class="row no-gutters px-2 pb-2">
-      <div class="col-12 px-1 text-muted text-sm b-b b-theme">Org Invoices</div>
-      <div class="col-4 dropdown-item">
-        <a [routerLink]="['org-invoice']" class="d-block text-center">
-          <i class="fa text-sm fa-money text-muted"></i>
-          <small class="d-block _500 title">Org Invoices</small>
-        </a>
-      </div>
-    </div>
-  </div>
+    <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
 </ng-template>
 <ng-template #constructionModuleTemplate>
-  <div>
-    <div class="row no-gutters px-2 pb-2">
-      <div class="col-12 px-1 text-muted text-sm b-b b-theme">Org Invoices</div>
-      <div class="col-4 dropdown-item">
-        <a [routerLink]="['org-invoice']" class="d-block text-center">
-          <i class="fa text-sm fa-money text-muted"></i>
-          <small class="d-block _500 title">Org Invoices</small>
-        </a>
-      </div>
-    </div>
-  </div>
+    <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
 </ng-template>
 <ng-template #transportationModuleTemplate>
-  <div>
-    <div class="row no-gutters px-2 pb-2">
-      <div class="col-12 px-1 text-muted text-sm b-b b-theme">Org Invoices</div>
-      <div class="col-4 dropdown-item">
-        <a [routerLink]="['org-invoice']" class="d-block text-center">
-          <i class="fa text-sm fa-money text-muted"></i>
-          <small class="d-block _500 title">Org Invoices</small>
-        </a>
-      </div>
-    </div>
-  </div>
+    <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
 </ng-template>
 <ng-template #orgModuleTemplate>
   <div class="row no-gutters px-2 pb-2">
