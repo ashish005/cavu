@@ -1,9 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OrgSetupAPIResolver} from "../services/api.resolver";
+import {OrgSetupAPIResolver} from "../../services/api.resolver";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {OrgSettingService} from "../services/org-setting.service";
+import {OrgSettingService} from "../../services/org-setting.service";
 import {AppSetup, AppSetupService} from "@app-global";
-
 @Component({
     standalone: false,
     templateUrl: './templates/org-config.html'

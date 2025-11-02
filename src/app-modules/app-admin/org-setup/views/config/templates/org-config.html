@@ -1,0 +1,70 @@
+<div class="content-main flex">
+    <div class="d-flex">
+        <form class="d-flex flex" [formGroup]="customForm">
+            <div class="d-flex flex p-2">
+                <div class="d-flex flex-column flex">
+                    <div class="row row-sm">
+                        <ng-template ngFor let-item [ngForOf]="otherFeatures | sortBy:'asc': 'sortOrder'"
+                                     let-i="index">
+                            <div class="col-sm-6 col-6">
+                                <div class="list py-2">
+                                    <h6>{{item.name}} </h6>
+                                    <ng-template [ngTemplateOutlet]="featureTemplateRef"
+                                                 [ngTemplateOutletContext]="{ data: item, order: 0 }"></ng-template>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <div class="col-sm-6 col-6">
+                            <div class="p-lg-3" *ngIf="orgSetup?.isRealEstate">
+                                <ng-template ngFor let-item [ngForOf]="projectFeatures | sortBy:'asc': 'sortOrder'"
+                                             let-i="index">
+                                    <div class="list py-2">
+                                        <h6>{{item.name}} </h6>
+                                        <ng-template [ngTemplateOutlet]="featureTemplateRef"
+                                                     [ngTemplateOutletContext]="{ data: item, order: 0 }"></ng-template>
+                                    </div>
+                                </ng-template>
+
+                            </div>
+                            <div class="p-lg-3" *ngIf="orgSetup?.isEducational">
+                                <ng-template ngFor let-item
+                                             [ngForOf]="educationalFeatures | sortBy:'asc': 'sortOrder'"
+                                             let-i="index">
+                                    <div class="list py-2">
+                                        <h6>{{item.name}} </h6>
+                                        <ng-template [ngTemplateOutlet]="featureTemplateRef"
+                                                     [ngTemplateOutletContext]="{ data: item, order: 0 }"></ng-template>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="white m-2 p-2 b-t mt-auto">
+                        <div class="d-flex align-items-center">
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline primary b-a d-flex align-items-center"
+                                    [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+                                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                                {{ submitted ? 'Submitting...' : 'Update'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<ng-template #featureTemplateRef let-data="data" let-order="order">
+    <ng-template ngFor let-item [ngForOf]="data?.features | sortBy:'asc': 'sortOrder'" let-i="index">
+        <div class="list-item py-1" [formGroup]="customForm">
+            <div class="list-body" [class]="'pl-'+order">
+                <a class="item-title _500" [class]="'pl-'+order">{{item.name}}</a>
+                <div class="item-except text-sm text-muted h-1x" *ngIf="item.desc">{{item.desc}}</div>
+            </div>
+            <div><label class="md-check"><input type="checkbox" [formControlName]="item.formKey"><i
+                    class="theme"></i></label></div>
+        </div>
+        <!--<ng-template [ngTemplateOutlet]="subTaskTemplateRef"
+                     [ngTemplateOutletContext]="{ data: item, order: order+2 }"></ng-template>-->
+    </ng-template>
+</ng-template>

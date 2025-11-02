@@ -1,28 +1,31 @@
-<div class="app" id="app">
-    <div id="content" class="app-content box-shadow-0" role="main">
-        <div class="navbar flex-nowrap white lt box-shadow">
-            <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
-                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
-            </a>
-            <div class="no-shadow">
-                <h6 class="mb-0"> Org </h6>
-                <small class="float-left"> Management</small>
-            </div>
-            <div class="nav-active-border b-theme px-4 px-md-0">
-                <ul class="nav nav-xs flex-row">
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['info']" routerLinkActive="active">Info</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['host']" routerLinkActive="active">Host</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['branch']" routerLinkActive="active">Branch</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['language']" routerLinkActive="active">Language</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['currency']" routerLinkActive="active">Currency</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['setting']" routerLinkActive="active">Office Setting</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['config']" routerLinkActive="active">Config</a></li>
-                    <li class="nav-item"><a class="nav-link" [routerLink]="['features']" routerLinkActive="active">Features</a></li>
-                </ul>
+<div class="d-flex flex">
+    <div class="d-flex flex" data-plugin="user">
+        <div class="fade aside aside-sm b-r" id="content-aside" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog d-flex flex-column w w-xs">
+                <div class="scrollable hover">
+                    <div class="sidenav mt-2">
+                        <div class="nav-active-border left b-primary">
+                            <ul class="nav flex-column nav-sm" *ngFor="let nav of navList">
+                                <li class="nav-header hidden-folded"><span class="nav-item px-1 text-muted" *ngIf="nav?.key">{{nav.key  }}</span></li>
+                                <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
+                                    <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{item?.key  }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="content-main d-flex flex">
-            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex" id="user-list">
+                <div class="navbar no-radius box-shadow pos-rlt">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="ml-1 d-md-none"
+                       data-pjax-state="external"><span class="btn btn-sm btn-icon primary"><i
+                            class="fa fa-th"></i></span></a>
+
+                </div>
+                <router-outlet (activate)='onActivate($event)'></router-outlet>
+            </div>
         </div>
     </div>
 </div>

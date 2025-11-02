@@ -33,9 +33,9 @@ export class AuthService {
   //   return this.oauthService.getAccessToken();
   // }
   //
-  // refresh() {
-  //   return this.oauthService.refreshToken();
-  // }
+  refresh() {
+    return this.oauthService.refreshToken();
+  }
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
@@ -210,7 +210,7 @@ export class AuthService {
   }
 
   public logout() { this.oauthService.logOut(); }
-  public refresh() { this.oauthService.silentRefresh(); }
+  //public refresh() { this.oauthService.silentRefresh(); }
   public hasValidToken() { return this.oauthService.hasValidAccessToken(); }
 
   // These normally won't be exposed from a service like this, but

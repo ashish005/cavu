@@ -10,9 +10,10 @@ export class DashboardAPIResolver extends CoreResourceService<DashboardLookup> i
   constructor(public override injector: Injector) { super(injector, `dashboardPortletLookup`, new DashboardLookupSerializer()); }
 
   resolve(route: ActivatedRouteSnapshot) {
+    const success = (results) => { this.masterType = results.data; };
+    const failure = (err: any) => {};
     const setup = super.readLookup(super.apiVersion);
-    return this.performRouteResolver1(route.data, setup);
-    //return of([]);
+    return this.performRouteResolver(route.data, setup, success, failure);
   }
   /*callService(resource: string){
       return this.httpClient

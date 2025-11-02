@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from '@angular/common/http';
-import {mergeMap, switchMap, catchError, Observable, Subject, from, throwError, of, map, tap, finalize} from 'rxjs';
+import {EMPTY, lastValueFrom, mergeMap, switchMap, catchError, Observable, Subject, from, throwError, of, map, tap, finalize, retry, timer} from 'rxjs';
 
 import {environment} from "@app-environments";
 import {CoreQueryOptions, CoreResource, CoreResponse, CoreSerializer} from "./models/core-resource";
@@ -25,53 +25,88 @@ export class CoreEndpointBase {
     protected httpClient: HttpClient;
     protected readonly authService: AuthService;
     protected readonly alertService: AlertService;
-    protected readonly orgSetupService: AppSetupService;
+    protected readonly appSetupService: AppSetupService;
     protected readonly loaderService: LoaderService;
 
     constructor(protected injector: Injector) {
         this.httpClient = injector.get(HttpClient);
         this.alertService = injector.get(AlertService);
         this.authService = injector.get(AuthService);
-        this.orgSetupService = injector.get(AppSetupService);
+        this.appSetupService = injector.get(AppSetupService);
         this.loaderService = injector.get(LoaderService);
     }
 
-  protected performRouteResolver1 = (info: any, setupSubscriber: Observable<any>): Promise<any> => {
-    this.loaderService.show();
-    return new Promise((resolve, reject) => {
-      setupSubscriber.pipe(
-        map(results => results['data']), // Extract and map the data here
-        // Use finalize to ensure loader is always hidden
+  // protected performRouteResolver0 = (setupSubscriber: Observable<any>) : Observable<any> => {
+  //   this.loaderService.show();
+  //   return setupSubscriber.pipe(
+  //       map(results => results['data']), // Extract and map the data here
+  //       // Use finalize to ensure loader is always hidden
+  //       finalize(() => this.loaderService.hide()),
+  //       catchError((error: ServerError) => {
+  //         // Here, you handle the error but do NOT recursively call the resolver.
+  //         // You should probably log the error, show a user-friendly message, etc.
+  //         console.error("Route resolver failed", error);
+
+  //         // Return a new observable with the error
+  //         // This will pass the error to the subscriber's failure handler
+  //         //return throwError(() => err);
+  //         return this.handleError(error, () => this.performRouteResolver1(setupSubscriber));
+  //       })
+  //   );
+  // };
+
+  /**
+   * Common route resolver helper
+   * Handles loader, error, cancellation, and redirect logic.
+   */
+  protected performRouteResolver2(
+  routeData: any,
+  observable$: Observable<any>,
+  success?: (results: any) => void,
+  failure?: (err: any) => void
+): Promise<any> {
+  this.loaderService.show();
+  return new Promise<any>((resolve, reject) => {
+    lastValueFrom(
+      observable$.pipe(
+        map((results) => results),
         finalize(() => this.loaderService.hide()),
-        catchError(err => {
-          // Here, you handle the error but do NOT recursively call the resolver.
-          // You should probably log the error, show a user-friendly message, etc.
-          console.error("Route resolver failed", err);
-
-          // Return a new observable with the error
-          // This will pass the error to the subscriber's failure handler
-          return throwError(() => err);
+        catchError((error: ServerError) => {
+          console.error('❌ Route resolver failed:', error);
+          if (failure) failure(error);
+          reject(error); // Rejects the Promise so router halts
+          return EMPTY;
         })
-      ).subscribe({
-        next: (data) => resolve(data),
-        error: (err) => reject(err)
+      )
+    )
+      .then((data) => {
+        if (success) success(data);
+        resolve(data);
+      })
+      .catch((err) => {
+        if (failure) failure(err);
+        this.loaderService.hide();
+        reject(err);
       });
-    });
-  };
+  });
+}
+  
+  protected performRouteResolver(info, setup, success, failure){
+    return this.performRouteResolver2(info, setup, success, failure);
+  }
+  // protected performRouteResolver(info, setup, success, failure){
+  //   return this.loaderService.resolver(setup, success, failure);
+  // }
 
-    protected performRouteResolver(info, setup, success, failure){
-      return this.loaderService.resolver(setup, success, failure);
-    }
-
-    protected get appVersion() { return this.orgSetupService.appVersion; }
-    protected get apiVersion() { return this.orgSetupService.apiVersion; }
+    protected get appVersion() { return this.appSetupService.appVersion; }
+    protected get apiVersion() { return this.appSetupService.apiVersion; }
 
     //protected get softwareId() { return this.coreService.orgSetup?.softwareId || ''; }
     //protected get softwareCode() { return this.coreService.orgSetup?.softwareCode || ''; }
     //protected get sectorMasterType() { return this.coreService.orgSetup?.sectorMasterType || ''; }
     protected get baseAPIUrl() { return environment.authBaseUrl + '/api'; }
-    protected get orgSetup() { return this.orgSetupService.appSetup; }
-    protected get baseSectorAPIUrl(): string { return this.orgSetup?.tenantPoint + '/api'; }
+    protected get orgSetup() { return this.appSetupService.appSetup; }
+    protected get baseSectorAPIUrl(): string { return this.orgSetup.tenantPoint + '/api'; }
     //public get baseSectorAPIUrl() { return `${environment.authBaseUrl}${this.orgSetup.sectorMasterType}/api/`; }
 
     private getRequestHeaders(d) {
@@ -124,47 +159,171 @@ export class CoreEndpointBase {
         }));
     }
 
-    protected handleError(error: ServerError | any, continuation: () => Observable<any>) {
-      if (error.status == 401) {
-            if (this.isRefreshingLogin) { return this.pauseTask(continuation); }
+    private refreshInProgress$?: Promise<void>;
+    private lastRefreshTime = 0;
 
-            this.isRefreshingLogin = true;
-            const handleLoginError = (refreshLoginError)=>{
-                this.isRefreshingLogin = false;
-                this.resumeTasks(false);
-                this.authService.login();
-                if (refreshLoginError.status == 401 || (refreshLoginError.error?.error == 'invalid_grant')) {
-                    return throwError(() => new Error('session expired'));
-                } else {
-                    return throwError(() => refreshLoginError || new Error('server error'));
-                }
-            };
+    protected handleError(error: any, continuation: () => Observable<any>): Observable<any> {
+      // Handle Unauthorized / Expired Token
+      if (error?.status === 401 || error?.error === 'invalid_token') {
+        console.warn('🔐 Intercepted 401 or invalid_token');
 
-            const refresh = this.authService.refresh();
-            return from(of(refresh)).pipe(
-                mergeMap(() => {
-                    this.isRefreshingLogin = false;
-                    this.resumeTasks(true);
-                    return continuation();
-                }),
-                catchError(handleLoginError));
+        // Throttle: avoid rapid refresh loops
+        const now = Date.now();
+        if (now - this.lastRefreshTime < 5000) {
+          console.warn('⚠️ Refresh already attempted recently. Logging out to prevent infinite loop.');
+          this.authService.logout();
+          return throwError(() => new Error('Repeated token failure.'));
         }
 
-        // if (response.StatusCode == HttpStatusCode.Found)
-        // {
-        //   // Handle the authentication redirect
-        //   var loginUrl = response.Headers.Location;
-        //   // The original URL is included in the query string of the redirect
-        //   // loginUrl is likely "/Account/Login?ReturnUrl=%2ForgLookup%2Fbusiness-setup"
-        // }
-
-        if (error.error?.error == 'invalid_grant') {
-            this.authService.login();
-            return throwError(() => new Error('session expired'));
-        } else {
-            return throwError(() => error || new Error('server error'));
+        // If refresh already in progress, wait for it
+        if (this.refreshInProgress$) {
+          console.info('⏳ Waiting for ongoing token refresh...');
+          return from(this.refreshInProgress$).pipe(
+            mergeMap(() => continuation()), // retry once after refresh completes
+            catchError(err => {
+              console.error('❌ Retry after refresh failed:', err);
+              this.authService.logout();
+              return throwError(() => new Error('Retry failed after token refresh.'));
+            })
+          );
         }
+
+        // Begin new refresh process
+        console.warn('🔄 Starting token refresh...');
+        this.lastRefreshTime = now;
+
+        this.refreshInProgress$ = this.authService.refresh()
+          .then(() => {
+            console.info('✅ Token refresh succeeded.');
+            this.refreshInProgress$ = undefined;
+          })
+          .catch(refreshErr => {
+            console.error('❌ Token refresh failed:', refreshErr);
+            this.refreshInProgress$ = undefined;
+            this.authService.logout();
+            throw refreshErr;
+          });
+
+        // Wait for refresh, then retry
+        return from(this.refreshInProgress$).pipe(
+          mergeMap(() => continuation()),
+          catchError(err => {
+            console.error('❌ Request failed after refresh attempt:', err);
+            this.authService.logout();
+            return throwError(() => new Error('Token refresh or retry failed.'));
+          })
+        );
+      }
+
+      // Handle refresh token invalid
+      if (error?.error === 'invalid_grant' || error?.error_description?.includes('invalid_grant')) {
+        console.warn('⚠️ Refresh token invalid. Logging out...');
+        this.authService.logout();
+        return throwError(() => new Error('Session expired.'));
+      }
+
+      // Generic unhandled errors
+      console.error('❌ Server error:', error);
+      return throwError(() => error || new Error('Unexpected server error.'));
     }
+
+    // protected handleError(error: any, continuation: () => Observable<any>, hasRetried = false): Observable<any> 
+    // {
+    //   // 🧩 Handle Unauthorized / Expired Token
+    //   if (error?.status === 401 || error?.error === 'invalid_token') {
+    //     // Avoid multiple simultaneous refresh attempts
+    //     if (this.isRefreshingLogin) {
+    //       return this.pauseTask(() => this.handleError(error, continuation, hasRetried));
+    //     }
+
+    //     // Prevent recursive infinite retries
+    //     if (hasRetried) {
+    //       console.error('⚠️ Token refresh already attempted once. Aborting further retries.');
+    //       this.authService.logout();
+    //       return throwError(() => new Error('Session expired after failed retry.'));
+    //     }
+
+    //     this.isRefreshingLogin = true;
+    //     console.warn('🔄 Token expired. Attempting refresh...');
+
+    //     const refresh$ = from(this.authService.refresh());
+
+    //     const handleRefreshError = (refreshError: any) => {
+    //       console.error('❌ Token refresh failed:', refreshError);
+    //       this.isRefreshingLogin = false;
+    //       this.resumeTasks(false);
+    //       this.authService.logout();
+    //       return throwError(() => new Error('Session expired or refresh failed.'));
+    //     };
+
+    //     return refresh$.pipe(
+    //       mergeMap(() => {
+    //         console.info('✅ Token refreshed successfully.');
+    //         this.isRefreshingLogin = false;
+    //         this.resumeTasks(true);
+    //         // Retry only once — pass hasRetried = true
+    //         return continuation().pipe(
+    //           catchError(err => this.handleError(err, continuation, true))
+    //         );
+    //       }),
+    //       catchError(handleRefreshError)
+    //     );
+    //   }
+
+    //   // 🧱 Handle invalid_grant (refresh token invalid)
+    //   if (error?.error === 'invalid_grant' || error?.error_description?.includes('invalid_grant')) {
+    //     console.warn('⚠️ Refresh token invalid. Logging out...');
+    //     this.authService.logout();
+    //     return throwError(() => new Error('Session expired.'));
+    //   }
+
+    //   // 🧩 Other unhandled errors
+    //   console.error('❌ Server error:', error);
+    //   return throwError(() => error || new Error('Unexpected server error'));
+    // }
+
+    // protected handleError(error: ServerError | any, continuation: () => Observable<any>) {
+    //   debugger
+    //   if (error.status == 401) {
+    //         if (this.isRefreshingLogin) { return this.pauseTask(continuation); }
+
+    //         this.isRefreshingLogin = true;
+    //         const handleLoginError = (refreshLoginError)=>{
+    //             this.isRefreshingLogin = false;
+    //             this.resumeTasks(false);
+    //             this.authService.login();
+    //             if (refreshLoginError.status == 401 || (refreshLoginError.error?.error == 'invalid_grant')) {
+    //                 return throwError(() => new Error('session expired'));
+    //             } else {
+    //                 return throwError(() => refreshLoginError || new Error('server error'));
+    //             }
+    //         };
+
+    //         const refresh = this.authService.refresh();
+    //         return from(of(refresh)).pipe(
+    //             mergeMap(() => {
+    //                 this.isRefreshingLogin = false;
+    //                 this.resumeTasks(true);
+    //                 return continuation();
+    //             }),
+    //             catchError(handleLoginError));
+    //     }
+
+    //     // if (response.StatusCode == HttpStatusCode.Found)
+    //     // {
+    //     //   // Handle the authentication redirect
+    //     //   var loginUrl = response.Headers.Location;
+    //     //   // The original URL is included in the query string of the redirect
+    //     //   // loginUrl is likely "/Account/Login?ReturnUrl=%2ForgLookup%2Fbusiness-setup"
+    //     // }
+
+    //     if (error.error?.error == 'invalid_grant') {
+    //         this.authService.login();
+    //         return throwError(() => new Error('session expired'));
+    //     } else {
+    //         return throwError(() => error || new Error('server error'));
+    //     }
+    // }
 
     private pauseTask<T>(continuation: () => Observable<any>) {
         if (!this.taskPauser) { this.taskPauser = new Subject(); }
@@ -195,6 +354,15 @@ public create(item: T): Observable<any> {
   return this.httpClient.post<T>(this.viewUrl, this.serializer.toJson(item), this.requestHeaders)
     .pipe(
       tap(data => this.notifyResponse(data)),
+      // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+      retry({
+        count: 1,
+        delay: (error, retryCount) => {
+          console.warn(`⚠️ Retry ${retryCount}/2 failed due to:`, error.message || error);
+          return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+        },
+        resetOnSuccess: true
+      }),
       catchError(error => this.handleError(error, () => this.create(item)))
     );
 }
@@ -204,6 +372,15 @@ public update(id: string | number, item: T): Observable<any> {
     .put<T>(`${this.viewUrl}/${id}`, this.serializer.toJson(item), this.requestHeaders)
     .pipe(
       tap(data => this.notifyResponse(data)),
+      // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+      retry({
+        count: 1,
+        delay: (error, retryCount) => {
+          console.warn(`⚠️ Retry ${retryCount}/2 failed due to:`, error.message || error);
+          return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+        },
+        resetOnSuccess: true
+      }),
       catchError(error => this.handleError(error, () => this.update(id, item)))
     );
 }
@@ -213,6 +390,15 @@ public patch(id: string | number, item: T): Observable<any> {
     .patch<T>(`${this.viewUrl}/${id}`, this.serializer.toJson(item), this.requestHeaders)
     .pipe(
       tap(data => this.notifyResponse(data)),
+      // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+      retry({
+        count: 1,
+        delay: (error, retryCount) => {
+          console.warn(`⚠️ Retry ${retryCount}/2 failed due to:`, error.message || error);
+          return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+        },
+        resetOnSuccess: true
+      }),
       catchError(error => this.handleError(error, () => this.patch(id, item)))
     );
 }
@@ -222,6 +408,15 @@ public read(id: string): Observable<CoreResponse<T>> {
     .get(`${this.viewUrl}/${id}`, this.requestHeaders)
     .pipe(
       map(data => this.performCoreAction(data)),
+      // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+      retry({
+        count: 2,
+        delay: (error, retryCount) => {
+          console.warn(`⚠️ Retry ${retryCount}/2 failed due to:`, error.message || error);
+          return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+        },
+        resetOnSuccess: true
+      }),
       catchError(error => this.handleError(error, () => this.read(id)))
     );
 }
@@ -231,6 +426,15 @@ public list(queryOptions: CoreQueryOptions): Observable<CoreResponse<T>> {
     .get(`${this.viewUrl}?${queryOptions.toQueryString()}`, this.requestHeaders)
     .pipe(
       map(data => this.performCoreAction(data)),
+      // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+      retry({
+        count: 2,
+        delay: (error, retryCount) => {
+          console.warn(`⚠️ Retry ${retryCount}/2 failed due to:`, error.message || error);
+          return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+        },
+        resetOnSuccess: true
+      }),
       //retry(3), // Retry up to 3 times if an error occurs
       catchError(error => this.handleError(error, () => this.list(queryOptions)))
     );

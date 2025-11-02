@@ -13,7 +13,7 @@ export class OrgConfigSetupLayout {
               //id:'setting',
               key: `Setup`, isFLatChildren: false,
               children:[
-
+                  { id:4, icon:"fa fa-dashboard", routeTo: 'general', key: `general`, sortOrder: 4 },
                   { id:4, icon:"fa fa-dashboard", routeTo: 'voucher-entry', key: `entry.name`, sortOrder: 4 },
                   { id:5, icon:"fa fa-dashboard", routeTo: 'invoice', key: `invoice.name`, sortOrder: 5 }
               ]

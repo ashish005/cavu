@@ -1,28 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Org} from "../domains/org.serializer";
-import {OrgSetupAPIResolver} from "../services/api.resolver";
-import {OrgService} from "../services/org.service";
+import {Org} from "../../domains/org.serializer";
+import {OrgSetupAPIResolver} from "../../services/api.resolver";
+import {OrgService} from "../../services/org.service";
 
 @Component({
     standalone: false,
     templateUrl: './templates/org-info.html',
-    styles: [
-        `:host { display: content; }
-      :host ::ng-deep .orgImg {
-        float: left;
-        clear: both;
-      }
-
-      :host ::ng-deep .orgImg .avatar-upload{
-        width: 200px !important;
-      }
-      
-      :host ::ng-deep .orgImg .avatar-upload .avatar-preview {
-        height: 100px !important;
-      }
-    `
-    ]
 })
 export class OrgInfoView implements OnInit {
     title: string = "Business";
@@ -40,22 +24,19 @@ export class OrgInfoView implements OnInit {
             affiliatedName: [null],
             operatedById: [null, Validators.required],
             address:[null, Validators.required],
-            tenant: this.fb.group({
-                id: [null, Validators.required],
+            
+            // Tenant specific details
+            licenseNo: [null],
 
-                licenseNo: [null],
+            validFromDate: [null],
+            validToDate: [null],
+            contactPersonEmail: [null, Validators.required],
+            contactPersonName: [null, Validators.required],
+            contactPersonMobile: [null, Validators.required],
 
-                validFromDate: [null],
-                validToDate: [null],
-
-                contactPersonEmail: [null, Validators.required],
-                contactPersonName: [null, Validators.required],
-                contactPersonMobile: [null, Validators.required],
-
-                referenceSource: [null],
-                referenceContact: [null],
-                referenceMail: [null]
-            })
+            referenceSource: [null],
+            referenceContact: [null],
+            referenceMail: [null]
         });
     }
 
@@ -69,7 +50,6 @@ export class OrgInfoView implements OnInit {
     get formOperatedBy() { return <FormArray>this.customForm.get('operatedById'); }
     updateOperatedBy(val){ this.formOperatedBy.setValue(val); }
 
-    get tenantForm() { return <FormGroup>this.customForm.get('tenant'); }
     updateOrganizationForm(org: Org){
         this.customForm.get('name').setValue(org.name);
         this.customForm.get('address').setValue(org.address);
@@ -80,8 +60,19 @@ export class OrgInfoView implements OnInit {
         this.customForm.get('establishedDate').setValue(org.establishedDate);
         this.customForm.get('affiliatedName').setValue(org.affiliatedName);
         this.customForm.get('operatedById').setValue(org.operatedById);
-        this.customForm.get('tenant').patchValue(org.tenant);
-        //this.customForm.get('config').patchValue(org.config);
+        // this.customForm.get('tenant').patchValue(org.tenant);
+        // this.customForm.get('config').patchValue(org.config);
+
+        const tenant = org.tenant;
+        this.customForm.get('licenseNo').patchValue(tenant.licenseNo);
+        this.customForm.get('validFromDate').patchValue(tenant.validFromDate);
+        this.customForm.get('validToDate').patchValue(tenant.validToDate);
+        this.customForm.get('contactPersonEmail').patchValue(tenant.contactPersonEmail);
+        this.customForm.get('contactPersonName').patchValue(tenant.contactPersonName);
+        this.customForm.get('contactPersonMobile').patchValue(tenant.contactPersonMobile);
+        this.customForm.get('referenceSource').patchValue(tenant.referenceSource);
+        this.customForm.get('referenceContact').patchValue(tenant.referenceContact);
+        this.customForm.get('referenceMail').patchValue(tenant.referenceMail);
     }
 
     onOrgSubmit(form: FormGroup){

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {OrgSetupAPIResolver} from "../services/api.resolver";
+import {OrgSetupAPIResolver} from "../../services/api.resolver";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {OrgSettingService} from "../services/org-setting.service";
+import {OrgSettingService} from "../../services/org-setting.service";
 import { AppSetup, AppSetupService } from "@app-global";
 
 class OrgConfigInfoForm {
@@ -104,10 +104,9 @@ class OrgConfigInfoForm {
 }
 @Component({
     standalone: false,
-    selector: 'org-config',
-    templateUrl: './templates/org-config-ce.html'
+    templateUrl: './templates/org-office-info.html'
 })
-export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
+export class OrgOfficeInfoView extends OrgConfigInfoForm implements OnInit{
     orgSetup: AppSetup;
     constructor(public override fb: FormBuilder,
                 public apiResolver: OrgSetupAPIResolver,
