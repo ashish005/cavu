@@ -12,6 +12,7 @@ class OrgSoftware {
 
 export class OrgOptions {
     id: number;
+    passwordChangeOnFirstLoginEnabled: boolean;
     hasMultipleBranch: boolean;
     hasMultipleStudyMode: boolean;
     hasMultipleClassSection: boolean;
@@ -22,13 +23,24 @@ export class OrgOptions {
 
     hasMultiCurrency: boolean;
     hasMultiLanguage: boolean;
+
+    isEducational: boolean;
+    isRealEstate: boolean;
+    isTransportation: boolean;
+    isHealthCare: boolean;
+    isHospitality: boolean;
     constructor(model: any = {}) {
-        const { id, hasMultipleBranch,
+        const { id,
+            passwordChangeOnFirstLoginEnabled,
+            hasMultipleBranch,
             hasMultipleStudyMode, hasMultipleClassSection, hasMultipleCourseSection,
             hasMultiProjectModule, hasProjectWorkFlow,
-            hasMultiCurrency, hasMultiLanguage
+            hasMultiCurrency, hasMultiLanguage,
+
+            isEducational, isRealEstate, isTransportation, isHealthCare, isHospitality
         } = model;
         this.id = id;
+        this.passwordChangeOnFirstLoginEnabled = passwordChangeOnFirstLoginEnabled;
         this.hasMultipleBranch = hasMultipleBranch;
         this.hasMultipleStudyMode = hasMultipleStudyMode;
         this.hasMultipleClassSection = hasMultipleClassSection;
@@ -39,15 +51,22 @@ export class OrgOptions {
 
         this.hasMultiCurrency = hasMultiCurrency;
         this.hasMultiLanguage = hasMultiLanguage;
+
+        this.isEducational = isEducational;
+        this.isRealEstate = isRealEstate;
+        this.isTransportation = isTransportation;
+        this.isHealthCare = isHealthCare;
+        this.isHospitality = isHospitality;
     }
 }
 
-class OrgConfigOptions {
+export class OrgConfigOptions {
     id: number;
 
     fontId:number;
     fontName: string;
 
+    countryId:number;
     countryCode: string;
 
     currencyId: number;
@@ -59,8 +78,6 @@ class OrgConfigOptions {
     languageName: string;
 
     logoDocumentId: number;
-    passwordChangeOnFirstLoginEnabled: boolean;
-
     startWeekDay:  number;
 
     dateFormat: string;
@@ -75,23 +92,22 @@ class OrgConfigOptions {
     fyCloseMonth: number;
 
     timeZone: string;
-    orgUnitId: string;
     constructor(model: any = {}){
         const {
             id,
-            fontId, fontName, countryCode,
+            fontId, fontName, countryId, countryCode,
             currencyId, currencyCode, currencySymbol,
             languageId, languageName, cultureCode,
-            logoDocumentId, passwordChangeOnFirstLoginEnabled,
+            logoDocumentId,
             startWeekDay, dateFormat, dateSeparator,
-            ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth, fyCloseDay, fyCloseMonth, timeZone,
-            orgUnitId
+            ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth, fyCloseDay, fyCloseMonth, timeZone
         } = model;
         this.id = id;
 
         this.fontId = fontId;
         this.fontName = fontName;
 
+        this.countryId = countryId;
         this.countryCode = countryCode;
 
         this.currencyId = currencyId;
@@ -103,7 +119,6 @@ class OrgConfigOptions {
         this.cultureCode = cultureCode;
 
         this.logoDocumentId = logoDocumentId;
-        this.passwordChangeOnFirstLoginEnabled = passwordChangeOnFirstLoginEnabled;
 
         this.startWeekDay = startWeekDay || 1;
         this.dateFormat = dateFormat || 'dd MMM yyyy';
@@ -119,7 +134,6 @@ class OrgConfigOptions {
         this.fyCloseDay = fyCloseDay || 31;
         this.fyCloseMonth = fyCloseMonth || 12;
         this.timeZone = timeZone;
-        this.orgUnitId = orgUnitId;
     }
 
     public hasValidConfig =(): boolean=> Boolean((this.currencyCode && this.cultureCode && this.timeZone));
@@ -339,9 +353,6 @@ export class AppSetup extends Org {
   getDefaultHeadBranch=() => (this.branches || []).find(r => r.isHeadBranch);
   getActiveBranchById=(branchId) => (this.branches || []).find(r => r.id == branchId);
   hasValidOrgSetup=()=>(this.countryId && this.masterBranch.isMasterSeedApplied && this.orgConfig.hasValidConfig);
-
-  get isEducational() { return true; }
-  get isRealEstate() { return true; }
 }
 export class AppSetupSerializer {
   fromJson(json: any): AppSetup { return new AppSetup(json); }

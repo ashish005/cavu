@@ -55,22 +55,44 @@ export class GlobalLanguage {
         this.status = status;
     }
 }
+export class Country {
+    id: number;
+    name: string;
+    countryCode: string;
+
+    constructor(model: any = <any>{}){
+        const { id, name, countryCode } = model;
+        this.id = id;
+        this.name = name;
+    }
+}
+
+export class TimeZoneLookup {
+    id: number;
+    name: string;
+    constructor(model: any = <any>{}){
+        const { id, name } = model;
+        this.id = id;
+        this.name = name;
+    }
+}
 
 export class ConfigLookup extends CoreResource {
     operatedBy: Array<any>;
     languages: Array<GlobalLanguage> = [];
     currencies: Array<GlobalCurrency> = [];
-    //timeZones: Array<SchedulerTimeZoneLookup> = [];
+    countries: Array<Country> = [];
+    timeZones: Array<TimeZoneLookup> = [];
 
     constructor(model: any = <any>{}){
         super();
-        const { languages, currencies, timeZones, operatedBy } = model;
+        const { languages, currencies, countries, operatedBy, timeZones } = model;
         this.operatedBy = operatedBy;
         this.languages = (languages || []).map(r => new GlobalLanguage(r));
         this.currencies = (currencies || []).map(r => new GlobalCurrency(r));
-        //this.timeZones = (timeZones || []).map(r => new SchedulerTimeZoneLookup(r));
+        this.countries = (countries || []).map(r => new Country(r));
+        this.timeZones = (timeZones || []).map(r => new TimeZoneLookup(r));
     }
-
     getCurrencyById=(id)=> (this.currencies || []).find(r => r.id == id);
     getLanguageById=(id)=> (this.languages || []).find(r => r.id == id);
 }

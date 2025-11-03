@@ -1,26 +1,4 @@
-export class OrgHostConfig {
-  id: string;
-  name: string;
-  connectionName: string;
-  connectionType: string;
-  connectionString: string;
-  isUnderConstruction: boolean;
-  enable: boolean;
-  hostName: string;
-  tenantPoint: string;
-
-  constructor(model: any = <any>{}){
-    this.id = model.id;
-    this.name = model.name;
-    this.connectionName = model.dB_ConnectionName;
-    this.connectionType = model.dB_ConnectionType;
-    this.connectionString = model.connectionString;
-    this.isUnderConstruction = model.isUnderConstruction;
-    this.enable = model.enable;
-    this.hostName = model.hostName;
-    this.tenantPoint = model.tenantPoint;
-  }
-}
+import {OrgHostConfig} from "./org-host-config.serializer";
 
 export class OrgTenant {
     id: number;

@@ -1,4 +1,4 @@
-export {AppSetup} from "./app-setup.serializer";
+export {AppSetup, OrgConfigOptions} from "./app-setup.serializer";
 
 export { CoreQueryOptions, CoreResource, CoreResponse, CoreSerializer } from "./core-resource";
 export {LocalStoreManager} from "./local-store-manager";

@@ -21,6 +21,7 @@ import {CALENDAR_COMPONENT} from "./calendars";
 import {ORG_COMPONENTS} from "./org";
 import {FlatSliderDropdownComponent} from "./slider-dropdown/flat-slider-dropdown.component";
 import {SliderDropdownComponent} from "./slider-dropdown/slider-dropdown.component";
+import {StatusCheckComponent} from "./status-check/status-check.component";
 
 export const GLOBAL_COMPONENTS = [
   ORG_COMPONENTS,
@@ -40,6 +41,7 @@ export const GLOBAL_COMPONENTS = [
   DATE_TIME_COMPONENTS,
   DUAL_LIST_COMPONENT,
   GRID_COMPONENT,
-  FlatSliderDropdownComponent, SliderDropdownComponent
+  FlatSliderDropdownComponent, SliderDropdownComponent,
+  StatusCheckComponent
   //MasterSearchComponent, ParticularSearch, MasterTypesSettingComponent, PaymentComponent
 ];

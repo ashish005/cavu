@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {OrgSetupAPIResolver} from "../../services/api.resolver";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OrgSettingService} from "../../services/org-setting.service";
 import { AppSetup, AppSetupService } from "@app-global";
+import {ConfigLookup} from "../../domains/lookup.serializer";
 
 class OrgConfigInfoForm {
     submitted: boolean = false;
@@ -33,11 +34,11 @@ class OrgConfigInfoForm {
     ];
 
     dateFormatList: Array<any> = [
-        {id: 'dd MMM yyyy', name: 'dd MM yyyy Like 16 Feb 2022'},
-        {id: 'MM dd yyyy', name: 'MM dd yyyy Like 02/16/2022'},
-        {id: 'M d yy', name: 'M d yy Like 2/16/22'},
-        {id: 'MMM d, y', name: 'MMM d, y Like Jun 15, 2015'},
-        {id: 'd MMM, y', name: 'd MMM, y Like 15 Jun, 2015'}
+        {id: 'dd MMM yyyy', name: 'dd MM yyyy', ex: '16 Feb 2022'},
+        {id: 'MM dd yyyy', name: 'MM dd yyyy', ex: '02 16 2022'},
+        {id: 'M d yy', name: 'M d yy', ex: '2 16 22'},
+        {id: 'MMM d, y', name: 'MMM d, y', ex: 'Jun 15, 2015'},
+        {id: 'd MMM, y', name: 'd MMM, y', ex: '15 Jun, 2015'}
     ];
     dateSeparatorList: Array<any> = [
         {id: '', name: ''},
@@ -59,6 +60,7 @@ class OrgConfigInfoForm {
 
             languageId: [null, Validators.required],
             currencyId: [null, Validators.required],
+            countryId: [null, Validators.required],
 
             fyStartDay: [null],
             fyStartMonth: [null],
@@ -67,9 +69,7 @@ class OrgConfigInfoForm {
 
             dateFormat: [null],
             dateSeparator: [null],
-            timeZone: [null, Validators.required],
-
-            dateFormater: [null]
+            timeZone: [null, Validators.required]
         });
     }
 
@@ -82,7 +82,7 @@ class OrgConfigInfoForm {
     get formDateFormat() { return <FormGroup>this.customForm.get('dateFormat'); }
     get formDateSeperator() { return <FormGroup>this.customForm.get('dateSeparator'); }
     get formTimeZone() { return <FormGroup>this.customForm.get('timeZone'); }
-    get formDateFormater() { return <FormGroup>this.customForm.get('dateFormater'); }
+    get formCountryId() { return <FormGroup>this.customForm.get('countryId'); }
 
     updateLanguageId(val){ this.formLanguageId.setValue(val); }
     updateCurrencyId(val){ this.formCurrencyId.setValue(val); }
@@ -90,6 +90,7 @@ class OrgConfigInfoForm {
     updateDateFormat(val){ this.formDateFormat.setValue(val); }
     updateDateSeperator(val){ this.formDateSeperator.setValue(val); }
     updateTimeZone(val){ this.formTimeZone.setValue(val); }
+    updateCountryId(val){ this.formCountryId.setValue(val); }
 
     get formatInfo(){
         const formate = this.formDateFormat.value;
@@ -107,7 +108,9 @@ class OrgConfigInfoForm {
     templateUrl: './templates/org-office-info.html'
 })
 export class OrgOfficeInfoView extends OrgConfigInfoForm implements OnInit{
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     orgSetup: AppSetup;
+    lookup: ConfigLookup;
     constructor(public override fb: FormBuilder,
                 public apiResolver: OrgSetupAPIResolver,
                 public service: OrgSettingService,
@@ -115,67 +118,17 @@ export class OrgOfficeInfoView extends OrgConfigInfoForm implements OnInit{
                 ){
         super(fb);
         this.orgSetup = appSetupService.appSetup;
+        this.lookup = this.apiResolver.masterType;
     }
-
-    /*itemFormLanguageValueChange = ([prev, next]: [any, any]) =>
-    {
-        if(prev != next)
-        {
-            this.defaultLanguage = this.apiResolver.masterType.getLanguageById(next);
-        }
-    };
-
-    itemFormCurrencyValueChange = ([prev, next]: [any, any]) =>
-    {
-        if(prev != next)
-        {
-            this.defaultCurrency = this.apiResolver.masterType.getCurrencyById(next);
-
-        }
-    };*/
-
-    // convenience getter for easy access to form fields
-    get fo() { return this.customForm.controls; }
-
     ngOnInit() {
         //this.orgSetup = this.coreService.orgSetup;
         const { orgConfig } = this.orgSetup;
-
         this.customForm.patchValue(<any>orgConfig);
         this.formLanguageId.disable();
         this.formCurrencyId.disable();
-        // this.formLanguageId.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(this.itemFormLanguageValueChange);
-        // this.formCurrencyId.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(this.itemFormCurrencyValueChange);
+        this.formCountryId.disable();
+        this.formTimeZone.disable();
     }
-
-    educationalFeatures = [
-        { name: 'Study Modes', sortOrder: 1,
-            features: [
-                { formKey:'hasMultipleStudyMode', name: 'Multiple Study Mode', desc: '', sortOrder: 1, type: 'checkbox', value: false },
-                { formKey:'hasMultipleClassSection', name: 'Multiple Class Section', desc: '', sortOrder: 2, type: 'checkbox', value: false },
-                { formKey:'hasMultipleCourseSection', name: 'Multiple Course Section', desc: '', sortOrder: 2, type: 'checkbox', value: false }
-            ]
-        }
-    ];
-    otherFeatures = [
-        { name: 'Config', sortOrder: 1,
-            features: [
-                { formKey:'hasMultipleBranch', name: 'Multiple Org Branches', desc: '', sortOrder: 2, type: 'checkbox', value: false },
-                { formKey:'passwordChangeOnFirstLoginEnabled', name: 'Password Change On First Login', desc: '', sortOrder: 2, type: 'checkbox', value: false },
-                { formKey:'hasMultiLanguage', name: 'Multiple Language', desc: '', sortOrder: 2, type: 'checkbox', value: false },
-                { formKey:'hasMultiCurrency', name: 'Multiple Currency', desc: '', sortOrder: 2, type: 'checkbox', value: false }
-            ]
-        }
-    ];
-    projectFeatures = [
-        { name: 'Project & WorkFlow', sortOrder: 1,
-            features: [
-                { formKey:'hasMultiProjectModule', name: 'Enable Multiple Project Module', desc: '', sortOrder: 1, type: 'checkbox', value: false },
-                { formKey:'hasProjectWorkFlow', name: 'Enable Project WorkFlow', desc: '', sortOrder: 2, type: 'checkbox', value: false }
-            ]
-        }
-    ];
-
     onSubmit(form) {
         if (form.invalid) { return; } // stop here if form is invalid
 

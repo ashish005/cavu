@@ -1,7 +1,7 @@
 import {Injectable, Injector, OnDestroy} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 import {DashboardLookup, DashboardLookupSerializer} from "./dashboard.lookup";
-import {CoreResourceService, OrgResourceService} from "../../endpoint-base.service";
+import {CoreResourceService} from "../../endpoint-base.service";
 
 @Injectable({ providedIn: 'root' })
 export class DashboardAPIResolver extends CoreResourceService<DashboardLookup> implements Resolve<any> {

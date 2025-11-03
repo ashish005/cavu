@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {OrgSetupAPIResolver} from "../../services/api.resolver";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OrgSettingService} from "../../services/org-setting.service";
-import {AppSetup, AppSetupService} from "@app-global";
+import {OrgConfigOptions, AppSetupService, OrgOptions} from "@app-global";
 @Component({
     standalone: false,
     templateUrl: './templates/org-config.html'
@@ -10,11 +10,10 @@ import {AppSetup, AppSetupService} from "@app-global";
 export class OrgConfigView implements OnInit{
     submitted: boolean = false;
     customForm: FormGroup;
-    orgSetup: AppSetup;
+    options: OrgOptions;
     constructor(public fb: FormBuilder, public apiResolver: OrgSetupAPIResolver,
                 public service: OrgSettingService, public appSetupService: AppSetupService) {
         this.customForm = this.fb.group({
-            id: [null],
             passwordChangeOnFirstLoginEnabled: [null],
 
             hasMultipleBranch: [null],
@@ -28,17 +27,14 @@ export class OrgConfigView implements OnInit{
             hasMultiProjectModule: [null],
             hasProjectWorkFlow: [null]
         });
-        this.orgSetup = appSetupService.appSetup;
+        this.options = appSetupService.appSetup.options;
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
 
     ngOnInit() {
-        //this.orgSetup = this.coreService.orgSetup;
-        //const { orgConfig, options } = this.coreService.orgSetup;
-
-        //this.customForm.patchValue(<any>options);
+        this.customForm.patchValue(<any>this.options);
     }
 
     educationalFeatures = [
@@ -71,12 +67,12 @@ export class OrgConfigView implements OnInit{
 
     onSubmit(formData) {
         if (formData.invalid) { return; } // stop here if form is invalid
-
         this.submitted = true;
         const success = (resp: any) => { this.submitted = false; };
         const error = (resp: any) => { this.submitted = false; };
 
         const data = formData.getRawValue();
-        this.service.updateGeneralOrgConfig(data?.id, data).toPromise().then(success, error);
+        data.id = this.options.id;
+        this.service.updateGeneralOrgConfig(data.id, data).toPromise().then(success, error);
     }
 }

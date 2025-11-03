@@ -22,7 +22,7 @@
                     <a data-toggle="modal" data-target="#content-aside" data-modal="" class="ml-1 d-md-none"
                        data-pjax-state="external"><span class="btn btn-sm btn-icon primary"><i
                             class="fa fa-th"></i></span></a>
-
+                    <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
                 </div>
                 <router-outlet (activate)='onActivate($event)'></router-outlet>
             </div>

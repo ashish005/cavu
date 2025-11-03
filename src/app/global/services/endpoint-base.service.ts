@@ -164,6 +164,7 @@ export class CoreEndpointBase {
 
     protected handleError(error: any, continuation: () => Observable<any>): Observable<any> {
       // Handle Unauthorized / Expired Token
+        debugger
       if (error?.status === 401 || error?.error === 'invalid_token') {
         console.warn('🔐 Intercepted 401 or invalid_token');
 
@@ -445,7 +446,20 @@ public delete(id: number) {
 }
 
   public readLookup(id: string) {
-    return this.httpClient.get(`${this.viewUrl}/${id}`, this.requestHeaders);
+    return this.httpClient
+        .get(`${this.viewUrl}/${id}`, this.requestHeaders)
+        .pipe(
+        // 🔁 Retry only twice on transient errors (e.g., network or 5xx)
+        retry({
+            count: 1,
+            delay: (error, retryCount) => {
+                console.warn(`⚠️ Retry ${retryCount}/1 failed due to:`, error.message || error);
+                return timer(500 * retryCount); // exponential delay: 500ms, 1000ms
+            },
+            resetOnSuccess: true
+        }),
+        catchError(error => this.handleError(error, () => this.readLookup(id)))
+    );
   }
 
 public updateFormData(methodType: string, uploadDocUrl: string, req: FormData, progressCb , cb) {

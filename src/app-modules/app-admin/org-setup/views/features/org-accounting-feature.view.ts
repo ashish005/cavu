@@ -6,10 +6,7 @@ import {ActivatedRoute} from "@angular/router";
     templateUrl: './templates/org-accounting-feature.html'
 })
 export class OrgAccountingFeatureView implements OnInit{
-    pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute){
-        const { title } = this.activatedRoute.snapshot.data;
-        this.pageTitle = title;
     }
 
     leftFeatures = [

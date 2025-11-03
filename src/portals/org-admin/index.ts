@@ -6,6 +6,12 @@ export const ADMIN_SETUP = [
         component: SetupLayout,
         //canActivate:[PortalAuthGuard], canLoad: [ModuleGuard],
         children: [
+            { path: '', pathMatch: 'full', redirectTo:'org-setup' },
+            {
+                path: 'org-setup',
+                loadChildren: () => import('app-modules/app-admin/org-setup/index').then(m => m.OrgSetupModule),
+                data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
+            },
             {
                 path: 'org-log',
                 loadChildren: () => import('app-modules/app-admin/org-log/index').then(m => m.OrgLogModule),
@@ -78,11 +84,6 @@ export const ADMIN_SETUP = [
                 path: 'bank-trxn', //canLoad:[ModuleGuard],
                 loadChildren: () => import('app-modules/app-admin/setup-transaction/transaction').then(m => m.BankTransactionModule),
                 data: {title: 'Trxn', header:'Bank Trxn', name: "Bank Trxn", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
-            },
-            {
-                path: 'org-setup',
-                loadChildren: () => import('app-modules/app-admin/org-setup/index').then(m => m.OrgSetupModule),
-                data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
             },
             {
                 path: 'payroll', //canLoad:[ModuleGuard],

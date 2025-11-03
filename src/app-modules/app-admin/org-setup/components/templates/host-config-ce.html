@@ -1,0 +1,60 @@
+<form class="d-flex flex"  [formGroup]="customForm" (submit)="onSubmit(customForm)">
+  <div class="d-flex flex-column flex">
+    <div class="scrollable hover">
+      <div class="p-3">
+        <div class="row row-sm">
+          <div class="col-12">
+            <div class="md-form-group">
+              <input class="md-input" formControlName="hostName"
+                     [ngClass]="{ 'is-invalid': submitted && f['hostName'].errors }">
+              <label> Host Name </label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="md-form-group">
+              <input class="md-input" formControlName="tenantPoint"
+                     [ngClass]="{ 'is-invalid': submitted && f['tenantPoint'].errors }">
+              <label> Tenant Point </label>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="md-form-group">
+              <input type="checkbox" class="md-input" formControlName="isUnderConstruction" [ngClass]="{ 'is-invalid': submitted && f['isUnderConstruction'].errors }">
+              <label> Under Construction </label>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="md-form-group">
+              <input type="checkbox" class="md-input" formControlName="enable" [ngClass]="{ 'is-invalid': submitted && f['enable'].errors }">
+              <label> Enable </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--<tr [formGroup]="item">
+      <td>
+          <select-dropdown [items]="apiResolver?.masterType?.dbTypes"
+                           title="DB Type" [disabled]="!formEnabled" (cb)="updateDBType($event)"
+                           [control]="formDBType"></select-dropdown>
+      </td>
+      <td>
+          <input class="md-input" formControlName="connectionString" [ngClass]="{ 'is-invalid': submitted && f.connectionString.errors }">
+      </td>
+    </tr>-->
+  </div>
+  <ng-template #footerTemplate>
+    <div class="row row-sm">
+      <div class="col-sm-12 text-center">
+        <div class="float-left p-2">
+          <!--                <status-check [customForm]="customForm"></status-check>-->
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-sm primary" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</form>

@@ -6,7 +6,6 @@ import {ORG_SETUP_VIEWS, OrgSetupRoutes} from "./org-setup.routing";
 import {ORG_SETUP_SERVICES} from "./services";
 import {ORG_SETUP_COMPONENTS} from "./components";
 import {ReactiveFormsModule} from "@angular/forms";
-
 @NgModule({
     imports: [
         CommonModule, ReactiveFormsModule,

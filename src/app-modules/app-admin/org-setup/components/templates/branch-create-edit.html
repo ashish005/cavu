@@ -3,18 +3,25 @@
         <div class="scrollable hover">
             <div class="p-3">
                 <div class="row row-sm">
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                         <div class="md-form-group">
                             <input class="md-input" formControlName="name"
                                    [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
                             <label> Name </label>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-2">
                         <div class="md-form-group">
                             <input class="md-input" formControlName="branchCode"
                                    [ngClass]="{ 'is-invalid': submitted && f['branchCode'].errors }">
                             <label> Branch Code </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="websiteUrl"
+                                   [ngClass]="{ 'is-invalid': submitted && f['websiteUrl'].errors }">
+                            <label> Website Url </label>
                         </div>
                     </div>
                     <div class="col-sm-8">
@@ -30,6 +37,20 @@
                                    [ngClass]="{ 'is-invalid': submitted && f['establishedDate'].errors }">
                             <label> Established Date </label>
                         </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="md-check">
+                            <input type="checkbox" formcontrolname="isSelfAdministration">
+                            <i class="theme"></i>
+                            Self Administration
+                        </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="md-check">
+                            <input type="checkbox" formcontrolname="isHeadBranch">
+                            <i class="theme"></i>
+                            Head Branch
+                        </label>
                     </div>
                     <div class="col-sm-12">
                         <div class="box">
@@ -78,18 +99,12 @@
                             </div>
                         </div>
                     </div>
-                    <!--<div class="col-sm-4">
-                      <div class="md-form-group">
-                        <input type="checkbox" class="md-input" formControlName="isSelfAdministration" [ngClass]="{ 'is-invalid': submitted && f.isSelfAdministration.errors }">
-                        <label> Is Self Administration </label>
-                      </div>
-                    </div>-->
                 </div>
             </div>
         </div>
         <div class="white lt b-t mt-auto">
             <div class="float-left p-2">
-<!--                <status-check [customForm]="customForm"></status-check>-->
+                <status-check [customForm]="customForm"></status-check>
             </div>
             <div class="float-right">
                 <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">

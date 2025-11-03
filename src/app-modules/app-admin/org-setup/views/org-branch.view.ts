@@ -19,7 +19,6 @@ import {OrgBranchCreateEditComponent} from "../components/branch-create-edit.com
   styles: [`:host { display: contents; }`]
 })
 export class OrgBranchView extends ViewExtender<Branch> implements OnInit {
-    @ViewChild('routerActionTemplate', { static: true }) public routerActionTemplate: TemplateRef<any>;
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     override coreState: BranchQueryOptions = new BranchQueryOptions();
     constructor(public router: Router,

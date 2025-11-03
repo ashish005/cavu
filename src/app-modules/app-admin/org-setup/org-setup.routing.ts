@@ -6,12 +6,9 @@ import {OrgConfigSetupLayout, OrgFeatureSetupLayout} from "./layout/layout";
 import {OrgLayout} from "./layout/org.layout";
 
 import {OrgHostView} from "./views/org-host.view";
-import {OrgInfoView, OrgBrandImageView, OrgOfficeInfoView} from "./views/general";
+import {OrgInfoView, OrgBrandImageView, OrgOfficeInfoView, OrgCurrencyView, OrgLanguageView} from "./views/general";
 import {OrgService} from "./services/org.service";
 
-import {
-    OrgCurrencyView, OrgLanguageView
-} from "./views/org-global.view";
 import {OrgBranchView} from "./views/org-branch.view";
 
 import {OrgInventoryFeatureView} from "./views/features/org-inventory-feature.view";

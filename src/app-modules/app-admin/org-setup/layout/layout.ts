@@ -13,9 +13,9 @@ export class OrgConfigSetupLayout {
               //id:'setting',
               key: `Setup`, isFLatChildren: false,
               children:[
-                  { id:4, icon:"fa fa-dashboard", routeTo: 'general', key: `general`, sortOrder: 4 },
-                  { id:4, icon:"fa fa-dashboard", routeTo: 'voucher-entry', key: `entry.name`, sortOrder: 4 },
-                  { id:5, icon:"fa fa-dashboard", routeTo: 'invoice', key: `invoice.name`, sortOrder: 5 }
+                  { id:4, icon:"fa fa-dashboard", routeTo: 'general', key: `General`, sortOrder: 4 },
+                  { id:4, icon:"fa fa-dashboard", routeTo: 'voucher-entry', key: `Invoice Entry Config`, sortOrder: 4 },
+                  { id:5, icon:"fa fa-dashboard", routeTo: 'invoice', key: `Invoice Settings`, sortOrder: 5 }
               ]
           }
       ];
@@ -36,8 +36,8 @@ export class OrgFeatureSetupLayout {
                 //id:'setting',
                 key: `Feature`, isFLatChildren: false,
                 children:[
-                    { id:4, icon:"fa fa-dashboard", routeTo: 'account', key: `account`, sortOrder: 4 },
-                    { id:5, icon:"fa fa-dashboard", routeTo: 'inventory', key: `inventory`, sortOrder: 5 }
+                    { id:4, icon:"fa fa-dashboard", routeTo: 'account', key: `Account Features`, sortOrder: 4 },
+                    { id:5, icon:"fa fa-dashboard", routeTo: 'inventory', key: `Inventory Features`, sortOrder: 5 }
                 ]
             }
         ];

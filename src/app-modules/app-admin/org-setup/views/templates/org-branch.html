@@ -1,18 +1,5 @@
 <div class="d-flex flex">
     <div class="d-flex flex-column flex">
-        <div class="navbar flex-nowrap lt">
-            <ul class="nav nav-xs flex-row no-border">
-                <li class="nav-item">Branch</li>
-            </ul>
-            <ul class="nav nav-xs flex-row no-border float-right">
-                <!--<li class="nav-item">
-                    <button class="nav-link" (click)="addFromGlobal()"><i class="fa fa-fw fa-plus"></i> Currency</button>
-                </li>-->
-                <li class="nav-item">
-                    <button class="btn btn-sm white" (click)="addBranch()"><i class="fa fa-plus"></i> Create</button>
-                </li>
-            </ul>
-        </div>
         <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
             <org-grid [data]="gridData"
                       [options]="gridOptions"
@@ -27,3 +14,19 @@
         </div>
     </div>
 </div>
+<ng-template #actionTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> Branches </h6>
+        <small class="float-left"> Management</small>
+    </div>
+    <div>
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <!--<li class="nav-item">
+                <button class="nav-link" (click)="addFromGlobal()"><i class="fa fa-fw fa-plus"></i> Currency</button>
+            </li>-->
+            <li class="nav-item">
+                <button class="btn btn-sm white" (click)="addBranch()"><i class="fa fa-plus"></i> Create</button>
+            </li>
+        </ul>
+    </div>
+</ng-template>

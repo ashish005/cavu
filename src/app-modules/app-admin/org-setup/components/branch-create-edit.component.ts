@@ -12,6 +12,7 @@ class BranchFormComponent {
       name: ['', Validators.required],
       address: [null, Validators.required],
       branchCode: [null, Validators.required],
+      websiteUrl: [null],
       contactName: [null, Validators.required],
       contactNo1: [null, Validators.required],
       contactNo2: [null],
@@ -28,6 +29,7 @@ class BranchFormComponent {
   populateBranchForm(data: Branch){
     this.customForm.get('name').setValue(data.name);
     this.customForm.get('address').setValue(data.address);
+    this.customForm.get('websiteUrl').setValue(data.websiteUrl);
     this.customForm.get('branchCode').setValue(data.branchCode);
     this.customForm.get('contactName').setValue(data.contactName);
     this.customForm.get('contactNo1').setValue(data.contactNo1);
@@ -60,6 +62,7 @@ export class OrgBranchCreateEditComponent extends BranchFormComponent {
     this.populateBranchForm(value || <Branch>{});
   };
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
 
   submitted: boolean;
   constructor(public override fb: FormBuilder, public service: OrgBranchService) {

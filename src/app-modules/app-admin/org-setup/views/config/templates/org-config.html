@@ -1,5 +1,11 @@
-<div class="content-main flex">
-    <div class="d-flex">
+<div class="content-main d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap lt box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <span class="text-md text-ellipsis flex">General Config</span>
+        </div>
         <form class="d-flex flex" [formGroup]="customForm">
             <div class="d-flex flex p-2">
                 <div class="d-flex flex-column flex">
@@ -15,7 +21,7 @@
                             </div>
                         </ng-template>
                         <div class="col-sm-6 col-6">
-                            <div class="p-lg-3" *ngIf="orgSetup?.isRealEstate">
+                            <div class="p-lg-3" *ngIf="options?.isRealEstate">
                                 <ng-template ngFor let-item [ngForOf]="projectFeatures | sortBy:'asc': 'sortOrder'"
                                              let-i="index">
                                     <div class="list py-2">
@@ -26,7 +32,7 @@
                                 </ng-template>
 
                             </div>
-                            <div class="p-lg-3" *ngIf="orgSetup?.isEducational">
+                            <div class="p-lg-3" *ngIf="options?.isEducational">
                                 <ng-template ngFor let-item
                                              [ngForOf]="educationalFeatures | sortBy:'asc': 'sortOrder'"
                                              let-i="index">

@@ -1,8 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
-import {Observable, throwError} from "rxjs";
-import {catchError, map, tap} from "rxjs";
 import { CoreResourceService } from "@app-global";
-import {Org, OrgHostConfig, OrgSerializer} from "../domains/org.serializer";
+import {Org, OrgSerializer} from "../domains/org.serializer";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 
 @Injectable()
@@ -25,16 +23,5 @@ export class OrgService extends CoreResourceService<Org> implements Resolve<any>
     const uploadDocUrl = `${this.viewUrl}/profile/${this.org.profileId}`;
 
     this.updateFormData('PUT', uploadDocUrl, formData, progressCb, cb);
-  }
-
-  public updateHostConfig(data: Array<OrgHostConfig>): Observable<any> {
-    return this.httpClient
-      .put(`${this.viewUrl}/${this.org.id}/host-config`, data, this.requestHeaders)
-      .pipe(
-        tap(
-          (resp: any) => console.log('read logged'),
-          (error)=>{ this.handleError(error, () => this.updateOrganization(data)) }
-        )
-      );
   }
 }

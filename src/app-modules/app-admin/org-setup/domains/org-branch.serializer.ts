@@ -8,6 +8,7 @@ export class Branch {
   public id: string;
   public address: string;
   public branchCode: string;
+  public websiteUrl: string;
 
   public contactName: string;
   public contactNo1: string;
@@ -26,6 +27,7 @@ export class Branch {
     this.id = model.id;
     this.address = model.address;
     this.branchCode = model.branchCode;
+    this.websiteUrl = model.websiteUrl;
     this.countryId = model.countryId;
     this.country = model.country;
     this.contactName = model.contactName;

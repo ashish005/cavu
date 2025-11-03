@@ -1,10 +1,10 @@
 import {Injectable, Injector} from "@angular/core";
 import {Observable, tap} from "rxjs";
-import { OrgResourceService } from "@app-global";
+import {CoreResourceService} from "@app-global";
 import {Branch, BranchSerializer} from "../domains/org-branch.serializer";
 
 @Injectable()
-export class OrgBranchService extends OrgResourceService<Branch>
+export class OrgBranchService extends CoreResourceService<Branch>
 {
   constructor(public override injector: Injector) { super(injector, 'orgBranch', new BranchSerializer()); }
 

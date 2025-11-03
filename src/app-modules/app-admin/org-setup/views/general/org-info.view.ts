@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Org} from "../../domains/org.serializer";
 import {OrgSetupAPIResolver} from "../../services/api.resolver";
@@ -9,7 +9,7 @@ import {OrgService} from "../../services/org.service";
     templateUrl: './templates/org-info.html',
 })
 export class OrgInfoView implements OnInit {
-    title: string = "Business";
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
     customForm: FormGroup;
     submitted: boolean = false;
     constructor(public fb: FormBuilder, public apiResolver: OrgSetupAPIResolver, public service: OrgService) {
@@ -85,16 +85,8 @@ export class OrgInfoView implements OnInit {
         const success = (resp: any)=>{
             this.submitted = false;
         };
-
         const error = (resp: any)=>{ this.submitted = false; };
-
         const data = form.getRawValue();
         this.service.updateOrganization(data).subscribe(success, error);
-    }
-
-    updateOrgImage(fileDocument: any){
-        const successAction = (resp)=> {};
-        const progressCb = ()=> {};
-        this.service.updateOrganizationProfile(fileDocument, successAction, progressCb);
     }
 }

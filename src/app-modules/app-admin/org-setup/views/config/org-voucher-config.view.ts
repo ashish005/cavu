@@ -6,12 +6,7 @@ import {ActivatedRoute} from "@angular/router";
     templateUrl: './templates/org-voucher-config.html'
 })
 export class OrgVoucherConfigView implements OnInit{
-    pageTitle: string;
-    constructor(public activatedRoute: ActivatedRoute){
-        const { title } = this.activatedRoute.snapshot.data;
-        this.pageTitle = title;
-    }
-
+    constructor(public activatedRoute: ActivatedRoute){}
     leftFeatures = [
         { name: 'General', sortOrder: 1,
             features: [

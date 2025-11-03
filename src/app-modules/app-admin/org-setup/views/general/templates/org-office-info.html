@@ -1,101 +1,123 @@
-<form class="m-3 d-flex flex-column flex box" [formGroup]="customForm" (submit)="onSubmit(customForm)">
-    <div class="box-header"><h3>Configuration</h3></div>
-    <div class="box-divider"></div>
-    <div class="box-body no-border">
-        <div class="row">
-            <div class="col-12">
-                <select-dropdown [items]="apiResolver.masterType.languages"
-                                 title="Language"
-                                 [disabled]="formLanguageId.disabled"
-                                 (cb)="updateLanguageId($event)"
-                                 [control]="formLanguageId"></select-dropdown>
-            </div>
-            <div class="col-12">
-                <select-dropdown [items]="apiResolver.masterType.currencies"
-                                 title="Currency"
-                                 [disabled]="formCurrencyId.disabled"
-                                 (cb)="updateCurrencyId($event)"
-                                 [control]="formCurrencyId"></select-dropdown>
+<form class="m-3 d-flex flex-column flex" [formGroup]="customForm" (submit)="onSubmit(customForm)">
+    <div class="row">
+        <div class="col-6">
+            <div class="box">
+                <div class="box-header"><h4>Configuration</h4></div>
+                <div class="box-body row py-0">
+                    <div class="col-12">
+                        <select-dropdown [items]="lookup.languages"
+                                         title="Language"
+                                         [disabled]="formLanguageId.disabled"
+                                         (cb)="updateLanguageId($event)"
+                                         [control]="formLanguageId"></select-dropdown>
+                    </div>
+                    <div class="col-12">
+                        <select-dropdown [items]="lookup.currencies"
+                                         title="Currency"
+                                         [disabled]="formCurrencyId.disabled"
+                                         (cb)="updateCurrencyId($event)"
+                                         [control]="formCurrencyId"></select-dropdown>
 
-            </div>
-            <div class="col-sm-12">
-                <div class="md-form-group">
-                    <div class="md-input disabled">{{formTimeZone.value}}</div>
-                    <label> TimeZone </label>
-                </div>
-                <!--<select-dropdown [items]="apiResolver.masterType?.timeZones"
-                                 title="Time zone"
-                                 [disabled]="formTimeZone.disabled"
-                                 (cb)="updateTimeZone($event)"
-                                 [control]="formTimeZone"></select-dropdown>-->
-            </div>
-            <div class="col-12">
-                <select-dropdown [items]="dateFormatList"
-                                 title="Date Format"
-                                 (cb)="onDateFormatChange($event)"
-                                 [control]="formDateFormater"></select-dropdown>
-            </div>
-            <div class="col-xs-12 col-12">
-                <h6 class="text-sm  m-0">Financial Year</h6>
-                <div class="row no-gutters text-xs">
-                    <div class="col-sm-6">
-                        <div class="input-group">
-                            <div class="input-group-prepend" style="max-width: 55px;">
-                                <div class="md-form-group pb-0">
-                                    <input class="md-input" type="number"
-                                           formControlName="fyStartDay">
-                                    <label>Start Day</label>
-                                </div>
-                            </div>
-                            <div class="md-form-group">
-                                <select class="md-input" formControlName="fyStartMonth"
-                                        style="width: 65px;">
-                                    <option *ngFor="let m of months" [value]="m.id">{{m.name}}
-                                    </option>
-                                </select>
-                                <label>Start Month</label>
-                            </div>
-                        </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="input-group">
-                            <div class="input-group-prepend" style="max-width: 55px;">
-                                <div class="md-form-group pb-0">
-                                    <input class="md-input" type="number"
-                                           formControlName="fyCloseDay">
-                                    <label>Close Day</label>
-                                </div>
-                            </div>
-                            <div class="md-form-group">
-                                <select class="md-input" formControlName="fyCloseMonth"
-                                        style="width: 65px;">
-                                    <option *ngFor="let m of months" [value]="m.id">{{m.name}}
-                                    </option>
-                                </select>
-                                <label>Close Month</label>
-                            </div>
-                        </div>
+                    <div class="col-12">
+                        <select-dropdown [items]="lookup?.countries"
+                                         title="Country"
+                                         [disabled]="formCountryId.disabled"
+                                         (cb)="updateCountryId($event)"
+                                         [control]="formCountryId"></select-dropdown>
+                    </div>
+                    <div class="col-sm-12">
+                        <!--<div class="md-form-group">
+                            <div class="md-input disabled">{{formTimeZone.value}}</div>
+                            <label> TimeZone </label>
+                        </div>-->
+                        <select-dropdown [items]="lookup?.timeZones"
+                                         title="Time zone"
+                                         [disabled]="formTimeZone.disabled"
+                                         (cb)="updateTimeZone($event)"
+                                         [control]="formTimeZone"></select-dropdown>
+                    </div>
+                    <div class="col-6">
+                        <select-dropdown [items]="dateFormatList"
+                                         title="Date Format"
+                                         (cb)="updateDateFormat($event)"
+                                         [control]="formDateFormat"></select-dropdown>
+                    </div>
+                    <div class="col-6">
+                        <select-dropdown [items]="dateSeparatorList"
+                                         title="Separator"
+                                         (cb)="updateDateSeperator($event)"
+                                         [control]="formDateSeperator"></select-dropdown>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-12 col-12">
-                <h6 class="text-sm m-0">Regular Office Hours</h6>
-                <div class="row no-gutters text-xs">
-                    <div class="col-sm-6">
-                        <div class="input-group">
-                            <div class="md-form-group">
-                                <input class="md-input" style="width: 100px;" type="time"
-                                       formControlName="ofcStartTime">
-                                <label>Start Time</label>
+        </div>
+        <div class="col-6">
+            <div class="box">
+                <div class="box-header"><h4>Financial Year</h4></div>
+                <div class="box-body">
+                    <div class="row text-xs">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend" style="max-width: 55px;">
+                                    <div class="md-form-group pb-0">
+                                        <input class="md-input" type="number"
+                                               formControlName="fyStartDay">
+                                        <label>Start Day</label>
+                                    </div>
+                                </div>
+                                <div class="md-form-group">
+                                    <select class="md-input" formControlName="fyStartMonth"
+                                            style="width: 65px;">
+                                        <option *ngFor="let m of months" [value]="m.id">{{m.name}}
+                                        </option>
+                                    </select>
+                                    <label>Start Month</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend" style="max-width: 55px;">
+                                    <div class="md-form-group pb-0">
+                                        <input class="md-input" type="number"
+                                               formControlName="fyCloseDay">
+                                        <label>Close Day</label>
+                                    </div>
+                                </div>
+                                <div class="md-form-group">
+                                    <select class="md-input" formControlName="fyCloseMonth"
+                                            style="width: 65px;">
+                                        <option *ngFor="let m of months" [value]="m.id">{{m.name}}
+                                        </option>
+                                    </select>
+                                    <label>Close Month</label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="input-group">
-                            <div class="md-form-group">
-                                <input class="md-input" style="width: 100px;" type="time"
-                                       formControlName="ofcEndTime">
-                                <label>End Time</label>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header"><h4>Office Hours</h4></div>
+                <div class="box-body">
+                    <div class="row text-xs">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <div class="md-form-group">
+                                    <input class="md-input" style="width: 100px;" type="time"
+                                           formControlName="ofcStartTime">
+                                    <label>Start Time</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <div class="md-form-group">
+                                    <input class="md-input" style="width: 100px;" type="time"
+                                           formControlName="ofcEndTime">
+                                    <label>End Time</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -103,15 +125,21 @@
             </div>
         </div>
     </div>
-    <div class="box-footer no-border">
-        <div class="row">
-            <div class="col-sm-12 text-center">
-                <!--<button type="button" (click)="onCancel()" class="btn btn-sm m-2">Cancel</button>-->
-                <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid">
-                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
-                    {{ submitted ? 'Submitting...' : 'Update' }}
-                </button>
+        <div class="box-footer no-border">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <!--<button type="button" (click)="onCancel()" class="btn btn-sm m-2">Cancel</button>-->
+                    <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : 'Update' }}
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 </form>
+<ng-template #actionTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> Office Info </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>

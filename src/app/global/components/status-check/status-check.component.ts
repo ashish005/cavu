@@ -1,10 +1,13 @@
 import {Component, Input} from "@angular/core";
-import {FormGroup} from "@angular/forms";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
 export enum STATUS_ENUM { ACTIVE = 1, INACTIVE = 2 };
 
 @Component({
   selector: 'status-check',
-  templateUrl: './status-check.html', standalone: false
+  templateUrl: './status-check.html',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class StatusCheckComponent {
   status = STATUS_ENUM;

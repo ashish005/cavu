@@ -68,9 +68,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12">
                         <div class="box">
-                            <div class="box-header"><h3>Organization Contact Info</h3></div>
+                            <div class="box-header"><h4>Org Contact Info</h4></div>
                             <div class="box-body row py-0">
                                 <div class="col-sm-4">
                                     <div class="md-form-group float-label">
@@ -193,11 +193,13 @@
                             </div>
                         </div>-->
                     </div>
-                    <div class="col-6">
+                </div>
+                <div class="row">
+                    <div class="col-12">
                         <div class="box">
-                            <div class="box-header"><h6>Contact Person</h6></div>
+                            <div class="box-header"><h4>Contact Person</h4></div>
                             <div class="box-body row py-0">
-                                <div class="col-sm-8">
+                                <div class="col-sm-4">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="contactPersonName"
                                                [ngClass]="{ 'is-invalid': submitted && f['contactPersonName']?.errors }">
@@ -210,7 +212,7 @@
                                         <label>Mobile</label>
                                     </div>
                                 </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-4">
                                     <div class="md-form-group float-label">
                                         <input class="md-input" formControlName="contactPersonEmail"
                                                [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail']?.errors }">
@@ -219,29 +221,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="box">
-                                    <div class="box-header"><h6>Referred By</h6></div>
-                                    <div class="box-body row py-0">
-                                        <div class="col-sm-8">
-                                            <div class="md-form-group float-label">
-                                                <input type="text" formControlName="referenceSource" class="md-input">
-                                                <label>Name</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="md-form-group float-label">
-                                                <input type="text" formControlName="referenceMail" class="md-input"/>
-                                                <label>Mobile</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <div class="md-form-group float-label">
-                                                <input type="text" formControlName="referenceContact" class="md-input"/>
-                                                <label>Email</label>
-                                            </div>
-                                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="box">
+                            <div class="box-header"><h4>Referred By</h4></div>
+                            <div class="box-body row py-0">
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="referenceSource" class="md-input">
+                                        <label>Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="referenceMail" class="md-input"/>
+                                        <label>Mobile</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="referenceContact" class="md-input"/>
+                                        <label>Email</label>
                                     </div>
                                 </div>
                             </div>
@@ -259,3 +261,9 @@
         </div>
     </div>
 </form>
+<ng-template #actionTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> General Info </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
