@@ -9,8 +9,18 @@ export const ADMIN_SETUP = [
             { path: '', pathMatch: 'full', redirectTo:'org-setup' },
             {
                 path: 'org-setup',
-                loadChildren: () => import('app-modules/app-admin/org-setup/index').then(m => m.OrgSetupModule),
+                loadChildren: () => import('app-modules/app-identity/org-setup/index').then(m => m.OrgSetupModule),
                 data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
+            },
+            {
+                path: 'subscription',
+                loadChildren: () => import('app-modules/app-identity/org-subscription/index').then(m => m.OrgSubscriptionModule),
+                data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' }
+            },
+            {
+                path: 'role-permission-setup',
+                loadChildren: () => import('app-modules/app-identity/module-permission/index').then(m => m.ManageUserModule),
+                data: { key:'list', icon:"fa fa-money", name: "Money", title: 'Team', header:'Team' }//code: "ACCESS_USR_LOGIN"
             },
             {
                 path: 'org-log',
@@ -51,11 +61,6 @@ export const ADMIN_SETUP = [
                 //data: { userType: ORG_USER_TYPE.EMPLOYEE }
             },
             {
-                path: 'role-permission-setup',
-                loadChildren: () => import('app-modules/app-admin/access-setup/module-permission/index').then(m => m.ManageUserModule),
-                data: { key:'list', icon:"fa fa-money", name: "Money", title: 'Team', header:'Team' }//code: "ACCESS_USR_LOGIN"
-            },
-            {
                 path: 'org-team',
                 loadChildren: () => import('app-modules/app-admin/team-setup/index').then(m => m.TeamSetupModule),
                 data: { icon:"fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header:'Team' }//code: "TEAM",
@@ -69,11 +74,6 @@ export const ADMIN_SETUP = [
                 path: 'quiz',
                 loadChildren: () => import('app-modules/app-admin/quiz/index').then(r => r.QuizModule),
                 data: {title: 'Quiz', header: 'Quiz'}
-            },
-            {
-                path: 'subscription',
-                loadChildren: () => import('app-modules/app-admin/org-subscription/index').then(m => m.OrgSubscriptionModule),
-                data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' }
             },
             {
                 path: 'transaction-setup',

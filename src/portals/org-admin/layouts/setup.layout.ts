@@ -9,13 +9,18 @@ import {ActivatedRoute, Router} from "@angular/router";
 export class SetupLayout {
     public navList: Array<any> = [
         {
-            isFLatChildren: true, key: 'mainLayout.heading.main',
+            isFLatChildren: true, key: 'main',
             children:[
                 { routeTo: ['org-setup'], icon:"fa fa-institution", key: 'Org setup' },
-                { routeTo: ['login-setup'], icon:"fa fa-user-circle", key: 'Login Setup' },
                 { routeTo: ['role-permission-setup/role-module'], icon:"fa fa-envelope", key: 'Role & Permissions' },
-                { routeTo: ['module-access-setup'], icon:"fa fa-user-circle", key: 'Module Access Setup' },
                 { routeTo: ['subscription'], icon:"fa fa-leaf", key: 'Subscription' },
+            ]
+        },
+        {
+            isFLatChildren: true, key: 'mainLayout.heading.main',
+            children:[
+                { routeTo: ['login-setup'], icon:"fa fa-user-circle", key: 'Login Setup' },
+                { routeTo: ['module-access-setup'], icon:"fa fa-user-circle", key: 'Module Access Setup' }
             ]
         },
         {
