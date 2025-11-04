@@ -9,9 +9,7 @@ export class OrgLicenseHistory {
   licenseTypeId: string;
   softwareId: string;
   remark: string;
-  apiKeyId: number;
 
-  apiKeyName: string;
   licenseTypeName: string;
   softwareName: string;
   softwareDescription: string;
@@ -20,23 +18,22 @@ export class OrgLicenseHistory {
   validFrom: number;
   isValidLicense: boolean;
   validityInDays: number;
-
+  createdDate: string;
   constructor(model: any = <any>{}){
     const {
       id, licenseId, licenseNo, licenseTypeId, softwareId, remark, status,
         apiKeyName, apiKeyId, licenseTypeName, softwareName, softwareDescription,
-        validFrom, isValidLicense, validityInDays
+        validFrom, isValidLicense, validityInDays, createdDate
     } = model;
     this.id = id;
     this.licenseId = licenseId;
     this.licenseNo = licenseNo;
     this.licenseTypeId = licenseTypeId;
     this.softwareId = softwareId;
-    this.apiKeyId = apiKeyId;
     this.remark = remark;
     this.status = status;
 
-    this.apiKeyName = apiKeyName;
+    this.createdDate = createdDate;
     this.licenseTypeName = licenseTypeName;
     this.softwareName = softwareName;
     this.softwareDescription = softwareDescription;

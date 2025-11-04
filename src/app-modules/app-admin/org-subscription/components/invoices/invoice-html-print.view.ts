@@ -1,7 +1,7 @@
 import {Component, ElementRef, ViewChild, ViewEncapsulation} from "@angular/core";
 import {DomSanitizer} from "@angular/platform-browser";
+import {OrgSoftwareInvoiceService} from "../../services/software-invoice.service";
 //import { saveAs } from 'file-saver';
-import {SoftwareInvoiceReportService} from "../../services/software-invoice-report.service";
 
 @Component({
     standalone: false,
@@ -15,7 +15,7 @@ export class SubscriptionHtmlPrintView
     innerHTML: any;
     //@ViewChild('docContent', { static: true }) docContent: ElementRef;
 
-    constructor(public service: SoftwareInvoiceReportService, public sanitizer: DomSanitizer){}
+    constructor(public service: OrgSoftwareInvoiceService, public sanitizer: DomSanitizer){}
 
     showReport(invoiceId: number, licenseId: number) {
         this.isLoading = true;

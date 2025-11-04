@@ -1,15 +1,15 @@
 import {Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve } from "@angular/router";
-import { ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService } from "@app-global";
+import { ASIDE_CLASS, ASIDE_SIZE, SharedService, CoreResourceService } from "@app-global";
 import {UserManagementLookup, UserManagementLookupSerializer} from "../domains/user-management.lookup";
 import {RolePermissionManager} from "../components/role-permission-manager";
 
 @Injectable()
-export class UserManagementAPIResolver extends OrgResourceService<UserManagementLookup> implements Resolve<any>  {
+export class UserManagementAPIResolver extends CoreResourceService<UserManagementLookup> implements Resolve<any>  {
     masterType: UserManagementLookup;
     sharedService: SharedService;
     constructor(public override injector: Injector) {
-        super(injector, 'org-lookup/auth', new UserManagementLookupSerializer());
+        super(injector, 'authLookup', new UserManagementLookupSerializer());
         this.sharedService = injector.get(SharedService);
     }
 
@@ -18,7 +18,7 @@ export class UserManagementAPIResolver extends OrgResourceService<UserManagement
             this.masterType = results.data;
         };
         const failure = (err: any) => {};
-        const setup = this.read(`${this.apiVersion}/employee`);
+        const setup = this.readLookup(`${this.apiVersion}`);
         return this.performRouteResolver(route.data, setup, success, failure);
     }
 

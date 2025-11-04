@@ -7,6 +7,7 @@ import {UserManagementAPIResolver} from "../../services/api.resolver";
 import {User} from "../../domains/user.model";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
 import {UserRoleCeComponent} from "../user-role-ce/user-role-ce.component";
+import {UserManagementLookup} from "../../domains/user-management.lookup";
 
 @Component({
   standalone: false,
@@ -24,17 +25,19 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
   @Output() cb: EventEmitter<any> = new EventEmitter<any>();
 
   isLoading: boolean;
+  lookup: UserManagementLookup;
   constructor(public override fb: FormBuilder,
               private apiResolver: UserManagementAPIResolver,
               public service: RolePermissionService,
               public userRolePermSvc: UserPermissionService,
               private sharedService: SharedService) {
     super(fb);
+    this.lookup = apiResolver.masterType;
   }
 
   ngOnInit(){
-      const roles = this.apiResolver.masterType.userRoles;
-      this.updateBaseModuleRights(this.apiResolver.masterType.modules);
+      const roles = this.lookup.userRoles;
+      this.updateBaseModuleRights(this.lookup.modules);
       let userRoles;
       if(this.data && this.data.roles) {
           userRoles = (this.data.roles || []).reduce((result, curr) => {
@@ -60,34 +63,33 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
   }
 
   updateRoles(){
-    let dataIds = this.formRoles.controls.reduce((accu: Array<any>, curr) => {
-      if(curr.get('hasRole'). value) {
-        accu.push(curr.get('id').value);
-      }
-      return accu;
-    }, []);
+    // let dataIds = this.formRoles.controls.reduce((accu: Array<any>, curr) => {
+    //   if(curr.get('hasRole'). value) {
+    //     accu.push(curr.get('id').value);
+    //   }
+    //   return accu;
+    // }, []);
+    // if(this.singleRole){
+    //   dataIds = [ this.activeUserType.id ];
+    // }
 
-
-    if(this.singleRole){
-      dataIds = [ this.activeUserType.id ];
-    }
-
-    const modulesRight = (this.formModuleRight.getRawValue() || []).reduce((result: Array<any>, curr)=>{
-       /*(curr.modulePermission || []).map(child => {
+    const modulesRight = (this.formModuleRight.getRawValue() || []).reduce((result: Array<any>, curr: any)=>{
+       (curr.modulePermission || []).map(child => {
          result.push(child);
-       });*/
-      //delete curr.modulePermission;
+       });
+      delete curr.modulePermission;
       result.push(curr);
       return result;
     }, []);
+    debugger
 
-    var allAPIs = dataIds.map(r => {
-      return this.service.updateModulePermissions(r, {moduleRight: modulesRight } );
-    });
-
+    // var allAPIs = dataIds.map(r => {
+    //   return this.userRolePermSvc.updateModulePermissions(r, {moduleRight: modulesRight } );
+    // });
     this.isLoading = true;
-    forkJoin(allAPIs).subscribe(r=> { this.isLoading = false; }, err=>{ this.isLoading = false; });
-    //this.cb.emit({ key: ACTION_ENUM.saveRoles, roleIds: dataIds, modules: this.formModuleRight.value });
+    this.userRolePermSvc
+            .updateModulePermissions(this.activeUserType.id, {moduleRight: modulesRight } )
+            .subscribe(r=> { this.isLoading = false; }, err=>{ this.isLoading = false; });
   }
 
   public applyRole(){
@@ -107,7 +109,7 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
 
     if(dataIds.length>0) {
       this.isLoading = true;
-      this.userRolePermSvc.postModuleByRoleId(dataIds).subscribe(success, error);
+      this.userRolePermSvc.getModulesByRoleId(dataIds).subscribe(success, error);
     }
   }
 
@@ -119,7 +121,7 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
     };
     const error = ()=> {this.isLoading = false;};
     this.isLoading = true;
-    this.userRolePermSvc.getModuleByRoleId(this.activeUserType.id).subscribe(success, error);
+    this.userRolePermSvc.getModulesByRoleId([ row.id ]).subscribe(success, error);
   }
 
   clearFilter(e) { this.activeUserType = null; }

@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Directive, Input, OnInit} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ViewExtender} from "@app-global";
+import {FullDateFormatCell, ViewExtender} from "@app-global";
 import {Conversation, ConversationQueryOptions} from "../domains/conversation.serializer";
 import {ConversationService} from "../services/conversation.service";
 
@@ -17,8 +17,8 @@ export class ManageConversationView extends ViewExtender<Conversation> implement
         super(activatedRoute, service);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name'},
-            {headerName: 'Created Date', field: 'createdDate'},
-            {headerName: 'modified Date', field: 'modifiedDate'}
+            {headerName: 'Created Date', field: 'createdDate', cellTemplate: FullDateFormatCell},
+            {headerName: 'modified Date', field: 'modifiedDate', cellTemplate: FullDateFormatCell}
         ];
     }
 

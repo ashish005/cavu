@@ -9,7 +9,7 @@ export class PaymentService extends CoreEndpointBase {
     getLicenseInfoEndpoint(){
         const { businessMasterType, sectorMasterType, softwareId} = this.orgSetup;
         return this.httpClient
-            .get(this.baseAPIUrl+`license/${softwareId}/org/${this.apiVersion}`, this.requestHeaders)
+            .get(this.baseAPIUrl+`/subscription`, this.requestHeaders)
             .pipe(
                 catchError(error => { return this.handleError(error, () => this.getLicenseInfoEndpoint()); })
             );
@@ -18,7 +18,7 @@ export class PaymentService extends CoreEndpointBase {
     public getPaymentLookup(){
         const { businessMasterType, sectorMasterType, softwareId} = this.orgSetup;
         return this.httpClient
-            .get(`${this.baseAPIUrl}software/payment-subscription/${softwareId}`, this.requestHeaders)
+            .get(`${this.baseAPIUrl}/subscription/payment/${softwareId}`, this.requestHeaders)
             .pipe(
                 map((resp: any) => resp.data),
                 catchError(error => this.handleError(error, () => this.getPaymentLookup()))
@@ -27,7 +27,7 @@ export class PaymentService extends CoreEndpointBase {
 
     savePaymentDetails(data: any) {
         return this.httpClient
-            .post(`${this.baseAPIUrl}softwareInvoice`, data, this.requestHeaders)
+            .post(`${this.baseAPIUrl}/subscription/payment`, data, this.requestHeaders)
             .pipe(
                 map((resp: any) => resp),
                 catchError(error => this.handleError(error, () => this.savePaymentDetails(data)))

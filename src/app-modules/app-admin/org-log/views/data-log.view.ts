@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LogAPIResolver} from "../services/api.resolver";
-import { ViewExtender } from "@app-global";
+import {FullDateFormatCell, ViewExtender} from "@app-global";
 import {DataLog, DataLogQueryOptions} from "../domains/data-log.serializer";
 import {DataLogService} from "../services/log.service";
 
@@ -18,8 +18,8 @@ export class DataLogView extends ViewExtender<DataLog> implements OnInit, OnDest
         super(activatedRoute, service);
         this.gridOptions.columnDefs= [
             {headerName: 'Name', field: 'name'},
-            {headerName: 'Created Date', field: 'createdDate'},
-            {headerName: 'modified Date', field: 'modifiedDate'}
+            {headerName: 'Created Date', field: 'createdDate', cellTemplate: FullDateFormatCell },
+            {headerName: 'modified Date', field: 'modifiedDate', cellTemplate: FullDateFormatCell}
         ];
     }
 

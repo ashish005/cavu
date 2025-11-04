@@ -1,9 +1,9 @@
 import {Injectable, Injector} from "@angular/core";
-import { OrgResourceService } from "@app-global";
+import { CoreResourceService } from "@app-global";
 import {ModulePermission, ModulePermissionSerializer} from "../domains/module-permission.serializer";
 
 @Injectable()
-export class ModulePermissionService extends OrgResourceService<ModulePermission>
+export class ModulePermissionService extends CoreResourceService<ModulePermission>
 {
   constructor(public override injector: Injector) { super(injector, 'tenant', new ModulePermissionSerializer()); }
 

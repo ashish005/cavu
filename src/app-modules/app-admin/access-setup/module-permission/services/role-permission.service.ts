@@ -1,10 +1,10 @@
 import {Observable, Subject} from "rxjs";
 import {Injectable, Injector} from "@angular/core";
 import { OrgModuleModel, OrgModuleModelSerializer } from "../domains/org-module.domain";
-import { OrgResourceService } from "@app-global";
+import { CoreResourceService } from "@app-global";
 
 @Injectable()
-export class RolePermissionService extends OrgResourceService<OrgModuleModel> {
+export class RolePermissionService extends CoreResourceService<OrgModuleModel> {
   constructor(public override injector: Injector) { super(injector, 'orgModule', new OrgModuleModelSerializer()); }
 
   createRole<T>(userObject: any): Observable<T> {
@@ -17,21 +17,13 @@ export class RolePermissionService extends OrgResourceService<OrgModuleModel> {
     return this.httpClient.put<T>(url, JSON.stringify(userObject), this.requestHeaders);
   }
 
-  updateModulePermissions<T>(userTypeId: string, userObject: any): Observable<T> {
-    const url: string = `${this.viewUrl}/permission/${userTypeId}`;
-    return this.httpClient.put<T>(url, JSON.stringify(userObject), this.requestHeaders);
-  }
+
 }
 
 @Injectable()
-export class UserPermissionService extends OrgResourceService<OrgModuleModel> {
+export class UserPermissionService extends CoreResourceService<OrgModuleModel> {
     constructor(public override injector: Injector) {
-      super(injector, 'userPermission', new OrgModuleModelSerializer());
-    }
-
-    getModuleByRoleId(id: string): Observable<any> {
-        const url: string = `${this.viewUrl}/role-modules/${id}`;
-        return this.httpClient.get<any>(url, this.requestHeaders);
+      super(injector, 'roleModulePermission', new OrgModuleModelSerializer());
     }
 
     getModuleByOrgUserId(id: string): Observable<any> {
@@ -39,8 +31,12 @@ export class UserPermissionService extends OrgResourceService<OrgModuleModel> {
         return this.httpClient.get<any>(url, this.requestHeaders);
     }
 
-    postModuleByRoleId(ids: Array<string>): Observable<any> {
-        const url: string = `${this.viewUrl}/role-modules`;
-        return this.httpClient.post<any>(url, ids, this.requestHeaders);
+    getModulesByRoleId(ids: Array<string>): Observable<any> {
+        return this.httpClient.post<any>(this.viewUrl, ids, this.requestHeaders);
+    }
+
+    updateModulePermissions<T>(userTypeId: string, userObject: any): Observable<T> {
+        const url: string = `${this.viewUrl}/permission/${userTypeId}`;
+        return this.httpClient.put<T>(url, JSON.stringify(userObject), this.requestHeaders);
     }
 }

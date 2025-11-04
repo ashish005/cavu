@@ -26,9 +26,9 @@ export class PaymentSoftwareLicenseType {
         this.isRecommended = isRecommended;
         this.validityIndays = validityIndays;
 
-        this.rate = rate;
-        this.discount = discount;
-        this.tax = tax;
+        this.rate = rate || 0;
+        this.discount = discount || 0;
+        this.tax = tax || 0;
     }
 
     paymentAmount=()=> this.rate * (1 - this.discount / 100) * (1 + this.tax / 100);

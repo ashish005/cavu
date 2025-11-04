@@ -1,6 +1,6 @@
 import {Component, Directive, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {ASIDE_CLASS, ASIDE_SIZE, SharedService, ViewExtender} from "@app-global";
+import {ASIDE_CLASS, ASIDE_SIZE, FullDateFormatCell, SharedService, ViewExtender} from "@app-global";
 import {DashboardPortletService} from "../services/dashboard-portlet.service";
 import {DashboardPortlet, DashboardPortletQueryOptions} from "../domains/dashboard-portlet.serializer";
 import {DashboardPortletRuleComponent} from "../components/dashboard-portlet.rule.component";
@@ -21,8 +21,8 @@ export class DashboardPortletView extends ViewExtender<DashboardPortlet> impleme
       {headerName: 'Name', field: 'name' },
       {headerName: 'Sort Order', field: 'sortOrder' },
       {headerName: 'Visible', field: 'isVisible' },
-      {headerName: 'Created Date', field: 'createdDate'},
-      {headerName: 'modified Date', field: 'modifiedDate'},
+      {headerName: 'Created Date', field: 'createdDate', cellTemplate: FullDateFormatCell },
+      {headerName: 'modified Date', field: 'modifiedDate', cellTemplate: FullDateFormatCell },
     ];
   }
 

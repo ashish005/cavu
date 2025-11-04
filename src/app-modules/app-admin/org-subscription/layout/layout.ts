@@ -3,24 +3,25 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
     standalone: false,
-  templateUrl: './layout.html'
+  templateUrl: './layout.html',
+    styles: [`::ng-deep ng-component{ display: contents;}`]
 })
 export class PricingLayout implements OnInit {
     public actionTemplate: TemplateRef<any>;
     public pageTitleTemplate: TemplateRef<any>;
     public navList = [
         {
-            isFLatChildren: true, key: 'mainLayout.heading.license',
+            isFLatChildren: true, key: 'Subscriptions',
             children:[
-                { routeTo: ['info'], icon:"fa fa-home", key: 'mainLayout.license.info' },
-                { routeTo: ['payment'], icon:"fa fa-home", key: 'mainLayout.license.payment' }
+                { routeTo: ['info'], icon:"fa fa-home", key: 'License info' },
+                { routeTo: ['payment'], icon:"fa fa-home", key: 'payment' }
             ]
         },
         {
-            isFLatChildren: true, key: 'mainLayout.heading.others',
+            isFLatChildren: true, key: 'Others',
             children:[
-                { id: 1, routeTo: ['license-history'], icon:"fa fa-history", key: 'mainLayout.license.history' },
-                { id: 2, routeTo: ['invoices'], icon:"fa fa-calendar", key: 'mainLayout.license.invoice' }
+                { id: 1, routeTo: ['license-history'], icon:"fa fa-history", key: 'License history' },
+                { id: 2, routeTo: ['invoices'], icon:"fa fa-calendar", key: 'invoices' }
             ]
         }
     ];

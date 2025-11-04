@@ -2,14 +2,12 @@ import {
     Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation
 } from "@angular/core";
 import {DomSanitizer} from "@angular/platform-browser";
-import {SoftwareInvoiceReportService} from "../services/software-invoice-report.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AppSetup, AppSetupService} from "@app-global";
 
 @Component({
     standalone: false,
     templateUrl: './templates/software-invoice-print.html',
-    providers: [SoftwareInvoiceReportService],
     styles: [`:host { display: contents; }`]
 })
 export class SoftwareInvoicePrintView  implements OnInit, OnDestroy {

@@ -15,8 +15,8 @@
                     </a>-->
                     <div class="scrollable hover">
                         <div class="list-group list-group-gap p-2" *ngIf="singleRole">
-                            <!--<div class="list-group-item p-1 pl-2 _500"
-                                 *ngFor="let row of apiResolver?.masterType?.userRoles; let i = index"
+                            <div class="list-group-item p-1 pl-2 _500"
+                                 *ngFor="let row of lookup?.userRoles; let i = index"
                                  [ngClass]="{'primary text-white': (activeUserType?.id == row.id)}">
                                 <div class="float-right">
                                     <a class="btn btn-xs btn-icon" *ngIf="activeUserType?.id != row.id"
@@ -25,7 +25,7 @@
                                        (click)="clearFilter(row)"><i class="fa fa-close"></i></a>
                                 </div>
                                 {{row.name}}
-                            </div>-->
+                            </div>
                         </div>
                         <form [formGroup]="customForm" *ngIf="!singleRole">
                             <div class="list mx-2 box" formArrayName="roles">
@@ -42,14 +42,6 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
-                    <div class="p-3 mt-auto">
-                        <!--<div class="input-group">
-                          <input type="text" class="form-control form-control-sm" id="newField" placeholder="New label" required="">
-                          <span class="input-group-append">
-                            <button class="btn btn-default btn-sm no-shadow" type="button" id="newBtn"><i class="fa fa-plus text-muted"></i></button>
-                          </span>
-                        </div>-->
                     </div>
                 </div>
             </div>
