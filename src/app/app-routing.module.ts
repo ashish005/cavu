@@ -18,7 +18,7 @@ export const appSetupGuard: CanActivateFn = (route, state) => {
     return true;
   }
   // Redirect to the login page if not authenticated
-  return router.createUrlTree(['/setup/trial']);
+  return router.createUrlTree(['/company/trial']);
 };
 
 const routes: Routes = [
@@ -26,7 +26,7 @@ const routes: Routes = [
   {
     path: 'app', loadChildren: () => import('portals/portal-module').then(m => m.PortalModule), canActivate: [ appSetupGuard, AuthGuard]
   },
-  {path: '', loadChildren: () => import('portals/setup').then(m => m.SetupModule) },
+  {path: '', loadChildren: () => import('portals/company').then(m => m.SetupModule) },
   ...THIRD_PARTY_ROUTES,
   {path: '**', component: NotFoundComponent}
 ];

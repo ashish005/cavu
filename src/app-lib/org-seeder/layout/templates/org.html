@@ -1,0 +1,43 @@
+<div class="content-main">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nav-active-border bottom mx-2 mt-2 b-b b-theme nav-active-theme">
+                <ul class="nav nav-sm nav-tabs">
+                    <li class="nav-item" [ngClass]="{ 'hide': orgSetupSuccessfully }">
+                        <a class="nav-link" [ngClass]="{ 'active': !orgSetupSuccessfully }" href="#" data-toggle="tab" data-target="#tab1">Configuration</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [ngClass]="{ 'active': orgSetupSuccessfully }" href="#" data-toggle="tab" data-target="#tab2">Sync Org/ Branch</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="tab" data-target="#tab3">Final</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tab-content px-2">
+                <div class="tab-pane animate fadeIn text-muted" id="tab1" [ngClass]="{ 'hide': orgSetupSuccessfully, 'active': !orgSetupSuccessfully }">
+                    <org-config></org-config>
+                </div>
+                <div class="tab-pane animate fadeIn text-muted" id="tab2" [ngClass]="{ 'active': orgSetupSuccessfully }">
+                    <sync-feeder></sync-feeder>
+                </div>
+                <div class="tab-pane animate fadeIn text-muted" id="tab3">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <!--<button type="button" (click)="onCancel()" class="btn btn-sm m-2">Cancel</button>-->
+                            <button type="button" class="btn btn-sm primary m-2"
+                                    (click)="onFinalizeSetup()">
+                                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                                {{ submitted ? 'Submitting...' : 'Finalize Setup' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -36,25 +36,6 @@ export class CoreEndpointBase {
         this.loaderService = injector.get(LoaderService);
     }
 
-  // protected performRouteResolver0 = (setupSubscriber: Observable<any>) : Observable<any> => {
-  //   this.loaderService.show();
-  //   return setupSubscriber.pipe(
-  //       map(results => results['data']), // Extract and map the data here
-  //       // Use finalize to ensure loader is always hidden
-  //       finalize(() => this.loaderService.hide()),
-  //       catchError((error: ServerError) => {
-  //         // Here, you handle the error but do NOT recursively call the resolver.
-  //         // You should probably log the error, show a user-friendly message, etc.
-  //         console.error("Route resolver failed", error);
-
-  //         // Return a new observable with the error
-  //         // This will pass the error to the subscriber's failure handler
-  //         //return throwError(() => err);
-  //         return this.handleError(error, () => this.performRouteResolver1(setupSubscriber));
-  //       })
-  //   );
-  // };
-
   /**
    * Common route resolver helper
    * Handles loader, error, cancellation, and redirect logic.
@@ -94,9 +75,6 @@ export class CoreEndpointBase {
   protected performRouteResolver(info, setup, success, failure){
     return this.performRouteResolver2(info, setup, success, failure);
   }
-  // protected performRouteResolver(info, setup, success, failure){
-  //   return this.loaderService.resolver(setup, success, failure);
-  // }
 
     protected get appVersion() { return this.appSetupService.appVersion; }
     protected get apiVersion() { return this.appSetupService.apiVersion; }
@@ -110,17 +88,17 @@ export class CoreEndpointBase {
     //public get baseSectorAPIUrl() { return `${environment.authBaseUrl}${this.orgSetup.sectorMasterType}/api/`; }
 
     private getRequestHeaders(d) {
-        const { id: orgId, countryId } = this.orgSetup;
+        //const { id: orgId, countryId } = this.orgSetup;
         //const orgBranchId = this.coreService.getOrgBranchId();
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
+        //const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
         const _header = {
             Authorization: `Bearer ${this.authService.accessToken}`,
             'App-Version': this.appVersion,
-            'X-Timezone': timezone,
-            'OrgUnitId': orgId || '',
+            // 'X-Timezone': timezone,
+            // 'OrgUnitId': orgId || '',
             //'OrgBranchId': `${ orgBranchId || '' }`,
             //'OrgSessionId': `${ this.coreService.orgSessionId || '' }`,
-            'OrgCountryId': `${ countryId || '' }`
+            //'OrgCountryId': `${ countryId || '' }`
         };
 
         if(d['Accept']){ _header['Accept'] = d['Accept']; }
@@ -164,7 +142,6 @@ export class CoreEndpointBase {
 
     protected handleError(error: any, continuation: () => Observable<any>): Observable<any> {
       // Handle Unauthorized / Expired Token
-        debugger
       if (error?.status === 401 || error?.error === 'invalid_token') {
         console.warn('🔐 Intercepted 401 or invalid_token');
 

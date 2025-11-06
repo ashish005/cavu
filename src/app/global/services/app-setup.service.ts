@@ -1,6 +1,4 @@
 import {inject, Injectable, Injector} from '@angular/core';
-import {ActivatedRouteSnapshot, NavigationExtras, Router, RouterStateSnapshot} from '@angular/router';
-import {BehaviorSubject, map, Observable, of, Subject, throwError} from 'rxjs';
 
 import {environment} from "@app-environments";
 import {LoaderService} from "./loader.service";
@@ -23,6 +21,13 @@ export class AppSetupService {
         this.httpClient = injector.get(HttpClient);
         this.themeManager = injector.get(ThemeManagerService);
     }
+
+    public showPreSetupPopup: { (): void } | undefined;
+    public showGlobalFilterPopup: { (): void } | undefined;
+
+    public showBellPopup: { (): void } | undefined;
+    public createSupportTicket: { (): void } | undefined;
+    public showSurveyPopup: { (): void } | undefined;
 
   loadApp = () => {
     this.loaderService.show();
@@ -58,51 +63,9 @@ export class AppSetupService {
       .pipe(
         catchError(error => this.handleError(error, () => this.getBusinessSetupModules(sectorMasterType, businessMasterType)))
       );
-  }
+  }*/
 
-  seederOrgBranchAsync = (configId, orgBranchId) => this.applySeed(configId, orgBranchId, 'master');
-  seederOrgBranchDemo = (configId, orgBranchId) => this.applySeed(configId, orgBranchId, 'demo');
-
-  private applySeed = (id, orgBranchId, moduleMasterType): Observable<any> => {
-    const tenantSeederCallback = (resp) => {
-      const {
-        countryCode, timeZone, currencyCode, cultureCode,
-        sectorMasterType, businessMasterType, softwareCode,
-        orgUnitId
-      } = resp;
-      const success = ()=> {
-        return this.httpClient
-          .put(this.baseAPIUrl+`tenantSeeder/success`, {orgBranchId: orgBranchId}, this.requestHeaders)
-
-      }
-      return this.httpClient.post(`${this.baseSectorAPIUrl}seed/tenant`, {
-        orgBranchId: orgBranchId,
-        orgUnitId: orgUnitId,
-        timeZone: timeZone,
-        countryCode: countryCode,
-        currencyCode: currencyCode,
-        cultureCode: cultureCode,
-        module: moduleMasterType,
-
-        sectorMasterType: sectorMasterType,
-        businessMasterType: businessMasterType,
-        SoftwareCode: softwareCode
-      }, this.requestHeaders).pipe(
-        flatMap((res) => success()),
-        catchError(error => this.handleError(error, () => tenantSeederCallback(resp)))
-      );
-    };
-
-    const tenantSeeder=()=> this.httpClient.get(this.baseAPIUrl+`orgSetting/partial/${id}`, this.requestHeaders)
-      .pipe(
-        flatMap((res: { data }) => tenantSeederCallback(res.data)),
-        catchError(error => this.handleError(error, () => tenantSeeder()))
-      );
-
-    return tenantSeeder();
-  };
-
-  public syncUserRolesEndpoint(orgId, orgBranchId)
+  /*public syncUserRolesEndpoint(orgId, orgBranchId)
   {
     return this.httpClient.get(this.baseAPIUrl+`org-lookup/org-roles-to-sync`, this.requestHeaders).toPromise()
       .then((r: { data })=>

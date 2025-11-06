@@ -21,6 +21,9 @@
       }
         <div class="d-inline-block float-right" *ngIf="!isAdminView">
             <ul class="nav nav-xs float-right _600">
+              <li class="nav-item align-items-center">
+                <a title="Setup" (click)="showPreSetupPopup()">Setup</a>
+              </li>
             <li class="nav-item align-items-center">
               <a title="Support Ticket?" class="btn btn-xs btn-icon btn-rounded" (click)="createSupportTicket()">
                 <i class="fa fa-support"></i>

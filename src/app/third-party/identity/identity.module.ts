@@ -1,4 +1,12 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf, inject, provideAppInitializer } from '@angular/core';
+import {
+  ModuleWithProviders,
+  NgModule,
+  Optional,
+  SkipSelf,
+  inject,
+  provideAppInitializer,
+  Injector
+} from '@angular/core';
 import {CanActivateFn, Router, RouterModule, Routes} from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {AuthConfig, OAuthModule, OAuthModuleConfig, OAuthStorage} from "angular-oauth2-oidc";
@@ -13,9 +21,34 @@ export const AUTH_ROUTES: Routes = [
   { path: 'login-callback', component: LoginCallbackView },
   { path: 'logout-callback', component: LogoutCallbackView }
 ];
+export class PrefixStorage implements OAuthStorage {
+  private prefix: string;
+
+  constructor(hostname: string) {
+    // Example: tenant1.example.com → tenant1_
+    const tenant = hostname.split('.')[0];
+    this.prefix = tenant ? `${tenant}_` : '';
+  }
+
+  private getKey(key: string): string {
+    return `${this.prefix}${key}`;
+  }
+
+  getItem(key: string): string | null {
+    return localStorage.getItem(this.getKey(key));
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(this.getKey(key));
+  }
+
+  setItem(key: string, value: string): void {
+    localStorage.setItem(this.getKey(key), value);
+  }
+}
 
 // We need a factory since localStorage is not available at AOT build time
-export function storageFactory(): OAuthStorage { return localStorage; }
+export function storageFactory(): OAuthStorage { return new PrefixStorage(window.location.hostname); }
 export function authAppInitializerFactory(authService: AuthService): () => Promise<void> { return () => authService.runInitialLoginSequence(); }
 
 export const authModuleConfig: OAuthModuleConfig = {
@@ -39,7 +72,8 @@ export class IdentityModule {
           const initializerFn = (authAppInitializerFactory)(inject(AuthService));
           return initializerFn();
         }),
-        { provide: AuthConfig, useValue: getAuthConfig() },
+        //{ provide: AuthConfig, useValue: getAuthConfig() },
+        { provide: AuthConfig, useFactory: getAuthConfig, deps: [Injector] },
         { provide: OAuthModuleConfig, useValue: authModuleConfig },
         { provide: OAuthStorage, useFactory: storageFactory },
       ]

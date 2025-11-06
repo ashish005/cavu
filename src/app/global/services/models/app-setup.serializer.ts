@@ -229,6 +229,7 @@ class OrgBranch {
 
     public isMasterSeedApplied: boolean;
     public isDemoSeedApplied: boolean;
+    public syncInitiated: boolean;
 
     constructor(model: any = {}){
         this.id = model.id;

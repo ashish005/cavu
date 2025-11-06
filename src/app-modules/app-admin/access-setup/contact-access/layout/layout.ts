@@ -1,6 +1,5 @@
 import {Component, Injector, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
-import {forkJoin, take, filter} from "rxjs";
 import {UserAccessSetupAPIResolver} from "../services/api.resolver";
 import {AccessSetupUserType} from "../domains/lookup.serializer";
 

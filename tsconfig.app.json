@@ -7,6 +7,7 @@
     "baseUrl": "./src",
     "paths": {
       "@app-global": [ "app/global" ],
+      "@app-lib": [ "app-lib" ],
       "@app-third-party": [ "app/third-party" ],
       "@app-environments": ["environments/environment.ts"],
       "@app-core-module": ["app-modules/core-modules"]

@@ -1,2 +1,4 @@
-export { FeedbackSupportFactory } from "./support.factory";
-export * from "./lib-setup";
+export {SetupFactory} from "./setup.factory";
+
+export {FeedbackSupportFactory} from "./support.factory";
+export {OrgCoreSetupModule} from "./org-seeder";

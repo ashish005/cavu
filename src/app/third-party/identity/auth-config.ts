@@ -1,7 +1,12 @@
 import { AuthConfig } from 'angular-oauth2-oidc';
 import {environment} from "@app-environments";
+//import {AppSetupService} from "../../global/services/app-setup.service";
+import {Injector} from "@angular/core";
+import {AppSetupService} from "@app-global";
 
-export function getAuthConfig(): AuthConfig {
+export function getAuthConfig(injector: Injector): AuthConfig {
+  //const setup= injector.get(AppSetupService);
+  //const { id } = appSetupSvc.appSetup;
   let issuer = environment.identityServer.issuer;// IdentityServer URL
   const origin = window.location.origin;
   const authCodeFlowConfig: AuthConfig = {

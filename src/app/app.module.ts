@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {AppMenuComponent} from "./app-menu.component";
 import {IdentityModule} from "./third-party";
 import {GlobalModule} from "./global";
+import {AppLibModule} from "../app-lib/app-lib.module";
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import {GlobalModule} from "./global";
   ],
   imports: [
     BrowserModule,
-    IdentityModule.forRoot(), AppRoutingModule, GlobalModule
+    IdentityModule.forRoot(), AppRoutingModule, GlobalModule,
+    AppLibModule
   ],
   bootstrap: [AppComponent]
 })

@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {filter, Observable} from "rxjs";
 import {AuthService} from "./third-party/identity/auth.service";
 import {Router} from "@angular/router";
-
+import {AppSetupService} from "@app-global";
+import {SetupFactory} from "@app-lib";
 @Component({
     selector: 'body',
     templateUrl: './app.component.html',
@@ -20,10 +21,15 @@ export class AppComponent implements OnInit {
   public logoutRedirectUrl: string | null = '/';
 
   isAuthenticated = false;
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService,
+              private appSetupService: AppSetupService,
+              private setupFactory: SetupFactory,
+              private router: Router) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
     this.isDoneLoading$ = this.authService.isDoneLoading$;
     this.canActivateProtectedRoutes$ = this.authService.canActivateProtectedRoutes$;
+
+    this.appSetupService.showPreSetupPopup = () => this.setupFactory.showPreSetupPopup();
   }
 
   ngOnInit(){

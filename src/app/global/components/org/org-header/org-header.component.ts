@@ -56,14 +56,12 @@ export class OrgHeaderComponent implements OnInit {
 
   routeToUrl=(path)=> this.router.navigate([path], {relativeTo: this.activatedRoute});
 
-    // showBellPopup = () => this.coreService.showBellPopup();
-    showBellPopup = () => null;
-    // createSupportTicket = () => this.coreService.createSupportTicket();
-    createSupportTicket = () => null;
-    // showSurveyPopup = () => this.coreService.showSurveyPopup();
+  showPreSetupPopup=() => this.appSetupService.showPreSetupPopup();
+  showBellPopup = () => this.appSetupService.showBellPopup();
+  createSupportTicket = () => this.appSetupService.createSupportTicket();
+  showSurveyPopup = () => this.appSetupService.showSurveyPopup();
+  showGlobalFilterPopup = () => this.appSetupService.showGlobalFilterPopup();
     updateLanguage = (lan) => null;
-    // showGlobalFilterPopup = () => this.coreService.showGlobalFilterPopup();
-    showGlobalFilterPopup = () => null;
     // updateAppSession = (session) => this.coreService.updateAppSession(session);
     updateAppSession = (session) => null;
     toggleThemeSwitcher = () => null;

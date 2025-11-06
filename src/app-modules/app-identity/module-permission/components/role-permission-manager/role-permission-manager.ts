@@ -81,7 +81,6 @@ export class RolePermissionManager extends ModuleRightsForm implements OnInit {
       result.push(curr);
       return result;
     }, []);
-    debugger
 
     // var allAPIs = dataIds.map(r => {
     //   return this.userRolePermSvc.updateModulePermissions(r, {moduleRight: modulesRight } );
