@@ -19,7 +19,6 @@ export class SetupLayout {
         {
             isFLatChildren: true, key: 'mainLayout.heading.main',
             children:[
-                { routeTo: ['login-setup'], icon:"fa fa-user-circle", key: 'Login Setup' },
                 { routeTo: ['module-access-setup'], icon:"fa fa-user-circle", key: 'Module Access Setup' }
             ]
         },

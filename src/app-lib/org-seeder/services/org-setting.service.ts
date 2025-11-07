@@ -74,7 +74,6 @@ export class OrgSettingService extends OrgResourceService<OrgSetting> {
             currencyCode: currencyCode,
             cultureCode: cultureCode,
             module: moduleMasterType,
-
             //sectorMasterType: sectorMasterType,
             businessMasterType: businessMasterType,
             SoftwareCode: softwareCode
@@ -89,4 +88,14 @@ export class OrgSettingService extends OrgResourceService<OrgSetting> {
             catchError(error => this.handleError(error, () => this.applySeed(orgBranchId, moduleMasterType)))
         );
     };
+
+  public syncUserRolesEndpoint=(orgBranchId)=>
+  {
+      const { id : orgId} = super.orgSetup;
+      return this.httpClient.get(this.baseAPIUrl+`/orgSetupLookup/org-roles-to-sync`, this.requestHeaders).toPromise()
+      .then((r: { data })=>
+      {
+        return this.httpClient.post(this.baseSectorAPIUrl+`/seed/${orgId}/syncUserRole`, r.data, this.requestHeaders).toPromise();
+      });
+  }
 }

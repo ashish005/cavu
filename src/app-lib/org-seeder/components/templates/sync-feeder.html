@@ -15,6 +15,9 @@
                             Setup
                             <i *ngIf="branch.isMasterSeedApplied && branch.isDemoSeedApplied" class='fa fa-check text-success'></i>
                         </a>
+                        <a class="btn btn-xs rounded btn-outline b-primary text-primary float-right" (click)="syncRoleFeeder(branch)">
+                            Sync Roles
+                        </a>
                     </div>
                 </div>
             </div>

@@ -64,13 +64,4 @@ export class AppSetupService {
         catchError(error => this.handleError(error, () => this.getBusinessSetupModules(sectorMasterType, businessMasterType)))
       );
   }*/
-
-  /*public syncUserRolesEndpoint(orgId, orgBranchId)
-  {
-    return this.httpClient.get(this.baseAPIUrl+`org-lookup/org-roles-to-sync`, this.requestHeaders).toPromise()
-      .then((r: { data })=>
-      {
-        return this.httpClient.post(this.baseSectorAPIUrl+`seed/syncUserRole/${orgId}/${orgBranchId}`, r.data, this.requestHeaders).toPromise();
-      });
-  }*/
 }

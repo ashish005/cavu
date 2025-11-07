@@ -10,6 +10,7 @@ import {
     ModulePermissionRowComponent,
     RolePermissionView
 } from "./role-permission-manager";
+import {CONTACTS_COMPONENTS} from "./contact";
 
 export const PERMISSION_MANAGEMENT_COMPONENT = [
     RolePermissionManager, RolePermissionView,
@@ -19,5 +20,6 @@ export const PERMISSION_MANAGEMENT_COMPONENT = [
 export const USER_MANAGEMENT_COMPONENT = [
     UserListSearchComponent,
     UserListComponent,
-    UserRoleCeComponent, ModuleCeComponent, ModulePermissionComponent
+    UserRoleCeComponent, ModuleCeComponent, ModulePermissionComponent,
+    CONTACTS_COMPONENTS
 ];

@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {ContactService} from "../services/contact.service";
 import {DynamicComponent} from "@app-global";
-import {ContactAPIResolver} from "../services/api.resolver";
+import {UserManagementAPIResolver} from "../services/api.resolver";
 
 @Component({
     standalone: false,
@@ -12,7 +12,7 @@ import {ContactAPIResolver} from "../services/api.resolver";
 })
 export class LoginGrantAccessCell extends DynamicComponent{
     grantAccessInProgress: boolean = false;
-    constructor(private apiResolver: ContactAPIResolver, public service: ContactService){ super(); }
+    constructor(private apiResolver: UserManagementAPIResolver, public service: ContactService){ super(); }
 
     grantAccess(){
         const { id, name, orgUserId } = this.context;

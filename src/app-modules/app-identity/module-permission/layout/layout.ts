@@ -14,7 +14,8 @@ export class PermissionLayout implements OnInit {
             isFLatChildren: true, key: 'mainLayout.heading.main',
             children:[
                 { routeTo: ['role-module'], icon:"fa fa-envelope", key: 'Role & Permissions' },
-                { routeTo: ['users'], icon:"fa fa-envelope", key: 'Portal Access' }
+                { routeTo: ['users'], icon:"fa fa-envelope", key: 'Portal Access' },
+                { routeTo: ['contact'], icon:"fa fa-envelope", key: 'App Users' }
             ]
         }
     ];

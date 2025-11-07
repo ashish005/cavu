@@ -29,4 +29,10 @@ export class SyncMasterComponent {
         const v = this.service.seederOrgBranchAsync(branch.id);
         v.subscribe(success, error);
     }
+
+    syncRoleFeeder(branch) {
+        const error = (resp: any) => { };
+        const success = (resp: any) => {};
+        this.service.syncUserRolesEndpoint(branch.id).then(success, error);
+    }
 }

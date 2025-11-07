@@ -122,10 +122,6 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                             loadChildren: () => import('app-common/setup-transaction/index').then(m => m.SetupTransactionModule),
                             data: {title: 'Bank', header: 'Bank', name: "Banking", key: 'layout.banking'}//code: "ACCESS_VT_MGT",
                         },
-                        { path: 'login-setup',
-                            loadChildren: () => import('app-common/access-setup/contacts/index').then(m => m.ContactsModule),
-                            data: { icon:"fa fa-users", code: "ACCESS_USR_LOGIN", name: "User Permission", key: 'layout.all_contacts' }
-                        },
                         { path: 'module-access-setup',
                             loadChildren: () => import('app-common/access-setup/contact-access/index').then(m => m.ContactAccessSetupModule),
                             data: { userType: ORG_USER_TYPE.EMPLOYEE }

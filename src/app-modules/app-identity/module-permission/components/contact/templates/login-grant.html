@@ -86,14 +86,21 @@
                         </tr>
                         </thead>
                         <tbody formArrayName="roles">
-                        <ng-template ngFor let-row [ngForOf]="formRoles.controls" let-i="index">
-                            <tr [formGroup]="row">
-                                <td><strong class="text-muted"><input formControlName="roleName"
-                                                                      class="no-border bg-transparent"></strong></td>
-                                <td><label class="md-check"><input type="checkbox" formControlName="status"><i
-                                        class="text-success"></i><span></span></label></td>
-                            </tr>
-                        </ng-template>
+                        <tr *ngFor="let row of formRoles.controls; let i = index" [formGroupName]="i">
+                            <td>
+                                <strong class="text-muted">
+                                    <input formControlName="roleName" class="no-border bg-transparent">
+                                </strong>
+                            </td>
+                            <td>
+                                <label class="md-check">
+                                    <input type="checkbox" formControlName="status">
+                                    <i [class.text-success]="row.get('status')?.value"
+                                       [class.text-muted]="!row.get('status')?.value"></i>
+                                    <span></span>
+                                </label>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

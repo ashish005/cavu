@@ -3,22 +3,20 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Contact, ContactQueryOptions} from "../domains/contact.serializer";
 import {ContactService} from "../services/contact.service";
 import {LoginGrantAccessCell} from "../grid-cells";
-import {UserTypeLookup} from "../domains/lookup.serializer";
-import {ContactAPIResolver} from "../services/api.resolver";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
+import {UserManagementAPIResolver} from "../services/api.resolver";
 @Component({
-    standalone: false,
+  standalone: false,
   templateUrl: './templates/contact.html',
   styles: [`:host { display: contents;}`]
 })
 export class ContactView extends ViewExtender<Contact> implements OnInit, OnDestroy
 {
-  activeUserType: UserTypeLookup;
   override coreState: ContactQueryOptions = new ContactQueryOptions();
   constructor(public router: Router,
               public override activatedRoute: ActivatedRoute,
               public override service: ContactService,
-              public lookupResolver: ContactAPIResolver) {
+              public lookupResolver: UserManagementAPIResolver) {
     super(activatedRoute, service);
       this.gridOptions.header.edit = false;
       this.gridOptions.columnDefs = [
@@ -34,12 +32,7 @@ export class ContactView extends ViewExtender<Contact> implements OnInit, OnDest
   }
 
   ngOnInit(){
-      this.activatedRoute.params.subscribe((params: Params) => {
-          const { contactType } = params;
-          this.coreState.contactType = contactType;
-          this.activeUserType = this.lookupResolver.masterType.getUserTypeByKey(this.coreState.contactType);
-          super.populateGrid();
-      });
+      super.populateGrid();
   }
 
   override ngOnDestroy(){

@@ -10,6 +10,7 @@ import {PermissionLayout} from "./layout/layout";
 import {GlobalModule} from "@app-global";
 import { ReactiveFormsModule} from "@angular/forms";
 import {UsersManagementView} from "./views/user-management.view";
+import {ContactView} from "./views/contact.view";
 
 /*@Component({template: '<router-outlet></router-outlet>'})
 export class Layout {
@@ -28,7 +29,8 @@ export class Layout {
 
 export const MANAGE_USER_VIEWS = [
     UsersManagementView,
-    RolePermissionManager
+    RolePermissionManager,
+    ContactView
 ];
 @NgModule({
     imports: [
@@ -39,7 +41,8 @@ export const MANAGE_USER_VIEWS = [
                 children:[
                     {path: '', redirectTo: 'role-module', pathMatch: 'full'},
                     { path: 'role-module', component: RolePermissionManager, data: { title: 'modules.authorization.title'} },
-                    { path: 'users', component: UsersManagementView, data: {title: 'User Permission'} }
+                    { path: 'users', component: UsersManagementView, data: {title: 'User Permission'} },
+                    { path: 'contact', component: ContactView, data: {title: 'Contact'} },
                 ]
             }
         ]),

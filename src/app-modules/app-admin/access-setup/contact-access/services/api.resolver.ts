@@ -6,7 +6,7 @@ import {UserAccessSetupLookup, UserAccessSetupLookupSerializer} from "../domains
 @Injectable()
 export class UserAccessSetupAPIResolver extends OrgResourceService<UserAccessSetupLookup> implements Resolve<any> {
     masterType: UserAccessSetupLookup;
-    constructor(public override injector: Injector) { super(injector, 'lookup/dashboard', new UserAccessSetupLookupSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'contact/lookup', new UserAccessSetupLookupSerializer()); }
 
     resolve(route: ActivatedRouteSnapshot) {
         const success = (results) => { this.masterType = results['data']; };

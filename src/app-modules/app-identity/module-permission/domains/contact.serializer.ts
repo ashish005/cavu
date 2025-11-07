@@ -47,7 +47,6 @@ export class Contact extends CoreResource
     isLocked: boolean;
 
     roles: Array<ContactRole>;
-    orgUnitId: string;
     orgBranchId: string;
 
     constructor(model: any = <any>{}){
@@ -74,7 +73,6 @@ export class Contact extends CoreResource
         this.isLocked = isLocked;
 
         this.roles = (roles || []).map(r => new ContactRole(r));
-        this.orgUnitId = orgUnitId;
         this.orgBranchId = orgBranchId;
     }
 
