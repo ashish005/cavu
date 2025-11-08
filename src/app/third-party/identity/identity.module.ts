@@ -59,7 +59,10 @@ export const authModuleConfig: OAuthModuleConfig = {
 
 @NgModule({
   declarations: [AUTH_VIEWS],
-  imports: [OAuthModule.forRoot(), RouterModule.forRoot(AUTH_ROUTES) ],
+  imports: [
+    OAuthModule.forRoot(),
+    RouterModule.forRoot(AUTH_ROUTES)
+  ],
   providers: [AuthService, AuthGuard, provideHttpClient(withInterceptorsFromDi())],
   exports: []
 })

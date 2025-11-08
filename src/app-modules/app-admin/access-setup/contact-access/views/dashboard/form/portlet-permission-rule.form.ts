@@ -41,7 +41,7 @@ export class PortletPermissionRuleForm {
   }
 
   populateForm(data: DashboardPortlet) {
-    const { name, code, description, footer, userTypeId, id, sortOrder, isVisible, status, permissions } = data;
+    const { name, code, description, footer, userTypeId, id, sortOrder, isVisible, status, rolePermissions } = data;
 
       this.customForm.get('name').setValue(name);
       this.customForm.get('code').setValue(code);
@@ -53,12 +53,12 @@ export class PortletPermissionRuleForm {
       this.customForm.get('status').setValue(status);
 
       this.formRule.controls.length = 0;
-      (permissions || []).map(r => {
+      (rolePermissions || []).map(r => {
           const item = {
               id: r.id,
               portletId: id,
               isVisible: r.isVisible || false,
-              status: r.status || false,
+              isActive: r.isActive || false,
               userTypeId: r.userTypeId,
               userRoleName: r.userRoleName,
               userRoleId: r.userRoleId

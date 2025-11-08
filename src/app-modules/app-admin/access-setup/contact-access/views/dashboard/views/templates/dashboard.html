@@ -18,9 +18,9 @@
                             <div class="list-body">
                                 <a class="item-title _500">{{row.name}}</a>
                                 <div class="float-right">
-                                    <ng-template ngFor let-perm [ngForOf]="row.permissions" let-i="index">
+                                    <ng-template ngFor let-perm [ngForOf]="row.rolePermissions" let-i="index">
                                         <div class="d-inline-block px-1 mx-1 b-a text-sm">
-                                            <i class="fa fa-user text-sm mr-1" [class.text-success]="perm.status"></i>
+                                            <i class="fa fa-user text-sm mr-1" [class.text-success]="perm.isActive"></i>
                                             <small class="title _500 pr-2" [class.text-success]="perm.status">{{perm.userRoleName}}</small>
                                             <span class="px-1">
                                                 <i class="fa text-sm" [class]="perm.isVisible? 'fa-eye text-success': 'fa fa-eye-slash text-warning'"></i>

@@ -92,14 +92,12 @@ export class CoreEndpointBase {
         //const orgBranchId = this.coreService.getOrgBranchId();
         //const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
         const _header = {
-            Authorization: `Bearer ${this.authService.accessToken}`,
-            'App-Version': this.appVersion,
-            // 'X-Timezone': timezone,
-            // 'OrgUnitId': orgId || '',
-            //'OrgBranchId': `${ orgBranchId || '' }`,
-            //'OrgSessionId': `${ this.coreService.orgSessionId || '' }`,
-            //'OrgCountryId': `${ countryId || '' }`
+            'App-Version': this.appVersion
         };
+
+        if(this.orgSetup){
+            _header['Authorization'] = `Bearer ${this.authService.accessToken}`;
+        }
 
         if(d['Accept']){ _header['Accept'] = d['Accept']; }
         if(d['Content-Type']){ _header['Content-Type'] = d['Content-Type']; }

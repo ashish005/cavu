@@ -4,8 +4,9 @@ import {UserAccessSetupAPIResolver} from "../services/api.resolver";
 import {AccessSetupUserType} from "../domains/lookup.serializer";
 
 @Component({
-    standalone: false,
-  templateUrl: './templates/layout.html'
+  standalone: false,
+  templateUrl: './templates/layout.html',
+  styles: [`::ng-deep ng-component{ display: contents;}`]
 })
 export class Layout implements OnInit, OnDestroy {
     public viewNavigations: any = [

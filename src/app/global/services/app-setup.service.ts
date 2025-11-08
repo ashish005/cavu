@@ -2,7 +2,7 @@ import {inject, Injectable, Injector} from '@angular/core';
 
 import {environment} from "@app-environments";
 import {LoaderService} from "./loader.service";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AppSetup} from "./models/app-setup.serializer";
 import {ThemeManagerService} from "../modules/theme-setting/services/theme-manager.service";
 
@@ -33,7 +33,8 @@ export class AppSetupService {
     this.loaderService.show();
     const promise = new Promise<boolean>((resolve, reject) => {
         const endpointUrl = `${environment.authBaseUrl}/appSetup/pre`;
-        const loadApp = this.httpClient.get(endpointUrl);
+        debugger
+        const loadApp = this.httpClient.get(endpointUrl, { headers: new HttpHeaders() });
         loadApp.subscribe({
           next: (response: any) => {
             const { isSuccess, data, message } = response;

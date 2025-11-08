@@ -4,6 +4,9 @@ import {AppSetupService} from "@app-global";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private ignoredUrls: string[] = [
+    '/appSetup/pre'
+  ];
   constructor(private appSetupService: AppSetupService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     let headers = req.headers;
@@ -19,6 +22,13 @@ export class AuthInterceptor implements HttpInterceptor {
       headers = headers.set('X-CountryCode', countryCode);
     }
 
+    if (this.ignoredUrls.some(url => req.url.includes(url))) {
+      // ✅ Clone without Authorization header
+      const cleanReq = req.clone({
+        headers: req.headers.delete('Authorization')
+      });
+      return next.handle(cleanReq);
+    }
     // 3️⃣ Clone and continue
     const clonedReq = req.clone({ headers });
     return next.handle(clonedReq);

@@ -16,7 +16,7 @@ export class PortletPermission {
   isVisible: boolean;
   userRoleId: string;
   userTypeId: number;
-  status: boolean;
+  isActive: boolean;
   statusText: string;
   userRoleName: string;
 
@@ -26,7 +26,7 @@ export class PortletPermission {
     this.isVisible = model.isVisible || false;
     this.userRoleId = model.userRoleId;
     this.userTypeId = model.userTypeId;
-    this.status = model.status;
+    this.isActive = model.isActive;
     this.statusText = model.statusText;
     this.userRoleName = model.userRoleName;
   }
@@ -40,11 +40,9 @@ export class DashboardPortlet {
   footer: string;
   sortOrder: number;
   isVisible: boolean;
-  isClassView: boolean;
-  isCourseView: boolean;
   userTypeId: number;
   status: boolean;
-  permissions: Array<PortletPermission>;
+  rolePermissions: Array<PortletPermission>;
 
   constructor(model: any = <any>{}){
     this.id = model.id;
@@ -54,11 +52,9 @@ export class DashboardPortlet {
     this.footer = model.footer;
     this.sortOrder = model.sortOrder;
     this.isVisible = model.isVisible;
-    this.isClassView = model.isClassView;
-    this.isCourseView = model.isCourseView;
     this.userTypeId = model.userTypeId;
     this.status = model.status;
-    this.permissions = (model.permissions || []).map(r => new PortletPermission(r));
+    this.rolePermissions = (model.rolePermissions || []).map(r => new PortletPermission(r));
   }
 }
 
@@ -68,7 +64,7 @@ export class DashboardPortletSerializer{
   }
 
   toJson(data: any): any {
-    (data.permissions || []).forEach(r=> { r.status = (r.status)? STATUS_ENUM.ACTIVE : STATUS_ENUM.INACTIVE; });
+    (data.permissions || []).forEach(r=> { r.status = (r.isActive)? STATUS_ENUM.ACTIVE : STATUS_ENUM.INACTIVE; });
     return data;
   }
 }

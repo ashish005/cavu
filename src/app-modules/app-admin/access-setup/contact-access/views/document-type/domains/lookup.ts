@@ -2,7 +2,6 @@ import {CoreResource} from "@app-global";
 
 export class DocumentCategoryLookup extends CoreResource {
     name: string;
-
     constructor(model: any = <any>{}){
         super();
         this.id = model.id;
@@ -12,7 +11,6 @@ export class DocumentCategoryLookup extends CoreResource {
 
 export class DocumentLookup extends CoreResource{
   categories: Array<DocumentCategoryLookup> = [];
-
   constructor(model: any = <any>{}){
     super();
     const { categories } = model;
