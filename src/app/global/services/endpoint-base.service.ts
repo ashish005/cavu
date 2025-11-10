@@ -140,7 +140,6 @@ export class CoreEndpointBase {
 
     protected handleError(error: any, continuation: () => Observable<any>): Observable<any> {
       // Handle Unauthorized / Expired Token
-        debugger
       if (error?.status === 401 || error?.error === 'invalid_token') {
         console.warn('🔐 Intercepted 401 or invalid_token');
 

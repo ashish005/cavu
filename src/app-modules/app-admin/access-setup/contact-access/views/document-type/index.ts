@@ -8,6 +8,7 @@ import {DocumentTypeService} from "./services/document-type.service";
 import {DOCUMENT_MASTER_COMPONENTS} from "./components";
 import {DocumentAccessAPIResolver} from "./services/api.resolver";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {DOC_TYPE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 
 const MasterDocumentRoutes: Array<any> = [
   //{ path: '', pathMatch: 'full', redirectTo:'category' },
@@ -20,7 +21,7 @@ const MasterDocumentRoutes: Array<any> = [
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],
-  declarations: [DocumentTypeView, DOCUMENT_MASTER_COMPONENTS],
+  declarations: [DocumentTypeView, DOCUMENT_MASTER_COMPONENTS, DOC_TYPE_GRID_COLUMN_CELL_COMPONENTS],
   providers: [ DocumentAccessAPIResolver, DocumentTypeService]
 })
 

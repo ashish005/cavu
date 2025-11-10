@@ -33,7 +33,7 @@
               <th>Status</th>
             </tr>
             </thead>
-            <tbody formArrayName="rules">
+            <tbody formArrayName="rulePermissions">
               <ng-template ngFor let-rule [ngForOf]="formRules?.controls" let-i="index">
                 <tr [formGroup]="rule">
                   <td><strong class="text-muted">{{rule.get('userTypeName').value}}</strong></td>

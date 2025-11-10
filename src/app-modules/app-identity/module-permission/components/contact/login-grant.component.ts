@@ -58,7 +58,6 @@ class LoginGrantForm {
         this.formRoles.controls.length = 0;
 
         var _roles = [];
-        debugger
         (this.userRoles || []).map((r: any) => {
             const givenRole: ContactRole = (roles || []).find(e => e.orgUserRoleId == r.roleId);
             _roles.push({

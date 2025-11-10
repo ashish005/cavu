@@ -1,17 +1,13 @@
 import {CoreQueryOptions, STATUS_ENUM} from "@app-global";
-
 export class DocumentTypeQueryOptions extends CoreQueryOptions {
-    userMasterType: string;
     categoryId: string;
     override toQueryString (){
         const obj = {
-            userMasterType:this.userMasterType,
             categoryId: this.categoryId
         };
         return super.getParamByObject(obj);
     }
 }
-
 export class DocumentTypeRule {
   id: string;
   userTypeId: number;
@@ -19,7 +15,7 @@ export class DocumentTypeRule {
   documentTypeId: number;
   isVerificationRequired: boolean;
   isMandatory: boolean;
-  status: boolean;
+  isActive: boolean;
 
   constructor(model: any = <any>{}) {
     this.id = model.id;
@@ -28,7 +24,7 @@ export class DocumentTypeRule {
     this.documentTypeId = model.documentTypeId;
     this.isVerificationRequired = model.isVerificationRequired;
     this.isMandatory = model.isMandatory;
-    this.status = model.status || false;
+    this.isActive = model.isActive || false;
   }
 }
 
@@ -38,15 +34,12 @@ export class DocumentType {
   minSize: number;
   maxSize: number;
   categoryId: number;
-  ruleId: string;
-  userTypeId: number;
-  isVerificationRequired: boolean;
-  isMandatory: boolean;
+  categoryName: string;
 
   verificationByUserId: string;
   verificationByUserName: string;
-  status: boolean;
-  rules: Array<DocumentTypeRule>;
+  isActive: boolean;
+  rulePermissions: Array<DocumentTypeRule>;
 
   constructor(model: any = <any>{}){
     this.id = model.id;
@@ -54,15 +47,12 @@ export class DocumentType {
     this.categoryId = model.categoryId;
     this.minSize = model.minSize || 1;
     this.maxSize = model.maxSize || 10;
-    this.rules = (model.rules || []).map(r=> new DocumentTypeRule(r));
+    this.rulePermissions = (model.rulePermissions || []).map(r=> new DocumentTypeRule(r));
 
-    this.userTypeId = model.userTypeId;
-    this.ruleId = model.ruleId;
-    this.isVerificationRequired = model.isVerificationRequired;
-    this.isMandatory = model.isMandatory;
+    this.categoryName = model.categoryName;
     this.verificationByUserId = model.verificationByUserId;
     this.verificationByUserName = model.verificationByUserName;
-    this.status = model.status || false;
+    this.isActive = model.isActive || false;
   }
 }
 

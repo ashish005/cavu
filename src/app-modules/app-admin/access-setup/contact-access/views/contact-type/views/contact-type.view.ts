@@ -10,15 +10,11 @@ import {ContactTypeRuleCeComponent} from "../components/contact-type.rule-ce.com
     templateUrl: './templates/contact-type.html'
 })
 export class ContactTypeView extends ViewExtender<ContactType> implements OnInit, OnDestroy {
-  public userMasterType: string;
   override coreState: ContactTypeQueryOptions = new ContactTypeQueryOptions();
-
   constructor(public override service: ContactTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
-    const { userType } = this.activatedRoute.snapshot.data;
-      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent},
@@ -29,7 +25,6 @@ export class ContactTypeView extends ViewExtender<ContactType> implements OnInit
   }
 
   ngOnInit() {
-    this.coreState.userMasterType = this.userMasterType;
     super.populateGrid();
   }
 

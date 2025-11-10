@@ -13,13 +13,16 @@ export class AuthInterceptor implements HttpInterceptor {
     // const token = this.auth.getAccessToken();
     // if (token) headers = headers.set('Authorization', `Bearer ${token}`);
     if (this.appSetupService.appSetup?.id) {
-      const { id, orgConfig } = this.appSetupService.appSetup;
-      const { countryId, countryCode, timeZone } = orgConfig;
+      const { id, orgConfig, branches } = this.appSetupService.appSetup;
+      const { countryId, timeZone } = orgConfig;
+
+      const branch = (branches || []).find(r => r.isHeadBranch) || { id };
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
       headers = headers.set('X-Tenant-ID', id);
       headers = headers.set('X-Timezone-ID', timeZone);
       headers = headers.set('X-Timezone-Browser', timezone);
-      headers = headers.set('X-CountryCode', countryCode);
+      headers = headers.set('X-Country-ID', `${countryId}`);
+      headers = headers.set('X-OrgBranch-ID', `${branch?.id}`);
     }
 
     if (this.ignoredUrls.some(url => req.url.includes(url))) {

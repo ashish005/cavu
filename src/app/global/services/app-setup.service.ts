@@ -33,7 +33,6 @@ export class AppSetupService {
     this.loaderService.show();
     const promise = new Promise<boolean>((resolve, reject) => {
         const endpointUrl = `${environment.authBaseUrl}/appSetup/pre`;
-        debugger
         const loadApp = this.httpClient.get(endpointUrl, { headers: new HttpHeaders() });
         loadApp.subscribe({
           next: (response: any) => {

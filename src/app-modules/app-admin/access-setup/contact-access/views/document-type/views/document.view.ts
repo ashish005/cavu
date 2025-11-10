@@ -7,31 +7,27 @@ import { DocumentTypeQueryOptions } from "../domains/document-type.serializer";
 import {DocumentAccessAPIResolver} from "../services/api.resolver";
 import {DocumentCategoryLookup} from "../domains/lookup";
 import {DocumentType} from "../domains/document-type.serializer";
+import {DocTypeCellComponent} from "../grid-cells/doc-type-grid-cell.component";
 
 @Component({
   standalone: false,
   templateUrl: './templates/document.html'
 })
 export class DocumentTypeView extends ViewExtender<DocumentType> implements OnInit, OnDestroy {
-  public userMasterType: string;
   override coreState: DocumentTypeQueryOptions = new DocumentTypeQueryOptions();
   constructor(public override service: DocumentTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService, public lookupResolver: DocumentAccessAPIResolver) {
     super(activatedRoute, service);
-    const { userType } = this.activatedRoute.snapshot.data;
-      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
-          {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'VerificationRequired', field: 'isVerificationRequired', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'Verification By', field: 'verificationByUserName' },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent }
+          {headerName: 'Category', field: 'categoryName'},
+          {headerName: 'User Type', cellTemplate: DocTypeCellComponent },
+          {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
       ];
   }
 
   ngOnInit() {
-    this.coreState.userMasterType = this.userMasterType;
     super.populateGrid();
   }
 
