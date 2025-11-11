@@ -21,7 +21,8 @@ export const User_Acccess_Setup_Routes: Routes = [
             { path: 'document-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/document-type').then(m => m.DocumentMasterTypeModule), data: { code: "ACCESS_DOC_MGT"} },
             { path: 'address-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/address-type').then(m => m.AddressMasterTypeModule), data: { code: "ACCESS_DOC_MGT"} },
             { path: 'contact-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/contact-type').then(m => m.ContactMasterTypeModule), data: { code: "ACCESS_DOC_MGT"} },
-            { path: 'relation-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/relation-type').then(m => m.RelationMasterTypeModule), data: { code: "ACCESS_DOC_MGT"} }
+            //{ path: 'relation-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/relation-type').then(m => m.RelationMasterTypeModule), data: { code: "ACCESS_DOC_MGT"} },
+            { path: 'user-type', loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/views/user-type').then(m => m.UserTypeModule), data: { code: "ACCESS_DOC_MGT"} }
         ]
     }
 ];

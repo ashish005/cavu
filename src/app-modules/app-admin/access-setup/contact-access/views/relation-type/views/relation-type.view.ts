@@ -10,23 +10,20 @@ import {RelationTypeCeComponent} from "../components/relation-type-ce.component"
     templateUrl: './templates/relation-type.html'
 })
 export class RelationTypeView extends ViewExtender<RelationType> implements OnInit, OnDestroy {
-  public userMasterType: string;
   override coreState: RelationTypeQueryOptions = new RelationTypeQueryOptions();
 
   constructor(public override service: RelationTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
-    const { userType } = this.activatedRoute.snapshot.data;
-      this.userMasterType = userType;
       this.gridOptions.columnDefs = [
-          {headerName: 'Name', field: 'name'},
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'Name', field: 'name'},
+        {headerName: 'UserType', field: 'userTypeName'},
+        {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
       ];
   }
 
   ngOnInit() {
-    this.coreState.userMasterType = this.userMasterType;
     super.populateGrid();
   }
 

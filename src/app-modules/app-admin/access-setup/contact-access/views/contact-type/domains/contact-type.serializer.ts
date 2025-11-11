@@ -17,7 +17,7 @@ export class ContactTypeRule {
   contactTypeId: number;
   isVerificationRequired: boolean;
   isMandatory: boolean;
-  status: boolean;
+  isActive: boolean;
 
   constructor(model: any = <any>{}) {
     this.id = model.id;
@@ -26,7 +26,7 @@ export class ContactTypeRule {
     this.contactTypeId = model.contactTypeId;
     this.isVerificationRequired = model.isVerificationRequired;
     this.isMandatory = model.isMandatory;
-    this.status = model.status || false;
+    this.isActive = model.isActive || false;
   }
 }
 
@@ -34,29 +34,17 @@ export class ContactType {
   id: string;
   name: string;
   isRequired: boolean;
-  ruleId: string;
-  userTypeId: number;
-  isVerificationRequired: boolean;
-  isMandatory: boolean;
-
-  verificationByUserId: string;
-  verificationByUserName: string;
-  status: boolean;
+  isActive: boolean;
   rules: Array<ContactTypeRule>;
+  rulePermissions: Array<ContactTypeRule>;
 
   constructor(model: any = <any>{}){
     this.id = model.id;
     this.name = model.name;
     this.isRequired = model.isRequired;
     this.rules = (model.rules || []).map(r=> new ContactTypeRule(r));
-
-    this.userTypeId = model.userTypeId;
-    this.ruleId = model.ruleId;
-    this.isVerificationRequired = model.isVerificationRequired;
-    this.isMandatory = model.isMandatory;
-    this.verificationByUserId = model.verificationByUserId;
-    this.verificationByUserName = model.verificationByUserName;
-    this.status = model.status || false;
+    this.rulePermissions = (model.rulePermissions || []).map(r=> new ContactTypeRule(r));
+    this.isActive = model.isActive || false;
   }
 }
 

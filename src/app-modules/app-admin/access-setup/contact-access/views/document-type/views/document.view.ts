@@ -22,7 +22,7 @@ export class DocumentTypeView extends ViewExtender<DocumentType> implements OnIn
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
           {headerName: 'Category', field: 'categoryName'},
-          {headerName: 'User Type', cellTemplate: DocTypeCellComponent },
+          {headerName: 'Access', cellTemplate: DocTypeCellComponent },
           {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
       ];
   }

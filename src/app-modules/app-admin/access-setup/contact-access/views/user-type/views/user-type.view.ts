@@ -1,25 +1,25 @@
 import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService, GridUISwitchCellComponent, ViewExtender} from "@app-global";
-import {ContactTypeService} from "../services/contact-type.service";
-import {ContactType, ContactTypeQueryOptions} from "../domains/contact-type.serializer";
-import {ContactTypeRuleCeComponent} from "../components/contact-type.rule-ce.component";
-import {ContactTypeGridCellComponent} from "../grid-cells/contact-type-grid-cell.component";
+import {UserTypeService} from "../services/user-type.service";
+import {UserType, UserTypeQueryOptions} from "../domains/user-type.serializer";
+import {UserTypeRuleCeComponent} from "../components/user-type.rule-ce.component";
+import {UserTypeGridCellComponent} from "../grid-cells/user-type-grid-cell.component";
 
 @Component({
     standalone: false,
-    templateUrl: './templates/contact-type.html'
+    templateUrl: './templates/user-type.html'
 })
-export class ContactTypeView extends ViewExtender<ContactType> implements OnInit, OnDestroy {
-  override coreState: ContactTypeQueryOptions = new ContactTypeQueryOptions();
-  constructor(public override service: ContactTypeService,
+export class UserTypeView extends ViewExtender<UserType> implements OnInit, OnDestroy {
+  override coreState: UserTypeQueryOptions = new UserTypeQueryOptions();
+  constructor(public override service: UserTypeService,
               public override activatedRoute: ActivatedRoute,
               private popupService: SharedService) {
     super(activatedRoute, service);
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
-          {headerName: 'Mandatory', field: 'isRequired', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'Access', cellTemplate: ContactTypeGridCellComponent },
+          {headerName: 'Account Group', field: 'accountGroupName'},
+          {headerName: 'Roles', cellTemplate: UserTypeGridCellComponent },
           {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
       ];
   }
@@ -32,19 +32,19 @@ export class ContactTypeView extends ViewExtender<ContactType> implements OnInit
     super.ngOnDestroy();
   }
 
-  actionCb(row: ContactType){
+  actionCb(row: UserType){
     const inputData: any = { id: row.id, data: row };
     this.addUpdatePopup(inputData);
   }
 
   addRecord(){
-    const inputData: any = { id: null, data: new ContactType() };
+    const inputData: any = { id: null, data: new UserType() };
     this.addUpdatePopup(inputData);
   }
 
   addUpdatePopup(inputData: any){
     const popup = {
-      header: { text: `Rules for Document`, desc: '' },
+      header: { text: `Rules for UserType`, desc: '' },
       aside: ASIDE_CLASS.RIGHT,
       size: ASIDE_SIZE.W_50
     };
@@ -57,7 +57,7 @@ export class ContactTypeView extends ViewExtender<ContactType> implements OnInit
       this.popupService.destroy();
     };
 
-    let modal$ = this.popupService.showCustomPopup(ContactTypeRuleCeComponent, popup, inputData);
+    let modal$ = this.popupService.showCustomPopup(UserTypeRuleCeComponent, popup, inputData);
     modal$.then(success, failure);
   }
 }

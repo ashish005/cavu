@@ -1,0 +1,74 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+    <div class="row row-sm">
+      <div class="col-sm-6">
+        <div class="md-form-group">
+          <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+          <label> Name </label>
+        </div>
+      </div>
+    </div>
+    <div class="row row-sm">
+      <div class="col-sm-6">
+        <div>
+          <h6 class="pb-0">Role</h6>
+          <small>These rules will be applicable for organization</small>
+        </div>
+        <table class="table small-table text-sm">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Active</th>
+              <th>Locked</th>
+            </tr>
+            </thead>
+            <tbody formArrayName="userRoles">
+              <ng-template ngFor let-rule [ngForOf]="formRoles?.controls" let-i="index">
+                <tr [formGroup]="rule">
+                  <td><strong class="text-muted">{{rule.get('name').value}}</strong></td>
+                  <td><label class="md-check"><input type="checkbox" formControlName="isActive"><i class="success"></i><span></span></label></td>
+                  <td><label class="md-check"><input type="checkbox" formControlName="isLocked"><i class="success"></i><span></span></label></td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+      </div>
+      <div class="col-sm-6">
+        <div>
+          <h6 class="pb-0">Relations</h6>
+          <small>These rules will be applicable for organization</small>
+        </div>
+        <table class="table small-table text-sm">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Active</th>
+            <th>Locked</th>
+          </tr>
+          </thead>
+          <tbody formArrayName="userRelations">
+          <ng-template ngFor let-rule [ngForOf]="formRelations?.controls" let-i="index">
+            <tr [formGroup]="rule">
+              <td><strong class="text-muted">{{rule.get('name').value}}</strong></td>
+              <td><label class="md-check"><input type="checkbox" formControlName="isActive"><i class="success"></i><span></span></label></td>
+              <td><label class="md-check"><input type="checkbox" formControlName="isLocked"><i class="success"></i><span></span></label></td>
+            </tr>
+          </ng-template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #footerTemplate>
+      <div class="white lt b-t mt-auto">
+        <div class="float-left p-2">
+          <status-check [customForm]="customForm"></status-check>
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </form>
+</div>

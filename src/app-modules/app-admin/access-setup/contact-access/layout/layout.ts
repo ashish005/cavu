@@ -15,7 +15,8 @@ export class Layout implements OnInit, OnDestroy {
         //{ name: 'Notification', sortOrder: 3, route: 'notification'},
         { name: 'Address Type', sortOrder: 4, route: 'address-type'},
         { name: 'Contact Type', sortOrder: 5, route: 'contact-type'},
-        { name: 'Relation Type', sortOrder: 6, route: 'relation-type'}
+        //{ name: 'Relation Type', sortOrder: 6, route: 'relation-type'},
+        { name: 'User Type', sortOrder: 6, route: 'user-type'}
     ];
 
   @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;

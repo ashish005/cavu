@@ -7,7 +7,14 @@
           <label> Name </label>
         </div>
       </div>
-      <div class="col-sm-6"></div>
+      <div class="col-sm-3">
+        <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" formControlName="isRequired">
+            Mandatory
+          </label>
+        </div>
+      </div>
       <div class="col-sm-12">
         <div>
           <h6 class="pb-0">Address Rule</h6>
@@ -19,16 +26,16 @@
               <th>User Type</th>
               <th>Mandatory</th>
               <th>Verification Required</th>
-              <th>Status</th>
+              <th>Active</th>
             </tr>
             </thead>
-            <tbody formArrayName="rules">
+            <tbody formArrayName="rulePermissions">
               <ng-template ngFor let-rule [ngForOf]="formRules?.controls" let-i="index">
                 <tr [formGroup]="rule">
                   <td><strong class="text-muted">{{rule.get('userTypeName').value}}</strong></td>
                   <td><label class="md-check"><input type="checkbox" formControlName="isMandatory"><i class="success"></i><span></span></label></td>
                   <td><label class="md-check"><input type="checkbox" formControlName="isVerificationRequired"><i class="success"></i><span></span></label></td>
-                  <td><label class="md-check"><input type="checkbox" formControlName="status"><i class="success"></i><span></span></label></td>
+                  <td><label class="md-check"><input type="checkbox" formControlName="isActive"><i class="success"></i><span></span></label></td>
                 </tr>
               </ng-template>
             </tbody>
@@ -36,10 +43,15 @@
       </div>
     </div>
     <ng-template #footerTemplate>
-      <div class="col-sm-12 text-right">
-        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
-          <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
-        </button>
+      <div class="white lt b-t mt-auto">
+        <div class="float-left p-2">
+          <status-check [customForm]="customForm"></status-check>
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+          </button>
+        </div>
       </div>
     </ng-template>
   </form>

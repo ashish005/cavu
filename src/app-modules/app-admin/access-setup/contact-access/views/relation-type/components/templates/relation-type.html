@@ -9,10 +9,15 @@
       </div>
     </div>
     <ng-template #footerTemplate>
-      <div class="col-sm-12 text-right">
-        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
-          <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
-        </button>
+      <div class="white lt b-t mt-auto">
+        <div class="float-left p-2">
+          <status-check [customForm]="customForm"></status-check>
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="onSubmit(customForm)">
+            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+          </button>
+        </div>
       </div>
     </ng-template>
   </form>

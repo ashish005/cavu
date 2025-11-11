@@ -4,6 +4,7 @@ import { GridUISwitchCellComponent, ASIDE_CLASS, ASIDE_SIZE, SharedService, View
 import {AddressType, AddressTypeQueryOptions} from "../domains/address-type.serializer";
 import {AddressTypeService} from "../services/address-type.service";
 import {AddressTypeRuleCeComponent} from "../components/address-type.rule-ce.component";
+import {AddressTypeGridCellComponent} from "../grid-cells/address-type-grid-cell.component";
 
 @Component({
     standalone: false,
@@ -20,10 +21,9 @@ export class AddressTypeView extends ViewExtender<AddressType> implements OnInit
       //this.userMasterType = this.activatedRoute.snapshot.data.userType;
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
-          {headerName: 'Mandatory', field: 'isMandatory', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'VerificationRequired', field: 'isVerificationRequired', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'Verification By', field: 'verificationByUserName' },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+          {headerName: 'Mandatory', field: 'isRequired', cellTemplate: GridUISwitchCellComponent },
+          {headerName: 'Access', cellTemplate: AddressTypeGridCellComponent },
+          {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
       ];
   }
 

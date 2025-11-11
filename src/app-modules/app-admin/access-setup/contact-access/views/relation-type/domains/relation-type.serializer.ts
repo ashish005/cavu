@@ -1,10 +1,8 @@
 import {CoreQueryOptions, STATUS_ENUM} from "@app-global";
 
 export class RelationTypeQueryOptions extends CoreQueryOptions {
-    userMasterType: string;
     override toQueryString (){
         const obj = {
-            userMasterType:this.userMasterType
         };
         return super.getParamByObject(obj);
     }
@@ -14,14 +12,22 @@ export class RelationType {
   id: string;
   name: string;
   userTypeId: number;
-  status: boolean;
+  userTypeName: string;
+  isLocked: boolean;
+  isActive: boolean;
 
+  createdDate: string;
+  modifiedDate: string;
   constructor(model: any = <any>{}){
     this.id = model.id;
     this.name = model.name;
-
     this.userTypeId = model.userTypeId;
-    this.status = model.status || false;
+    this.userTypeName = model.userTypeName;
+
+    this.isLocked = model.isLocked;
+    this.isActive = model.isActive;
+    this.createdDate = model.createdDate;
+    this.modifiedDate = model.modifiedDate;
   }
 }
 

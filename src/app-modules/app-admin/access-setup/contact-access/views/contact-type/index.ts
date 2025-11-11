@@ -7,6 +7,7 @@ import {ContactTypeView} from "./views/contact-type.view";
 import {CONTACT_MASTER_COMPONENTS} from "./components";
 import {ContactTypeService} from "./services/contact-type.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CONTACT_TYPE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 
 const MasterDocumentRoutes: Array<any> = [
   { path: '', component: ContactTypeView, data: {title: 'master_type.modules.document.category.title'} }
@@ -18,7 +19,7 @@ const MasterDocumentRoutes: Array<any> = [
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],
-  declarations: [ContactTypeView, CONTACT_MASTER_COMPONENTS],
+  declarations: [ContactTypeView, CONTACT_MASTER_COMPONENTS, CONTACT_TYPE_GRID_COLUMN_CELL_COMPONENTS],
   providers: [ ContactTypeService ]
 })
 

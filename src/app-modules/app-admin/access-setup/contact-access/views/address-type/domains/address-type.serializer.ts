@@ -17,7 +17,7 @@ export class AddressTypeRule {
   addressTypeId: number;
   isVerificationRequired: boolean;
   isMandatory: boolean;
-  status: boolean;
+  isActive: boolean;
 
   constructor(model: any = <any>{}) {
     this.id = model.id;
@@ -26,35 +26,27 @@ export class AddressTypeRule {
     this.addressTypeId = model.addressTypeId;
     this.isVerificationRequired = model.isVerificationRequired;
     this.isMandatory = model.isMandatory;
-    this.status = model.status || false;
+    this.isActive = model.isActive || false;
   }
 }
 
 export class AddressType {
   id: string;
   name: string;
-  ruleId: string;
-  userTypeId: number;
-  isVerificationRequired: boolean;
-  isMandatory: boolean;
-
-  verificationByUserId: string;
-  verificationByUserName: string;
-  status: boolean;
+  isRequired: boolean;
+  isActive: boolean;
+  isLocked: boolean;
   rules: Array<AddressTypeRule>;
+  rulePermissions: Array<AddressTypeRule>;
 
   constructor(model: any = <any>{}){
     this.id = model.id;
     this.name = model.name;
+    this.isRequired = model.isRequired;
+    this.isActive = model.isActive;
+    this.isLocked = model.isLocked;
     this.rules = (model.rules || []).map(r=> new AddressTypeRule(r));
-
-    this.userTypeId = model.userTypeId;
-    this.ruleId = model.ruleId;
-    this.isVerificationRequired = model.isVerificationRequired;
-    this.isMandatory = model.isMandatory;
-    this.verificationByUserId = model.verificationByUserId;
-    this.verificationByUserName = model.verificationByUserName;
-    this.status = model.status || false;
+    this.rulePermissions = (model.rulePermissions || []).map(r=> new AddressTypeRule(r));
   }
 }
 

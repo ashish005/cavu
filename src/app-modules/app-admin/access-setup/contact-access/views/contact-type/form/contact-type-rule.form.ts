@@ -7,12 +7,13 @@ export class ContactTypeRuleForm {
     this.customForm = this.fb.group({
       name: [null, Validators.required],
       isRequired: [false],
-      rules: this.fb.array([])
+      isActive: [false],
+      rulePermissions: this.fb.array([])
     });
   }
 
   getRuleFormGroup(data: ContactTypeRule){
-    const { id, contactTypeId, userTypeId, userTypeName, isVerificationRequired, isMandatory, status } = data;
+    const { id, contactTypeId, userTypeId, userTypeName, isVerificationRequired, isMandatory, isActive } = data;
     return this.fb.group(<any>{
       id: [id],
       userTypeId: [userTypeId, Validators.required],
@@ -21,24 +22,24 @@ export class ContactTypeRuleForm {
 
       isVerificationRequired: [isVerificationRequired],
       isMandatory: [isMandatory],
-      status: [status]
+        isActive: [isActive]
     });
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.customForm.controls; }
 
-  get formRules() { return this.customForm.get('rules') as FormArray<FormGroup>; }
+  get formRules() { return this.customForm.get('rulePermissions') as FormArray<FormGroup>; }
 
   addToFormRule(item) { this.formRules.push(this.getRuleFormGroup(item)); }
 
     populateForm(data: ContactType) {
-        const { name, isRequired, rules } = data;
+        const { name, isRequired, isActive, rulePermissions } = data;
         this.customForm.get('name').setValue(name);
         this.customForm.get('isRequired').setValue(isRequired);
-
+        this.customForm.get('isActive').setValue(isActive);
         this.formRules.controls.length = 0;
-        (rules || []).map((r: ContactTypeRule) => {
+        (rulePermissions || []).map((r: ContactTypeRule) => {
             this.addToFormRule(r);
         });
     }

@@ -9,6 +9,7 @@ export class DocumentTypeRuleForm {
       categoryId: [null, Validators.required],
       minSize: [null],
       maxSize: [null],
+      isActive: [false],
       rulePermissions: this.fb.array([])
     });
   }
@@ -37,11 +38,12 @@ export class DocumentTypeRuleForm {
   addToFormRule(item) { this.formRules.push(this.getRuleFormGroup(item)); }
 
     populateForm(data: DocumentType) {
-        const { id, name, categoryId, minSize, maxSize, rulePermissions } = data;
+        const { id, name, categoryId, isActive, minSize, maxSize, rulePermissions } = data;
         this.customForm.get('name').setValue(name);
         this.customForm.get('categoryId').setValue(categoryId);
         this.customForm.get('minSize').setValue(minSize);
         this.customForm.get('maxSize').setValue(maxSize);
+        this.customForm.get('isActive').setValue(isActive);
 
         this.formRules.controls.length = 0;
         (rulePermissions || []).map((r: DocumentTypeRule) => {

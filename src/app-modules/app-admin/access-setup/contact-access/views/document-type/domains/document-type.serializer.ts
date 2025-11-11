@@ -39,6 +39,7 @@ export class DocumentType {
   verificationByUserId: string;
   verificationByUserName: string;
   isActive: boolean;
+  isLocked: boolean;
   rulePermissions: Array<DocumentTypeRule>;
 
   constructor(model: any = <any>{}){
@@ -53,6 +54,7 @@ export class DocumentType {
     this.verificationByUserId = model.verificationByUserId;
     this.verificationByUserName = model.verificationByUserName;
     this.isActive = model.isActive || false;
+    this.isLocked = model.isLocked;
   }
 }
 

@@ -7,6 +7,7 @@ import {AddressTypeService} from "./services/address-type.service";
 import {AddressTypeView} from "./views/address-type.view";
 import {ADDRESS_MASTER_COMPONENTS} from "./components";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ADDRESS_TYPE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 
 const MasterDocumentRoutes: Array<any> = [
   //{ path: '', pathMatch: 'full', redirectTo:'category' },
@@ -19,7 +20,7 @@ const MasterDocumentRoutes: Array<any> = [
     RouterModule.forChild(MasterDocumentRoutes),
     GlobalModule
   ],
-  declarations: [AddressTypeView, ADDRESS_MASTER_COMPONENTS],
+  declarations: [AddressTypeView, ADDRESS_MASTER_COMPONENTS, ADDRESS_TYPE_GRID_COLUMN_CELL_COMPONENTS],
   providers: [ AddressTypeService]
 })
 
