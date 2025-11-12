@@ -4,7 +4,6 @@ import {ViewExtender} from "@app-global";
 import {Team, TeamQueryOptions} from "../domains/team.serializer";
 import {TeamUserGroup} from "../domains/user-group.serializer";
 import {TeamUserRecordsService} from "../services/team.service";
-
 @Component({
     standalone: false,
     templateUrl: './templates/team-records.html',

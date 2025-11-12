@@ -5,6 +5,7 @@ import {TeamUserGroup} from "../domains/user-group.serializer";
 import {TeamGroupForm} from "../forms/team-group.form";
 import {TeamSetupAPIResolver} from "../services/api.resolver";
 import {TeamSetupService, TeamUserRecordsService} from "../services/team.service";
+import {TeamSetupLookup} from "../domains/lookup.serializer";
 
 @Component({
     standalone: false,
@@ -12,10 +13,10 @@ import {TeamSetupService, TeamUserRecordsService} from "../services/team.service
 })
 export class TeamCeView extends TeamGroupForm implements OnInit {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
-
+    @ViewChild('ruleRecord', { static: true }) public ruleRecord;
+    lookup: TeamSetupLookup;
     submitted: boolean;
     @Input() hideDynamicResult: boolean;
-    userList: Array<any>;
     @Input() set data(val) {
         this.populateUserGroup(val || new TeamUserGroup({}))
     };
@@ -24,6 +25,7 @@ export class TeamCeView extends TeamGroupForm implements OnInit {
                 private userRecordsService: TeamUserRecordsService,
                 protected service: TeamSetupService) {
         super(fb);
+        this.lookup = apiResolver.masterType;
         const itemFormValueChange = ([prev, next]: [any, any]) =>
         {
             if(prev != next)
@@ -35,7 +37,7 @@ export class TeamCeView extends TeamGroupForm implements OnInit {
         {
             if(prev != next)
             {
-                const { hasDynamicRules } = this.apiResolver.masterType?.getCategoryById(next) || {};
+                const { hasDynamicRules } = this.lookup?.getCategoryById(next) || {};
                 this.customForm.get('hasDynamicRules').setValue(hasDynamicRules || false);
             }
         };
@@ -49,11 +51,10 @@ export class TeamCeView extends TeamGroupForm implements OnInit {
        if(e.key == 'delete'){ super.deleteFilterOptions(e.index); }
     }
 
-    searchRecord(data)
+    searchRecord(data: FormGroup)
     {
-        const success = (resp)=> { this.userList = resp.entities; };
-        const error = (resp)=> {};
-        this.userRecordsService.getUserRecords(data.getRawValue()).subscribe(success, error);
+        const formData = data.getRawValue();
+        this.ruleRecord.populateRecord(formData);
     }
 
     onSubmit(form: FormGroup) {

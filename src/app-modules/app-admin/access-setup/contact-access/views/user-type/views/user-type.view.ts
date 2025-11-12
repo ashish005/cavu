@@ -18,7 +18,7 @@ export class UserTypeView extends ViewExtender<UserType> implements OnInit, OnDe
     super(activatedRoute, service);
       this.gridOptions.columnDefs = [
           {headerName: 'Name', field: 'name'},
-          {headerName: 'Account Group', field: 'accountGroupName'},
+          //{headerName: 'Account Group', field: 'accountGroupName'},
           {headerName: 'Roles', cellTemplate: UserTypeGridCellComponent },
           {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
       ];

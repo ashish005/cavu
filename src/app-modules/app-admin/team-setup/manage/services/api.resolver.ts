@@ -3,6 +3,7 @@ import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 import {ASIDE_CLASS, ASIDE_SIZE, OrgResourceService, SharedService} from "@app-global";
 import {TeamSetupLookup, TeamSetupLookupSerializer} from "../domains/lookup.serializer";
 import {TeamCeView} from "../components";
+import {StaticRecordsComponent} from "../components/static-records.component";
 
 @Injectable()
 export class TeamSetupAPIResolver extends OrgResourceService<TeamSetupLookup> implements Resolve<any> {
@@ -27,5 +28,17 @@ export class TeamSetupAPIResolver extends OrgResourceService<TeamSetupLookup> im
         const onSuccess = (resp)=> {this.sharedService.destroy(); cb(); };
         const failure = (resp)=> {this.sharedService.destroy();};
         this.sharedService.showCustomPopup(TeamCeView, popupOptions, inputData).then(onSuccess, failure);
+    }
+
+    showStaticRecordPopup(inputData, headerOptions, cb){
+        const popupOptions = {
+            header: headerOptions,
+            aside: ASIDE_CLASS.RIGHT,
+            size: ASIDE_SIZE.W_50
+        };
+        inputData = inputData || { id: null, data: null };
+        const onSuccess = (resp)=> {this.sharedService.destroy(); cb(); };
+        const failure = (resp)=> {this.sharedService.destroy();};
+        this.sharedService.showCustomPopup(StaticRecordsComponent, popupOptions, inputData).then(onSuccess, failure);
     }
 }

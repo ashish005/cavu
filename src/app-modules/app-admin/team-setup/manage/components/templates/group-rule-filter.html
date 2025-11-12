@@ -1,16 +1,32 @@
 <ng-container [formGroup]="customForm" class="text-xs">
     <td>
         <a *ngIf="!filters?.length" class="text-danger px-2">No filters available</a>
-        <select-dropdown [items]="filters"
+        <!--<select-dropdown [items]="filters"
                          title="Filters"
                          (cb)="updateUserFilterTypeId($event)"
-                         [control]="formUserFilterTypeId"></select-dropdown>
+                         [control]="formUserFilterTypeId"></select-dropdown>-->
+        <div class="md-form-group" style="padding: 0 !important;">
+            <select class="md-input" formControlName="userFilterTypeId">
+                <ng-template ngFor let-entity [ngForOf]="filters" let-i="index">
+                    <option [value]="entity.id">{{entity.name}}</option>
+                </ng-template>
+            </select>
+<!--            <label>Task</label>-->
+        </div>
     </td>
     <td>
-        <select-dropdown [items]="operatorList"
+        <!--<select-dropdown [items]="operatorList"
                          title="Operator"
                          (cb)="updateFilterOperator($event)"
-                         [control]="formFilterOperator"></select-dropdown>
+                         [control]="formFilterOperator"></select-dropdown>-->
+        <div class="md-form-group" style="padding: 0 !important;">
+            <select class="md-input" formControlName="operator">
+                <ng-template ngFor let-entity [ngForOf]="operatorList" let-i="index">
+                    <option [value]="entity.id">{{entity.name}}</option>
+                </ng-template>
+            </select>
+            <!--<label></label>-->
+        </div>
     </td>
     <td>
         <div class="form-control px-0" [class]="!formFilterValueName?.value ? 'border-danger text-danger': ''">

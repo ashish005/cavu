@@ -58,7 +58,7 @@ export const ADMIN_SETUP = [
             },
             {
                 path: 'org-team',
-                loadChildren: () => import('app-modules/app-admin/team-setup/index').then(m => m.TeamSetupModule),
+                loadChildren: () => import('app-modules/app-admin/team-setup/manage/index').then(m => m.TeamSetupModule),
                 data: { icon:"fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header:'Team' }//code: "TEAM",
             },
             {

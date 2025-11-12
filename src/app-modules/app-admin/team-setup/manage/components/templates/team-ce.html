@@ -9,13 +9,13 @@
                     </div>
                 </div>
                 <div class="col-sm-3">
-                    <select-dropdown [items]="apiResolver?.masterType?.categories"
+                    <select-dropdown [items]="lookup?.categories"
                                      title="Category"
                                      (cb)="updateGroupCategoryId($event)"
                                      [control]="formUserGroupCategoryId"></select-dropdown>
                 </div>
                 <div class="col-sm-3">
-                    <select-dropdown [items]="apiResolver?.masterType?.userTypes"
+                    <select-dropdown [items]="lookup?.userTypes"
                                      title="User Type"
                                      (cb)="updateUserTypeId($event)"
                                      [control]="formUserTypeId"></select-dropdown>
@@ -32,14 +32,13 @@
                     <th width="20px"></th>
                 </tr>
                 </thead>
-                <!--<tbody formArrayName="rules">
+                <tbody formArrayName="rules">
                 <tr *ngFor="let item of formFilterOptions.controls; let i = index;"
                     group-rule-filter [customForm]="item" [index]="i" (onOk)="cb($event)"></tr>
-                </tbody>-->
+                </tbody>
                 <tfoot class="box">
                 <tr>
-                    <td colspan="4"><a class="text-primary" (click)="addFilterOptions()"><i class="fa fa-plus"></i> Add
-                        Filter</a></td>
+                    <td colspan="4"><a class="text-primary" (click)="addFilterOptions()"><i class="fa fa-plus"></i> Add Filter</a></td>
                 </tr>
                 </tfoot>
             </table>
@@ -47,9 +46,13 @@
                 Dynamic rules are not applicable to this group...
             </div>
         </div>
-        <div class="p-3 mt-auto">
+        <div class="mx-2 mt-auto white">
             <a class="btn text-sm text-primary text-primary" *ngIf="customForm.value.hasDynamicRules"
                (click)="addFilterOptions()"><i class="fa fa-plus"></i> Add Filter</a>
+            <div class="float-left p-2">
+                <status-check [customForm]="customForm"></status-check>
+            </div>
+
             <ul class="nav nav-xs flex-row no-border float-right">
                 <li class="nav-item px-2" *ngIf="!hideDynamicResult">
                     <a class="nav-link btn btn-sm b-a" (click)="searchRecord(customForm)">Fetch Records</a>
@@ -63,28 +66,7 @@
             </ul>
         </div>
     </form>
-    <div class="d-flex flex-column w-xl white h-100 light lt" *ngIf="!hideDynamicResult">
-        <div class="navbar box-shadow">
-            <div class="input-group flex">
-                <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search User for Group Rules" required="">
-                <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>
-            </div>
-        </div>
-        <div class="p-2 px-3 text-muted text-sm">User By Group Rules</div>
-        <div class="scrollable hover h-100">
-            <div class="streamline">
-                <ng-template ngFor let-row [ngForOf]="userList" let-i="index">
-                    <div class="sl-item b-success">
-                        <div class="sl-content">
-                            <div class="sl-date">
-                                {{ row.name }}
-                                <a class="text-primary">{{ row.userType }}</a>
-                            </div>
-                            <p>{{ row.email }}{{ row.mobile }}</p>
-                        </div>
-                    </div>
-                </ng-template>
-            </div>
-        </div>
+    <div class="d-flex flex-column w-xl white h-100 light lt">
+        <rule-record #ruleRecord></rule-record>
     </div>
 </div>

@@ -3,10 +3,10 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {CoreResponse} from "@app-global";
 import {ColumnFilterLookup} from "../domains/lookup.serializer";
 import {TeamSetupAPIResolver} from "../services/api.resolver";
-import {TeamSetupService} from "../services/team.service";
+import {TeamSetupService, TeamUserRecordsService} from "../services/team.service";
 
 @Component({
-    standalone: false,
+  standalone: false,
   selector: '[group-rule-filter]',
   templateUrl: './templates/group-rule-filter.html'
 })
@@ -26,7 +26,7 @@ export class GroupRuleFilterCeComponent implements OnInit {
         {id: 'range', name: 'Range'},
     ];
     entities: Array<any>;
-    constructor(public fb: FormBuilder, public apiResolver: TeamSetupAPIResolver, public service: TeamSetupService) { }
+    constructor(public fb: FormBuilder, public apiResolver: TeamSetupAPIResolver, public service: TeamUserRecordsService) { }
 
     get formUserTypeId(){ return this.customForm.get('userTypeId'); }
     get formUserFilterTypeId(){ return this.customForm.get('userFilterTypeId'); }
@@ -46,7 +46,7 @@ export class GroupRuleFilterCeComponent implements OnInit {
         this.populateColumnFilters(userTypeId);
         if(filterKeyId)
         {
-            this.populateValues(userTypeId, filterKeyId);
+            this.populateValues(filterKeyId);
         }
 
         this.filters = this.apiResolver.masterType?.getFiltersByUserTypeId(this.formUserTypeId.value);
@@ -54,14 +54,15 @@ export class GroupRuleFilterCeComponent implements OnInit {
             this.populateColumnFilters(userTypeId);
         });
         this.formUserFilterTypeId.valueChanges.subscribe(filterKeyId => {
-            this.populateValues(this.formUserTypeId.value, filterKeyId)
+            debugger
+            this.populateValues(filterKeyId);
         })
     }
 
-    populateValues = (userTypeId, filterKeyId) =>
+    populateValues = (filterKeyId) =>
     {
         const success =(r: CoreResponse<any>) => { this.entities = r.entities; };
-        this.service.getLookupByKey(userTypeId, filterKeyId).toPromise().then(success);
+        this.service.getLookupByKey(filterKeyId).toPromise().then(success);
     }
 
     populateColumnFilters(userTypeId) {

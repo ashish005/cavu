@@ -1,0 +1,26 @@
+<div class="d-flex flex-column">
+    <div class="navbar box-shadow">
+        <div class="input-group flex">
+            <input type="text" class="form-control px-0 no-bg no-border no-shadow search"
+                   placeholder="Search User for Group Rules" required="">
+            <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                    class="fa fa-search text-muted"></i></button></span>
+        </div>
+    </div>
+    <div class="p-2 px-3 text-muted text-sm">User By Rules</div>
+    <div class="scrollable hover h-100">
+        <div class="streamline">
+            <ng-template ngFor let-row [ngForOf]="userList" let-i="index">
+                <div class="sl-item b-success">
+                    <div class="sl-content">
+                        <div class="sl-date">
+                            {{ row.name }}
+                            <a class="text-primary">{{ row.userType }}</a>
+                        </div>
+                        <p>{{ row.email }}{{ row.mobile }}</p>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

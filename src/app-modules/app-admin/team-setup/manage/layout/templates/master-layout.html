@@ -11,9 +11,15 @@
                 </div>
                 <div class="nav-active-border b-theme px-4 px-md-0">
                     <ul class="nav nav-xs flex-row" *ngFor="let nav of navList">
-                        <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{ item?.key
-                                }}</a>
+                        <ng-container *ngFor="let item of nav?.children; let i = index">
+                            <li class="nav-item" routerLinkActive="active">
+                                <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{ item?.key}}</a>
+                            </li>
+                        </ng-container>
+                        <li class="nav-item">
+                            <button type="submit" class="btn btn-xs b-a b-theme text-theme" (click)="showUserFilters()">
+                                Team:Setup Filters
+                            </button>
                         </li>
                     </ul>
                 </div>

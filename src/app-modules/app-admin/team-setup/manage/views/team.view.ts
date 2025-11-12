@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {ViewExtender} from "@app-global";
+import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 import {TeamUserGroup, TeamUserGroupQueryOptions} from "../domains/user-group.serializer";
 import {TeamSetupService} from "../services/team.service";
 import {TeamRuleCellComponent} from "../grid-cells/team-grid.cell";
@@ -23,10 +23,10 @@ export class TeamView extends ViewExtender<TeamUserGroup> implements OnInit{
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name' },
             {headerName: 'Category', field: 'categoryName' },
-            {headerName: 'UserType', field: 'userMasterTypeName' },
-            {headerName: 'Dynamic Rules', field: 'hasDynamicRules' },
-            {headerName: 'Rules', field: 'totalRules', cellTemplate: TeamRuleCellComponent },
-            {headerName: 'Status', field: 'status' }
+            {headerName: 'UserType', field: 'userTypeName' },
+            {headerName: 'Total Rules', field: 'totalRules', cellTemplate: TeamRuleCellComponent },
+            {headerName: 'Dynamic Rules', field: 'hasDynamicRules', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
         ];
     }
     ngOnInit(){ this.populateGrid(); }

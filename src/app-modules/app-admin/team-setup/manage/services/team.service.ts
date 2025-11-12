@@ -16,22 +16,11 @@ export class TeamService extends OrgResourceService<Team>{
 export class TeamSetupService extends OrgResourceService<TeamUserGroup>{
     public teamChangeEvent: BehaviorSubject<TeamUserGroup> = new BehaviorSubject<TeamUserGroup>(null);
     constructor(public override injector: Injector) { super(injector, 'team', new TeamUserGroupSerializer()); }
-
-    getLookupByKey(groupId, filterKey) {
-        return this.httpClient
-            .get(`${this.viewUrl}/lookup/${groupId}/${filterKey}`, this.requestHeaders)
-            .pipe(
-                tap(
-                    (resp: any) => console.log('read logged'),
-                    (error)=>{ this.handleError(error, () => this.getLookupByKey(groupId, filterKey)) }
-                )
-            );
-    }
 }
 
 @Injectable()
 export class TeamUserRecordsService extends OrgResourceService<Team>{
-    constructor(public override injector: Injector) { super(injector, 'team/user-records', new TeamSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'teamRecord', new TeamSerializer()); }
 
     getUserRecords(data) {
         return this.httpClient
@@ -43,4 +32,19 @@ export class TeamUserRecordsService extends OrgResourceService<Team>{
                 )
             );
     }
+
+    getLookupByKey(filterKey) {
+        return this.httpClient
+            .get(`${this.viewUrl}/lookup/${filterKey}`, this.requestHeaders)
+            .pipe(
+                tap(
+                    (resp: any) => console.log('read logged'),
+                    (error)=>{ this.handleError(error, () => this.getLookupByKey(filterKey)) }
+                )
+            );
+    }
+}
+@Injectable()
+export class MappedUserRecordService extends OrgResourceService<Team>{
+    constructor(public override injector: Injector) { super(injector, 'userGroupMapping', new TeamSerializer()); }
 }

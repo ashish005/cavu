@@ -1,0 +1,13 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <org-grid [data]="gridData"
+                  [options]="gridOptions"
+                  [isLoading]="isLoading"
+                  (cb)="actionCb($event)"
+                  (update)="updateGrid($event)"></org-grid>
+    </div>
+</div>
+<ng-template #footerTemplate>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)">
+    </org-grid-pagination>
+</ng-template>

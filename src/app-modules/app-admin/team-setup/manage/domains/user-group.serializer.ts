@@ -21,7 +21,7 @@ export class TeamUserGroupRule {
     valueId: string;
     min: string;
     max: string;
-
+    isActive: boolean;
     constructor(model: any = <any>{}){
         this.id = model.id;
         this.userTypeId = model.userTypeId; // Just to manage internally
@@ -32,6 +32,7 @@ export class TeamUserGroupRule {
         this.valueId = model.valueId;
         this.min = model.min;
         this.max = model.max;
+        this.isActive = model.isActive;
     }
 }
 
@@ -39,17 +40,18 @@ export class TeamUserGroup extends CoreResource {
     //id: string;
     name: string;
     categoryId: number;
-    userTypeId: number; //Just to filter out rules
     categoryName: string;
+    userTypeId: number; //Just to filter out rules
+
     hasDynamicRules: boolean;
     rules: Array<TeamUserGroupRule>;
     totalRules: number;
-    userMasterTypeName: string;
-    status: string;
+    userTypeName: string;
+    isActive: boolean;
     isLocked: boolean;
     constructor(model: any = <any>{}){
         super();
-        const { id, name, categoryId, categoryName, userTypeId, hasDynamicRules, rules, totalRules, userMasterTypeName, status, isLocked} = model;
+        const { id, name, categoryId, categoryName, userTypeId, hasDynamicRules, rules, totalRules, userTypeName, isActive, isLocked} = model;
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
@@ -58,8 +60,8 @@ export class TeamUserGroup extends CoreResource {
         this.hasDynamicRules = hasDynamicRules;
         this.rules = (rules || []).map(r => new TeamUserGroupRule(r));
         this.totalRules = totalRules;
-        this.userMasterTypeName = userMasterTypeName;
-        this.status = status;
+        this.userTypeName = userTypeName;
+        this.isActive = isActive;
         this.isLocked = isLocked;
     }
 }
