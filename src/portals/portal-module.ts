@@ -1,10 +1,9 @@
 import {RouterModule, ROUTES} from "@angular/router";
 import {NgModule} from "@angular/core";
-import {SetupLayout} from "./org-admin/layouts";
+import {LogLayout, ProcessLayout, SetupLayout} from "./org-admin/layouts";
 import {CommonModule} from "@angular/common";
 import {AppSetupService, GlobalModule} from "@app-global";
 import {ADMIN_SETUP} from "./org-admin";
-
 enum ORG_SECTOR {
   SETUP_ORG = "setup_organizations",
   EDUCATION = "education",
@@ -14,7 +13,6 @@ enum ORG_SECTOR {
 
   TRANSPORTATION = "transportation"
 };
-
 enum ORG_USER_TYPE {
   ROOT = "root",
   EMPLOYEE = "employee",
@@ -24,7 +22,6 @@ enum ORG_USER_TYPE {
   STUDENT_PARENT = "parent",
   DRIVER = "driver",
 };
-
 export const setupRoutesFactory = (setupService: AppSetupService) => {
   const { license, sectorMasterType }= setupService.appSetup;
   //const userMasterType = coreService.currentUser?.userMasterType;
@@ -179,7 +176,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
 };
 
 @NgModule({
-  declarations: [SetupLayout],
+  declarations: [ SetupLayout, ProcessLayout, LogLayout ],
   imports: [RouterModule, CommonModule, GlobalModule],
     providers: [
         { provide: ROUTES, useFactory: setupRoutesFactory, multi: true, deps: [ AppSetupService ] }

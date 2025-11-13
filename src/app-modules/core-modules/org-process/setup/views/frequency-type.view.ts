@@ -21,7 +21,7 @@ export class FrequencyTypeView extends ViewExtender<FrequencyType> implements On
             {headerName: 'Name', field: 'name' },
             {headerName: 'Fee Type', field: 'isFeeType', cellTemplate: GridUISwitchCellComponent},
             {headerName: 'PeriodType', field: 'isPeriodType', cellTemplate: GridUISwitchCellComponent},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent }
+            {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
         ];
     }
 

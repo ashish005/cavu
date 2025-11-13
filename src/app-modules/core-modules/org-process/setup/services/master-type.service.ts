@@ -7,7 +7,7 @@ import {ProcessPhase, ProcessPhaseSerializer} from "../domains/process-phase.ser
 
 @Injectable()
 export class FrequencyTypeService extends OrgResourceService<FrequencyType>{
-    constructor(public override injector: Injector) { super(injector, 'masterType/frequencyType', new FrequencyTypeSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'frequencyType', new FrequencyTypeSerializer()); }
 }
 
 @Injectable()

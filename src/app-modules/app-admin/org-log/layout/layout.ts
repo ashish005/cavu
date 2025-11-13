@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-    standalone: false,
+  standalone: false,
   templateUrl: './layout.html'
 })
 export class LayoutComponent {
@@ -12,7 +12,7 @@ export class LayoutComponent {
             children:[
                 { routeTo: ['error'], icon:"fa fa-inbox", key: "Error Log" },
                 { routeTo: ['data'], icon:"fa fa-paper-plane", key: "Data Log" },
-                { routeTo: ['org-task'], icon:"fa fa-trash", key: "Org Task Log" },
+                //{ routeTo: ['org-task'], icon:"fa fa-trash", key: "Org Task Log" },
             ]
         }
     ];

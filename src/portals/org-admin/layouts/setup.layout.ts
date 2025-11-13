@@ -1,9 +1,8 @@
 import {ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-
 @Component({
-    templateUrl: './templates/setup.html',
-  //styles: [`::ng-deep ng-component{ display: contents;}`],
+  templateUrl: './templates/setup.html',
+  styles: [`::ng-deep ng-component{ display: contents;}`],
   standalone: false
 })
 export class SetupLayout {
@@ -27,7 +26,6 @@ export class SetupLayout {
             children:[
                 { routeTo: ['org-team'], icon:"fa fa-building", key: 'Team' },
                 { routeTo: ['notification'], icon:"fa fa-bell", key: 'Notification' },
-                { routeTo: ['org-log'], icon:"fa fa-clock-o", key: 'Error Logs' },
                 { routeTo: ['process'], icon:"fa fa-history", key: 'Process & Workflow' },
                 { routeTo: ['setup-trxn'], icon:"fa fa-cc-visa", key: 'Bank' },
                 { routeTo: ['bank-trxn'], icon:"fa fa-cc-visa", key: 'Bank Integration' }
@@ -51,8 +49,7 @@ export class SetupLayout {
     ];
     constructor(public router: Router,
                 public activatedRoute: ActivatedRoute,
-                public cdref: ChangeDetectorRef){
-    }
-    ngAfterContentChecked() { this.cdref.detectChanges(); }
+                public cdref: ChangeDetectorRef){}
+    ngAfterContentChecked(){ this.cdref.detectChanges(); }
     onActivate(componentRef) {}
 }

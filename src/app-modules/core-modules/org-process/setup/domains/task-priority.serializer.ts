@@ -11,9 +11,9 @@ export class TaskPriority {
   color: string;
 
   isLocked: boolean;
-  status: string;
+  isActive: boolean;
   constructor(model: any = <any>{}){
-    const { id, name, masterType, sortOrder, isDefault, color, isLocked, status} = model;
+    const { id, name, masterType, sortOrder, isDefault, color, isLocked, isActive} = model;
     this.id = id;
     this.name = name;
     this.masterType = masterType;
@@ -21,8 +21,8 @@ export class TaskPriority {
     this.isDefault = isDefault;
     this.color = color;
 
-    this.isLocked = model.isLocked;
-    this.status = model.status;
+    this.isLocked = isLocked;
+    this.isActive = isActive;
   }
 }
 

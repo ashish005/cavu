@@ -29,7 +29,7 @@ export class ProcessLayout {
         CommonModule,
         RouterModule.forChild([
             {
-                path: '', component: ProcessLayout,
+                path: '', //component: ProcessLayout,
                 children: [
                     {
                         path: '', data: { translatePath: 'modules.project.manage' },

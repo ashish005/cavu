@@ -61,7 +61,7 @@ export class Layout extends CoreEndpointBase implements OnInit {
     }
 
     public getOrgRootProcesses() {
-        const url: string = this.baseSectorAPIUrl + `processWorkflow/root/${super.apiVersion}`;
+        const url: string = this.baseSectorAPIUrl + `/processWorkflow/root/${super.apiVersion}`;
         return this.httpClient.get(url, this.requestHeaders)
             .pipe(
                 map(data => data),

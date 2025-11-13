@@ -15,17 +15,17 @@ export class FrequencyType {
     name: string;
     isFeeType: boolean;
     isPeriodType: boolean;
-    status: boolean;
+    isActive: boolean;
     isLocked: boolean;
 
     constructor(model: any = <any>{}){
-        const { id, name, isFeeType, isPeriodType, status, isLocked, accountId, hasTax, hasVoucherCredit }  = model;
+        const { id, name, isFeeType, isPeriodType, isActive, isLocked, accountId, hasTax, hasVoucherCredit }  = model;
         this.id = id;
         this.name = name;
         this.isFeeType = isFeeType;
         this.isPeriodType = isPeriodType;
 
-        this.status = status;
+        this.isActive = isActive;
         this.isLocked = isLocked;
     }
 }

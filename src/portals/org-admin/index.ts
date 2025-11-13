@@ -1,4 +1,5 @@
-import { SetupLayout } from "./layouts";
+import {ProcessLayout, SetupLayout} from "./layouts";
+import {LogLayout} from "./layouts/log.layout";
 
 export const ADMIN_SETUP = [
     {
@@ -22,15 +23,14 @@ export const ADMIN_SETUP = [
                 loadChildren: () => import('app-modules/app-identity/module-permission/index').then(m => m.ManageUserModule),
                 data: { key:'list', icon:"fa fa-money", name: "Money", title: 'Team', header:'Team' }//code: "ACCESS_USR_LOGIN"
             },
-            {
-                path: 'org-log',
-                loadChildren: () => import('app-modules/app-admin/org-log/index').then(m => m.OrgLogModule),
-                data: {title: 'Log', header: 'Log'}
+            { path: 'module-access-setup',
+                loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/index').then(m => m.ContactAccessSetupModule),
+                //data: { userType: ORG_USER_TYPE.EMPLOYEE }
             },
             {
-                path: 'process', //canLoad: [PortalAuthGuard],
-                loadChildren: () => import('app-modules/core-modules/org-process/index').then(m => m.ProcessModule),
-                data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'}
+                path: 'org-team',
+                loadChildren: () => import('app-modules/app-admin/team-setup/manage/index').then(m => m.TeamSetupModule),
+                data: { icon:"fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header:'Team' }//code: "TEAM",
             },
             {
                 path: 'notification', //canLoad: [PortalAuthGuard],
@@ -51,15 +51,6 @@ export const ADMIN_SETUP = [
                 path: 'setup-trxn',
                 loadChildren: () => import('app-modules/app-admin/setup-transaction/index').then(m => m.SetupTransactionModule),
                 data: {title: 'Bank', header: 'Bank', name: "Banking", key: 'layout.banking'}//code: "ACCESS_VT_MGT",
-            },
-            { path: 'module-access-setup',
-                loadChildren: () => import('app-modules/app-admin/access-setup/contact-access/index').then(m => m.ContactAccessSetupModule),
-                //data: { userType: ORG_USER_TYPE.EMPLOYEE }
-            },
-            {
-                path: 'org-team',
-                loadChildren: () => import('app-modules/app-admin/team-setup/manage/index').then(m => m.TeamSetupModule),
-                data: { icon:"fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header:'Team' }//code: "TEAM",
             },
             {
                 path: 'integration',
@@ -87,5 +78,15 @@ export const ADMIN_SETUP = [
                 data: {title: 'Trxn', header:'Payroll', name: "Payroll", key: 'Payroll' }//code: "ACCESS_VT_MGT",
             }
         ]
-    }
+    },
+    {
+        path: 'process', component: ProcessLayout,//canLoad: [PortalAuthGuard],
+        loadChildren: () => import('app-modules/core-modules/org-process/index').then(m => m.ProcessModule),
+        data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'}
+    },
+    {
+        path: 'org-log', component: LogLayout,
+        loadChildren: () => import('app-modules/app-admin/org-log/index').then(m => m.OrgLogModule),
+        data: {title: 'Log', header: 'Log'}
+    },
 ];
