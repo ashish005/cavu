@@ -1,0 +1,72 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <form class="p-3" [formGroup]="customForm" (submit)="onSubmit(customForm)">
+            <div class="d-flex flex-column flex">
+                <table class="no-more-tables p-0 table small-table table-striped table-condensed cf text-xs">
+                    <thead class="cf">
+                    <tr>
+                        <th>From Phase</th>
+                        <th>From Status</th>
+                        <th>To Phase</th>
+                        <th>To Status</th>
+                        <th width="150px" class="text-right">Enabled</th>
+                    </tr>
+                    </thead>
+                    <tbody formArrayName="phaseTransitions">
+                    <ng-template ngFor let-phase [ngForOf]="phaseTransitions.controls" let-i="index">
+                        <tr [formGroupName]="i">
+                            <td>
+                                <select formControlName="fromPhaseId">
+                                    <option [ngValue]="null">-- Select Phase --</option>
+                                    <option *ngFor="let phase of process?.phases" [value]="phase.id">
+                                        {{ phase.name }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td><select formControlName="fromStatusId">
+                                <option [ngValue]="null">-- Select Status --</option>
+                                <option *ngFor="let status of lookup.phaseStatus" [value]="status.id">
+                                    {{ status.name }}
+                                </option>
+                            </select></td>
+                            <td><select formControlName="toPhaseId">
+                                <option [ngValue]="null">-- Select Phase --</option>
+                                <option *ngFor="let phase of process?.phases" [value]="phase.id">
+                                    {{ phase.name }}
+                                </option>
+                            </select></td>
+                            <td><select formControlName="toStatusId">
+                                <option [ngValue]="null">-- Select Status --</option>
+                                <option *ngFor="let status of lookup.phaseStatus" [value]="status.id">
+                                    {{ status.name }}
+                                </option>
+                            </select></td>
+                            <td>
+                                <div class="text-right">
+                                    <label class="md-check my-1"><input type="checkbox" formControlName="isActive"><i></i><span></span></label>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <button type="button" (click)="addTransition()">Add Transition</button>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="p-3 b-t mt-auto">
+                <div class="d-flex align-items-center float-right">
+                    <button type="submit" class="btn btn-sm btn-outline primary b-a"
+                            [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

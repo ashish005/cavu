@@ -3,33 +3,12 @@ import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
 import {GlobalModule} from "@app-global";
 
-@Component({
-    standalone: false,
-    templateUrl: './layout.html'
-})
-export class ProcessLayout {
-    public navList = [
-        { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'mainLayout.dashboard' },
-        { routeTo: ['workflow'], icon:"fa fa-dashboard", key: 'Workflow' },
-        { routeTo: ['all'], icon:"fa fa-envelope", key: 'Processes' },
-        { routeTo: ['task'], icon:"fa fa-envelope", key: 'Tasks' },
-        { routeTo: ['task-info'], icon:"fa fa-envelope", key: 'Task Runner' },
-        { routeTo: ['scheduled'], icon:"fa fa-bell", key: 'Task Schedule' },
-        { routeTo: ['task-reminder'], icon:"fa fa-bell", key: 'mainLayout.reminder' },
-        { routeTo: ['task-calendar'], icon:"fa fa-bell", key: 'mainLayout.calendar' },
-        { routeTo: ['history'], icon:"fa fa-bell", key: 'History' },
-        { routeTo: ['setup'], icon:"fa fa-bell", key: 'Setup' }
-    ];
-    constructor(){}
-    onActivate(e: any){}
-}
-
 @NgModule({
     imports: [
         CommonModule,
         RouterModule.forChild([
             {
-                path: '', //component: ProcessLayout,
+                path: '',
                 children: [
                     {
                         path: '', data: { translatePath: 'modules.project.manage' },
@@ -54,6 +33,6 @@ export class ProcessLayout {
         GlobalModule
     ],
     providers: [],
-    declarations: [ProcessLayout]
+    declarations: []
 })
 export class ProcessModule{}

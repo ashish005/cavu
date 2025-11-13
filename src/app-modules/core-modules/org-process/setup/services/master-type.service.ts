@@ -12,15 +12,15 @@ export class FrequencyTypeService extends OrgResourceService<FrequencyType>{
 
 @Injectable()
 export class ProcessPhaseService extends OrgResourceService<ProcessPhase> {
-    constructor(public override injector: Injector) { super(injector, 'masterType/ProcessPhase', new ProcessPhaseSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'processPhaseStatus', new ProcessPhaseSerializer()); }
 }
 
 @Injectable()
 export class TaskPriorityService extends OrgResourceService<TaskPriority> {
-    constructor(public override injector: Injector) { super(injector, 'masterType/TaskPriority', new TaskPrioritySerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'taskPriority', new TaskPrioritySerializer()); }
 }
 
 @Injectable()
 export class TaskStatusTypeService extends OrgResourceService<TaskStatusType> {
-    constructor(public override injector: Injector) { super(injector, 'masterType/TaskStatusType', new TaskStatusTypeSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'taskStatusType', new TaskStatusTypeSerializer()); }
 }

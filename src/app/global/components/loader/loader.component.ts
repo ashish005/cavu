@@ -124,7 +124,8 @@ import {CommonModule} from "@angular/common";
     }
   }
 
-  `], standalone: true, imports: [ CommonModule ]
+  `],
+  standalone: true, imports: [ CommonModule ]
 })
 export class LoaderComponent {
   @Input() isLoading: boolean;

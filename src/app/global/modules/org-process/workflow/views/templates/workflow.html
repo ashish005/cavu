@@ -1,0 +1,173 @@
+<div class="flex p-2">
+    <!--<div class="float-right text-xs">
+        <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block"><i class="fa fa-plus pr-1"></i> Process </a>
+    </div>-->
+    <ul class="timeline" [class.timeline-center]="isCenterAlign">
+        <ng-template [ngTemplateOutlet]="orgProcessTimelineTemplateRef"
+                     [ngTemplateOutletContext]="{ list: processList }"></ng-template>
+    </ul>
+    <loader [isLoading]="isLoading"></loader>
+</div>
+<ng-template #orgProcessTimelineTemplateRef let-list="list">
+    <li class="tl-header">
+        <div class="btn btn-xs" data-toggle-class="timeline-center" data-target=".timeline">Default Workflow</div>
+    </li>
+    <li class="tl-item" *ngFor="let process  of list | sortBy:'asc': 'sortOrder'; let i = index"
+        [class.tl-left]="(i%2 == 0)">
+        <div class="tl-wrap b-info" style="float: none;">
+            <!--<span class="tl-date text-muted"><i class="fa fa-green text-success">N/A</i></span>-->
+            <div class="tl-content box-color b-a text-color block w-xl w-auto-xs mb-0">
+                <span class="arrow b-white left pull-top hidden-left"></span>
+                <span class="arrow b-white right pull-top visible-left"></span>
+                <div>
+                    <a class="text-primary collapsed">{{process?.name}}</a>
+                    <!--<div style="top: -35px; position: relative;">
+                        <ng-template [ngTemplateOutlet]="processActionsTemplateRef" [ngTemplateOutletContext]="{ process: process, isParent: true }"></ng-template>
+                    </div>-->
+
+                </div>
+                <ng-template [ngTemplateOutlet]="subProcessTemplateRef"
+                             [ngTemplateOutletContext]="{ data: process }"></ng-template>
+            </div>
+            <!--<div class="tl-content box-color block b-a">
+                <span class="arrow b-info left pull-top hidden-left"></span>
+                <span class="arrow b-info right pull-top visible-left"></span>
+                <div class="box-header font-bold primary">{{subProcess.name}}</div>
+                <div class="box-divider"></div>
+                <div class="box-body text-muted">{{subProcess | json}}</div>
+            </div>-->
+        </div>
+    </li>
+    <!--</ng-template>-->
+    <li class="tl-header">
+        <div class="btn btn-sm white btn-rounded">End</div>
+    </li>
+</ng-template>
+<ng-template #subProcessTemplateRef let-data="data">
+    <div class="streamline streamline-xs streamline-dotted">
+        <ng-template ngFor let-subProcess [ngForOf]="data?.childItems | sortBy:'asc': 'sortOrder'" let-i="index">
+            <div class="sl-item b-info">
+                <div class="sl-content text-xs">
+                    <div class="sl-author b-b">
+                        {{subProcess.name}}
+                        <small class="h-1x">{{subProcess.description}}</small>
+                    </div>
+                    <!--<ng-template [ngTemplateOutlet]="processActionsTemplateRef" [ngTemplateOutletContext]="{ process: subProcess }"></ng-template>-->
+                </div>
+                <div class="sl-content">
+                    <ng-template [ngTemplateOutlet]="taskTemplateRef" [ngTemplateOutletContext]="{ taskList: subProcess?.tasks }"></ng-template>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+    <ng-template [ngTemplateOutlet]="taskTemplateRef"
+                 [ngTemplateOutletContext]="{ taskList: data?.tasks }"></ng-template>
+</ng-template>
+<ng-template #taskTemplateRef let-taskList="taskList">
+    <div class="streamline streamline-xs streamline-dotted">
+        <ng-template ngFor let-task [ngForOf]="taskList | sortBy:'asc': 'sortOrder'" let-i="index">
+            <div class="sl-item b-warning">
+                <div class="sl-content b-b">
+                    <div class="sl-author b-b">{{task.name}}
+                        <small class="h-1x">{{task.taskPriorityName || '--'}} Priority <span class="badge green">Task</span>  {{task.remark }}</small>
+                    </div>
+                    <!--<p>This
+                        <a class="text-primary">{{ (task.isManual) ? 'Manual': 'Automatic'}}</a>
+                        <small *ngIf="task.isPrimary" class="item-title _500 text-success px-1">(High Priority)</small>
+                        Task executed <a class="text-info">{{task.lastRunResult}}</a> on <a class="text-info">{{task.lastRunTime}}</a>.
+                        &lt;!&ndash;Next execution date is {{task.nextRunTime }}.&ndash;&gt;
+                        <span class="float-right" *ngIf="task.isVerificationRequired">Verification Required</span>
+                    </p>-->
+                    <ng-template [ngTemplateOutlet]="taskActionsTemplateRef" [ngTemplateOutletContext]="{ data: task }"></ng-template>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</ng-template>
+
+<ng-template #processActionsTemplateRef let-process="process" let-isParent="isParent">
+    <div class="box-tool">
+        <ul class="nav nav-xs no-border">
+            <li class="nav-item text-xs mx-1">
+                <div class="input-group b-a px-1">
+                    <div class="px-1"><small class="text-xs text-muted">Phase</small></div>
+                    <div class="input-group-prepend pr-1">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">{{process.processPhase?? '&#45;&#45;'}}</a>
+                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <!--<ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.processPhases | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <a class="dropdown-item" (click)="onProcessPhasesChange(process, phase)" [class.active]="(process.processPhase == phase.name)">{{phase.name}}</a>
+                            </ng-template>-->
+                        </div>
+                    </div>
+                    <input #processPhaseOn type="date" class="md-input form-control no-border"
+                           [value]="process.processPhaseOn"
+                           (change)="onProcessPhaseDateChange(process, processPhaseOn.value)"
+                           style="height: 20px;">
+                </div>
+            </li>
+            <li class="nav-item text-xs mx-1">
+                <div class="input-group b-a px-1">
+                    <div class="px-1"><small class="text-xs text-muted">Status</small></div>
+                    <div class="input-group-append pl-1">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">{{process.manualStatus ?? '&#45;&#45;'}} </a>
+                        <div class="dropdown-menu" x-placement="bottom-start"
+                             style="position: absolute; transform: translate3d(1023px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <!--<ng-template ngFor let-status [ngForOf]="apiResolver.masterType?.processStatus | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <a class="dropdown-item" (click)="onProcessStatusChange(process, status)" [class.active]="(process.manualStatus == status.name)">{{status.name}}</a>
+                            </ng-template>-->
+                        </div>
+                    </div>
+                    <input #manualStatusOn type="date" class="md-input form-control no-border"
+                           [value]="process.manualStatusOn"
+                           (change)="onManualStatusOnDateChange(process, manualStatusOn.value)"
+                           style="height: 20px;">
+                </div>
+            </li>
+            <li class="nav-item" *ngIf="isParent">
+                <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block"><i class="fa fa-plus pr-1"></i> Process </a>
+            </li>
+            <li class="nav-item">
+                <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs d-block" (click)="addTask(process)"><i class="fa fa-plus pr-1"></i> Task </a>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+<ng-template #taskActionsTemplateRef let-data="data">
+    <div class="box-tool">
+        <ul class="nav nav-xs no-border">
+            <!--<li class="nav-item text-xs mx-1">
+                <div class="input-group b-a px-1">
+                    <div class="px-1"><small class="text-xs text-muted">Priority</small></div>
+                    <div class="input-group-append pl-1">
+                        <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">{{data.taskPriorityName ?? '&#45;&#45;'}} </a>
+                        <div class="dropdown-menu" x-placement="bottom-start"
+                             style="position: absolute; transform: translate3d(1023px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <ng-template ngFor let-priority [ngForOf]="apiResolver.masterType?.taskPriorities | sortBy:'asc': 'sortOrder'" let-i="index">
+                                <a class="dropdown-item" (click)="onTaskPriorityChange(data, priority)" [class.active]="(data.taskPriorityId == priority.id)">{{priority.name}}</a>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </li>-->
+            <li class="nav-item text-xs">
+                <div class="float-right text-sm-right">
+                    <div class="float-left mx-2">
+                        <label class="md-check"><i [class]="(data.isStatusOnMailRequired) ? 'fa fa-check-square-o text-success': 'fa fa-square-o'"></i>Status on Mail</label>
+                    </div>
+                    <div class="float-left mx-2">
+                        <label class="md-check"><i [class]="(data.isStatusOnMailDaily) ? 'fa fa-check-square-o text-success': 'fa fa-square-o'"></i>Daily</label>
+                    </div>
+                    <div class="float-left mx-2">
+                        <label class="md-check"><i [class]="(data.isStatusOnMailWeekly) ? 'fa fa-check-square-o text-success': 'fa fa-square-o'"></i>Weekly</label>
+                    </div>
+                    <div class="float-left mx-2">
+                        <label class="md-check"><i [class]="(data.isStatusOnMailMonthly) ? 'fa fa-check-square-o text-success': 'fa fa-square-o'"></i>Monthly</label>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</ng-template>

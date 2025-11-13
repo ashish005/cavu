@@ -1,9 +1,7 @@
 import {Component, ElementRef, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {OrgThemeSettingService} from "./services/org-theme-setting.service";
-import {pairwise, startWith} from "rxjs";
 import {ThemeManagerService} from "./services/theme-manager.service";
-
 @Component({
     selector: 'theme-setting',
     templateUrl: './templates/theme-setting.html',

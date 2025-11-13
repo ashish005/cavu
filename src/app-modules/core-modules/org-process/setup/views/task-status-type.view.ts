@@ -19,8 +19,9 @@ export class TaskStatusTypeView extends ViewExtender<TaskStatusType> implements 
     this.gridOptions.header = { title: 'Task Status', hide: true, footerHide: true, desc: 'Process Status details', add: false, refresh: true, edit: false, delete: false };
     this.gridOptions.columnDefs = [
         {headerName: 'Name', field: 'name', cellTemplate: NameCellComponent},
+        {headerName: 'Order', field: 'sortOrder'},
         {headerName: 'Default', field: 'isDefault', cellTemplate: GridUISwitchCellComponent},
-        {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+      {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
     ];
   }
 

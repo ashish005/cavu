@@ -20,7 +20,7 @@ export class ProcessPhaseView extends ViewExtender<ProcessPhase> implements OnIn
     this.gridOptions.columnDefs = [
         {headerName: 'Name', field: 'name', cellTemplate: NameCellComponent},
         {headerName: 'Default', field: 'isDefault', cellTemplate: GridUISwitchCellComponent},
-        {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
     ];
   }
 

@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   standalone: false,
-  template: ``//<setup-workflow #setupWorkflow></setup-workflow>`
+  template: `<setup-workflow #setupWorkflow></setup-workflow>`
 })
 export class ProcessWorkflowView implements OnInit, OnDestroy {
     @ViewChild('setupWorkflow', { static: true }) public setupWorkflow: any;

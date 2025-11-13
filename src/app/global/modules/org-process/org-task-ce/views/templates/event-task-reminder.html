@@ -1,0 +1,52 @@
+<div class="d-flex flex">
+    <div class="fade aside aside-sm" id="task-list">
+        <div class="d-flex flex-column w-xxl modal-dialog">
+            <div class="scrollable hover">
+                <a class="nav-link" (click)="createNew()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span></a>
+                <nav class="nav-border right b-theme" data-nav="">
+                    <ul class="list inset">
+                        <ng-template ngFor let-item [ngForOf]="reminders" let-i="index">
+                            <li class="list-item">
+                                <div class="list-body">
+                                    <a class="item-title _500" (click)="reminderClick(item)">{{item.name}}</a>
+                                    <div class="item-except text-sm text-muted h-1x">
+                                        <span [class.hide]="item.isValidForSession" class="text-xs text-danger">
+                                          <i class="fa fa-hand-stop-o px-1"></i> Session Date Range Exceeded
+                                        </span>
+                                    </div>
+                                    <div class="item-except text-sm text-muted h-1x" *ngIf="item.templates?.length">
+                                        <ng-template ngFor let-template [ngForOf]="item.templates">
+                                            <a class="d-inline-block px-1 text-center b">
+                                                <small class="text-xs">{{template?.mediaType}}</small>
+                                            </a>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </nav>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <div class="p-3 mt-auto"><span class="text-sm text-muted">Reminders: </span></div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="navbar flex-nowrap white lt box-shadow">
+                <a data-toggle="modal" data-target="#task-list" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                </a>
+                <!--<reminder-ce #reminderEl (cb)="updateReminders($event)"></reminder-ce>-->
+                <ng-template *ngTemplateOutlet="reminderEl.footerTemplate"></ng-template>
+            </div>
+            <notification-create-edit #cgrEl></notification-create-edit>
+            <div class="white lt b-t mt-auto">
+                <ng-template *ngTemplateOutlet="cgrEl.footerTemplate"></ng-template>
+            </div>
+        </div>
+    </div>
+</div>

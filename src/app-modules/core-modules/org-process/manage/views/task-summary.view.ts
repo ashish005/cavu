@@ -46,20 +46,12 @@ export class TaskSummaryView extends ViewExtender<OrgTaskSummaryRow> implements 
 
     actionCb(row: OrgTaskSummaryRow) {
         const {id, name} = row;
-        const inputData: any = {
-            id: id,
-            orgTaskId: id,
-            data: row
-        };
+        const inputData: any = { id: id, orgTaskId: id, data: row };
         const popupHeaderOptions = { text: `${name}`, desc: `` };
       // this.pluginFactory.showTaskCEPopup(inputData, popupHeaderOptions, ()=>{});
     }
     addRecord(){
-        const inputData: any = {
-            id: null,
-            orgTaskId: null,
-            data: {}
-        };
+        const inputData: any = { id: null, orgTaskId: null, data: {} };
         const popupHeaderOptions = { text: `New Task`, desc: `` };
         // this.pluginFactory.showTaskCEPopup(inputData, popupHeaderOptions, ()=>{});
     }

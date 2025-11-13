@@ -19,8 +19,10 @@ export class TaskPriorityView extends ViewExtender<TaskPriority> implements OnIn
     this.gridOptions.header = { title: 'Task Priority', hide: true, footerHide: true, desc: 'Task Priority', add: false, refresh: true, edit: false, delete: false };
     this.gridOptions.columnDefs = [
         {headerName: 'Name', field: 'name', cellTemplate: NameCellComponent},
+        {headerName: 'Color', field: 'color'},
+        {headerName: 'Order', field: 'sortOrder'},
         {headerName: 'Default', field: 'isDefault', cellTemplate: GridUISwitchCellComponent},
-        {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
     ];
   }
 

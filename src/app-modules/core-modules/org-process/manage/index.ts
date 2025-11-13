@@ -6,7 +6,6 @@ import {ORG_PROCESS_TASK_VIEWS, OrgProcessTaskRoutes} from "./process.routing";
 import {PipelineAPIResolver} from "./resolver/api.resolver";
 import {PIPELINE_PROCESS_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 import {ORG_PROCESS_SERVICE} from "./services";
-
 @NgModule({
   imports: [
     CommonModule,

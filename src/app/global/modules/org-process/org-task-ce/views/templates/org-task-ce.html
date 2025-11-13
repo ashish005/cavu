@@ -1,0 +1,215 @@
+<form class="content-main d-flex flex h-100" [formGroup]="customForm">
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex" id="chat-list">
+            <div class="navbar flex-nowrap white lt box-shadow">
+                <a data-toggle="modal" data-target="#content-aside"
+                   data-modal="" class="mr-1 d-md-none"
+                   data-pjax-state=""><span
+                        class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
+                <span class="text-md text-ellipsis flex">Task</span>
+                <!--<add-reminder [orgTaskId]="orgTaskId"></add-reminder>
+                <task-schedule [orgTaskId]="orgTaskId"></task-schedule>-->
+            </div>
+            <div class="row no-gutters p-2">
+                <div class="col-sm-8">
+                    <div class="row no-gutters">
+                        <div class="col-sm-10">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" formControlName="name"
+                                       [ngClass]="{ 'is-invalid': submitted && f.name.errors }"
+                                       onkeyup="this.setAttribute('value', this.value);" required="">
+                                <label>Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 float-right">
+                            <div class="text-sm text-muted">Task Priority</div>
+                            <select (change)="updateTaskPriorityId($event.currentTarget.value)"
+                                    formControlName="taskPriorityId">
+                                <ng-template ngFor let-taskPriority
+                                             [ngForOf]="lookupResolver?.masterType?.taskPriorities" let-i="index">
+                                    <option [value]="taskPriority.id">{{taskPriority.name}}</option>
+                                </ng-template>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row no-gutters">
+                        <div class="col-sm-12">
+                            <div class="md-form-group">
+                <textarea rows="3" class="md-input" placeholder="Write here something to remind you about this task"
+                          formControlName="remark"
+                          [ngClass]="{ 'is-invalid': submitted && f.remark.errors }"></textarea>
+                                <label> Remark </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label class="md-check py-3"><input type="checkbox" checked="checked"> <i class="theme"></i>
+                                <small>Verification Required</small>
+                            </label>
+                        </div>
+                        <div class="col-sm-8">
+                            <user-type-ahead controlTitle="Verified By"
+                                             userType="employee" (cb)="updateVerifiedById($event)"
+                                             [controlId]="formVerifiedById.value"
+                                             [controlValue]="formVerifiedBy.value"></user-type-ahead>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <user-type-ahead controlTitle="Reported By"
+                                             userType="employee" (cb)="updateReportedToId($event)"
+                                             [controlId]="formReportedToId?.value"
+                                             [controlValue]="formReportedTo?.value"></user-type-ahead>
+                        </div>
+                        <div class="col-sm-6">
+                            <user-type-ahead controlTitle="Assigned To"
+                                             userType="employee" (cb)="updateAssignedToId($event)"
+                                             [controlId]="formAssignedToId?.value"
+                                             [controlValue]="formAssignedTo?.value"></user-type-ahead>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="m-3">
+                        <div class="form-check"><label class="form-check-label"><input class="form-check-input"
+                                                                                       type="checkbox"
+                                                                                       formControlName="isPrimary"><i
+                                class="theme"></i>
+                            <small>Is Primary</small>
+                        </label></div>
+                        <div class="form-check"><label class="form-check-label"><input class="form-check-input"
+                                                                                       type="checkbox"
+                                                                                       formControlName="isManual"><i
+                                class="theme"></i>
+                            <small>Is Manual</small>
+                        </label></div>
+                    </div>
+                    <div class="m-3">
+                        <!--<div class="text-sm text-muted">Default Frequency</div>-->
+                        <div class="md-form-group">
+                            <select class="md-input" formControlName="defaultFrequencyTypeId">
+                                <ng-template ngFor let-entity [ngForOf]="lookupResolver.masterType?.frequencyTypes" let-i="index">
+                                    <option [value]="entity.id">{{entity.name}}</option>
+                                </ng-template>
+                            </select>
+                            <label>Default Frequency</label>
+                        </div>
+                        <div class="row row-sm">
+                            <div class="col-sm-6">
+                                <div class="md-form-group float-label pb-0">
+                                    <!--<input class="md-input" type="number" min="1" max="31"
+                                           formControlName="defaultDay" style="width: 80px"
+                                           [ngClass]="{ 'is-invalid': submitted && f.defaultDay.errors }">-->
+                                    <select class="md-input" formControlName="defaultDay">
+                                        <ng-template ngFor let-entity [ngForOf]="days" let-i="index">
+                                            <option [value]="entity.id">{{entity.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <label> Default Day </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="md-form-group float-label pb-0">
+                                    <select class="md-input" formControlName="defaultMonth">
+                                        <ng-template ngFor let-entity [ngForOf]="months" let-i="index">
+                                            <option [value]="entity.id">{{entity.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <!--<input class="md-input" type="number" min="1" max="12"
+                                           formControlName="defaultMonth" style="width: 80px"
+                                           [ngClass]="{ 'is-invalid': submitted && f.defaultMonth.errors }">-->
+                                    <label> Default Month </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <div class="text-sm">
+                            <label class="md-check"><input type="checkbox" formControlName="isStatusOnMailRequired"><i
+                                    class="theme"></i> Status on Mail</label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailDaily">
+                                <i class="theme"></i>
+                                <small>Daily</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailWeekly">
+                                <i class="theme"></i>
+                                <small>Weekly</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailMonthly">
+                                <i class="theme"></i>
+                                <small>Monthly</small>
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Default status will be sent to your Inbox.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 white lt b-t mt-auto">
+                <div class="row row-sm">
+                    <div class="col-sm-12 text-center">
+                        <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                                (click)="onSubmit(customForm)"
+                                [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                            'Submitting...' : actionType}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+    </div>
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xxl">
+            <div class="navbar box-shadow">
+                <div class="input-group flex">For Process</div>
+            </div>
+            <div class="scrollable hover">
+                <div class="list-group list-group-gap text-xs">
+                    <ng-template ngFor let-process [ngForOf]="processList" let-i="index">
+                        <div class="list-group-item">
+                            <div class="pb-2">
+                                <label class="md-check">
+                                    <input type="radio" name="orgProcessId" formControlName="orgProcessId" [value]="process.id">
+                                    <i class="theme"></i>
+                                </label>
+                                {{process?.name}}
+                            </div>
+                            <ng-template [ngTemplateOutlet]="subProcessTemplateRef" [ngTemplateOutletContext]="{ data: process }"></ng-template>
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <ng-template #subProcessTemplateRef let-data="data">
+                <ng-template ngFor let-subProcess [ngForOf]="data?.childItems" let-i="index">
+                    <div class="list-group-item px-2 b-l-primary py-1">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="orgProcessId" formControlName="orgProcessId"
+                                       [value]="subProcess.id">
+                                <small>{{ subProcess.name }}</small>
+                            </label>
+                        </div>
+                        <div *ngIf="subProcess?.childItems?.length" class="pl-3">
+                            <ng-template [ngTemplateOutlet]="subProcessTemplateRef"
+                                         [ngTemplateOutletContext]="{ data: subProcess }"></ng-template>
+                        </div>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </div>
+    </div>
+</form>

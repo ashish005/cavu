@@ -3,7 +3,6 @@ import {DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Scheduler} from "../domains/scheduler.serializer";
-
 @Component({
   standalone: false,
     template: `<div>
@@ -12,12 +11,8 @@ import {Scheduler} from "../domains/scheduler.serializer";
     </div>`
 })
 export class ScheduledNameActionCell extends DynamicComponent {
-    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver) {
-        super();
-    }
-
+    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver) { super(); }
     checkActivity(task: Scheduler) {
-
         const { id, name } = task;
         const popupHeaderOption = {text: `Activity for ${name}`, desc: `Activity`};
         const inputData: any = { orgSchedulerId: id };
@@ -42,7 +37,6 @@ export class ScheduledStartDateCell extends DynamicComponent{ constructor(){ sup
     </div>`
 })
 export class ScheduledEndDateCell extends DynamicComponent{ constructor(){ super(); } }
-
 @Component({
   standalone: false,
     template: `<div *ngIf="context[col.field]">

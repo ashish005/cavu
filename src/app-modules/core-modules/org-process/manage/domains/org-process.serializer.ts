@@ -18,54 +18,42 @@ export class OrgProcessQueryOptions extends CoreQueryOptions{
 export class OrgProcess extends CoreResource {
     name: string;
     description: string;
-    parentId: number;
     sortOrder: string;
+    parentId: number;
     parentName: string;
-
     // processPhase: string;
     // processPhaseOn: string;
     // manualStatus: string;
     // manualStatusOn: string;
-
     inchargeId: number;
     inchargeName: string;
-
-    totalSubProcesses: number;
-    totalTaskCount: number;
-
-    isRoot: boolean;
+    processStatus: string;
     isLocked: boolean;
-    status: string;
-    phaseCount: number;
+    isActive: boolean;
   constructor(model: any = <any>{}){
     super();
-      const {id, name, description, parentId, sortOrder, parentName,
-          processPhase, processPhaseOn, manualStatus, manualStatusOn,
-          inchargeId, inchargeName, isRoot, totalSubProcesses, totalTaskCount,
-          isLocked, status, phaseCount
+      const {
+          id, name, description, sortOrder,
+          parentId, parentName,
+          //processPhase, processPhaseOn, manualStatus, manualStatusOn,
+          inchargeId, inchargeName, processStatus,
+          isLocked, isActive
       } = model;
       this.id = id;
       this.name = name;
       this.description = description;
-
+      this.sortOrder = sortOrder;
       this.parentId = parentId;
       this.parentName = parentName;
-      this.sortOrder = sortOrder;
-
       // this.processPhase = processPhase;
       // this.processPhaseOn = processPhaseOn;
       // this.manualStatus = manualStatus;
       // this.manualStatusOn = manualStatusOn;
       this.inchargeId = inchargeId;
       this.inchargeName = inchargeName;
-
-      this.isRoot = isRoot;
-      this.totalSubProcesses = totalSubProcesses;
-      this.totalTaskCount = totalTaskCount;
-
+      this.processStatus = processStatus;
       this.isLocked = isLocked;
-      this.status = status;
-      this.phaseCount = phaseCount;
+      this.isActive = isActive;
   }
 }
 
@@ -74,12 +62,5 @@ export class OrgProcessSerializer {
     return new OrgProcess(json);
   }
 
-  toJson(data: any): any {
-    return {
-      id: data.id,
-      name: data.name,
-      parentId: data.parentId,
-      description: data.description
-    };
-  }
+  toJson(data: any): any { return data; }
 }

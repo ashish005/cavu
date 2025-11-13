@@ -1,0 +1,30 @@
+<div class="d-flex flex-column w-xxl">
+    <div class="navbar box-shadow">
+        <div class="input-group flex">Next Scheduled Task</div>
+        <select (change)="onSchedulechange($event.currentTarget.value)">
+            <option value="7">Next 7 Days</option>
+            <option value="30">Next 30 Days</option>
+            <option value="90">Next 3 Month</option>
+        </select>
+    </div>
+    <div class="scrollable hover">
+        <div class="list">
+            <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                <div class="list-item">
+                    <div class="list-body">
+                        <a class="item-title _500" data-pjax-state="">{{row.orgTaskName}}</a>
+                    </div>
+                    <div class="text-right">
+                        <span class="item-meta text-xs badge badge-sm badge-pill lt">  {{ row.scheduleDate | fullDateFormat }}</span>
+                        <span class="item-except text-xs text-muted h-1x"><small>{{row.modifiedDate | fullDateFormat}} </small></span>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+        <div class="no-result" [ngClass]="{'hide': (gridData?.length) }">
+            <div class="p-4 text-center">No Results</div>
+        </div>
+    </div>
+    <div class="p-3 mt-auto"><span
+            class="text-sm text-muted">Total: {{ gridOptions?.total }}</span></div>
+</div>

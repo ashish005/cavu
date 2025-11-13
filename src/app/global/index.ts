@@ -1,3 +1,5 @@
+export {CoreProcessFactory} from "./pluginFactory";
+
 export {GlobalModule} from "./library.module";
 
 export * from "./animations";

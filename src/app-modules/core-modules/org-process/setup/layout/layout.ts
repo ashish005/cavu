@@ -17,10 +17,15 @@ export class ConfigLayout implements OnInit {
 
     public items: Array<any> = [
         {
-            id:1, icon:"fa fa-dashboard", isHeading: true, name: "Main", sortOrder: 3,
+            id:1, icon:"fa fa-dashboard", isHeading: true, name: "Main", sortOrder: 1,
+            children: [
+                { id:3, icon:"fa fa-dashboard", route: 'phase', name: "Process Phase Status", sortOrder: 1 }
+            ]
+        },
+        {
+            id:2, icon:"fa fa-dashboard", isHeading: true, name: "Task", sortOrder: 2,
             children: [
                 { id:2, icon:"fa fa-dashboard", route: 'frequency', name: "Frequency", sortOrder: 1 },
-                { id:3, icon:"fa fa-dashboard", route: 'phase', name: "Process Phase", sortOrder: 1 },
                 { id:4, icon:"fa fa-dashboard", route: 'task-priority', name: "Task Priority", sortOrder: 1 },
                 { id:5, icon:"fa fa-dashboard", route: 'task-status', name: "Task Status", sortOrder: 1 }
             ]

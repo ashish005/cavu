@@ -1,8 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import {Observable, map} from "rxjs";
 import {OrgTheme, OrgThemeSerializer} from "../domains/theme-setup.serializer";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "@app-environments";
 import {CoreEndpointBase} from "../../../services";
 
 @Injectable()

@@ -55,17 +55,17 @@ export class Layout extends CoreEndpointBase implements OnInit {
     }
 
     refreshList=()=>{
-        this.getOrgRootProcesses().toPromise().then(r => {
+        this.getOrgRootProcess().toPromise().then(r => {
             this.orgProcessList = (r.entities || []).map(k => new OrgProcess(k));
         }, ()=>{ this.orgProcessList = []; });
     }
 
-    public getOrgRootProcesses() {
+    public getOrgRootProcess() {
         const url: string = this.baseSectorAPIUrl + `/processWorkflow/root/${super.apiVersion}`;
         return this.httpClient.get(url, this.requestHeaders)
             .pipe(
                 map(data => data),
-                catchError(error => this.handleError(error, () => this.getOrgRootProcesses()))
+                catchError(error => this.handleError(error, () => this.getOrgRootProcess()))
             );
     }
 
@@ -74,7 +74,7 @@ export class Layout extends CoreEndpointBase implements OnInit {
     }
 
     routeToUrl=(item)=> this.router.navigate([item.id], { relativeTo: this.activatedRoute.parent });
-    showProcesses = (item) => this.router.navigate([item.id, 'processes'], { relativeTo: this.activatedRoute.parent });
+    showProcesses = (item) => this.router.navigate([item.id, 'process'], { relativeTo: this.activatedRoute.parent });
     showProcessTasks = (item) => this.router.navigate([item.id, 'tasks'], { relativeTo: this.activatedRoute.parent });
     showTaskSchedules = (item) => this.router.navigate([item.id, 'schedules'], { relativeTo: this.activatedRoute.parent });
 

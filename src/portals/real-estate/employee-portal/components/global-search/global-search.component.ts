@@ -12,18 +12,10 @@ import {GlobalSearchLookupService} from "./services/global-search-api.resolver";
 export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   search = {
     categories: [
-      {
-        name:  'Process & Task'
-      },
-      {
-        name:  'Student'
-      },
-      {
-        name:  'Employee'
-      },
-      {
-        name:  'Course'
-      }
+      { name:  'Process & Task' },
+      { name:  'Student' },
+      { name:  'Employee' },
+      { name:  'Course' }
     ]
   };
   constructor(private el: ElementRef, public router: Router,

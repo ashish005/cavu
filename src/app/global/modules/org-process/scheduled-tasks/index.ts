@@ -1,0 +1,1 @@
+export {TaskScheduledListComponent} from "./views/scheduled-task.view";

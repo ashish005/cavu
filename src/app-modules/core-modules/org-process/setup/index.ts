@@ -7,17 +7,16 @@ import {FrequencyTypeView} from "./views/frequency-type.view";
 import {ProcessPhaseView} from "./views/process-phase.view";
 import {TaskPriorityView} from "./views/task-priority.view";
 import {TaskStatusTypeView} from "./views/task-status-type.view";
-
 const getTranslationString = (key)=> `master_type.modules.process.${key}`;
 export const routes: Routes = [
     {
         path: '', component: ConfigLayout,
         children: [
             { path: '', pathMatch: 'full', redirectTo: 'frequency' },
-            { path: 'frequency', component: FrequencyTypeView, data: {title: getTranslationString('frequency.type.title'), header: getTranslationString('frequency.type.header')} },
-            { path: 'phase', component: ProcessPhaseView, data: {title: getTranslationString('frequency.type.title'), header: getTranslationString('frequency.type.header')} },
-            { path: 'task-priority', component: TaskPriorityView, data: {title: getTranslationString('frequency.type.title'), header: getTranslationString('frequency.type.header')} },
-            { path: 'task-status', component: TaskStatusTypeView, data: {title: getTranslationString('frequency.type.title'), header: getTranslationString('frequency.type.header')} }
+            { path: 'frequency', component: FrequencyTypeView, data: {title: 'Frequency', header: 'Frequency'} },
+            { path: 'phase', component: ProcessPhaseView, data: {title: 'ProcessPhase', header: 'ProcessPhase' } },
+            { path: 'task-priority', component: TaskPriorityView, data: {title: 'TaskPriority', header: 'TaskPriority'} },
+            { path: 'task-status', component: TaskStatusTypeView, data: {title: 'TaskStatus', header: 'TaskStatus'} }
         ]
     }
 ];

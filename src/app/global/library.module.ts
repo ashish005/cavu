@@ -21,8 +21,8 @@ import {GLOBAL_DIRECTIVES} from "./directives";
 import {GLOBAL_COMPONENTS} from "./components/shared_components";
 import {SharedService} from "./shared.service";
 import {TranslateModule} from "@ngx-translate/core";
-import {ThemeSettingComponent} from "./modules/theme-setting/theme-setting.component";
-
+import {DEPENDENT_COMPONENTS} from "./modules";
+import {CoreProcessFactory} from "./pluginFactory";
 class LowerCaseUrlSerializer extends DefaultUrlSerializer {
     override parse(url: string): UrlTree {
         const possibleSeparators = /[?;#]/;
@@ -37,13 +37,10 @@ class LowerCaseUrlSerializer extends DefaultUrlSerializer {
         } else {
             processedUrl = url.toLowerCase();
         }
-
         return super.parse(processedUrl);
     }
 }
-
 function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
-
 @NgModule({
     imports: [
         CommonModule, RouterModule,
@@ -61,13 +58,13 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
     ],
     providers: [
       GLOBAL_PIPES,
-      PopupService, SharedService,
+      PopupService, SharedService, CoreProcessFactory,
         { provide: TitleStrategy, useClass: AppTitleService },
         { provide: UrlSerializer, useClass: LowerCaseUrlSerializer },
         { provide: ErrorHandler, useClass: AppErrorHandler },
         { provide: 'BASE_URL', useFactory: getBaseUrl }
     ],
-    declarations: [ ThemeSettingComponent ],
+    declarations: [ ...DEPENDENT_COMPONENTS ],
     exports: [
       CommonModule,
         // RouterModule,
@@ -77,8 +74,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         NgbModule, NgbPopoverModule, NgbTooltipModule, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         // AngularEditorModule,
         // ToastaModule,
-      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES,
-      ThemeSettingComponent
+      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS
     ]
 })
 export class GlobalModule {}
