@@ -2,7 +2,6 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 export class OrgProcessForm
 {
-    process: any;
     customForm: FormGroup;
     constructor(public fb: FormBuilder) {
         this.customForm = this.fb.group({
@@ -20,21 +19,15 @@ export class OrgProcessForm
 
             inchargeName: [null],
             phases: this.fb.array([]),
-            phaseTransitions: this.fb.array([]),
+            //phaseTransitions: this.fb.array([]),
             isActive: [false ],
         });
     }
-
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-
-    get id(){ return this.customForm.get('id').value; }
     get formInchargeId(){ return this.customForm.get('inchargeId'); }
     get formInchargeName(){ return this.customForm.get('inchargeName'); }
-
     get phases(): FormArray { return this.customForm.get('phases') as FormArray<FormGroup>; }
-    get phaseTransitions(): FormArray { return this.customForm.get('phaseTransitions') as FormArray<FormGroup>; }
-
     addPhase(data?: any): void {
         const phase = this.fb.group({
             id: [data?.id],
@@ -47,8 +40,8 @@ export class OrgProcessForm
         });
         this.phases.push(phase);
     }
-
-    addTransition(data?: any): void {
+    //get phaseTransitions(): FormArray { return this.customForm.get('phaseTransitions') as FormArray<FormGroup>; }
+    /*addTransition(data?: any): void {
         const transitions = this.fb.group({
             id: [data?.id],
             description: [data?.description || ''],
@@ -59,21 +52,18 @@ export class OrgProcessForm
             isActive: [!data? true: data?.isActive],
         });
         this.phaseTransitions.push(transitions);
-    }
-
+    }*/
     updateInchargeId(val: any){
         const { id, name, userId } = val || {};
         this.formInchargeId.setValue(userId, { emitEvent: false});
         this.formInchargeName.setValue(name, { emitEvent: false});
     }
-
     populateOrgProcess(item: any){
-        this.process = item;
         this.customForm.patchValue(item);
         this.phases.controls.length = 0;
         (item.phases || []).map(r => this.addPhase(r));
 
-        this.phaseTransitions.controls.length = 0;
-        (item.phaseTransitions || []).map(r => this.addTransition(r));
+        // this.phaseTransitions.controls.length = 0;
+        // (item.phaseTransitions || []).map(r => this.addTransition(r));
     }
 }

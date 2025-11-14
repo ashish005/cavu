@@ -78,17 +78,19 @@
                     </table>
                 </div>
             </div>
-            <div class="white lt b-t mt-auto">
-                <button class="btn btn-xs theme" type="button" (click)="addPhase()">Add Phase</button>
-                <div class="float-left p-2">
-                    <status-check [customForm]="customForm"></status-check>
+            <ng-template #footerTemplate>
+                <div class="white lt b-t mt-auto">
+                    <button class="btn btn-xs theme" type="button" (click)="addPhase()">Add Phase</button>
+                    <div class="float-left p-2">
+                        <status-check [customForm]="customForm"></status-check>
+                    </div>
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
                 </div>
-                <div class="float-right">
-                    <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
-                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
-                    </button>
-                </div>
-            </div>
+            </ng-template>
         </form>
     </div>
 </div>

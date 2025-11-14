@@ -1,0 +1,112 @@
+/* GLOBAL TABLE COMPACTING */
+.small-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.small-table td,
+.small-table th {
+    padding: 2px 4px !important;
+    line-height: 1.1;
+}
+
+.small-table input {
+    padding: 2px 4px !important;
+    height: 20px;
+    font-size: 12px;
+}
+
+.small-table button {
+    padding: 1px 4px;
+    font-size: 11px;
+}
+
+/* REMOVE LARGE SPACING */
+.table-condensed td,
+.table-condensed th {
+    padding: 2px 6px !important;
+}
+
+.p-0 {
+    padding: 0 !important;
+}
+
+/* ------------------------------
+    TREE STRUCTURE STYLE
+--------------------------------*/
+
+/* PHASE ROW STYLE */
+tr[formgroupname] > td:first-child {
+    font-weight: bold;
+}
+
+/* PHASE LABEL TREE LINE */
+tr[formgroupname]::before {
+    content: "● ";
+    color: #0052cc;
+    font-size: 10px;
+    margin-right: 4px;
+}
+
+/* STEP TABLE AS TREE BRANCH */
+tbody[formarrayname="approvalSteps"] tr[formgroupname] {
+    position: relative;
+}
+
+tbody[formarrayname="approvalSteps"] tr[formgroupname]::before {
+    content: "├── ";
+    color: #888;
+    position: absolute;
+    left: -14px;
+}
+
+/* LAST STEP CHILD */
+tbody[formarrayname="approvalSteps"] tr:last-child[formgroupname]::before {
+    content: "└── ";
+}
+
+/* RULE TABLE AS LEAF BRANCH */
+tbody[formarrayname="rules"] tr {
+    position: relative;
+}
+
+tbody[formarrayname="rules"] tr::before {
+    /*content: "│   ├── ";*/
+    color: #bbb;
+    position: absolute;
+    left: -28px;
+}
+
+/* LAST RULE LEAF */
+/*tbody[formarrayname="rules"] tr:last-child::before {
+    content: "│   └── ";
+}*/
+
+/* INDENTATION FOR CHILD TABLES */
+table.small-table table.small-table {
+    margin-left: 22px;
+    border-left: 1px dashed #ccc;
+    padding-left: 12px;
+}
+
+/* EMPTY STATE COMPACT */
+.empty {
+    font-size: 11px;
+    margin-left: 24px;
+    padding: 2px 0;
+    color: #666;
+}
+
+/* COLORS */
+.phase-row {
+    background: #f0f4ff;
+}
+
+.step-row {
+    background: #eef7ff;
+}
+
+.rule-row {
+    background: #f8f9fa;
+}

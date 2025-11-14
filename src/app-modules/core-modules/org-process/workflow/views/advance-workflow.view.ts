@@ -10,7 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
     standalone: false,
-    template: `<setup-advance-workflow #setupWorkflow></setup-advance-workflow>`
+    template: `<workflow-with-phase #setupWorkflow></workflow-with-phase>`
 })
 export class AdvanceWorkflowView implements OnInit, OnDestroy {
     @ViewChild('setupWorkflow', { static: true }) public setupWorkflow: any;

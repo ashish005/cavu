@@ -7,11 +7,11 @@ import {CoreProcessWorkflowService} from "../services/process-workflow.service";
 @Component({
     standalone: false,
     selector: 'workflow',
-    templateUrl: './templates/workflow.html',
+    templateUrl: './templates/workflow-with-task.html',
     styles: [`:host{ display: contents; }`],
     providers: [CoreProcessWorkflowService]
 })
-export class WorkflowView {
+export class WorkflowWithTaskView {
     //@ViewChild('popupOptionsTemplate', { static: true }) public popupOptionsTemplate: TemplateRef<any>;
     isLoading: boolean = false;
     processList: Array<WorkflowOrgProcess>;

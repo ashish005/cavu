@@ -1,0 +1,220 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <form class="p-3" [formGroup]="customForm" (submit)="onSubmit(customForm)">
+            <div class="row row-sm">
+                <div class="col-sm-6">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="name"
+                               [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                        <label> Name </label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <user-type-ahead controlTitle="Incharge"
+                                     userType="employee" (cb)="updateInchargeId($event)"
+                                     [controlId]="formInchargeId.value"
+                                     [controlValue]="formInchargeName.value"></user-type-ahead>
+                </div>
+                <div class="col-sm-12">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="description"
+                               [ngClass]="{ 'is-invalid': submitted && f['description'].errors }">
+                        <label> Description </label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <table class="table small-table text-xs table-condensed">
+                        <thead class="cf">
+                            <tr>
+                                <td></td>
+                                <th>Phase</th>
+                                <th width="50px">Color</th>
+                                <th width="50px">Default</th>
+                                <th width="100px" class="text-right">Sort Order</th>
+                                <th width="100px" class="text-right">Active</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="phases">
+                            <ng-container *ngFor="let phase of phases.controls; let i = index">
+                                <tr [formGroupName]="i">
+                                    <!-- Phase Row -->
+                                    <td>
+                                        <button type="button" (click)="removePhase(i)">🗑️</button>
+                                        <button type="button" (click)="addStep(null, i)">+ Step</button>
+                                    </td>
+                                    <td><input formControlName="name" class="md-input no-border" placeholder="Phase name"></td>
+                                    <td><input formControlName="color" type="color" class="md-input no-border"></td>
+                                    <td class="text-center"><input type="checkbox" formControlName="isDefault"></td>
+                                    <td><input type="number" formControlName="sortOrder" style="width: 45px" class="text-right"></td>
+                                    <td class="text-center"><input type="checkbox" formControlName="isActive"></td>
+                                </tr>
+                                <!-- STEPS SECTION -->
+                                <tr>
+                                    <td colspan="6" class="p-0" [formGroupName]="i">
+                                        <table class="table small-table" *ngIf="steps(i).length > 0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Step #</th>
+                                                    <th>Step Name</th>
+                                                    <th>Role</th>
+                                                    <th>Mandatory</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody formArrayName="approvalSteps">
+                                                <ng-container *ngFor="let step of steps(i).controls; let j = index" >
+                                                    <!-- STEP ROWS -->
+                                                    <tr [formGroupName]="j">
+                                                        <td>{{ j + 1 }}</td>
+                                                        <td><input formControlName="name" placeholder="Step name"></td>
+                                                        <td><input formControlName="approverRole" placeholder="Role"></td>
+                                                        <td><input type="checkbox" formControlName="isMandatory"></td>
+                                                        <td>
+                                                            <button type="button" (click)="addRule(null, i, j)">+ Rule</button>
+                                                            <button type="button" class="danger" (click)="removeStep(i, j)">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- RULES SECTION -->
+                                                    <tr>
+                                                        <td colspan="5" [formGroupName]="j">
+                                                            <!-- RULES ARRAY -->
+                                                            <table class="table small-table" *ngIf="rules(i,j).length > 0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Rule #</th>
+                                                                        <th>Rule Name</th>
+                                                                        <th>Condition</th>
+                                                                        <th>Action</th>
+                                                                        <th>Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody formArrayName="rules">
+                                                                    <tr *ngFor="let rule of rules(i,j).controls; let k = index" [formGroupName]="k">
+                                                                        <td>{{ k + 1 }}</td>
+                                                                        <td><input formControlName="name" placeholder="Rule name"></td>
+                                                                        <td><input formControlName="condition" placeholder="Condition"></td>
+                                                                        <td><input formControlName="action" placeholder="Action"></td>
+                                                                        <td><button type="button" class="danger" (click)="removeRule(i, j, k)">Delete</button></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <!-- Empty state -->
+                                                            <div class="empty" *ngIf="rules(i,j).length === 0">
+                                                                No rules.
+                                                                <button type="button" (click)="addRule(null, i, j)">Add Rule</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="white lt b-t mt-auto">
+                    <button class="btn btn-xs theme" type="button" (click)="addPhase()">Add Phase</button>
+                    <div class="float-left p-2">
+                        <status-check [customForm]="customForm"></status-check>
+                    </div>
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+        </form>
+    </div>
+</div>
+<ng-template #stepsTemplate let-i="i">
+    <!-- THIS is the required wrapper formGroupName="i" -->
+    <div [formGroupName]="i">
+        <table class="steps-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Step Name</th>
+                <th>Role</th>
+                <th>Mandatory</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <!-- MUST be inside the phase formGroup -->
+            <tbody formArrayName="approvalSteps">
+
+            <tr *ngFor="let step of steps(i).controls; let j = index" [formGroupName]="j">
+                <td>{{ j + 1 }}</td>
+
+                <td><input formControlName="name"></td>
+                <td><input formControlName="role"></td>
+                <td><input type="checkbox" formControlName="isMandatory"></td>
+
+                <td>
+                    <button type="button" (click)="addRule(null, i, j)">+ Rule</button>
+                    <button type="button" class="danger" (click)="removeStep(i, j)">Delete</button>
+                </td>
+            </tr>
+
+            <!-- RULES -->
+            <tr *ngFor="let step of steps(i).controls; let j = index">
+                <td colspan="5">
+                    <ng-container *ngTemplateOutlet="rulesTemplate; context:{ i:i, j:j }"></ng-container>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</ng-template>
+
+<ng-template #rulesTemplate let-i="i" let-j="j">
+
+    <!-- MUST wrap rules array inside the step formGroupName -->
+    <div [formGroupName]="j">
+
+        <!-- Rules array lives INSIDE step j -->
+        <div formArrayName="rules">
+
+            <table class="rules-table" *ngIf="rules(i,j).length > 0">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Rule Name</th>
+                    <th>Condition</th>
+                    <th>Action</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let rule of rules(i,j).controls; let k = index" [formGroupName]="k">
+                    <td>{{ k + 1 }}</td>
+
+                    <td><input formControlName="name" /></td>
+                    <td><input formControlName="condition" /></td>
+                    <td><input formControlName="action" /></td>
+
+                    <td>
+                        <button type="button" (click)="removeRule(i,j,k)" class="danger">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="empty" *ngIf="rules(i,j).length === 0">
+                No rules.
+                <button type="button" (click)="addRule(null,i,j)">Add Rule</button>
+            </div>
+
+        </div>
+    </div>
+
+</ng-template>

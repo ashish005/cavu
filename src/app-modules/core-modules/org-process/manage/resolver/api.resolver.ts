@@ -1,16 +1,15 @@
 import {Injectable, OnDestroy} from "@angular/core";
-import {SharedService} from "@app-global";
+import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
+import {ProcessCeView} from "../components/process-ce.view";
 
 @Injectable()
 export class PipelineAPIResolver {
     constructor(public sharedService: SharedService) {}
-
     showSchedulerPopup(inputData, popupHeaderOption, cb){
         /*const success = (resp: any) => { this.schedulerFactory.destroy(); cb(); };
         const failure = (err)=> { this.schedulerFactory.destroy(); };
         this.schedulerFactory.showSchedulerPopup(inputData, popupHeaderOption).then(success, failure);*/
     }
-
     showFrequencyCalenderTestPopup(inputData, popupHeaderOption){
         /*const success = (resp: any) => { this.schedulerFactory.destroy(); };
         const failure = (err)=> { this.schedulerFactory.destroy(); };
@@ -70,5 +69,13 @@ export class PipelineAPIResolver {
         // const success = (resp: any) => { this.pluginFactory.destroy(); };
         // const failure = (resp: any) => { this.pluginFactory.destroy();  };
         // this.pluginFactory.showTaskStatusChangePopup(inputData, popupHeaderOption).then(success, failure);
+    }
+
+    ceProcessPopup=(data: any, popupHeaderOption: any, cb)=> {
+        data = data || { id: null, data: null };
+        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
+        const success = (resp: any) => { this.sharedService.destroy(); cb(); };
+        const failure = (e) => { this.sharedService.destroy(); };
+        return this.sharedService.showCustomPopup(ProcessCeView, popupOptions, data).then(success, failure);
     }
 }
