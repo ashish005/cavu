@@ -3,6 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {OrgProcessService} from "../services/org-process.service";
 import {Subscription} from "rxjs";
 import {ACTION_ENUM} from "@app-global";
+import {OrgProcess} from "../domains/org-process.serializer";
 class OrgProcessForm {
   customForm: FormGroup;
   constructor(public fb: FormBuilder) {
@@ -31,7 +32,8 @@ class OrgProcessForm {
     this.formInchargeId.setValue(userId, { emitEvent: false});
     this.formInchargeName.setValue(name, { emitEvent: false});
   }
-  populateOrgProcess(item: any){
+  populateOrgProcess(item: OrgProcess){
+    debugger
     this.customForm.patchValue(item);
     // Reset existing phases
     this.phases.clear();
@@ -51,7 +53,6 @@ class OrgProcessForm {
   // --- Phase Helpers ---
   get phases(): FormArray { return this.customForm.get('phases') as FormArray; }
   steps(phaseIndex: number) { return this.phases.at(phaseIndex).get('approvalSteps') as FormArray<FormGroup>; }
-
   addPhase(data?: any): void {
     const phase = this.fb.group({
       id: [data?.id],
@@ -69,15 +70,15 @@ class OrgProcessForm {
   }
 
   addStep(s: any, phaseIndex: number) {
-    s = s || {};
+    s = s || { sortOrder: this.steps(phaseIndex).length + 1, isActive: true };
     const step = this.fb.group({
       id: [s.id],
-      name: [s.name],
       stepOrder: [s.stepOrder],
       approverRole: [s.approverRole],
-      isMandatory: [s.isMandatory],
+      isActive: [s.isActive],
       rules: this.fb.array([])
     });
+    debugger
     this.steps(phaseIndex).push(step);
     // Populate rules
     (s.rules || []).forEach((r: any, stepIndex: number) => { this.addRule(r, phaseIndex, stepIndex); });
@@ -86,9 +87,10 @@ class OrgProcessForm {
     r = r || {};
     const rule = this.fb.group({
       id: [r.id],
-      name: [r.name, Validators.required],
-      condition: [r.condition],
-      action: [r.action]
+      propertyName: [r.propertyName, Validators.required],
+      operator: [r.operator],
+      value: [r.value],
+      isActive: [r.isActive]
     });
     this.rules(phaseIndex, stepIndex).push(rule);
   }
@@ -117,6 +119,7 @@ export class ProcessCeView extends OrgProcessForm implements OnInit, OnDestroy {
   isLoading: boolean = false;
   constructor(public override fb: FormBuilder, private service: OrgProcessService) { super(fb); }
   ngOnInit(){
+    debugger
     if(this.id) {
       this.isLoading = true;
       this.subscribe = this.service.read(this.id).subscribe(r => {
@@ -132,9 +135,7 @@ export class ProcessCeView extends OrgProcessForm implements OnInit, OnDestroy {
       this.submitted = false;
       this.onOk.emit(resp);
     };
-    const error = (resp)=> {
-      this.submitted = false;
-    };
+    const error = (resp)=> { this.submitted = false; };
     const formData = form.getRawValue();
     this.submitted = true;
     if(this.id) {

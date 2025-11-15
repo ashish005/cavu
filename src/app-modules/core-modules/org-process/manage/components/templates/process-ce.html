@@ -39,7 +39,7 @@
                     <tr [formGroupName]="i">
                         <!-- Phase Row -->
                         <td>
-                            <button type="button" (click)="removePhase(i)">🗑️</button>
+                            <!--<button type="button" (click)="removePhase(i)">🗑️</button>-->
                             <button type="button" (click)="addStep(null, i)">+ Step</button>
                         </td>
                         <td><input formControlName="name" class="md-input no-border" placeholder="Phase name"></td>
@@ -54,10 +54,10 @@
                             <table class="table small-table" *ngIf="steps(i).length > 0">
                                 <thead>
                                 <tr>
-                                    <th>Step #</th>
-                                    <th>Step Name</th>
+                                    <th>Approver #</th>
                                     <th>Role</th>
-                                    <th>Mandatory</th>
+                                    <th>Order</th>
+                                    <th>Active</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -66,12 +66,12 @@
                                     <!-- STEP ROWS -->
                                     <tr [formGroupName]="j">
                                         <td>{{ j + 1 }}</td>
-                                        <td><input formControlName="name" placeholder="Step name"></td>
                                         <td><input formControlName="approverRole" placeholder="Role"></td>
-                                        <td><input type="checkbox" formControlName="isMandatory"></td>
+                                        <td><input type="number" formControlName="stepOrder" style="width: 45px;" class="text-right"></td>
+                                        <td><input type="checkbox" formControlName="isActive"></td>
                                         <td>
                                             <button type="button" (click)="addRule(null, i, j)">+ Rule</button>
-                                            <button type="button" class="danger" (click)="removeStep(i, j)">Delete</button>
+                                            <!--<button type="button" class="danger" (click)="removeStep(i, j)">Delete</button>-->
                                         </td>
                                     </tr>
                                     <!-- RULES SECTION -->
@@ -82,19 +82,21 @@
                                                 <thead>
                                                 <tr>
                                                     <th width="50px">Rule #</th>
-                                                    <th>Rule Name</th>
-                                                    <th>Condition</th>
-                                                    <th>Action</th>
-                                                    <th>Actions</th>
+                                                    <th>Property</th>
+                                                    <th>Operator</th>
+                                                    <th>Value</th>
+                                                    <th>Active</th>
+                                                    <!--<th></th>-->
                                                 </tr>
                                                 </thead>
                                                 <tbody formArrayName="rules">
                                                 <tr *ngFor="let rule of rules(i,j).controls; let k = index" [formGroupName]="k">
                                                     <td>{{ k + 1 }}</td>
-                                                    <td><input formControlName="name" placeholder="Rule name"></td>
-                                                    <td><input formControlName="condition" placeholder="Condition"></td>
-                                                    <td><input formControlName="action" placeholder="Action"></td>
-                                                    <td><button type="button" class="danger" (click)="removeRule(i, j, k)">Delete</button></td>
+                                                    <td><input formControlName="propertyName" placeholder="Property"></td>
+                                                    <td><input formControlName="operator" placeholder="Operator"></td>
+                                                    <td><input formControlName="value" placeholder="Value"></td>
+                                                    <td><input type="checkbox" formControlName="isActive"></td>
+                                                    <!--<td><button type="button" class="danger" (click)="removeRule(i, j, k)">Delete</button></td>-->
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -120,7 +122,7 @@
                         <status-check [customForm]="customForm"></status-check>
                     </div>
                     <div class="float-right">
-                        <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted">
+                        <button type="submit" class="btn btn-sm primary m-2" (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
                             <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
                         </button>
                     </div>

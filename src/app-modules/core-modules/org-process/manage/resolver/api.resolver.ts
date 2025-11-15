@@ -73,7 +73,7 @@ export class PipelineAPIResolver {
 
     ceProcessPopup=(data: any, popupHeaderOption: any, cb)=> {
         data = data || { id: null, data: null };
-        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
+        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
         const success = (resp: any) => { this.sharedService.destroy(); cb(); };
         const failure = (e) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(ProcessCeView, popupOptions, data).then(success, failure);

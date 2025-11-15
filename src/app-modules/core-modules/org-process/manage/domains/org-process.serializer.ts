@@ -9,21 +9,41 @@ export class OrgProcessQueryOptions extends CoreQueryOptions{
         return super.getParamByObject(obj);
     }
 }
-
-class ApprovalSteps {
+class ApprovalRole {
     id: number;
-    name: string;
-    sortOrder: number;
+    propertyName: string;
+    operator: string;
+    value: string;
     isActive: boolean;
     constructor(model: any = <any>{}){
         const {
-            id, name, sortOrder, isActive
+            id, propertyName, operator, value, isActive, rules
         } = model;
 
         this.id = id;
-        this.name = name;
-        this.sortOrder = sortOrder;
+        this.propertyName = propertyName;
+        this.operator = operator;
+        this.value = value;
         this.isActive = isActive;
+    }
+}
+
+class ApprovalSteps {
+    id: number;
+    approverRole: string;
+    stepOrder: number;
+    isActive: boolean;
+    rules: Array<ApprovalRole>;
+    constructor(model: any = <any>{}){
+        const {
+            id, approverRole, stepOrder, isActive, rules
+        } = model;
+
+        this.id = id;
+        this.approverRole = approverRole;
+        this.stepOrder = stepOrder;
+        this.isActive = isActive;
+        this.rules = (rules || []).map(r => new ApprovalRole(r));
     }
 }
 class OrgProcessPhase{
