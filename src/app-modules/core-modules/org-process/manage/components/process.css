@@ -85,7 +85,7 @@ tbody[formarrayname="rules"] tr::before {
 
 /* INDENTATION FOR CHILD TABLES */
 table.small-table table.small-table {
-    margin-left: 22px;
+    /*margin-left: 22px;*/
     border-left: 1px dashed #ccc;
     padding-left: 12px;
 }

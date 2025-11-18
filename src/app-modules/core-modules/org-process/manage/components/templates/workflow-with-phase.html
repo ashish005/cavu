@@ -40,7 +40,13 @@
                 <span class="arrow b-white left pull-top hidden-left"></span>
                 <span class="arrow b-white right pull-top visible-left"></span>
                 <div style="position: relative;">
-                    <div class="text-xs _500">{{process?.name}}</div>
+                    <div class="text-xs _500">
+                        <a class="btn btn-xs text-xs b-theme text-theme border-0" (click)="editProcess(process)"><i class="fa fa-edit"></i></a>
+                        {{process?.name}}
+                        <a class="text-primary px-2" *ngIf="process.description" [ngbPopover]="process.description" placement="auto" (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+                            <i class="fa fa-info-circle"></i>
+                        </a>
+                    </div>
                     <ng-template [ngTemplateOutlet]="processActionsTemplateRef"
                                  [ngTemplateOutletContext]="{ process: process, isParent: true }"></ng-template>
                 </div>
@@ -66,6 +72,7 @@
                 </div>-->
                 <div class="sl-content text-xs">
                     <div class="sl-author m-0">
+                        <a class="btn btn-xs text-xs b-theme text-theme border-0" (click)="editProcess(subProcess)"><i class="fa fa-edit"></i></a>
                         {{subProcess.name}}
                         <a class="text-primary px-2" *ngIf="subProcess.description" [ngbPopover]="subProcess.description" placement="auto"
                            (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
@@ -124,14 +131,15 @@
                            style="height: 20px;">
                 </div>
             </li>-->
-
             <li class="nav-item">
-                <a class="btn btn-xs text-xs b-theme text-theme border-0">{{process.phases?.length}} Phases</a>
+                <a *ngIf="isParent" href="javascript:void(0)" title="Add process" class="btn btn-xs text-xs b-theme text-theme border-0"
+                   (click)="addProcess(process)"><i class="fa fa-plus pr-1"></i> Process </a>
             </li>
             <li class="nav-item">
-                <a href="javascript:void(0)" title="edit process" class="btn btn-xs text-xs b-theme text-theme border-0"
-                   (click)="editProcess(process)"><i class="fa fa-edit pr-1"></i> Process </a>
+                <a href="javascript:void(0)" title="add sub process" class="btn btn-xs text-xs b-theme text-theme border-0"
+                   (click)="addTask(process)"><i class="fa fa-plus pr-1"></i> Task </a>
             </li>
+            <li class="nav-item">{{process.phases?.length}} Phases</li>
         </ul>
     </div>
 </ng-template>
@@ -141,7 +149,7 @@
     <ul class="nav nav-xs no-border p-2" *ngIf="phases?.length">
         <ng-container *ngFor="let phase of phases; let i = index">
             <li class="nav-item text-xs theme  text-theme mx-1 b-a px-1"
-                [style.backgroundColor]="phase.color" (click)="handlePhaseClick(phase)">
+                [style.backgroundColor]="phase.color">
                 {{phase.name}}
             </li>
         </ng-container>

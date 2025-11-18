@@ -20,7 +20,7 @@ class OrgProcessForm {
       // manualStatusOn: [null],
       inchargeName: [null],
       phases: this.fb.array([]),
-      isActive: [false ],
+      isActive: [true],
     });
   }
   // convenience getter for easy access to form fields
@@ -33,7 +33,6 @@ class OrgProcessForm {
     this.formInchargeName.setValue(name, { emitEvent: false});
   }
   populateOrgProcess(item: OrgProcess){
-    debugger
     this.customForm.patchValue(item);
     // Reset existing phases
     this.phases.clear();
@@ -53,15 +52,16 @@ class OrgProcessForm {
   // --- Phase Helpers ---
   get phases(): FormArray { return this.customForm.get('phases') as FormArray; }
   steps(phaseIndex: number) { return this.phases.at(phaseIndex).get('approvalSteps') as FormArray<FormGroup>; }
-  addPhase(data?: any): void {
+  addPhase(data: any): void {
+    data = data || { sortOrder: this.phases.length + 1, isActive: true };
     const phase = this.fb.group({
-      id: [data?.id],
-      name: [data?.name, Validators.required],
-      color: [data?.color || ''],
-      phaseStatusId: [data?.phaseStatusId],
-      sortOrder: [data?.sortOrder || this.phases.length + 1],
-      isDefault: [data?.isDefault],
-      isActive: [ !data? true: data?.isActive ],
+      id: [data.id],
+      name: [data.name, Validators.required],
+      color: [data.color || ''],
+      phaseStatusId: [data.phaseStatusId],
+      sortOrder: [data.sortOrder],
+      isDefault: [data.isDefault],
+      isActive: [ data.isActive ],
       approvalSteps: this.fb.array([])
     });
     this.phases.push(phase);
@@ -70,7 +70,7 @@ class OrgProcessForm {
   }
 
   addStep(s: any, phaseIndex: number) {
-    s = s || { sortOrder: this.steps(phaseIndex).length + 1, isActive: true };
+    s = s || { stepOrder: this.steps(phaseIndex).length + 1, isActive: true };
     const step = this.fb.group({
       id: [s.id],
       stepOrder: [s.stepOrder],
@@ -78,7 +78,6 @@ class OrgProcessForm {
       isActive: [s.isActive],
       rules: this.fb.array([])
     });
-    debugger
     this.steps(phaseIndex).push(step);
     // Populate rules
     (s.rules || []).forEach((r: any, stepIndex: number) => { this.addRule(r, phaseIndex, stepIndex); });
@@ -110,7 +109,7 @@ export class ProcessCeView extends OrgProcessForm implements OnInit, OnDestroy {
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
   //@ViewChild('popupOptionsTemplate', { static: true }) public popupOptionsTemplate: TemplateRef<any>;
   get actionType(){ return this.id ? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; };
-  //@Input() parentId: number | string;
+  @Input() parentId: number | string;
   @Input() id: any;
   submitted: boolean = false;
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
@@ -119,7 +118,6 @@ export class ProcessCeView extends OrgProcessForm implements OnInit, OnDestroy {
   isLoading: boolean = false;
   constructor(public override fb: FormBuilder, private service: OrgProcessService) { super(fb); }
   ngOnInit(){
-    debugger
     if(this.id) {
       this.isLoading = true;
       this.subscribe = this.service.read(this.id).subscribe(r => {
@@ -137,6 +135,7 @@ export class ProcessCeView extends OrgProcessForm implements OnInit, OnDestroy {
     };
     const error = (resp)=> { this.submitted = false; };
     const formData = form.getRawValue();
+    formData.parentId = this.parentId;
     this.submitted = true;
     if(this.id) {
       this.service.update(this.id, formData).subscribe(success, error);

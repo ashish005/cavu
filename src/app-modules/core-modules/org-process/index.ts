@@ -19,10 +19,6 @@ import {GlobalModule} from "@app-global";
                         loadChildren: () => import('app-modules/core-modules/org-process/task-by-id').then(m => m.TaskByIdModule)
                     },
                     {
-                        path: 'workflow', data: { translatePath: 'modules.project.sub_module' },
-                        loadChildren: () => import('app-modules/core-modules/org-process/workflow').then(m => m.ProcessWorkflowModule)
-                    },
-                    {
                         path: 'setup', //canLoad:[ModuleGuard],
                         loadChildren: () => import('app-modules/core-modules/org-process/setup').then(m => m.ProcessSetupModule),
                         data: {title: 'Process', header:'Process', name: "Process", key: 'layout.banking' }//code: "ACCESS_VT_MGT",

@@ -1,7 +1,7 @@
 <div class="d-flex flex-column w-xxl">
     <div class="navbar box-shadow">
         <div class="input-group flex">Next Scheduled Task</div>
-        <select (change)="onSchedulechange($event.currentTarget.value)">
+        <select #nextSchedule (change)="onSchedulechange(nextSchedule.value)">
             <option value="7">Next 7 Days</option>
             <option value="30">Next 30 Days</option>
             <option value="90">Next 3 Month</option>

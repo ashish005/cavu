@@ -26,9 +26,7 @@ export class SetupWorkflowView extends CoreEndpointBase implements OnDestroy {
     }*/
     subscriber: Subscription;
     constructor(public router: Router, public override injector: Injector){ super(injector); }
-
     ngOnDestroy(){ this.subscriber?.unsubscribe(); }
-
     call=(processId: number)=>{
         this.processId = processId;
         //this.service.syncProcess$.emit(processId);

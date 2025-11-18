@@ -1,2 +1,4 @@
 import {ProcessCeView} from "./process-ce.view";
-export const PROCESS_COMPONENTS = [ProcessCeView];
+import {WorkflowWithPhaseView} from "./workflow-with-phase.view";
+import {TaskCeComponent} from "./task-ce.component";
+export const PROCESS_COMPONENTS = [ ProcessCeView, TaskCeComponent, WorkflowWithPhaseView ];

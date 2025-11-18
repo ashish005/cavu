@@ -1,6 +1,7 @@
 import {Injectable, Injector, OnDestroy} from "@angular/core";
 import {of, Subscription} from "rxjs";
 import {OrgResourceService} from "../endpoint-base.service";
+import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 export class WorkflowPhaseStatusLookup {
     id: number;
     name: string;
@@ -61,35 +62,60 @@ export class WorkflowTaskStatusLookup {
         this.color = color;
     }
 }
+
+class EventFrequencyTypeLookup {
+    id: number;
+    name: string;
+    masterType: string;
+    isDefault: boolean;
+    isFeeType: boolean;
+    isPeriodType: boolean;
+
+    constructor(model: any = <any>{}){
+        const {id, name, masterType, isDefault, isFeeType, isPeriodType} = model;
+        this.id = id;
+        this.name = name;
+        this.isDefault = isDefault;
+        this.masterType = masterType;
+        this.isFeeType = isFeeType;
+        this.isPeriodType = isPeriodType;
+    }
+}
 export class WorkflowPluginLookup {
     id: number;
     phaseStatus: Array<WorkflowPhaseStatusLookup>;
     processStatus: Array<WorkflowProcessStatusLookup>;
+    frequencyTypes: Array<EventFrequencyTypeLookup> = [];
+
     taskPriorities: Array<WorkflowTaskPriorityLookup>;
     taskStatus: Array<WorkflowTaskStatusLookup>;
     constructor(model: any = <any>{}){
-        const { phaseStatus, processStatus, taskPriorities, taskStatus } = model;
+        const { phaseStatus, processStatus, taskPriorities, taskStatus, frequencyTypes } = model;
         this.processStatus = (processStatus || []).map(r => new WorkflowProcessStatusLookup(r));
         this.phaseStatus = (phaseStatus || []).map(r => new WorkflowPhaseStatusLookup(r));
         this.taskPriorities = (taskPriorities || []).map(r => new WorkflowTaskPriorityLookup(r));
         this.taskStatus = (taskStatus || []).map(r => new WorkflowTaskStatusLookup(r));
+        this.frequencyTypes = (frequencyTypes || []).map(r => new EventFrequencyTypeLookup(r));
     }
+    public defaultFrequency=()=> (this.frequencyTypes || []).find(r => r.isDefault);
+    public defaultTaskPriority=()=> (this.taskPriorities || []).find(r => r.isDefault);
 }
 class WorkflowPluginLookupSerializer {
     fromJson(json: any): WorkflowPluginLookup { return new WorkflowPluginLookup(json); }
     toJson(data: any): any { return {}; }
 }
 @Injectable({ providedIn: 'root' })
-export class OrgWorkflowAPIResolver extends OrgResourceService<WorkflowPluginLookup> {
+export class OrgWorkflowAPIResolver extends OrgResourceService<WorkflowPluginLookup> implements Resolve<any>{
     masterType: WorkflowPluginLookup;
-    constructor(public override injector: Injector) { super(injector, `/pipelineLookup/workflow`, new WorkflowPluginLookupSerializer()); }
-    lookupResolver() {
+    constructor(public override injector: Injector) { super(injector, `pipelineLookup/workflow`, new WorkflowPluginLookupSerializer()); }
+    resolve(route: ActivatedRouteSnapshot) { return this.lookupResolver(route.data); }
+    lookupResolver(route) {
         return new Promise((resolve, reject) => {
             if(this.masterType) { return resolve(true); }
             const failure = (err: any) => { return reject(err); };
-            const success = (results) => { this.masterType = results.data; return resolve(true); };
+            const success = (results) => { this.masterType = new WorkflowPluginLookup(results.data); return resolve(true); };
             const setup = super.readLookup(super.apiVersion);
-            return this.performRouteResolver({}, setup, success, failure);
+            return this.performRouteResolver(route.data, setup, success, failure);
         });
     }
 }

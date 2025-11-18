@@ -11,8 +11,7 @@ export class ProcessLayout {
             isFLatChildren: true, key: 'main',
             children:[
                 { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
-                { routeTo: ['workflow'], icon:"fa fa-dashboard", key: 'Workflow' },
-                { routeTo: ['all'], icon:"fa fa-envelope", key: 'Process' },
+                { routeTo: ['tree'], icon:"fa fa-envelope", key: 'Workflow' },
             ]
         },
         {

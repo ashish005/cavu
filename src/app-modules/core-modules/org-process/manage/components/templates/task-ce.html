@@ -1,0 +1,163 @@
+<form class="content-main d-flex flex h-100" [formGroup]="customForm">
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex">
+            <div class="row no-gutters p-2">
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" onkeyup="this.setAttribute('value', this.value);" required="">
+                                <label>Name</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="md-form-group">
+                                <select class="md-input" #process formControlName="orgProcessId">
+                                    <ng-template ngFor let-entity [ngForOf]="processList" let-i="index">
+                                        <option [value]="entity.id">{{entity.name}}</option>
+                                    </ng-template>
+                                </select>
+                                <label>Process</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters">
+                        <div class="col-sm-12">
+                            <div class="md-form-group">
+                                <textarea rows="3" class="md-input" placeholder="Write here something to remind you about this task" formControlName="remark" [ngClass]="{ 'is-invalid': submitted && f['remark'].errors }"></textarea>
+                                <label> Remark </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label class="md-check py-3">
+                                <input type="checkbox" checked="checked"> <i class="theme"></i>
+                                <small>Verification Required</small>
+                            </label>
+                        </div>
+                        <div class="col-sm-8">
+                            <user-type-ahead controlTitle="Verified By"
+                                             userType="employee" (cb)="updateVerifiedById($event)"
+                                             [controlId]="formVerifiedById.value"
+                                             [controlValue]="formVerifiedBy.value"></user-type-ahead>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <user-type-ahead controlTitle="Reported By"
+                                             userType="employee" (cb)="updateReportedToId($event)"
+                                             [controlId]="formReportedToId?.value"
+                                             [controlValue]="formReportedTo?.value"></user-type-ahead>
+                        </div>
+                        <div class="col-sm-6">
+                            <user-type-ahead controlTitle="Assigned To"
+                                             userType="employee" (cb)="updateAssignedToId($event)"
+                                             [controlId]="formAssignedToId?.value"
+                                             [controlValue]="formAssignedTo?.value"></user-type-ahead>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="mx-3">
+                        <div class="md-form-group">
+                            <select class="md-input" #taskPriority (change)="updateTaskPriorityId(taskPriority.value)" formControlName="defaultFrequencyTypeId">
+                                <ng-template ngFor let-entity [ngForOf]="lookup?.taskPriorities" let-i="index">
+                                    <option [value]="entity.id">{{entity.name}}</option>
+                                </ng-template>
+                            </select>
+                            <label>Priority</label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isPrimary"><i class="theme"></i>
+                                <small>Is Primary</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isManual"><i class="theme"></i>
+                                <small>Is Manual</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mx-3">
+                        <!--<div class="text-sm text-muted">Default Frequency</div>-->
+                        <div class="md-form-group">
+                            <select class="md-input" formControlName="defaultFrequencyTypeId">
+                                <ng-template ngFor let-entity [ngForOf]="lookup?.frequencyTypes" let-i="index">
+                                    <option [value]="entity.id">{{entity.name}}</option>
+                                </ng-template>
+                            </select>
+                            <label>Default Frequency</label>
+                        </div>
+                        <!--<div class="row row-sm">
+                            <div class="col-sm-6">
+                                <div class="md-form-group float-label pb-0">
+                                    <select class="md-input" formControlName="defaultDay">
+                                        <ng-template ngFor let-entity [ngForOf]="days" let-i="index">
+                                            <option [value]="entity.id">{{entity.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <label> Default Day </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="md-form-group float-label pb-0">
+                                    <select class="md-input" formControlName="defaultMonth">
+                                        <ng-template ngFor let-entity [ngForOf]="months" let-i="index">
+                                            <option [value]="entity.id">{{entity.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <label> Default Month </label>
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                    <div class="mx-3">
+                        <div class="text-sm">
+                            <label class="md-check">
+                                <input type="checkbox" formControlName="isStatusOnMailRequired"><i class="theme"></i> Status on Mail
+                            </label>
+                        </div>
+                        <!--<div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailDaily">
+                                <i class="theme"></i>
+                                <small>Daily</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailWeekly">
+                                <i class="theme"></i>
+                                <small>Weekly</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" formControlName="isStatusOnMailMonthly">
+                                <i class="theme"></i>
+                                <small>Monthly</small>
+                            </label>
+                        </div>-->
+                        <small class="form-text text-muted">Default status will be sent to your Inbox.</small>
+                    </div>
+                </div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="mt-auto">
+                    <div class="float-left px-2">
+                        <status-check [customForm]="customForm"></status-check>
+                    </div>
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-sm primary" (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+            <loader [isLoading]="isLoading"></loader>
+        </div>
+    </div>
+</form>

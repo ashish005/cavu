@@ -4,6 +4,7 @@ export {GlobalModule} from "./library.module";
 
 export * from "./animations";
 export * from "./components";
+export * from "./enums";
 export * from "./extender-classes";
 export * from './helpers';
 export * from "./services";
