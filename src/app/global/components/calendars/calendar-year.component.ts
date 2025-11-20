@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {DateHelper} from "../../helpers";
 import {CalendarYearMonthDayComponent} from "./calendar-year-month-day.component";
-
+import {CommonModule} from "@angular/common";
 @Component({
     selector: 'calendar-year',
     templateUrl: `./templates/calendar-year.html`,
@@ -152,14 +152,14 @@ import {CalendarYearMonthDayComponent} from "./calendar-year-month-day.component
     .calendar-context-menu .item:hover>.submenu {
       display: block
     }`],
-    standalone: true, imports: [CalendarYearMonthDayComponent]
+    standalone: true,
+    imports: [CommonModule, CalendarYearMonthDayComponent]
 })
 export class CalendarYearComponent implements OnInit {
     @ViewChild('headerTemplate', { static: true }) public headerTemplate: TemplateRef<any>;
     startDate: string;
     endDate: string;
     entities: {};
-
     constructor() {}
     yearArray: Array<any>;
     selectedYear: number;

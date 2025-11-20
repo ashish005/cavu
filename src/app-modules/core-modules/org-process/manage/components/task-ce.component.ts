@@ -22,9 +22,9 @@ export class OrgTaskForm {
 
       isVerificationRequired: [false],
       isStatusOnMailRequired: [false],
-      isStatusOnMailDaily: [false],
-      isStatusOnMailWeekly: [false],
-      isStatusOnMailMonthly: [false],
+      // isStatusOnMailDaily: [false],
+      // isStatusOnMailWeekly: [false],
+      // isStatusOnMailMonthly: [false],
 
       defaultFrequencyTypeId: [null, Validators.required],
       defaultDay: [1],
@@ -36,7 +36,10 @@ export class OrgTaskForm {
 
       verifiedByName: [null],
       assignedToName: [null],
-      reportedToName: [null]
+      reportedToName: [null],
+
+      orgProcessName: [null],
+      isActive: [null]
     });
   }
 
@@ -85,7 +88,6 @@ export class OrgTaskForm {
 }
 @Component({
   standalone: false,
-  selector: 'org-task-ce',
   templateUrl: './templates/task-ce.html',
   styles: [`:host{ display: contents; }`]
 })

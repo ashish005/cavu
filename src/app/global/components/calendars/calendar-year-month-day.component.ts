@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {CommonModule, DatePipe} from "@angular/common";
-
 interface CalendarOptions {
     dayNames: Array<string>,
     dayBegin: number,
@@ -12,17 +11,13 @@ interface CalendarOptions {
     nextIcon: string,//"&gt;",
     prevIcon: string//"&lt;"
 }
-
 @Component({
     selector: 'calendar-year-month-day',
     templateUrl: `./templates/calendar-year-month-day.html`,
-    standalone: true, imports: [ CommonModule ],
+    standalone: true,
+    imports: [ CommonModule ],
     styles: [`
-    table.month tr td.disabled, table.month tr td.disabled:hover {
-      color: #ddd;
-      
-    }
-
+    table.month tr td.disabled, table.month tr td.disabled:hover { color: #ddd; }
     table.month th.month-title {
       font-size: 0.6rem;/*font-size: 14px;*/
       padding-bottom: 5px

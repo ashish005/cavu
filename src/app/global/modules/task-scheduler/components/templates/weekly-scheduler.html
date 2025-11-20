@@ -1,0 +1,33 @@
+<form class="p-0" [formGroup]="customForm">
+    <ul class="list-unstyled" formGroupName="weekly">
+        <li>
+            <div class="flex d-block flex-column">
+                Recur every: <input style="width: 60px;" class="md-input" formControlName="weekInterval" [ngClass]="{ 'is-invalid': f['weekInterval'].errors }">Weeks on:
+            </div>
+        </li>
+        <li>
+            <div class="">
+                <div class="input-group pt-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <label class="md-check">
+                                <input #allWeekDay type="checkbox" formControlName="isAllWeekDay" (change)="isAllApply(weekDayNoFromArray, allWeekDay.checked)">
+                                <i class="theme"></i>All Week Day
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-control">
+                        <div class="row" formArrayName="weekDayNo">
+                            <div class="col-4" *ngFor="let item of weekDayNoFromArray.controls; let i=index;" [formGroupName]="i">
+                                <label class="md-check">
+                                    <input type="checkbox" formControlName="isChecked"> <i class="blue"></i>
+                                    <small>{{ item.get('name').value }}</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</form>

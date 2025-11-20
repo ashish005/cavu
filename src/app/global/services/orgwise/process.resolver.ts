@@ -2,6 +2,7 @@ import {Injectable, Injector, OnDestroy} from "@angular/core";
 import {of, Subscription} from "rxjs";
 import {OrgResourceService} from "../endpoint-base.service";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
+import {FREQUENCY_TYPE} from "../../enums";
 export class WorkflowPhaseStatusLookup {
     id: number;
     name: string;
@@ -63,7 +64,7 @@ export class WorkflowTaskStatusLookup {
     }
 }
 
-class EventFrequencyTypeLookup {
+export class EventFrequencyTypeLookup {
     id: number;
     name: string;
     masterType: string;
@@ -80,12 +81,15 @@ class EventFrequencyTypeLookup {
         this.isFeeType = isFeeType;
         this.isPeriodType = isPeriodType;
     }
+    public isOnEvent=()=> this.masterType == FREQUENCY_TYPE.ON_EVENT;
+    public isFixedTime=()=> this.masterType == FREQUENCY_TYPE.FIXED_TIME;
+    public isMonthly=()=> this.masterType == FREQUENCY_TYPE.MONTHLY;
 }
 export class WorkflowPluginLookup {
     id: number;
     phaseStatus: Array<WorkflowPhaseStatusLookup>;
     processStatus: Array<WorkflowProcessStatusLookup>;
-    frequencyTypes: Array<EventFrequencyTypeLookup> = [];
+    frequencyTypes: Array<EventFrequencyTypeLookup>;
 
     taskPriorities: Array<WorkflowTaskPriorityLookup>;
     taskStatus: Array<WorkflowTaskStatusLookup>;
@@ -99,6 +103,7 @@ export class WorkflowPluginLookup {
     }
     public defaultFrequency=()=> (this.frequencyTypes || []).find(r => r.isDefault);
     public defaultTaskPriority=()=> (this.taskPriorities || []).find(r => r.isDefault);
+    public getFeeFrequencies=()=> (this.frequencyTypes || []).filter(r => r.isFeeType);
 }
 class WorkflowPluginLookupSerializer {
     fromJson(json: any): WorkflowPluginLookup { return new WorkflowPluginLookup(json); }

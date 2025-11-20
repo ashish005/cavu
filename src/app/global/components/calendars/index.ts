@@ -6,7 +6,6 @@ import {CalendarYearComponent} from "./calendar-year.component";
 import {CalendarTimelineComponent} from "./calendar-timeline.component";
 import {MonthTableComponent} from "./month-table.component";
 import {CalendarYearMonthDayComponent} from "./calendar-year-month-day.component";
-
 export const CALENDAR_COMPONENT = [
   FlatCalendarComponent,
   CalendarMonthComponent,

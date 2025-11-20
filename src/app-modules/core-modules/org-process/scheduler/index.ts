@@ -9,7 +9,6 @@ import {GlobalModule} from "@app-global";
   //template: '<scheduler-calender></scheduler-calender>'
 })
 export class SchedulerLayout {}
-
 @NgModule({
     imports: [
         CommonModule,

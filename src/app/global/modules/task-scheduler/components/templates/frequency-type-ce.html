@@ -1,0 +1,60 @@
+<form class="flex flex-row" [formGroup]="customForm">
+    <div class="flex-column">
+        <div class="float-left">
+            <select class="md-input text-xs" formControlName="frequencyTypeId" style="width: 100px;">
+                <option *ngFor="let frequencyType of frequencyTypes;" [ngValue]="frequencyType.id">
+                    {{frequencyType.name}}
+                </option>
+            </select>
+        </div>
+        <div class="float-left text-xs px-1" *ngIf="frequency?.isOnEvent">
+            <div class="text-left text-sm-left">
+                <div class="d-inline-block">
+                    <small class="text-primary">Task</small>
+                </div>
+                <div class="d-inline-block">
+                    <select class="md-input" formControlName="orgTaskId">
+                        <option *ngFor="let entity of tasks;" [ngValue]="entity.id"> {{entity.name}} </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="float-left text-xs px-1" *ngIf="frequency?.isFixedTime">
+            <div class="text-left text-sm-left">
+                <div class="d-inline-block">
+                    <small class="text-primary">Deposit On</small>
+                </div>
+                <div class="d-inline-block">
+                    <select class="md-input" formControlName="defaultDay" style="width: 40px;">
+                        <option *ngFor="let entity of days;" [ngValue]="entity.id"> {{entity.name}}</option>
+                    </select>
+                </div>
+                <div class="d-inline-block">
+                    <select class="md-input" formControlName="defaultMonth" style="width: 80px;">
+                        <option *ngFor="let entity of months;" [ngValue]="entity.id"> {{entity.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="float-left text-xs px-1" *ngIf="frequency?.isMonthly">
+            <div class="text-left text-sm-left">
+                <div class="d-inline-block">
+                    <small class="text-primary">Deposit</small>
+                </div>
+                <div class="d-inline-block">
+                    <select class="md-input" formControlName="depositDurationType" style="width: 80px;">
+                        <option *ngFor="let entity of depositDurationTypes;" [value]="entity.id"> {{entity.name}}</option>
+                    </select>
+                </div>
+                <div class="d-inline-block">
+                    <small class="text-primary">On</small>
+                </div>
+                <div class="d-inline-block">
+                    <select class="md-input" formControlName="defaultDay" style="width: 40px;">
+                        <option *ngFor="let entity of days;" [ngValue]="entity.id"> {{entity.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

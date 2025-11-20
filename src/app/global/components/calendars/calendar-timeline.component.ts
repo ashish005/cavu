@@ -1,13 +1,12 @@
 import {Component, OnInit} from "@angular/core";
-
 @Component({
+  standalone: true,
   selector: 'calendar-timeline',
   templateUrl: `./templates/calendar-timeline.html`,
   styles: [`
     .fc-not-allowed, .fc-not-allowed .fc-event {
       cursor: not-allowed
     }
-
     .fc-unselectable {
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -1597,6 +1596,5 @@ import {Component, OnInit} from "@angular/core";
   `]
 })
 export class CalendarTimelineComponent implements OnInit {
-
   ngOnInit(){}
 }

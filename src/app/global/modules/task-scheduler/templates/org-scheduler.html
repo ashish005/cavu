@@ -1,0 +1,137 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="scrollable hover">
+                <div class="d-flex">
+                    <div class="w w-auto-xs" style="width:100px">
+                        <!--<div class="nav-active b-primary left right">
+                            <ul class="nav flex-column nav-sm">
+                                <li class="nav-link nav-item"
+                                    *ngFor="let item of frequencyTypes; let i = index"
+                                    (click)="updateFrequencyTypeId(item.id)"
+                                    [ngClass]="{'active': (frequencyTypeId?.value === item.id)}">
+                                    <small>{{item?.name }}</small>
+                                </li>
+                            </ul>
+                        </div>-->
+                        <div class="list-group list-group-gap">
+                            <div class="list-group-item p-0 px-1 _500"
+                                 *ngFor="let item of frequencyTypes; let i = index"
+                                 (click)="updateFrequencyTypeId(item.id)"
+                                 [ngClass]="{'text-primary active': (frequencyTypeId?.value === item.id)}">
+                                <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                                <small class="_500">{{item?.name }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p class="p-1 mb-0" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                            <label class="md-check text-xs"><input type="checkbox" formControlName="hasNoExpiration"><i
+                                    class="blue"></i>Has No Expiration</label>
+                        </p>
+                        <ul class="nav nav-xs no-border">
+                            <li class="nav-item" style="width: 50px;">
+                                <label class="text-xs text-muted">Start On</label>
+                            </li>
+                            <li class="nav-item">
+                                <div class="md-form-group p-0">
+                                    <input class="md-input text-sm" type="date" formControlName="startDate"
+                                           [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }"
+                                           style="max-width: 95px;">
+                                </div>
+                            </li>
+                            <li class="nav-item px-2">
+                                <div class="md-form-group p-0">
+                                    <input class="md-input text-sm" type="time" formControlName="startTime"
+                                           [ngClass]="{ 'is-invalid': submitted && f['startTime'].errors }"
+                                           style="width: 90px;">
+                                </div>
+                            </li>
+                            <!--<li class="nav-item">
+                                <div class="md-form-group text-sm p-0">
+                                    <select class="md-input" style="max-width: 95px;" formControlName="startTimeZone">
+                                        <ng-template ngFor let-tz [ngForOf]="lookupService.masterType?.timeZones" let-i="index">
+                                            <option [value]="tz.id">{{tz.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <label style="visibility: hidden;">Time zone</label>
+                                </div>
+                            </li>-->
+                        </ul>
+                        <ul class="nav nav-xs no-border" *ngIf="!customForm.value.hasNoExpiration && activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                            <li class="nav-item" style="width: 50px;">
+                                <label class="text-xs text-muted">End On</label>
+                            </li>
+                            <li class="nav-item">
+                                <div class="md-form-group p-0">
+                                    <input class="md-input text-sm" type="date" formControlName="endDate"
+                                           [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }"
+                                           style="max-width: 95px;">
+                                </div>
+                            </li>
+                            <li class="nav-item px-2">
+                                <div class="md-form-group p-0">
+                                    <input class="md-input text-sm" type="time" formControlName="endTime"
+                                           [ngClass]="{ 'is-invalid': submitted && f['endTime'].errors }"
+                                           style="width: 90px;">
+                                </div>
+                            </li>
+                            <!--<li class="nav-item">
+                                <div class="md-form-group text-sm p-0">
+                                    <select class="md-input" style="max-width: 95px;" formControlName="endTimeZone">
+                                        <ng-template ngFor let-tz [ngForOf]="lookupService.masterType?.timeZones" let-i="index">
+                                            <option [value]="tz.id">{{tz.name}}</option>
+                                        </ng-template>
+                                    </select>
+                                    <label style="visibility: hidden;">Time zone</label>
+                                </div>
+                            </li>-->
+                        </ul>
+                        <div [ngSwitch]="activeFrequency?.masterType">
+                            <daily-info-scheduler [customForm]="customForm"
+                                                  *ngSwitchCase="'DAILY'"></daily-info-scheduler>
+                            <weekly-info-scheduler [customForm]="customForm"
+                                                   *ngSwitchCase="'WEEKLY'"></weekly-info-scheduler>
+                            <monthly-info-scheduler [customForm]="customForm"
+                                                    *ngSwitchCase="'MONTHLY'"></monthly-info-scheduler>
+                            <event-info-scheduler [customForm]="customForm"
+                                                  *ngSwitchCase="'ON_EVENT'"></event-info-scheduler>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!(isManual)">
+                    <advance-setting [customForm]="customForm"></advance-setting>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<ng-template #schedularShowCalenderTemplate>
+    <ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item">
+            <button class="btn btn-xs white b-a no-shadow" type="button" (click)="testScheduler()">Show Calendar</button>
+        </li>
+    </ul>
+</ng-template>
+<ng-template #schedularActionTemplate>
+    <div>
+        <div class="d-flex float-left">
+            <span class="text-muted">Trigger Status</span>
+            <label class="md-switch"><input type="checkbox" checked="checked"><i class="blue"></i>On/Off</label>
+        </div>
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item mx-2">
+                <button class="btn btn-xs btn-outline b-a b-theme text-theme mr-2" (click)="cancelFrequency()">Reset</button>
+            </li>
+            <li class="nav-item mx-2">
+                <button class="btn btn-xs btn-outline b-primary b-a b-theme text-theme" autofocus [disabled]="submitted" (click)="applyFrequency()">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : (id)? 'Update': 'Create' }}
+                </button>
+            </li>
+            <li>
+                <button class="float-right btn btn-xs white b-a no-shadow" type="button" (click)="testScheduler()">Show Calendar</button>
+            </li>
+        </ul>
+    </div>
+</ng-template>

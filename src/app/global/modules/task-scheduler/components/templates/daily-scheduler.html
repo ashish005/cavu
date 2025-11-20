@@ -1,0 +1,89 @@
+<form class="p-0" [formGroup]="customForm">
+    <div class="d-flex align-items-stretch" formGroupName="daily">
+        <div class="d-flex">
+            <div class="flex d-block flex-column">
+            Recur every: <input style="width: 60px;" class="md-input" formControlName="dayInterval" [ngClass]="{ 'is-invalid': f['dayInterval'].errors }">days
+            </div>
+            <div class="flex d-block flex-columns">
+                <div class="row no-gutters">
+                    <div class="col-12">
+                        <div class="flex float-right">
+                            <div class="input-group">
+                                <div class="px-1">
+                                    <small class="text-xs text-muted">Interval</small>
+                                </div>
+                                <div class="input-group-prepend pr-1">
+                                    <a>{{dailyHourInterval || '--'}}
+                                        <small>Hr</small>
+                                    </a>
+                                </div>
+                                <div class="input-group-apend pr-1">
+                                    <a >{{dailyMinuteInterval}}
+                                        <small>Minute</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <small>Hour</small>
+                        <div class="b-a row no-gutters">
+                            <div class="btn btn-xs col-3" *ngFor="let hour of hours; let i=index" (click)="updateDailyFormHour(hour)" [class.active]="hour == dailyHourInterval">
+                                <a >{{hour}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <small>Minute</small>
+                        <div class="b-a row no-gutters">
+                            <div class="btn btn-xs col-3" *ngFor="let minute of minutes; let i=index" (click)="updateDailyFormMinute(minute)" [class.active]="minute == dailyMinuteInterval">
+                                <a >{{minute}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div>
+          <button class="btn btn-sx dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+            <span *ngIf="!dailyHourInterval">Hour Interval </span>
+            <span *ngIf="dailyHourInterval">{{dailyHourInterval}} <small>Hr</small></span>
+          </button>
+          <div class="dropdown-menu w animate fadeIn" x-placement="bottom-start">
+            <div class="row no-gutters b-b mb-2">
+              <div class="col-6 b-r text-center show" (click)="updateDailyAMPM(false);"
+                   [ngClass]="{'active':(dailyAMPM === 'AM')}">
+                  <span class="text-center"><i class="fa text-md text-muted"></i>
+                    <small>AM</small>
+                  </span>
+              </div>
+              <div class="col-6 b-r text-center" (click)="updateDailyAMPM(true)"
+                   [ngClass]="{'active':(dailyAMPM === 'PM')}">
+                  <span class="text-center"><i class="fa text-md text-muted"></i>
+                    <small>PM</small>
+                  </span>
+              </div>
+            </div>
+            <span class="dropdown-item" *ngFor="let hour of sfFactory?.hours; let i=index"
+                  (click)="updateDailyFormHour(hour)">
+                {{hour}}
+              </span>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-sx w-100-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+            <span *ngIf="!dailyMinuteInterval">Minute Interval </span>
+            <span *ngIf="dailyMinuteInterval">{{dailyMinuteInterval}} <small>Mi</small> </span>
+          </button>
+          <div class="dropdown-menu" x-placement="bottom-start"
+               style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
+            <a class="dropdown-item" *ngFor="let minute of sfFactory?.minutes"
+               (click)="updateDailyFormMinute(minute)">
+              {{minute}}
+            </a>
+          </div>
+        </div>-->
+    </div>
+</form>

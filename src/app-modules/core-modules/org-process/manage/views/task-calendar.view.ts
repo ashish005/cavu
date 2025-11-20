@@ -27,17 +27,14 @@ export class TaskCalendarView extends ViewExtender<OrgTaskCalendar> implements O
             {headerName: 'End Time', cellTemplate: CalendarEndDateCell }
         ];
     }
-
     onActivate(componentRef){
       this.actionTemplate = componentRef.actionTemplate;
     }
     override ngOnDestroy(){ super.ngOnDestroy(); }
-
     ngOnInit(){
         //this.orgTaskId = this.activatedRoute.snapshot.params.taskId;
       super.populateGrid();
     }
-
     actionCb(data: OrgTaskCalendar){
         const { id, taskName,  orgTaskId } = data;
         const popupHeaderOption = { text: `Calendar for ${taskName}`, desc: `Calendar` };
@@ -46,6 +43,6 @@ export class TaskCalendarView extends ViewExtender<OrgTaskCalendar> implements O
             orgTaskId: orgTaskId,
             data: data
         };
-        this.lookupResolver.showOrgCalendarPopup(inputData, popupHeaderOption);
+        this.lookupResolver.showTaskCalendarPopup(inputData, popupHeaderOption);
     }
 }

@@ -8,7 +8,7 @@ import {OrgTask} from "../domains/org-task.serializer";
   standalone: false,
     template: `<div>
         <!--<a class="btn btn-xs text-xs text-primary" (click)="checkActivity(context)"><i class="fa fa-calendar"></i></a>-->
-        <a class="text-xs _500" (click)="routeTo(context)"> {{ context.name }} <span class="text-muted">({{ context.orgProcess?.name }})</span></a>
+        <a class="text-xs _500" (click)="routeTo(context)"> {{ context.name }} <span class="text-muted">({{ context.orgProcessName }})</span></a>
         <a class="px-1" [ngbPopover]="content" placement="auto" container="body" triggers="manual" [autoClose]="true" (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.toggle()">
             <i class="fa fa-info-circle"></i>
         </a>
@@ -19,7 +19,7 @@ import {OrgTask} from "../domains/org-task.serializer";
                         <table class="table small-table text-xs">
                             <tr>
                                 <td>Process</td>
-                                <td class="text-right">{{ context.orgProcess?.name || '--' }}</td>
+                                <td class="text-right">{{ context.orgProcessName || '--' }}</td>
                             </tr>
                             <tbody class="lt">
                                 <tr>
@@ -63,7 +63,7 @@ export class TaskNameActionCell extends DynamicComponent {
         const inputData: any = {
             orgTaskId: id
         };
-        this.lookupResolver.showEventTaskActivityPopup(inputData, popupHeaderOption);
+        this.lookupResolver.showTaskActivityPopup(inputData, popupHeaderOption);
     }
 }
 
@@ -104,7 +104,7 @@ export class TriggerCellComponent extends DynamicComponent {
             orgTaskId: id,//Org Task Id
             isManual: isManual
         };
-        this.lookupResolver.showSchedulerPopup(inputData, popupHeaderOption, () => {});
+        this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, () => {});
     }
 
     showAllSchedulers(task: OrgTask) {
@@ -113,7 +113,7 @@ export class TriggerCellComponent extends DynamicComponent {
         const inputData: any = {
             orgTaskId: id
         };
-        this.lookupResolver.showEventTaskSchedulerPopup(inputData, popupHeaderOption)
+        this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, ()=>{})
     }
 }
 

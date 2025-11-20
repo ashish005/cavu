@@ -43,7 +43,7 @@ export class ReminderNameActionCell extends DynamicComponent {
             orgTaskId: orgTaskId,
             scheduleId: orgTaskScheduleId
         };
-        this.lookupResolver.showEventTaskActivityPopup(inputData, popupHeaderOption);
+        this.lookupResolver.showTaskActivityPopup(inputData, popupHeaderOption);
     }
 
     /*showTemplateToCreateEdit(row: ReminderTemplate) {

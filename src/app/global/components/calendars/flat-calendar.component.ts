@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
-
 @Component({
+  standalone: true,
   selector: 'flat-calendar',
   templateUrl: `./templates/flat-calendar.html`,
   styleUrls: [`./templates/flat-calendar.scss`]

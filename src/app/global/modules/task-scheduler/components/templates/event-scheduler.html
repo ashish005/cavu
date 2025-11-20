@@ -1,0 +1,12 @@
+<div class="flex flex-row" [formGroup]="customForm">
+  <div class="row text-xs no-gutters" formGroupName="event">
+    <div class="col-sm-12">
+      <div class="md-form-group float-label p-0">
+        <label class="text-xs text-muted m-0">Task</label>
+        <select class="md-input" formControlName="afterSucessOnTaskId">
+          <option *ngFor="let task of tasks;" [ngValue]="task.id">{{task.name}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+<form class="pt-2" [formGroup]="customForm">
+  <div id="advance-scheduler">
+    <div class="panel box no-border mb-2">
+      <div class="box-header p-2 p-y-sm">
+        <!--<span class="float-right badge text-sm">430</span>-->
+        <a data-toggle="collapse" data-parent="#advance-scheduler" data-target="#adv-sch-1">Advance setting</a>
+      </div>
+      <div id="adv-sch-1" class="collapse">
+        <div class="box-body">
+          <div class="input-group mb-2">
+      <span class="input-group-prepend">
+        <div class="input-group-text"><input type="checkbox" formControlName="isTaskDelay"></div>
+      </span>
+            <div class="form-control py-0">
+              <select-dropdown [items]="delayTask" [disabled]="isDelayTaskActive"
+                               title="Delay Task for up to( Random Delay)"
+                               (cb)="updateDelayTask($event)" [control]="formDelayTask"></select-dropdown>
+            </div>
+          </div>
+          <div class="input-group mb-2">
+      <span class="input-group-prepend">
+        <div class="input-group-text"><input type="checkbox" formControlName="isRepeatTask"></div>
+      </span>
+            <div class="form-control py-0">
+              <div class="row">
+                <div class="col-sm-6">
+                  <select-dropdown [items]="repeatTask" [disabled]="isRepeatTaskActive" title="Repeat Task every"
+                                   (cb)="updateRepeatTask($event)" [control]="formRepeatTask"></select-dropdown>
+                </div>
+                <div class="col-sm-6">
+                  <select-dropdown [items]="repeatDuration" [disabled]="isRepeatTaskActive" title="For a duration of"
+                                   (cb)="updateRepeatDuration($event)"
+                                   [control]="formRepeatDuration"></select-dropdown>
+                </div>
+              </div>
+              <label class="md-check pb-2">
+                <input type="checkbox" formControlName="isStopTaskAtEndRepetition" [attr.disabled]="isRepeatTaskActive? '' : null"> <i class="indigo"></i>
+                <span [ngClass]="{'text-muted': isRepeatTaskActive }" class="pl-2">Stop all running tasks at end of repetition duration</span>
+              </label>
+            </div>
+          </div>
+          <div class="input-group mb-2">
+      <span class="input-group-prepend">
+        <div class="input-group-text"><input type="checkbox" formControlName="isStopTaskIfLongerThan"></div>
+      </span>
+            <div class="form-control py-0">
+              <select-dropdown [items]="longRunningTaskDuration" [disabled]="isStopIfLongerThanActive"
+                               title="Stop task if it runs longer than" (cb)="updateStopTask($event)"
+                               [control]="formStopTask"></select-dropdown>
+            </div>
+          </div>
+          <!--<div class="list-item">
+            <span class="w-40">
+              <span class="text-muted">Expire</span>
+              <label class="md-check mt-2"><input type="checkbox" formControlName="isExpire"> <i class="indigo"></i> </label>
+            </span>
+            <div class="list-body mt-2">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="md-form-group pb-2">
+                    <input class="md-input" type="date" formControlName="endDate"  [attr.disabled]="isExpireActive? '' : null"
+                           [ngClass]="{ 'is-invalid': submitted && f.endDate.errors }">
+                    <label>Date</label>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="md-form-group pb-2">
+                    <input class="md-input" type="time" formControlName="endTime"  [attr.disabled]="isExpireActive? '' : null"
+                           [ngClass]="{ 'is-invalid': submitted && f.endTime.errors }">
+                    <label>Time</label>
+                  </div>
+                </div>
+              </div>
+              <label class="md-check pb-2">
+                <input type="checkbox" formControlName="synchAcrossTimeZone"  [attr.disabled]="isExpireActive? '' : null"> <i class="indigo"></i>
+                <span [ngClass]="{'text-muted': isExpireActive }" class="pl-2"> Synchronize Across TimeZone </span>
+              </label>
+              <div class="item-tag tag hide"></div>
+            </div>
+          </div>-->
+          <!--<div class="list-item">
+            <div class="list-body pt-2">
+              <label class="md-check"><input type="checkbox" formControlName="isEnabled"> <i class="indigo"></i> Enabled</label>
+            </div>
+          </div>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

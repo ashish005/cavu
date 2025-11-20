@@ -15,6 +15,7 @@ export class OrgTask extends CoreResource {
     //taskTypeId: number;
     taskPriorityId: number;
     orgProcessId: number;
+    orgProcessName: string;
 
     isManual: boolean;
     isPrimary: boolean;
@@ -29,12 +30,10 @@ export class OrgTask extends CoreResource {
     verifiedById: string;
     reportedToId: string;
     assignedToId: string;
-
-    defaultDay: number;
-    defaultMonth: number;
-
+    // defaultDay: number;
+    // defaultMonth: number;
     isLocked: boolean;
-    status: string;
+    isActive: boolean;
 
     verifiedByName: string;
     reportedToName: string;
@@ -54,14 +53,14 @@ export class OrgTask extends CoreResource {
           isVerificationRequired, isStatusOnMailRequired,
           isStatusOnMailDaily, isStatusOnMailWeekly, isStatusOnMailMonthly,
           verifiedById, reportedToId,
-          defaultFrequencyTypeId,
-          defaultDay, defaultMonth, remark,
+          defaultFrequencyTypeId, orgProcessName,
+          //defaultDay, defaultMonth,
+          remark,
           isManual, isPrimary, orgProcessId, assignedToId,
           verifiedByName, reportedToName, assignedToName,
           defaultFrequencyTypeName, taskPriorityName,
-          isLocked, status,
-          isFeeTask, isPeriodType,
-          orgProcess
+          isLocked, isActive,
+          isFeeTask, isPeriodType
       } = model;
 
       this.id = id;
@@ -78,16 +77,17 @@ export class OrgTask extends CoreResource {
       this.verifiedById = verifiedById;
       this.reportedToId = reportedToId;
       this.defaultFrequencyTypeId = defaultFrequencyTypeId;
-      this.defaultDay = defaultDay;
-      this.defaultMonth = defaultMonth;
+      // this.defaultDay = defaultDay;
+      // this.defaultMonth = defaultMonth;
 
       this.isManual = isManual;
       this.isPrimary = isPrimary;
 
       this.isLocked = isLocked;
-      this.status = status;
+      this.isActive = isActive;
 
       this.orgProcessId = orgProcessId;
+      this.orgProcessName = orgProcessName;
       this.assignedToId = assignedToId;
 
       this.verifiedByName = verifiedByName;
@@ -104,9 +104,5 @@ export class OrgTask extends CoreResource {
 
 export class OrgTaskSerializer {
   fromJson(json: any): OrgTask { return new OrgTask(json); }
-  toJson(data: any): any {
-    data.orgProcessId = data.orgProcessId || data.orgParentProcessId;
-    // Special handling for orgParentProcessId
-    return data;
-  }
+  toJson(data: any): any { return data; }
 }

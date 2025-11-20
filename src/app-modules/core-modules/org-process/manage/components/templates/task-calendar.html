@@ -1,0 +1,129 @@
+<div class="d-flex flex">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xxl modal-dialog">
+            <!--<div class="navbar box-shadow">
+                <div class="input-group flex">
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search"
+                           required="">
+                    <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                            class="fa fa-search text-muted"></i></button></span>
+                </div>
+            </div>-->
+            <div class="scrollable hover">
+                <a class="nav-link" (click)="createNew()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span>
+                </a>
+                <nav class="nav-border right b-theme" data-nav="">
+                    <ul class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="calendars" let-i="index">
+                            <li class="list-item" (click)="changeCalendar(row)">
+                                <div class="list-body">
+                                    <a class="item-title _500">{{row.name}}</a>
+                                    <div class="item-except text-muted text-sm h-1x" *ngIf="row.remark">
+                                        {{row.remark}}
+                                    </div>
+                                    <div class="item-except text-xs">
+                                        <span class="clearfix"><span class="text-muted">Incharge:</span><small class="pl-1">{{row.inchargeName}}</small></span>
+                                        <div class="text-muted">
+                                            <div class="d-inline-block">
+                                                <span class="float-left">From: {{ row.startDate }} <small class="pl-1">{{ row.startTime }}</small></span>
+                                            </div>
+                                            <div class="d-inline-block float-right">
+                                                <span class="float-right">Till: {{row.endDate }}<small class="pl-1">{{ row.endTime }}</small></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </nav>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <div class="p-3 mt-auto"><span class="text-sm text-muted">Reminders: </span></div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <form class="d-flex flex-column flex"  [formGroup]="customForm">
+            <div class="navbar flex-nowrap white lt box-shadow">
+                <a data-toggle="modal" data-target="#task-list" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                </a>
+                <span class="text-md text-ellipsis flex">New Calendar</span>
+            </div>
+            <div class="scrollable hover">
+                <!--<calendar-ce #calendarEl [orgTaskId]="orgTaskId" (cb)="updateCalendars($event)"></calendar-ce>-->
+                <div class="flex flex-row p-3">
+                    <div class="d-flex flex-column flex">
+                        <div class="row no-gutters">
+                            <div class="col-sm-6">
+                                <div class="md-form-group float-label">
+                                    <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                                           onkeyup="this.setAttribute('value', this.value);" required="">
+                                    <label>Name</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <user-type-ahead controlTitle="Incharge"
+                                                 userType="employee" (cb)="updateInchargeId($event)"
+                                                 [controlId]="formInchargeId.value"
+                                                 [controlValue]="formInchargeName.value"></user-type-ahead>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="md-form-group">
+                <textarea rows="3" class="md-input" placeholder="Write here something to remind you about this task"
+                          formControlName="remark"
+                          [ngClass]="{ 'is-invalid': submitted && f['remark'].errors }"></textarea>
+                                    <label> Remark </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-row pb-3">
+                            <div class="col-sm-3 p-0">
+                                <div class="md-form-group pb-0">
+                                    <input class="md-input" type="date" formControlName="startDate"
+                                           [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }">
+                                    <label>Start Date</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 pb-0">
+                                <div class="md-form-group pb-0">
+                                    <input class="md-input" type="time" formControlName="startTime"
+                                           [ngClass]="{ 'is-invalid': submitted && f['startTime'].errors }">
+                                    <label>Start Time</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 p-0">
+                                <div class="md-form-group pb-0">
+                                    <input class="md-input" type="date" formControlName="endDate"
+                                           [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }">
+                                    <label>End Date</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 pb-0">
+                                <div class="md-form-group pb-0">
+                                    <input class="md-input" type="time" formControlName="endTime"
+                                           [ngClass]="{ 'is-invalid': submitted && f['endTime'].errors }">
+                                    <label>End Time</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="white lt b-t mt-auto">
+                <div class="row row-sm">
+                    <div class="col-sm-12 text-center">
+                        <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                                (click)="saveForm(customForm)"
+                                [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
