@@ -1,4 +1,4 @@
-<div class="d-flex flex">
+<div class="d-flex flex h-100">
     <div class="fade aside aside-sm" id="task-list">
         <div class="d-flex flex-column w-xxl b-r white modal-dialog">
             <div class="navbar box-shadow">
@@ -128,22 +128,17 @@
                         class="text-xs">{{taskSchedule?.orgTaskScheduleDescription}}</small></span>
             </div>
             <div class="scrollable hover">
-                <div class="p-3">
-                    <scheduler-info [id]="id" #schedulerEl
-                                    [orgTaskId]="orgTaskId"
-                                    [isManual]="isManual"
-                                    [isFeeTask]="isFeeTask"
-                                    [addManually]="addManually"
-                                    (onOk)="onOkAction($event)"
-                                    (onCancel)="onCancelAction($event)"></scheduler-info>
-                </div>
-                <div class="no-result" [class.hide]="id">
-                    <div class="p-4 text-center">No Results</div>
-                </div>
+                <scheduler-info [id]="id" #schedulerEl
+                                [orgTaskId]="orgTaskId"
+                                [isManual]="isManual"
+                                [isFeeTask]="isFeeTask"
+                                [addManually]="addManually"
+                                (onOk)="onOkAction($event)"
+                                (onCancel)="onCancelAction($event)"></scheduler-info>
             </div>
-            <div class="white lt b-t mt-auto" id="chat-form">
+            <!--<div class="white lt b-t mt-auto" id="chat-form">
                 <ng-template *ngTemplateOutlet="schedulerEl?.footerTemplate"></ng-template>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

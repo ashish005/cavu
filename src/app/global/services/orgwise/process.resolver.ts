@@ -71,19 +71,21 @@ export class EventFrequencyTypeLookup {
     isDefault: boolean;
     isFeeType: boolean;
     isPeriodType: boolean;
-
+    isOnEvent: boolean;
+    isFixedTime: boolean;
+    isMonthly: boolean;
     constructor(model: any = <any>{}){
-        const {id, name, masterType, isDefault, isFeeType, isPeriodType} = model;
+        const {id, name, masterType, isDefault, isFeeType, isPeriodType, isOnEvent, isFixedTime, isMonthly} = model;
         this.id = id;
         this.name = name;
         this.isDefault = isDefault;
         this.masterType = masterType;
         this.isFeeType = isFeeType;
         this.isPeriodType = isPeriodType;
+        this.isOnEvent = isOnEvent;
+        this.isFixedTime = isFixedTime;
+        this.isMonthly = isPeriodType;
     }
-    public isOnEvent=()=> this.masterType == FREQUENCY_TYPE.ON_EVENT;
-    public isFixedTime=()=> this.masterType == FREQUENCY_TYPE.FIXED_TIME;
-    public isMonthly=()=> this.masterType == FREQUENCY_TYPE.MONTHLY;
 }
 export class WorkflowPluginLookup {
     id: number;

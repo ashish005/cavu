@@ -41,24 +41,6 @@ export class OrgSchedularComponent extends SchedularForm implements OnInit, OnDe
   activeFrequency: EventFrequencyTypeLookup;
   taskSchedule: SchedularDomain;
   subscriber: Subscription;
-    /*
-    timer;
-    isActive: Subject<boolean> = new Subject<boolean>();
-
-    timerStarted$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-    const tapFn = (next) => {
-        if(this.lookupResolver?.masterType?.frequencyTypes?.length){
-            this.isActive.next(true);
-              this.fetchSchedular();
-        } else if (next) {
-            clearTimeout(this.timer);
-            this.timer = setTimeout(() => { this.timerStarted$.next(true); }, 100);
-        }
-    };
-    this.timerStarted$.pipe(
-        takeUntil(this.isActive), // auto-unsubscribe
-        tap(tapFn)).subscribe();
-    */
   frequencyTypeEnum: any = FREQUENCY_TYPE;
   constructor(public override fb: FormBuilder, public override injector: Injector,
               public lookupResolver: OrgWorkflowAPIResolver,

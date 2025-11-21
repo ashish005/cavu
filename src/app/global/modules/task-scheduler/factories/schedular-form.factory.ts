@@ -52,8 +52,7 @@ export class SchedularForm {
         return this.fb.group({
             dayInterval: [null, Validators.required],
             hourInterval: [null, Validators.required],
-            minuteInterval: [null, Validators.required],
-            ampm: [null, Validators.required],
+            minuteInterval: [null, Validators.required]
         })
     }
   weeklyFormGroup(){

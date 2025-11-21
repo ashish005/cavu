@@ -1,43 +1,33 @@
 <form class="p-0" [formGroup]="customForm">
-    <ul class="list-unstyled p-0" formGroupName="monthly">
-        <li>
-            <div class="row">
-                <div class="col-6">
-                    Recur every:
-                    <input style="width: 60px;" class="md-input" formControlName="monthInterval"
-                           [ngClass]="{ 'is-invalid': f['monthInterval'].errors }">
-                    months on:
-                </div>
-                <div class="col-6">
-                    <div class="input-group-text p-1">
+    <div class="d-flex align-items-stretch" formGroupName="monthly">
+        <div class="d-flex text-xs">
+            <div class="_500 p-1">Recur every:</div>
+            <div class="flex d-block flex-column">
+                <input type="number" style="width: 50px;" class="md-input" formControlName="monthInterval" [ngClass]="{ 'is-invalid': f['monthInterval'].errors }"> months on:
+            </div>
+        </div>
+    </div>
+    <div class="d-flex text-xs" formGroupName="monthly">
+        <div class="flex d-block flex-column">
+            <label class="md-check float-right">
+                <input #allMonth type="checkbox" formControlName="isAllMonth" (change)="isAllApply(formMonthlyMonthNo, allMonth.checked)">
+                <i class="theme"></i>All Month
+            </label>
+            <div class="form-control clear">
+                <div class="row" formArrayName="monthNo">
+                    <div class="col-3" *ngFor="let item of formMonthlyMonthNo.controls; let i=index;" [formGroupName]="i">
                         <label class="md-check">
-                            <input #allMonth type="checkbox" checked="checked" formControlName="isAllMonth"
-                                   (change)="isAllApply(formMonthlyMonthNo, allMonth.checked)"> <i
-                                class="blue"></i> All Month
+                            <input type="checkbox" formControlName="isChecked"> <i class="blue"></i>
+                            <small>{{ item.get('name').value }}</small>
                         </label>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 p-2 px-3 line line-dashed">
-                            <div class="row" formArrayName="monthNo">
-                                <div class="col-sm-3" *ngFor="let item of formMonthlyMonthNo.controls; let i=index;"
-                                     [formGroupName]="i">
-                                    <label class="md-check">
-                                        <input type="checkbox" formControlName="isChecked"> <i class="blue"></i>
-                                        <small>{{ item.get('name').value }}</small>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </li>
-        <li>
             <div class="row no-gutters box" [attr.id]="id">
                 <div class="col-6 light lt">
                     <div class="box-header p-2">
                       <span class="badge text-sm">
-                        <label class="md-check"><input type="radio" formControlName="on" name="on" value="1"><i class="blue"></i> Days</label>
+                        <label class="md-check"><input type="radio" formControlName="on" name="on" value="1"><i class="theme"></i> Days</label>
                       </span>
                         <!--<a data-toggle="collapse" [attr.data-parent]="'#'+id" [attr.data-target]="'#'+id+'accor_1'"
                            class="collapsed" aria-expanded="false">
@@ -45,74 +35,56 @@
                         </a>-->
                     </div>
                     <div class="box-divider"></div>
-                    <div [attr.id]="id+'accor_1'" class="box-body pt-0" [class.show]="(formOn?.value=='1')"
-                         [class.collapse]="(formOn?.value != '1')">
+                    <div [attr.id]="id+'accor_1'" class="box-body pt-0" [class.show]="(formOn?.value=='1')" [class.collapse]="(formOn?.value != '1')">
                         <div class="row no-gutters py-0" formArrayName="dayNo">
                             <div class="col-3" *ngFor="let item of formMonthlyDays.controls; let i=index;" [formGroupName]="i">
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" formControlName="isChecked">
-                                        <small>{{item.get('name').value }}</small>
-                                    </label>
-                                </div>
+                                <label class="md-check">
+                                    <input type="checkbox" formControlName="isChecked"> <i class="theme"></i>
+                                    <small>{{ item.get('name').value }}</small>
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 light lt b-l">
                     <div class="box-header p-2">
-                  <span class="badge text-sm">
-                     <label class="md-check"><input type="radio" formControlName="on" name="on" value="2"><i class="blue"></i> On Weeks and days</label>
-                  </span>
+                      <span class="badge text-sm">
+                         <label class="md-check"><input type="radio" formControlName="on" name="on" value="2"><i class="theme"></i> On Weeks and days</label>
+                      </span>
                         <!--<a data-toggle="collapse" [attr.data-parent]="'#'+id" [attr.data-target]="'#'+id+'accor_2'"
                            class="collapsed" aria-expanded="false">
                             By Weeks and days
                         </a>-->
                     </div>
                     <div class="box-divider"></div>
-                    <div [attr.id]="id+'accor_2'" class="box-body pt-0"
-                         [ngClass]="{ 'show': formOn?.value==2, 'collapse': formOn?.value != 2}">
+                    <div [attr.id]="id+'accor_2'" class="box-body p-1" [ngClass]="{ 'show': formOn?.value==2, 'collapse': formOn?.value != 2}">
                         <div class="row no-gutters py-0">
                             <div class="col-sm-6">
-                                <fieldset class="form-group">
-                                    <div class="row">
-                                        <div class="col-sm-12" formArrayName="weekNo">
-                                            <small>On Weeks Of</small>
-                                            <div class="form-check"
-                                                 *ngFor="let item of formMonthlyWeeks.controls; let i=index;"
-                                                 [formGroupName]="i">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           formControlName="isChecked">
-                                                    <small>{{item.get('name').value }}</small>
-                                                </label>
-                                            </div>
-                                        </div>
+                                <small>On Weeks Of</small>
+                                <div class="row no-gutters py-0" formArrayName="weekNo">
+                                    <div class="col-12" *ngFor="let item of formMonthlyWeeks.controls; let i=index;" [formGroupName]="i">
+                                        <label class="md-check">
+                                            <input type="checkbox" formControlName="isChecked"> <i class="theme"></i>
+                                            <small>{{ item.get('name').value }}</small>
+                                        </label>
                                     </div>
-                                </fieldset>
+                                </div>
                             </div>
                             <div class="col-sm-6">
-                                <small>On Week Days</small>
-                                <fieldset class="form-group">
-                                    <div class="row">
-                                        <div class="col-sm-12" formArrayName="monthlyWeekDayNo">
-                                            <div class="form-check"
-                                                 *ngFor="let item of formMonthlyWeekDayNo.controls; let i=index;"
-                                                 [formGroupName]="i">
-                                                <label class="form-check-label">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           formControlName="isChecked">
-                                                    <small>{{item.get('name').value }}</small>
-                                                </label>
-                                            </div>
-                                        </div>
+                                <small>Week Days</small>
+                                <div class="row no-gutters py-0" formArrayName="monthlyWeekDayNo">
+                                    <div class="col-12" *ngFor="let item of formMonthlyWeekDayNo.controls; let i=index;" [formGroupName]="i">
+                                        <label class="md-check">
+                                            <input type="checkbox" formControlName="isChecked"> <i class="theme"></i>
+                                            <small>{{ item.get('name').value }}</small>
+                                        </label>
                                     </div>
-                                </fieldset>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </li>
-    </ul>
+        </div>
+    </div>
 </form>

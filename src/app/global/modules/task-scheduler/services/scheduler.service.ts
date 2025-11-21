@@ -44,7 +44,7 @@ export class SchedulerService extends OrgResourceService<SchedularDomain> {
 
   getOrgTaskEvents(taskParam: SchedulerTaskParam){
     return this.httpClient
-      .get(`${this.baseSectorAPIUrl}orgTask/scheduleLookup?${taskParam.toQueryString()}`, this.requestHeaders)
+      .get(`${this.baseSectorAPIUrl}/orgTask/scheduleLookup?${taskParam.toQueryString()}`, this.requestHeaders)
       .pipe(
           map((resp: any) => resp.entities),
           catchError(error => this.handleError(error, () => this.getOrgTaskEvents(taskParam)))

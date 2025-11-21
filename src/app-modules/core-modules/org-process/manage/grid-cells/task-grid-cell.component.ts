@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ACTION_ENUM, DynamicComponent} from "@app-global";
+import {ACTION_ENUM, CoreProcessFactory, DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {OrgTask} from "../domains/org-task.serializer";
 
@@ -78,7 +78,7 @@ export class TaskNameActionCell extends DynamicComponent {
     </div>`
 })
 export class TriggerCellComponent extends DynamicComponent {
-    constructor(public lookupResolver: PipelineAPIResolver) {
+    constructor(public lookupResolver: PipelineAPIResolver, private plugin: CoreProcessFactory) {
         super();
     }
 
@@ -104,7 +104,7 @@ export class TriggerCellComponent extends DynamicComponent {
             orgTaskId: id,//Org Task Id
             isManual: isManual
         };
-        this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, () => {});
+        this.plugin.showSchedulerPopup(inputData, popupHeaderOption, () => {});
     }
 
     showAllSchedulers(task: OrgTask) {
@@ -113,7 +113,9 @@ export class TriggerCellComponent extends DynamicComponent {
         const inputData: any = {
             orgTaskId: id
         };
-        this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, ()=>{})
+
+        this.plugin.showMultiSchedulerPopup(inputData, popupHeaderOption, () => {});
+        //this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, ()=>{})
     }
 }
 

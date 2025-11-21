@@ -15,8 +15,8 @@
             </div>
             <!--<div class="px-0 pt-0 pb-2 b-b"><a class="text-primary" [routerLink]="[targetLink?.value]"> {{target?.value}} </a></div>-->
             <div class="scrollable hover">
-                <div class="d-flex">
-                    <div class="w w-auto-xs" style="width:100px">
+                <div class="d-flex flex p-2">
+                    <div class="w w-auto-xs" style="width:80px">
                         <!--<div class="nav-active b-primary left right">
                             <ul class="nav flex-column nav-sm">
                                 <li class="nav-link nav-item"
@@ -37,14 +37,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <p class="p-1 mb-0" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
-                            <label class="md-check text-xs"><input type="checkbox" formControlName="hasNoExpiration"><i
-                                    class="blue"></i>Has No Expiration</label>
-                        </p>
+                    <div class="flex px-1">
                         <ul class="nav nav-xs no-border">
-                            <li class="nav-item" style="width: 50px;">
-                                <label class="text-xs text-muted">Start On</label>
+                            <li class="nav-item" style="width: 30px;">
+                                <label class="text-xs text-muted">From</label>
                             </li>
                             <li class="nav-item">
                                 <div class="md-form-group p-0">
@@ -71,23 +67,26 @@
                                 </div>
                             </li>-->
                         </ul>
-                        <ul class="nav nav-xs no-border" *ngIf="!customForm.value.hasNoExpiration && activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
-                            <li class="nav-item" style="width: 50px;">
-                                <label class="text-xs text-muted">End On</label>
+                        <ul class="nav nav-xs no-border" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                            <li class="nav-item" style="width: 30px;">
+                                <label class="text-xs text-muted">Till</label>
                             </li>
                             <li class="nav-item">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="date" formControlName="endDate"
-                                           [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }"
-                                           style="max-width: 95px;">
+                                    <input class="md-input text-sm" type="date" formControlName="endDate" [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }" style="max-width: 95px;">
                                 </div>
                             </li>
                             <li class="nav-item px-2">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="time" formControlName="endTime"
-                                           [ngClass]="{ 'is-invalid': submitted && f['endTime'].errors }"
-                                           style="width: 90px;">
+                                    <input class="md-input text-sm" type="time" formControlName="endTime" [ngClass]="{ 'is-invalid': submitted && f['endTime'].errors }" style="width: 90px;">
                                 </div>
+                            </li>
+                            <li class="nav-item">
+                                <p class="p-1 mb-0" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                                    <label class="md-check text-xs">
+                                        <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No Expiration
+                                    </label>
+                                </p>
                             </li>
                             <!--<li class="nav-item">
                                 <div class="md-form-group text-sm p-0">
@@ -118,9 +117,8 @@
             </div>
             <div class="p-2 white m-2 b-a lt mt-auto" *ngIf="!hideActionFooter">
                 <div class="d-flex float-left">
-                    <span class="text-muted">Trigger Status</span>
-                    <label class="md-switch"><input type="checkbox" checked="checked"> <i
-                            class="blue"></i>On/Off</label>
+                    <span class="text-muted">Status</span>
+                    <label class="md-switch"><input type="checkbox" checked="checked"> <i class="blue"></i>On/Off</label>
                 </div>
                 <ng-template *ngTemplateOutlet="schedularActionTemplate"></ng-template>
             </div>
@@ -136,7 +134,7 @@
             </div>
         </div>
     </div>
-    <ng-template #footerTemplate>
+    <!--<ng-template #footerTemplate>
         <div class="p-2 white m-2 lt mt-auto">
             <div class="d-flex float-left">
                 <span class="text-muted">Trigger Status</span>
@@ -163,7 +161,7 @@
                 </li>
             </ul>
         </div>
-    </ng-template>
+    </ng-template>-->
     <ng-template #testSchedularActionTemplate>
         <button class="btn btn-xs btn-outline b-a b-theme text-theme align-content-center" (click)="testScheduler()">
             Test Calendar
@@ -172,9 +170,7 @@
     <ng-template #schedularActionTemplate>
         <ul class="nav nav-xs flex-row no-border float-right">
             <li class="nav-item mx-2">
-                <button class="btn btn-xs btn-outline b-a b-theme text-theme mr-2" (click)="cancelFrequency()">
-                    Reset
-                </button>
+                <button class="btn btn-xs btn-outline b-a b-theme text-theme mr-2" (click)="cancelFrequency()">Reset</button>
             </li>
             <li class="nav-item mx-2">
                 <button class="btn btn-xs btn-outline b-primary b-a b-theme text-theme" autofocus

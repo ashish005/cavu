@@ -41,11 +41,6 @@ export class MultiSchedulerInfoComponent {
         });
     }
 
-    onOkAction(data){
-        this.onOk.emit(data);
-    }
-
-    onCancelAction(data){
-        this.onCancel.emit(data);
-    }
+    onOkAction(data){ this.onOk.emit(data); }
+    onCancelAction(data){ this.onCancel.emit(data); }
 }

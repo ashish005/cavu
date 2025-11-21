@@ -12,7 +12,7 @@ import { SchedularForm } from "./factories/schedular-form.factory";
 import {FormBuilder} from "@angular/forms";
 import {SchedulerService} from "./services/scheduler.service";
 import {ACTION_ENUM} from "../../popup-module/app-popup.enum";
-import {Subscription, BehaviorSubject, Subject, pairwise, startWith} from "rxjs";
+import {Subscription, BehaviorSubject, Subject, pairwise, startWith, debounceTime} from "rxjs";
 import {SchedularDomain, SchedularParser} from "./domains/schedular.domain";
 import {FREQUENCY_TYPE} from "../../enums";
 import {EventFrequencyTypeLookup, OrgWorkflowAPIResolver} from "../../services/orgwise";
@@ -39,7 +39,7 @@ import {EventFrequencyTypeLookup, OrgWorkflowAPIResolver} from "../../services/o
 })
 export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnDestroy {
   @ViewChild('calendarYear', { static: true }) public calendarYear;
-  @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+  //@ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
   @ViewChild('schedularActionTemplate', { static: true }) public schedularActionTemplate: TemplateRef<any>;
   @ViewChild('testSchedularActionTemplate', { static: true }) public testSchedularActionTemplate: TemplateRef<any>;
 
@@ -57,54 +57,50 @@ export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnD
   get actionType(){ return (this.id)? ACTION_ENUM.UPDATE: ACTION_ENUM.ADD; }
   submitted: boolean = false;
 
-  timer;
-  isActive: Subject<boolean> = new Subject<boolean>();
   subscriber: Subscription;
 
   frequencyTypes: Array<EventFrequencyTypeLookup>;
   activeFrequency: EventFrequencyTypeLookup;
   taskSchedule: SchedularDomain;
-  timerStarted$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   frequencyTypeEnum: any = FREQUENCY_TYPE;
   constructor(public override fb: FormBuilder, public override injector: Injector,
               public lookupResolver: OrgWorkflowAPIResolver,
               private schedulerService: SchedulerService) {
       super(fb, injector);
-  }
-
-  ngOnDestroy(){ this.isActive?.next(true); this.subscriber?.unsubscribe(); }
-
-  ngOnInit(){
-      let lookup = this.lookupResolver.masterType;
+      let lookup = lookupResolver.masterType;
       this.frequencyTypes = (this.isFeeTask) ? lookup.getFeeFrequencies(): lookup.frequencyTypes;
-      this.refreshScheduler(this.id);
-      /*const tapFn = (next) => {
-          if(this.lookupResolver?.masterType?.frequencyTypes?.length){
-              this.isActive.next(true);
-                this.fetchSchedular();
-          } else if (next) {
-              clearTimeout(this.timer);
-              this.timer = setTimeout(() => { this.timerStarted$.next(true); }, 100);
-          }
-      };
-      this.timerStarted$.pipe(
-          takeUntil(this.isActive), // auto-unsubscribe
-          tap(tapFn)).subscribe();*/
-
+      this.activeFrequency = this.activeFrequency ?? lookup.defaultFrequency();
+      this.updateFrequencyFormByType(this.activeFrequency.masterType)
       const itemFormValueChange = ([prev, next]: [number, number]) =>
       {
           if(prev != next)
           {
               this.activeFrequency = this.frequencyTypes.find(r => r.id == next);
-              if(!this.activeFrequency) {
-                  this.activeFrequency = this.frequencyTypes.find(r => r.isDefault);
-              }
               this.updateFrequencyFormByType(this.activeFrequency.masterType)
           }
       };
       this.frequencyTypeId.valueChanges.pipe(startWith(null as number), pairwise()).subscribe(itemFormValueChange);
   }
-
+  ngOnDestroy(){ this.subscriber?.unsubscribe(); }
+  ngOnInit(){
+      this.refreshScheduler(this.id);
+      this.customForm.get('hasNoExpiration')?.valueChanges.pipe(
+          debounceTime(10) // Small debounce to ensure smooth updates
+      ).subscribe(value => {
+          const endDateControl = this.customForm.get('endDate');
+          const endTimeControl = this.customForm.get('endTime');
+          const endTimeZoneControl = this.customForm.get('endTimeZone');
+          if (value) {
+              endDateControl?.disable();
+              endTimeControl?.disable();
+              endTimeZoneControl?.disable();
+          } else {
+              endDateControl?.enable();
+              endTimeControl?.enable();
+              endTimeZoneControl?.enable();
+          }
+      });
+  }
   public refreshScheduler(schedulerId){
     if(!schedulerId){
       return;
@@ -114,7 +110,6 @@ export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnD
       this.taskSchedule = resp;
       this.updateSchedularForm(SchedularParser.parseDetails(resp));
     };
-
     const error = (err)=>{};
     this.subscriber = this.schedulerService.getOrgSchedulerById(schedulerId).subscribe(success, error);
   }
