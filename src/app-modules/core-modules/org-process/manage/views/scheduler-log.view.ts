@@ -1,7 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {SchedulerLogService} from "../services/scheduler-log.service";
-import {DateFormatCell, FullDateFormatCell, GridUISwitchCellComponent, ViewExtender} from "@app-global";
+import {
+    CoreProcessFactory,
+    DateFormatCell,
+    FullDateFormatCell,
+    GridUISwitchCellComponent,
+    ViewExtender
+} from "@app-global";
 import { ScheduleLog, ScheduleLogQueryOptions } from "../domains/schedule-log.serializer";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 
@@ -15,7 +21,7 @@ export class SchedulerLogView extends ViewExtender<ScheduleLog> implements OnIni
   constructor(private router: Router,
               public override activatedRoute: ActivatedRoute,
               public override service: SchedulerLogService,
-              public lookupResolver: PipelineAPIResolver){
+              public lookupResolver: PipelineAPIResolver, private plugin: CoreProcessFactory){
       super(activatedRoute, service);
       this.gridOptions.header.edit = false;
       this.gridOptions.columnDefs = [
@@ -51,8 +57,6 @@ export class SchedulerLogView extends ViewExtender<ScheduleLog> implements OnIni
             // isManual: isManual,
             // isFeeTask: isFeeTask
         };
-        this.lookupResolver.showSchedulerPopup(inputData, { text: `${name}`, desc: `` }, ()=>{
-          super.populateGrid();
-        });
+        this.plugin.showSchedulerPopup(inputData, { text: `${name}`, desc: `` }, () => { super.populateGrid(); });
     }
 }

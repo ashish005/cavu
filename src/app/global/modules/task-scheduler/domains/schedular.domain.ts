@@ -98,10 +98,10 @@ export class SchedularDomain {
     on: string;
 
     /*On Event*/
-    afterSucessOnTaskId: number;
-
     target: string;
     targetLink: string;
+
+    afterSucessOnTaskId: number;
 
     isTaskDelay: boolean;
     taskDelayDuration: number;
@@ -149,10 +149,10 @@ export class SchedularDomain {
         this.on = model.on;
 
         /*On Event*/
-        this.afterSucessOnTaskId = model.afterSucessOnTaskId || null;
-
         this.target = model.target || null;
         this.targetLink = model.targetLink || null;
+
+        this.afterSucessOnTaskId = model.afterSucessOnTaskId || null;
 
         this.isTaskDelay = model.isTaskDelay || false;
         this.taskDelayDuration = model.taskDelayDuration;
@@ -172,6 +172,7 @@ export class SchedularDomain {
         this.endDate = model.endDate;
         this.endTime = model.endTime;
         this.frequencyTypeId = model.frequencyTypeId;
+        this.afterSucessOnTaskId = model.afterSucessOnTaskId || null;
     }
 
     updateDaily(model: any = <any>{}){
@@ -224,7 +225,10 @@ export class SchedularDomain {
         return Array.isArray(items) ? (items || []).filter(r => r.isChecked).map(k => k.id).join(','): items;
     }
 
-    updateOnEvent(model: any = <any>{}) { this.afterSucessOnTaskId = model.afterSucessOnTaskId; }
+    updateOnEvent(model: any = <any>{}) {
+        this.target = model.target || null;
+        this.targetLink = model.targetLink || null;
+    }
 
     onlyPopulateFrequencyValues(frequencyMasterType: string) {
         this.frequencyMasterType = frequencyMasterType;

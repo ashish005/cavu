@@ -55,11 +55,11 @@ class OrgTaskCalendarService extends OrgResourceService<OrgTaskCalendar>{
 }
 @Component({
     standalone: false,
-    templateUrl: './templates/task-calendar.html',
+    templateUrl: './templates/task-manager.html',
     styles: [`:host{ display: contents; }`],
     providers: [OrgTaskCalendarService]
 })
-export class TaskCalendarComponent implements OnInit, OnDestroy {
+export class TaskManagerComponent implements OnInit, OnDestroy {
     customForm: FormGroup;
     @Input() orgTaskId: number;
     subscriber: Subscription;

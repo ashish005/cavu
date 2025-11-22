@@ -26,7 +26,7 @@ export class SchedulerService extends OrgResourceService<SchedularDomain> {
         );
   }
 
-  updateScheduler(id: string, data: any){
+  updateScheduler(id: number, data: any){
       return this.httpClient.put(`${this.viewUrl}/${id}`, data, this.requestHeaders)
         .pipe(
             map((resp: any) => resp),

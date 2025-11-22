@@ -47,23 +47,20 @@ import {OrgTask} from "../domains/org-task.serializer";
     </div>`
 })
 export class TaskNameActionCell extends DynamicComponent {
-    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver) {
+    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver, public plugin: CoreProcessFactory) {
         super();
     }
 
     routeTo(context: OrgTask){
-        const { id } = context;
-        this.router.navigate(['task', id], {relativeTo: this.activatedRoute.parent});
+        // const { id } = context;
+        // this.router.navigate(['task', id], {relativeTo: this.activatedRoute.parent});
     }
 
     checkActivity(task: OrgTask) {
         const {id} = task;
-
         const popupHeaderOption = {text: `Activity for ${task.name}`, desc: `Activity`};
-        const inputData: any = {
-            orgTaskId: id
-        };
-        this.lookupResolver.showTaskActivityPopup(inputData, popupHeaderOption);
+        const inputData: any = { orgTaskId: id };
+        this.plugin.showTaskActivityPopup(inputData, popupHeaderOption);
     }
 }
 
@@ -110,10 +107,7 @@ export class TriggerCellComponent extends DynamicComponent {
     showAllSchedulers(task: OrgTask) {
         const {id, isManual, isFeeTask, isPeriodType, name} = this.context;
         const popupHeaderOption = {text: `${name}`, desc: `Schedule a tasks for ${name}`};
-        const inputData: any = {
-            orgTaskId: id
-        };
-
+        const inputData: any = { orgTaskId: id };
         this.plugin.showMultiSchedulerPopup(inputData, popupHeaderOption, () => {});
         //this.lookupResolver.showTaskSchedulerPopup(inputData, popupHeaderOption, ()=>{})
     }

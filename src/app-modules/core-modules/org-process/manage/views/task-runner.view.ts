@@ -13,14 +13,14 @@ import {OrgTaskSummaryRow, OrgTaskSummaryRowQueryOptions} from "../domains/org-t
   templateUrl: './templates/task.html',
   styles: [':host { display: contents; }']
 })
-export class TaskSummaryView extends ViewExtender<OrgTaskSummaryRow> implements OnInit {
+export class TaskRunnerView extends ViewExtender<OrgTaskSummaryRow> implements OnInit {
   override coreState: OrgTaskSummaryRowQueryOptions = new OrgTaskSummaryRowQueryOptions();
   constructor(public override service: OrgTaskSummaryService,
               public router: Router,
               public override activatedRoute: ActivatedRoute,
               public apiResolver: PipelineAPIResolver) {
     super(activatedRoute, service);
-
+    this.gridOptions.header.edit = false;
     this.gridOptions.columnDefs = [
         {headerName: 'Name', cellTemplate: TaskSummaryNameActionCell},
         //{headerName: 'Name', field: 'name', cellFn: (row)=> `${row.name}`},
@@ -36,7 +36,7 @@ export class TaskSummaryView extends ViewExtender<OrgTaskSummaryRow> implements 
         // {headerName: 'Last Run', field: 'lastRunLog', cellTemplate: TaskLastRunLogCell},
         // {headerName: "Today's Schedules", field: 'modifiedDate', cellTemplate: TaskScheduleInfoCell},
         {headerName: 'Next Run', field: 'nextDueRun', cellTemplate: TaskNextScheduleRunCell},
-        {headerName: 'Status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
     ];
   }
 
@@ -48,11 +48,6 @@ export class TaskSummaryView extends ViewExtender<OrgTaskSummaryRow> implements 
         const {id, name} = row;
         const inputData: any = { id: id, orgTaskId: id, data: row };
         const popupHeaderOptions = { text: `${name}`, desc: `` };
-      // this.pluginFactory.showTaskCEPopup(inputData, popupHeaderOptions, ()=>{});
-    }
-    addRecord(){
-        const inputData: any = { id: null, orgTaskId: null, data: {} };
-        const popupHeaderOptions = { text: `New Task`, desc: `` };
-        // this.pluginFactory.showTaskCEPopup(inputData, popupHeaderOptions, ()=>{});
+        this.apiResolver.ceOrgTaskPopup(inputData, popupHeaderOptions, ()=>{});
     }
 }

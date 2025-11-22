@@ -2,17 +2,10 @@ import {Injectable, OnDestroy} from "@angular/core";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
 import {ProcessCeView} from "../components/process-ce.view";
 import {TaskCeComponent} from "../components/task-ce.component";
-import {TaskActivityComponent} from "../components/task-activity.component";
-import {TaskSchedulerComponent} from "../components/task-scheduler.component";
-import {TaskCalendarComponent} from "../components/task-calendar.component";
+import {TaskManagerComponent} from "../components/task-manager.component";
 @Injectable()
 export class PipelineAPIResolver {
     constructor(public sharedService: SharedService) {}
-    showSchedulerPopup(inputData, popupHeaderOption, cb){
-        /*const success = (resp: any) => { this.schedulerFactory.destroy(); cb(); };
-        const failure = (err)=> { this.schedulerFactory.destroy(); };
-        this.schedulerFactory.showSchedulerPopup(inputData, popupHeaderOption).then(success, failure);*/
-    }
     showFrequencyCalenderTestPopup(inputData, popupHeaderOption){
         /*const success = (resp: any) => { this.schedulerFactory.destroy(); };
         const failure = (err)=> { this.schedulerFactory.destroy(); };
@@ -24,7 +17,7 @@ export class PipelineAPIResolver {
         const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
         const success = (resp: any) => { this.sharedService.destroy(); };
         const failure = (e) => { this.sharedService.destroy(); };
-        return this.sharedService.showCustomPopup(TaskCalendarComponent, popupOptions, data).then(success, failure);
+        return this.sharedService.showCustomPopup(TaskManagerComponent, popupOptions, data).then(success, failure);
     }
 
     showTaskReminderCEPopup(inputData, popupHeaderOption){
@@ -37,22 +30,6 @@ export class PipelineAPIResolver {
         /*const success = (resp: any) => { this.pluginFactory.destroy(); };
         const failure = (err)=> { this.pluginFactory.destroy(); };
         this.coreReminderFactory.showTaskReminderPopup(inputData, popupHeaderOption).then(success, failure);*/
-    }
-
-    showTaskActivityPopup(data, popupHeaderOption){
-        data = data || { id: null, data: null };
-        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-        const success = (resp: any) => { this.sharedService.destroy(); };
-        const failure = (e) => { this.sharedService.destroy(); };
-        return this.sharedService.showCustomPopup(TaskActivityComponent, popupOptions, data).then(success, failure);
-    }
-
-    showTaskSchedulerPopup(data, popupHeaderOption, cb){
-        data = data || { id: null, data: null };
-        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-        const success = (resp: any) => { this.sharedService.destroy(); cb(); };
-        const failure = (e) => { this.sharedService.destroy(); };
-        return this.sharedService.showCustomPopup(TaskSchedulerComponent, popupOptions, data).then(success, failure);
     }
 
     /*showOrgStagesPopup(inputData, popupHeaderOption) {

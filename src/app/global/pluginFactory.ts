@@ -5,7 +5,8 @@ import {OrgWorkflowAPIResolver} from "./services";
 
 import {SchedulerInfoComponent} from "./modules/task-scheduler/schedular-info.component";
 import {MultiSchedulerInfoComponent} from "./modules/task-scheduler/multi-scheduler-info.component";
-import {TestFrequencyCalenderView} from "./modules/task-scheduler/test-frequency-calender.view";
+import {TestSchedulerCalenderView} from "./modules/task-scheduler/test-scheduler-calender.view";
+import {TaskActivityComponent} from "./modules/task-scheduler/task-activity.component";
 @Injectable()
 export class CoreProcessFactory {
     sharedService: SharedService;
@@ -34,7 +35,17 @@ export class CoreProcessFactory {
     }
     showFrequencyCalenderTestPopup(data: any, popupHeaderOption: any){
         const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-        return this.sharedService.showCustomPopup(TestFrequencyCalenderView, popupOptions, data);
+        const success = (resp: any) => { this.destroy(); };
+        const failure = (e) => { this.destroy(); };
+        return this.sharedService.showCustomPopup(TestSchedulerCalenderView, popupOptions, data).then(success, failure);
+    }
+
+    showTaskActivityPopup(data, popupHeaderOption){
+        data = data || { id: null, data: null };
+        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        const success = (resp: any) => { this.sharedService.destroy(); };
+        const failure = (e) => { this.sharedService.destroy(); };
+        return this.sharedService.showCustomPopup(TaskActivityComponent, popupOptions, data).then(success, failure);
     }
     private showPopup = (component: any, popupOptions: any, data: any) => this.sharedService.showCustomPopup(component, popupOptions, data);
     private destroy = () => this.sharedService.destroy();

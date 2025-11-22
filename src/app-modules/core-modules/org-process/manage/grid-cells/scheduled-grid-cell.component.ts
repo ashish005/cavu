@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {DynamicComponent} from "@app-global";
+import {CoreProcessFactory, DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Scheduler} from "../domains/scheduler.serializer";
@@ -11,12 +11,12 @@ import {Scheduler} from "../domains/scheduler.serializer";
     </div>`
 })
 export class ScheduledNameActionCell extends DynamicComponent {
-    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver) { super(); }
+    constructor(public plugin: CoreProcessFactory) { super(); }
     checkActivity(task: Scheduler) {
         const { id, name } = task;
         const popupHeaderOption = {text: `Activity for ${name}`, desc: `Activity`};
         const inputData: any = { orgSchedulerId: id };
-        this.lookupResolver.showFrequencyCalenderTestPopup(inputData, popupHeaderOption);
+        this.plugin.showFrequencyCalenderTestPopup(inputData, popupHeaderOption);
     }
 }
 

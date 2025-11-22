@@ -6,7 +6,7 @@ import {
     ScheduledStartDateCell,
     ScheduledTaskLastRunCell
 } from "../grid-cells/scheduled-grid-cell.component";
-import {FullDateFormatCell, ViewExtender} from "@app-global";
+import {CoreProcessFactory, FullDateFormatCell, ViewExtender} from "@app-global";
 import {Scheduler, SchedulerQueryOptions} from "../domains/scheduler.serializer";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 
@@ -20,7 +20,7 @@ export class TaskScheduleView extends ViewExtender<Scheduler> implements OnInit,
   constructor(private router: Router,
               public override activatedRoute: ActivatedRoute,
               public override service: SchedulerService,
-              public lookupResolver: PipelineAPIResolver){
+              public lookupResolver: PipelineAPIResolver, private plugin: CoreProcessFactory){
   super(activatedRoute, service);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name', cellTemplate: ScheduledNameActionCell },
@@ -44,14 +44,13 @@ export class TaskScheduleView extends ViewExtender<Scheduler> implements OnInit,
 
     actionCb(schedule: Scheduler){
         const { id, orgTaskId, isFeeTask, isManual, name, description } = schedule;
+        debugger
         const inputData: any = {
             id: id, //Schedular ID
             orgTaskId: orgTaskId, //Org Task Id
             isManual: isManual,
             isFeeTask: isFeeTask
         };
-        this.lookupResolver.showSchedulerPopup(inputData, { text: `${name}`, desc: `` }, ()=>{
-          super.populateGrid();
-        });
+        this.plugin.showSchedulerPopup(inputData, { text: `${name}`, desc: `` }, () => { super.populateGrid(); });
     }
 }

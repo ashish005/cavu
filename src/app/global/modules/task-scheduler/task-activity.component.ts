@@ -1,8 +1,8 @@
 import {Component, OnInit, Input, OnDestroy, ViewChild, TemplateRef, Injector, Injectable} from '@angular/core';
 import {FormBuilder} from "@angular/forms";
 import {pairwise, startWith, Subscription} from "rxjs";
-import {CoreEndpointBase, CoreQueryOptions} from "@app-global";
-
+import {CoreEndpointBase} from "../../services/index";
+import {CoreQueryOptions} from "../../services/models";
 class OrgTaskActivityQueryOptions extends CoreQueryOptions {
     orgTaskId: any;
     scheduleId: any;
@@ -16,7 +16,6 @@ class OrgTaskActivityQueryOptions extends CoreQueryOptions {
         return super.getParamByObject(obj);
     }
 }
-
 @Component({
     standalone: false,
     templateUrl: './templates/task-activity.html',

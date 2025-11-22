@@ -18,7 +18,7 @@ export class ProcessLayout {
             isFLatChildren: true, key: 'Task',
             children:[
                 { routeTo: ['task'], icon:"fa fa-envelope", key: 'Tasks' },
-                { routeTo: ['task-info'], icon:"fa fa-envelope", key: 'Task Runner' },
+                { routeTo: ['task-runner'], icon:"fa fa-envelope", key: 'Task Runner' },
             ]
         },
         {
@@ -26,7 +26,7 @@ export class ProcessLayout {
             children:[
                 { routeTo: ['scheduled'], icon:"fa fa-bell", key: 'Task Schedule' },
                 { routeTo: ['task-reminder'], icon:"fa fa-bell", key: 'reminder' },
-                { routeTo: ['task-calendar'], icon:"fa fa-bell", key: 'calendar' },
+                //{ routeTo: ['task-calendar'], icon:"fa fa-bell", key: 'calendar' },
             ]
         },
         {

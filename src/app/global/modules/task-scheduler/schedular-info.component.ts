@@ -39,13 +39,14 @@ import {EventFrequencyTypeLookup, OrgWorkflowAPIResolver} from "../../services/o
 })
 export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnDestroy {
   @ViewChild('calendarYear', { static: true }) public calendarYear;
-  //@ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+  @ViewChild('schedularStatusTemplate', { static: true }) public schedularStatusTemplate: TemplateRef<any>;
   @ViewChild('schedularActionTemplate', { static: true }) public schedularActionTemplate: TemplateRef<any>;
   @ViewChild('testSchedularActionTemplate', { static: true }) public testSchedularActionTemplate: TemplateRef<any>;
 
   @Input() hideActionFooter: boolean = false;
   @Input() hideActionHeader: boolean = false;
-  @Input() id: string; //scheduler id
+  @Input() hideInternalCalender: boolean = false;
+  @Input() id: number; //scheduler id
   @Input() orgTaskId: any;
 
   @Input() isManual: boolean = false;
@@ -105,7 +106,6 @@ export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnD
     if(!schedulerId){
       return;
     }
-
     const success = (resp: SchedularDomain)=>{
       this.taskSchedule = resp;
       this.updateSchedularForm(SchedularParser.parseDetails(resp));

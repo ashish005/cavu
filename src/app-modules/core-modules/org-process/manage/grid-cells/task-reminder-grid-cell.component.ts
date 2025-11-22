@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
-import {DynamicComponent} from "@app-global";
+import {CoreProcessFactory, DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {ReminderTemplate, TaskReminder} from "../domains/task-reminder.serializer";
 
@@ -23,7 +23,7 @@ import {ReminderTemplate, TaskReminder} from "../domains/task-reminder.serialize
     </div>`
 })
 export class ReminderNameActionCell extends DynamicComponent {
-    constructor(public activatedRoute: ActivatedRoute, public lookupResolver: PipelineAPIResolver) {
+    constructor(public plugin: CoreProcessFactory, public lookupResolver: PipelineAPIResolver){
         super();
     }
 
@@ -43,7 +43,7 @@ export class ReminderNameActionCell extends DynamicComponent {
             orgTaskId: orgTaskId,
             scheduleId: orgTaskScheduleId
         };
-        this.lookupResolver.showTaskActivityPopup(inputData, popupHeaderOption);
+        this.plugin.showTaskActivityPopup(inputData, popupHeaderOption);
     }
 
     /*showTemplateToCreateEdit(row: ReminderTemplate) {

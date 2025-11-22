@@ -3,21 +3,20 @@
         <div class="d-flex flex-column w-xxl b-r white modal-dialog">
             <div class="navbar box-shadow">
                 <div class="input-group flex">
-                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search"
-                           required="">
-                    <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
-                            class="fa fa-search text-muted"></i></button></span>
+                    <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required="">
+                    <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>
                 </div>
             </div>
             <div class="scrollable hover">
-                <a class="nav-link" (click)="createNew()"><span class="btn btn-sm btn-block btn-rounded theme"><i
-                        class="fa fa-plus float-left"></i> New</span></a>
+                <a class="nav-link" (click)="createNew()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span>
+                </a>
                 <nav class="nav-border right b-theme" data-nav="">
                     <ul class="list inset">
                         <ng-template ngFor let-item [ngForOf]="list" let-i="index">
                             <li class="list-item">
                                 <div class="list-body">
-                                    <a class="item-title _500" (click)="activeTaskSchedule(item)">
+                                    <a class="item-title _500" (click)="scheduleClick(item)">
                                         <a class="text-u-c _600 text-sm"
                                            [class.text-primary]="(item?.frequencyMasterType == 'ON_EVENT')"
                                            [class.text-info]="(item?.frequencyMasterType == 'MONTHLY' || item?.frequencyMasterType == 'DAILY')"
@@ -29,7 +28,7 @@
                     </span>
                                     </a>
                                     <ng-template ngFor let-row [ngForOf]="item?.feeStructures" let-j="index">
-                                        <div (click)="activeTaskSchedule(item)">
+                                        <div (click)="scheduleClick(item)">
                                             <a class="item-title _500" data-pjax-state="">{{row?.name}}</a>
                                             <div class="item-except text-sm text-muted h-1x">
                                                 {{row?.courseName}}
@@ -38,7 +37,7 @@
                                         </div>
                                     </ng-template>
                                     <ng-template ngFor let-row [ngForOf]="item?.notification" let-j="index">
-                                        <div (click)="activeTaskSchedule(item)">
+                                        <div (click)="scheduleClick(item)">
                                             <a class="item-title _500">{{item.notification?.name}}</a>
                                             <div class="item-except text-sm text-muted h-1x">
                                                 <ng-template ngFor let-template
@@ -56,11 +55,10 @@
                                     </div>
                                 </div>
                             </li>
-
                             <!--<li class="list-item">
                               <a class="item-title _500">{{item.frequencyType}} <small class="text-xs">{{item?.orgTaskScheduleDescription}}</small></a>
                               <ng-template ngFor let-row [ngForOf]="item?.feeStructures" let-j="index">
-                                <div class="list-body" (click)="activeTaskSchedule(item, row?.name)">
+                                <div class="list-body" (click)="scheduleClick(item, row?.name)">
                                   <a class="item-title _500" data-pjax-state="">{{row?.name}}</a>
                                   <div class="item-except text-sm text-muted h-1x">
                                     {{row?.courseName}}
@@ -69,7 +67,7 @@
                                 </div>
                               </ng-template>
                               <ng-template ngFor let-row [ngForOf]="item?.notification" let-j="index">
-                                <div class="list-body" (click)="activeTaskSchedule(item, item.notification?.name)">
+                                <div class="list-body" (click)="scheduleClick(item, item.notification?.name)">
                                   <a class="item-title _500">{{item.notification?.name}}</a>
                                   <div class="item-except text-sm text-muted h-1x">
                                     <ng-template ngFor let-template [ngForOf]="item.notification?.templates">
@@ -82,10 +80,9 @@
                                 </div>
                               </ng-template>
                             </li>-->
-
                             <!--<ng-template ngFor let-row [ngForOf]="item?.feeStructures" let-j="index">
                               <li class="list-item">
-                                <div class="list-body" (click)="activeTaskSchedule(item, row?.name)">
+                                <div class="list-body" (click)="scheduleClick(item, row?.name)">
                                   <a class="item-title _500" data-pjax-state="">{{row?.name}}</a>
                                   <div class="item-except text-sm text-muted h-1x">
                                     {{row?.courseName}}
@@ -95,7 +92,7 @@
                               </li>
                             </ng-template>
                             <li class="list-item" *ngIf="item.notification">
-                              <div class="list-body" (click)="activeTaskSchedule(item, item.notification?.name)">
+                              <div class="list-body" (click)="scheduleClick(item, item.notification?.name)">
                                 <a class="item-title _500">{{item.notification?.name}}</a>
                                 <div class="item-except text-sm text-muted h-1x">
                                   <ng-template ngFor let-template [ngForOf]="item.notification?.templates">

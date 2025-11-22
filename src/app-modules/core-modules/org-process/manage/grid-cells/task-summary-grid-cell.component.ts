@@ -1,13 +1,11 @@
 import {Component} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {DynamicComponent} from "@app-global";
+import {CoreProcessFactory, DynamicComponent} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {OrgTaskSummaryRow} from "../domains/org-task-summary.serializer";
 
 @Component({
   standalone: false,
     template: `<div>
-        <a class="btn btn-xs text-xs text-primary" (click)="eventTaskCalendar(context)">Calendar</a>
         <a class="btn btn-xs text-xs text-primary" (click)="checkActivity(context)"><i class="fa fa-calendar"></i></a>
         <span class="text-xs _500"> {{ context.name }}</span>
         <a class="px-1" [ngbPopover]="content" placement="auto" container="body" triggers="manual" [autoClose]="true" (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.toggle()">
@@ -47,27 +45,15 @@ import {OrgTaskSummaryRow} from "../domains/org-task-summary.serializer";
     </div>`
 })
 export class TaskSummaryNameActionCell extends DynamicComponent {
-    constructor(public router: Router, public activatedRoute: ActivatedRoute) {
+    constructor(public plugin: CoreProcessFactory) {
         super();
     }
 
-    eventTaskCalendar(task: OrgTaskSummaryRow) {
-        // const {id} = task;
-        // const inputData: any = {
-        //     id: id,
-        //     orgTaskId: id
-        // };
-        // this.processFactory.showEventTaskPopup(inputData, {text: `${task.name}`, desc: `Manage Task`}, ()=>{});
-    }
-
     checkActivity(task: OrgTaskSummaryRow) {
-        // const {id} = task;
-        //
-        // const popupHeaderOption = {text: `Activity for ${task.name}`, desc: `Activity`};
-        // const inputData: any = {
-        //     orgTaskId: id
-        // };
-        // this.lookupResolver.showEventTaskActivityPopup(inputData, popupHeaderOption);
+        const {id} = task;
+        const popupHeaderOption = {text: `Activity for ${task.name}`, desc: `Activity`};
+        const inputData: any = { orgTaskId: id };
+        this.plugin.showTaskActivityPopup(inputData, popupHeaderOption);
     }
 }
 

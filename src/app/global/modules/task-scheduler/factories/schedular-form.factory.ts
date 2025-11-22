@@ -28,9 +28,7 @@ export class SchedularForm {
 
           orgTaskId:[null, Validators.required],
           frequencyTypeId:[null, Validators.required],
-
-          target: [null],
-          targetLink: [null],
+          afterSucessOnTaskId: [null],
 
           isTaskDelay: [false],
           taskDelayDuration: [null],
@@ -94,7 +92,8 @@ export class SchedularForm {
     }
   eventFormGroup(){
         return this.fb.group({
-            afterSucessOnTaskId: [null]
+            target: [null],
+            targetLink: [null]
         });
     }
 
@@ -103,9 +102,6 @@ export class SchedularForm {
 
   get formOrgTaskId(){ return <FormGroup>this.customForm.get('orgTaskId'); }
   get frequencyTypeId(){ return this.customForm.get('frequencyTypeId'); }
-
-  get target(){ return this.customForm.get('target'); }
-  get targetLink(){ return this.customForm.get('targetLink'); }
 
   get formDaily() { return <FormGroup>this.customForm.get('daily'); }
   get formWeekly() { return <FormGroup>this.customForm.get('weekly'); }
@@ -146,9 +142,7 @@ export class SchedularForm {
 
     this.customForm.get('frequencyTypeId').setValue(data.frequencyTypeId);
     this.customForm.get('orgTaskId').setValue(data.orgTaskId);
-
-    this.customForm.get('target').setValue(data.target);
-    this.customForm.get('targetLink').setValue(data.targetLink);
+    this.customForm.get('afterSucessOnTaskId').setValue(data.afterSucessOnTaskId);
 
     this.customForm.get('isTaskDelay').setValue(isTaskDelay);
     this.customForm.get('taskDelayDuration').setValue(taskDelayDuration);
@@ -163,7 +157,9 @@ export class SchedularForm {
     this.updateDailyForm(data);
     this.updateWeeklyForm(data);
     this.updateMonthlyForm(data);
-    this.formEvent.get('afterSucessOnTaskId').setValue(data.afterSucessOnTaskId);
+
+    this.formEvent.get('target').setValue(data.target);
+    this.formEvent.get('targetLink').setValue(data.targetLink);
   }
 
   updateMiltiCheckboxControls(controlArrayForm, items){
