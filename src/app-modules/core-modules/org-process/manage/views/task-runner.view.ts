@@ -7,6 +7,7 @@ import {
 } from "../grid-cells/task-summary-grid-cell.component";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 import {OrgTaskSummaryRow, OrgTaskSummaryRowQueryOptions} from "../domains/org-task-summary.serializer";
+import {TriggerCellComponent} from "../grid-cells/task-grid-cell.component";
 
 @Component({
   standalone: false,
@@ -23,20 +24,19 @@ export class TaskRunnerView extends ViewExtender<OrgTaskSummaryRow> implements O
     this.gridOptions.header.edit = false;
     this.gridOptions.columnDefs = [
         {headerName: 'Name', cellTemplate: TaskSummaryNameActionCell},
+        {headerName: 'Triggers', field: 'triggers', cellTemplate: TriggerCellComponent},
+        //{headerName: 'Reminders', field: 'notifications', cellTemplate: ReminderCellComponent},
         //{headerName: 'Name', field: 'name', cellFn: (row)=> `${row.name}`},
-        {headerName: 'Triggers', field: 'totalTaskSchedules', cellFn: (row)=> `${row.totalTaskSchedules || '--'}`},
-        {headerName: 'Reminders', field: 'totalTaskSchedules', cellFn: (row)=> `${row.totalTaskReminders || '--'}`},
-        {headerName: 'Calendars', field: 'totalTaskCalendars', cellFn: (row)=> `${row.totalTaskCalendars || '--'}`},
+        // {headerName: 'Triggers', field: 'totalTaskSchedules', cellFn: (row)=> `${row.totalTaskSchedules || '--'}`},
+        // {headerName: 'Reminders', field: 'totalTaskSchedules', cellFn: (row)=> `${row.totalTaskReminders || '--'}`},
+        // {headerName: 'Calendars', field: 'totalTaskCalendars', cellFn: (row)=> `${row.totalTaskCalendars || '--'}`},
 
-        {headerName: 'Assigned To', field: 'assignedToName'},
-        {headerName: 'Reported To', field: 'reportedToName'},
-        {headerName: 'Verified By', field: 'verifiedByName'},
+        // {headerName: 'Assigned To', field: 'assignedToName'},
+        // {headerName: 'Reported To', field: 'reportedToName'},
+        // {headerName: 'Verified By', field: 'verifiedByName'},
 
-        {headerName: 'Next DueOn', field: 'nextDueDate', cellTemplate: FullDateFormatCell },
-        // {headerName: 'Last Run', field: 'lastRunLog', cellTemplate: TaskLastRunLogCell},
-        // {headerName: "Today's Schedules", field: 'modifiedDate', cellTemplate: TaskScheduleInfoCell},
-        {headerName: 'Next Run', field: 'nextDueRun', cellTemplate: TaskNextScheduleRunCell},
-        {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'Due Date', field: 'nextDueDate', cellTemplate: FullDateFormatCell },
+        {headerName: 'Next Run', field: 'nextDueRun', cellTemplate: TaskNextScheduleRunCell}
     ];
   }
 

@@ -24,15 +24,12 @@ export class TaskScheduleView extends ViewExtender<Scheduler> implements OnInit,
   super(activatedRoute, service);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name', cellTemplate: ScheduledNameActionCell },
-            //{headerName: 'Task', field: 'taskName'},
-            {headerName: 'Frequency', field: 'frequencyTypeName'},
-            {headerName: 'Priority', field: 'taskPriorityName'},
             {headerName: 'Start On', cellTemplate: ScheduledStartDateCell},
             {headerName: 'End On', cellTemplate: ScheduledEndDateCell},
             {headerName: 'Last Run', field: 'lastRun', cellTemplate: ScheduledTaskLastRunCell},
-            {headerName: 'Today run', field: 'todayRun', cellTemplate: ScheduledTaskLastRunCell},
+            //{headerName: 'Today run', field: 'todayRun', cellTemplate: ScheduledTaskLastRunCell},
             {headerName: 'Next Run', field: 'nextRun', cellTemplate: ScheduledTaskLastRunCell},
-            {headerName: 'nextDueDate', field: 'nextDueDate', cellTemplate: FullDateFormatCell}
+            {headerName: 'Due Date', field: 'nextDueDate', cellTemplate: FullDateFormatCell}
         ];
     }
 

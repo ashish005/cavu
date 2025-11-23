@@ -1,13 +1,17 @@
 import {Component} from "@angular/core";
 import {CoreProcessFactory, DynamicComponent} from "@app-global";
-import {PipelineAPIResolver} from "../resolver/api.resolver";
-import {ActivatedRoute, Router} from "@angular/router";
 import {Scheduler} from "../domains/scheduler.serializer";
 @Component({
   standalone: false,
-    template: `<div>
-        <a class="btn btn-xs text-xs text-primary" (click)="checkActivity(context)"><i class="fa fa-calendar"></i></a>
-        {{context.name}}
+    template: `<div class="flex">
+        <div class="flex flex-row">
+            <a class="btn btn-xs text-xs text-primary" (click)="checkActivity(context)"><i class="fa fa-calendar"></i></a>
+            <span class="text-xs">{{context.name}} </span>
+        </div>
+        <div class="item-except text-xs h-1x">
+            <span class="badge green mx-1">{{context.frequencyTypeName}}</span>
+            <span class="badge green mx-1">{{context.taskPriorityName}}</span>
+        </div>
     </div>`
 })
 export class ScheduledNameActionCell extends DynamicComponent {
@@ -23,8 +27,7 @@ export class ScheduledNameActionCell extends DynamicComponent {
 @Component({
   standalone: false,
     template: `<div>
-        <a class="text-xs _500">{{ context.startDate | dateFormat }} {{context.startTime}}</a>
-        <div class="item-except text-xs text-muted h-1x"> {{context.startTimeZoneDate | fullDateFormat }} </div>
+        <a class="text-xs _500">{{context.startTimeZoneDate | fullDateFormat }}</a>
     </div>`
 })
 export class ScheduledStartDateCell extends DynamicComponent{ constructor(){ super(); } }
@@ -32,8 +35,7 @@ export class ScheduledStartDateCell extends DynamicComponent{ constructor(){ sup
 @Component({
   standalone: false,
     template: `<div>
-        <a class="text-xs _500">{{context.endDate | dateFormat}} {{context.endTime}}</a>
-        <div class="item-except text-xs text-muted h-1x">{{context.startTimeZoneDate | fullDateFormat }} </div>
+        <a class="text-xs _500">{{context.endTimeZoneDate | fullDateFormat}}</a>
     </div>`
 })
 export class ScheduledEndDateCell extends DynamicComponent{ constructor(){ super(); } }

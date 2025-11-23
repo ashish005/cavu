@@ -19,8 +19,6 @@ export class OrgTaskView extends ViewExtender<OrgTask> implements OnInit {
     super(activatedRoute, service);
     this.gridOptions.columnDefs = [
         {headerName: 'Name', cellTemplate: TaskNameActionCell},
-        {headerName: 'Triggers', field: 'triggers', cellTemplate: TriggerCellComponent},
-        {headerName: 'Reminders', field: 'notifications', cellTemplate: ReminderCellComponent},
         {headerName: 'Frequency', field: 'defaultFrequencyTypeName'},
         {headerName: 'Priority', field: 'taskPriorityName'},
         {headerName: 'Manual', field: 'isManual', cellTemplate: GridUISwitchCellComponent},

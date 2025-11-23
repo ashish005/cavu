@@ -10,6 +10,7 @@ import {
 } from "@app-global";
 import { ScheduleLog, ScheduleLogQueryOptions } from "../domains/schedule-log.serializer";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
+import {ScheduleLogNameActionCell} from "../grid-cells/schedule-log-grid-cell.component";
 
 @Component({
   standalone: false,
@@ -25,27 +26,22 @@ export class SchedulerLogView extends ViewExtender<ScheduleLog> implements OnIni
       super(activatedRoute, service);
       this.gridOptions.header.edit = false;
       this.gridOptions.columnDefs = [
-          {headerName: 'Name', field: 'name'},
+          {headerName: 'Name', field: 'name', cellTemplate: ScheduleLogNameActionCell},
           {headerName: 'AutoRun', field: 'isAutoRun', cellTemplate: GridUISwitchCellComponent},
-
-          {headerName: 'Frequency Type', field: 'frequencyTypeName'},
-          {headerName: 'Priority', field: 'taskPriorityName'},
 
           {headerName: 'Start Date', field: 'startDate', cellTemplate: FullDateFormatCell},
           {headerName: 'Due On', field: 'dueDate', cellTemplate: FullDateFormatCell},
           {headerName: 'Success', field: 'isSuccess', cellTemplate: GridUISwitchCellComponent},
-          {headerName: 'End Date', field: 'endDate', cellTemplate: FullDateFormatCell},
+          //{headerName: 'End Date', field: 'endDate', cellTemplate: FullDateFormatCell},
 
           {headerName: 'Status', field: 'taskStatusTypeName'},
           {headerName: 'Verified By', field: 'verifiedByEmployeeName'},
-          {headerName: 'Created', field: 'createdDate', cellTemplate: FullDateFormatCell}
+          //{headerName: 'Created', field: 'createdDate', cellTemplate: FullDateFormatCell}
       ];
   }
-
     onActivate(componentRef){
       this.actionTemplate = componentRef.actionTemplate;
     }
-
     override ngOnDestroy(){ super.ngOnDestroy(); }
     ngOnInit(){ super.populateGrid(); }
 

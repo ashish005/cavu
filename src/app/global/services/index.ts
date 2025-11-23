@@ -1,3 +1,5 @@
+export {UtcLocalTimeService, TimeOutputFormat } from "./utc-local-time.service";
+
 export {OrgOptions} from "./models/app-setup.serializer";
 
 export {CoreEndpointBase, CoreResourceService, OrgResourceService} from "./endpoint-base.service";
