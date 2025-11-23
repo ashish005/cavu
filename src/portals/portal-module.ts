@@ -1,6 +1,6 @@
 import {RouterModule, ROUTES} from "@angular/router";
 import {NgModule} from "@angular/core";
-import {LogLayout, ProcessLayout, SetupLayout} from "./org-admin/layouts";
+import {LogLayout, ProcessLayout, SetupLayout, ComplianceLayout} from "./org-admin/layouts";
 import {CommonModule} from "@angular/common";
 import {AppSetupService, GlobalModule} from "@app-global";
 import {ADMIN_SETUP} from "./org-admin";
@@ -176,7 +176,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
 };
 
 @NgModule({
-  declarations: [ SetupLayout, ProcessLayout, LogLayout ],
+  declarations: [ SetupLayout, ProcessLayout, ComplianceLayout, LogLayout ],
   imports: [RouterModule, CommonModule, GlobalModule],
     providers: [
         { provide: ROUTES, useFactory: setupRoutesFactory, multi: true, deps: [ AppSetupService ] }

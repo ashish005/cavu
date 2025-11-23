@@ -1,8 +1,7 @@
 export const PortalCommonModuleRoutes = [
     { path: 'profile', loadChildren: () => import('app-modules/core-modules/profile').then(m => m.ProfileModule), data: { title: 'Profile', header:'Profile'} },
     { path: 'support', loadChildren: () => import('app-modules/core-modules/service-request').then(m => m.ServiceRequestModule), data: {title: 'Support', header: 'Support'} },
-    { path: 'docs', loadChildren: () => import('app-modules/core-modules/docs/index').then(m => m.DocsModule), data: {title: 'Doc', header: 'Doc'} },
-    { path: 'scheduler', loadChildren: () => import('app-modules/core-modules/org-process/scheduler').then(m => m.SchedulerModule), data: {title: 'Scheduler', header:'Scheduler'} }
+    { path: 'docs', loadChildren: () => import('app-modules/core-modules/docs/index').then(m => m.DocsModule), data: {title: 'Doc', header: 'Doc'} }
 ];
 
 export const CoreCommonModuleRoutes = [
@@ -15,7 +14,7 @@ export const CoreCommonModuleRoutes = [
 
   //{ path: 'manage-invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: {code: "FIN" } },
   { path: 'org-invoice', loadChildren: () => import('app-modules/app-admin/org-invoice/index').then(m => m.ManageMoneyModule), data: {icon:"fa fa-money", name: "Money", key: 'layout.money', title: 'Invoices', header:'Invoices' } },
-    { path: 'compliance', loadChildren: () => import('app-modules/app-admin/compliance/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
+    { path: 'compliance-report', loadChildren: () => import('app-modules/app-admin/compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 
     { path: 'org-emp', loadChildren: () => import('app-modules/core-modules/org-employee').then(m => m.OrgEmployeeModule), data: { code: "EMP", title: 'Employee', header:'Employee'} },
 

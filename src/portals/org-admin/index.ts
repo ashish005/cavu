@@ -1,4 +1,4 @@
-import {ProcessLayout, SetupLayout} from "./layouts";
+import {ComplianceLayout, ProcessLayout, SetupLayout} from "./layouts";
 import {LogLayout} from "./layouts/log.layout";
 
 export const ADMIN_SETUP = [
@@ -36,11 +36,6 @@ export const ADMIN_SETUP = [
                 path: 'notification', //canLoad: [PortalAuthGuard],
                 loadChildren: () => import('app-modules/app-admin/notification/index').then(m => m.NotificationModule),
                 data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
-            },
-            {
-                path: 'compliance', //canLoad: [PortalAuthGuard],
-                loadChildren: () => import('app-modules/app-admin/compliance/index').then(m => m.ComplianceModule),
-                data: {title: 'Compliance', header: 'Compliance'}
             },
             {
                 path: 'tax-management', //canLoad: [PortalAuthGuard],
@@ -81,8 +76,13 @@ export const ADMIN_SETUP = [
     },
     {
         path: 'process', component: ProcessLayout,//canLoad: [PortalAuthGuard],
-        loadChildren: () => import('app-modules/core-modules/org-process/index').then(m => m.ProcessModule),
+        loadChildren: () => import('app-modules/app-admin/org-process-management/index').then(m => m.ProcessModule),
         data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'}
+    },
+    {
+        path: 'compliance', component: ComplianceLayout, //canLoad: [PortalAuthGuard],
+        loadChildren: () => import('app-modules/app-admin/compliance-management/index').then(m => m.ComplianceModule),
+        data: {title: 'Compliance', header: 'Compliance'}
     },
     {
         path: 'org-log', component: LogLayout,

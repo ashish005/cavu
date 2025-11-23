@@ -1,0 +1,11 @@
+<header class="org-header theme flex-nowrap box-shadow">
+  <org-header [isAdminView]="true"></org-header>
+</header>
+<div class="app" id="app">
+  <org-aside [data]="navList"></org-aside>
+  <div class="app-content box-shadow-4 box-radius-4" role="main">
+    <div class="content-main">
+      <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<form class="d-flex flex h-100" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex-column flex p-3">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="name"
+                                   [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                            <label> Name </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="registrationNo"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+                            <label> Registration No </label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="md-form-group">
+                            <input class="md-input" type="date"
+                                   formControlName="registrationDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['registrationDate'].errors }">
+                            <label> Registration Date </label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="md-form-group">
+                            <div class="text-xs" style="float: right;position: absolute;top: 0px;right: 0px;">
+                                <label class="md-check">
+                                    <input type="checkbox" formControlName="isRenewalRequired">
+                                    <i class="theme"></i> Required
+                                </label>
+                            </div>
+                            <input class="md-input" type="date" formControlName="renewalDate"
+                                   [ngClass]="{ 'is-invalid': submitted && f['renewalDate'].errors }">
+                            <label>Renewal Date</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-2 p-2 white b-a">
+                    <div class="col-12">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="url" [ngClass]="{ 'is-invalid': submitted && f['url'].errors }">
+                            <label> Url </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="userId"
+                                   [ngClass]="{ 'is-invalid': submitted && f['userId'].errors }">
+                            <label> UserId </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="md-form-group">
+                            <input class="md-input" formControlName="password"
+                                   [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+                            <label> Password </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="m-2 flex-row white lt b-t mt-auto">
+            <div class="float-left p-2">
+                <status-check [customForm]="customForm"></status-check>
+            </div>
+            <ul class="nav nav-xs no-border float-right">
+                <li class="nav-item mx-1">
+                    <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                            (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                        'Submitting...' : actionType}}
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <!--<loader [isLoading]="isLoading"></loader>-->
+    </div>
+</form>

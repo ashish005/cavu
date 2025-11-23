@@ -69,9 +69,9 @@
           <a class="dropdown-item" [routerLink]="['setup']">Admin</a>
           <a class="dropdown-item" [routerLink]="['org-log']">Log Analyser</a>
           <a class="dropdown-item" [routerLink]="['process']">Workflow & Process</a>
+          <a class="dropdown-item" [routerLink]="['compliance']">Compliance</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item text-truncate" [routerLink]="['support','ticket']" title="Tickets">Tickets</a>
-          <a class="dropdown-item" (click)="routeToUrl('scheduler')">scheduler</a>
           <a class="dropdown-item" (click)="logout()" *ngIf="isAuthenticated$ | async"><i class="fa fa-power-off px-1"></i>Sign Out</a>
         </div>
       </li>
@@ -157,13 +157,13 @@
       </a>
     </div>
     <div class="col dropdown-item">
-      <a (click)="routeToSetupPath('process')" class="d-block text-center">
+      <a (click)="routeToModulePath('process')" class="d-block text-center">
         <i class="fa text-sm fa fa-user-circle text-muted"></i>
         <small class="d-block _500 title">Process Setup</small>
       </a>
     </div>
     <div class="col dropdown-item">
-      <a (click)="routeToSetupPath('compliance')" class="d-block text-center">
+      <a (click)="routeToModulePath('compliance')" class="d-block text-center">
         <i class="fa text-sm fa fa-users text-muted"></i>
         <small class="d-block _500 title">Compliance Setup</small>
       </a>

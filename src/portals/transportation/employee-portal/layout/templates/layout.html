@@ -22,7 +22,6 @@
             <a class="dropdown-item" (click)="routeToUrl('profile')"><span>{{'layout.profile'}}</span></a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item text-truncate" [routerLink]="['support','ticket']" title="Tickets">Tickets</a>
-            <a class="dropdown-item" (click)="routeToUrl('scheduler')">{{'mainLayout.setting_options.scheduler' }}</a>
             <a class="dropdown-item">{{'mainLayout.setting_options.sign_out' }}</a>
           </div>
         </li>
@@ -158,7 +157,7 @@
         </button>
         <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
             <li class="dropdown-item">
-                <a [routerLink]="['compliance']">
+                <a [routerLink]="['compliance-report']">
                     <small class="d-block _500 title">Compliance</small>
                 </a>
             </li>

@@ -22,21 +22,20 @@ export class SetupLayout {
             ]
         },
         {
+            isFLatChildren: true, key: 'Regulations Tracker',
+            children:[
+                { routeTo: ['tax-management'], icon:"fa fa-money", key: 'Tax management' },
+                { routeTo: ['compliance'], icon:"fa fa-check-square-o", key: 'Compliance Setup' },
+                { routeTo: ['payroll'], icon:"fa fa-check-square-o", key: 'Payroll' }
+            ]
+        },
+        {
             isFLatChildren: true, key: 'Teams, Workflow & Logs',
             children:[
                 { routeTo: ['org-team'], icon:"fa fa-building", key: 'Team' },
                 { routeTo: ['notification'], icon:"fa fa-bell", key: 'Notification' },
-                { routeTo: ['process'], icon:"fa fa-history", key: 'Process & Workflow' },
                 { routeTo: ['setup-trxn'], icon:"fa fa-cc-visa", key: 'Bank' },
                 { routeTo: ['bank-trxn'], icon:"fa fa-cc-visa", key: 'Bank Integration' }
-            ]
-        },
-        {
-            isFLatChildren: true, key: 'Regulations Tracker',
-            children:[
-                { routeTo: ['tax-management'], icon:"fa fa-money", key: 'Tax management' },
-                { routeTo: ['compliance'], icon:"fa fa-check-square-o", key: 'Compliance' },
-                { routeTo: ['payroll'], icon:"fa fa-check-square-o", key: 'Payroll' }
             ]
         },
         {
