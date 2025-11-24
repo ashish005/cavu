@@ -7,6 +7,7 @@ export * from "./components";
 export * from "./enums";
 export * from "./extender-classes";
 export * from './helpers';
+export * from './lookups';
 export * from "./services";
 export * from "./services/models";
 export * from "./pipes";

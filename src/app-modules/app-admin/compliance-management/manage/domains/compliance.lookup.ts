@@ -1,9 +1,7 @@
-import {CoreQueryOptions, CoreResource} from "@app-global";
-
+import {CalculationTypeLookup, CoreQueryOptions, CoreResource, OrgTaskConfigLookup, TaxRegimeLookup} from "@app-global";
 export class ComplianceQueryOptions extends CoreQueryOptions {
     constructor(model: any = <any>{}){ super(); }
 }
-
 class SubscriptionsLookup
 {
     id: any;
@@ -19,15 +17,16 @@ export class ComplianceTypeLookup
 {
   id: any;
   name: string;
+  masterType: string;
   subscriptions: Array<any>;
   constructor(model: any = {}){
-    const { id, name, subscriptions } = model;
+    const { id, name, masterType, subscriptions } = model;
     this.id = id;
     this.name = name;
+    this.masterType = masterType;
     this.subscriptions = (subscriptions || []).map(r => new SubscriptionsLookup(r));
   }
 }
-
 export class RegulatoryLookup
 {
     id: any;
@@ -50,9 +49,9 @@ export class ComplianceLookup  extends CoreResource {
     const { complianceTypes, regulatories, calculationTypes, taxRegimes, orgTaskConfigs } = model;
     this.complianceTypes = (complianceTypes || []).map(r => new ComplianceTypeLookup(r));
     this.regulatories = (regulatories || []).map(r => new RegulatoryLookup(r));
-    /*this.calculationTypes = (calculationTypes || []).map(r => new CalculationTypeLookup(r));
+    this.calculationTypes = (calculationTypes || []).map(r => new CalculationTypeLookup(r));
     this.taxRegimes = (taxRegimes || []).map(r => new TaxRegimeLookup(r));
-    this.orgTaskConfigs = (orgTaskConfigs || []).map(r => new OrgTaskConfigLookup(r));*/
+    this.orgTaskConfigs = (orgTaskConfigs || []).map(r => new OrgTaskConfigLookup(r));
   }
 
   getSubscriptionsByComplianceType=(complianceTypeId) => (this.complianceTypes || []).find(r => r.id == complianceTypeId)?.subscriptions || [];

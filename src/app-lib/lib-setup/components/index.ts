@@ -1,5 +1,3 @@
-export {NG_SELECT_COMPONENTS} from "./ng-select";
-
 import {MasterSearchComponent, PaymentComponent, ParticularSearch, MasterTypesSettingComponent } from "./app";
 
 export const SHARED_COMPONENTS = [

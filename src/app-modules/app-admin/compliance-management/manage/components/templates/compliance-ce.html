@@ -12,12 +12,12 @@
                         </div>
                         <div class="col-sm-5">
                             <div class="md-form-group">
-                                <select class="md-input" formControlName="taskId">
-                                    <ng-template ngFor let-entity [ngForOf]="apiResolver.masterType?.orgTaskConfigs" let-i="index">
+                                <select class="md-input" formControlName="regulatoryId">
+                                    <ng-template ngFor let-entity [ngForOf]="lookup?.regulatories" let-i="index">
                                         <option [value]="entity.id">{{entity.name}}</option>
                                     </ng-template>
                                 </select>
-                                <label>Task</label>
+                                <label>Regulatory</label>
                             </div>
                         </div>
                         <div class="col-sm-12">
@@ -26,29 +26,22 @@
                                 <label> Description </label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="md-form-group">
-                                <select class="md-input" formControlName="regulatoryId">
-                                    <ng-template ngFor let-entity [ngForOf]="apiResolver.masterType?.regulatories" let-i="index">
-                                        <option [value]="entity.id">{{entity.name}}</option>
-                                    </ng-template>
-                                </select>
-                                <label>Regulatory Authorities</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-sm-5">
                             <div class="md-form-group">
                                 <select class="md-input" formControlName="complianceTypeId">
-                                    <ng-template ngFor let-entity [ngForOf]="apiResolver.masterType?.complianceTypes" let-i="index">
+                                    <ng-template ngFor let-entity [ngForOf]="lookup?.complianceTypes" let-i="index">
                                         <option [value]="entity.id">{{entity.name}}</option>
                                     </ng-template>
                                 </select>
                                 <label>Compliance Type</label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-4" *ngIf="subscriptions?.length">
                             <div class="md-form-group">
                                 <select class="md-input" formControlName="subscriptionId">
+                                    <option value="" selected> N/A </option>
                                     <ng-template ngFor let-entity [ngForOf]="subscriptions" let-i="index">
                                         <option [value]="entity.id">{{entity.name}}</option>
                                     </ng-template>
@@ -56,12 +49,25 @@
                                 <label>Subscription</label>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <div class="md-form-group">
                                 <select class="md-input text-xs" formControlName="taxRegimeId">
-                                    <option *ngFor="let entity of apiResolver.masterType?.taxRegimes;" [ngValue]="entity.id"> {{entity.name}}</option>
+                                    <option value="" selected> N/A </option>
+                                    <option *ngFor="let entity of lookup?.taxRegimes;" [ngValue]="entity.id"> {{entity.name}}</option>
                                 </select>
                                 <label class="text-xs text-muted m-0">Tax Regime</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-sm-4">
+                            <div class="md-form-group">
+                                <select class="md-input" formControlName="taskId">
+                                    <ng-template ngFor let-entity [ngForOf]="lookup?.orgTaskConfigs" let-i="index">
+                                        <option [value]="entity.id">{{entity.name}}</option>
+                                    </ng-template>
+                                </select>
+                                <label>Task</label>
                             </div>
                         </div>
                         <!--<div class="col-sm-3">
@@ -94,23 +100,32 @@
                                     [controlValue]="formEmpExecutive?.value"></user-type-ahead>
                         </div>
                         <div class="col-sm-6">
+                            <div class="text-sm text-muted">Frequency</div>
+                            <div class="clearfix">
+                                <compliance-frequency-ce #frequencyTypeCtrl (onOk)="frequencyTypeChange($event)"></compliance-frequency-ce>
+                            </div>
                             <!--<add-reminder [orgTaskId]="orgTaskId"></add-reminder>
                             <task-schedule [orgTaskId]="orgTaskId"></task-schedule>-->
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="mx-2 white lt b-t mt-auto">
-                <div class="row row-sm">
-                    <div class="col-sm-12 text-center">
-                        <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
-                                (click)="onSubmit(customForm)"
-                                [disabled]="!customForm.valid || submitted">
-                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType}}
-                        </button>
+            <ng-template #footerTemplate>
+                <div>
+                    <div class="float-left p-2">
+                        <status-check [customForm]="customForm"></status-check>
                     </div>
+                    <ul class="nav nav-xs no-border float-right">
+                        <li class="nav-item mx-1">
+                            <button type="click" class="btn btn-xs theme" data-dismiss="modal"
+                                    (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
+                                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                                'Submitting...' : actionType}}
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </ng-template>
             <!--<loader [isLoading]="isLoading"></loader>-->
         </div>
     </div>

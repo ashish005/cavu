@@ -2,14 +2,16 @@ import {FREQUENCY_TYPE} from "../../../enums";
 import {CoreQueryOptions} from "../../../services/models";
 
 export class SchedulerTaskParam extends CoreQueryOptions{
-    showFeePLanTasks: boolean;
+    processMasterType: string;
+    //showFeePLanTasks: boolean;
     //IsPeriodType: boolean;
 
     constructor(model: any = {}){ super(model); }
 
     override toQueryString (){
         const obj = {
-            showFeePLanTasks: this.showFeePLanTasks,
+            processMasterType: this.processMasterType,
+            //showFeePLanTasks: this.showFeePLanTasks,
             //IsPeriodType: this.IsPeriodType
         };
         return super.getParamByObject(obj);

@@ -1,5 +1,5 @@
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF} from "../../../enums";
+import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF, YEAR_MODE_ENUM, YEAR_MODES} from "../../../enums";
 import {Injector} from "@angular/core";
 import {AppSetupService} from "../../../services";
 import {OrgConfigOptions} from "../../../services/models/app-setup.serializer";
@@ -8,6 +8,7 @@ export class SchedularForm {
   months: Array<any> = MONTHS;
   days: Array<any> = DAYS;
   weeksOf: Array<any> = WEEK_OF;
+  yearModes: Array<any> = YEAR_MODES;
 
   customForm: FormGroup;
   orgConfig: OrgConfigOptions;
@@ -18,6 +19,8 @@ export class SchedularForm {
       const { ofcStartTime, ofcEndTime, assumedStartDate, assumedEndDate, timeZone } = this.orgConfig;
       this.customForm = this.fb.group({
           name: [null, Validators.required],
+          yearMode: [YEAR_MODE_ENUM.CALENDER_YEAR, Validators.required],
+          financialStartMonth: [null],
           startDate: [assumedStartDate, Validators.required],
           startTime: [ofcStartTime, Validators.required],
           startTimeZone: [timeZone, Validators.required],

@@ -54,7 +54,6 @@ export class GroupRuleFilterCeComponent implements OnInit {
             this.populateColumnFilters(userTypeId);
         });
         this.formUserFilterTypeId.valueChanges.subscribe(filterKeyId => {
-            debugger
             this.populateValues(filterKeyId);
         })
     }

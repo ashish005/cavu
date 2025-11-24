@@ -1,6 +1,6 @@
 export {Referrals} from "./constants";
 
-export {FREQUENCY_TYPE, WEEK_DAYS, MONTHS, DAYS, WEEK_OF, DEPOSIT_DURATION_TYPE } from "./tasks.enums";
+export {FREQUENCY_TYPE, WEEK_DAYS, MONTHS, DAYS, WEEK_OF, YEAR_MODES, YEAR_MODE_ENUM } from "./tasks.enums";
 
 export {ORG_PROCESS_TYPE, ORG_NOTIFICATION_MEDIA_TYPE} from "./process-enums";
 

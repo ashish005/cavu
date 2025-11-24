@@ -39,11 +39,11 @@
         <div class="float-left text-xs px-1" *ngIf="frequency?.isMonthly">
             <div class="text-left text-sm-left">
                 <div class="d-inline-block">
-                    <small class="text-primary">Deposit</small>
+                    <small class="text-primary">Frequency</small>
                 </div>
                 <div class="d-inline-block">
                     <select class="md-input" formControlName="depositDurationType" style="width: 80px;">
-                        <option *ngFor="let entity of depositDurationTypes;" [value]="entity.id"> {{entity.name}}</option>
+                        <option *ngFor="let entity of frequencyOptions;" [value]="entity.id"> {{entity.name}}</option>
                     </select>
                 </div>
                 <div class="d-inline-block">

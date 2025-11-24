@@ -28,6 +28,9 @@
                         </div>
                     </div>
                     <div class="flex px-1">
+                        <select class="md-input text-xs" formControlName="yearMode" style="width: 100px;">
+                            <option *ngFor="let y of yearModes" [value]="y.id">{{y.name}}</option>
+                        </select>
                         <ul class="nav nav-xs no-border">
                             <li class="nav-item" style="width: 30px;">
                                 <label class="text-xs text-muted">From</label>

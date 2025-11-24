@@ -26,7 +26,6 @@ export class StaticRecordsComponent extends ViewExtender<Team> implements OnInit
     }
 
     ngOnInit(){
-        debugger
         this.coreState.teamId = this.id;
         super.populateGrid();
     }

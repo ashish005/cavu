@@ -9,7 +9,8 @@ import {Scheduler} from "../../../org-process-management/manage/domains/schedule
     template: `<div>
     <a class="text-xs _500">{{context.name}}</a>
     <div class="item-except text-xs">
-        <a class="text-xs">{{context.complianceTypeName}}</a>
+        <span class="badge lime">{{context.complianceTypeName}}</span>
+        <span class="badge blue">{{context.subscriptionName}}</span>
     </div>
 </div>`
 })

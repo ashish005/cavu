@@ -17,7 +17,7 @@ export class OnTaskSuccessSchedularComponent implements OnInit{
   updateEventTask(val){ this.formAfterSucessOnTaskId.setValue(val); }
 
   ngOnInit(){
-    this.synchTask();
+    if(!this.tasks?.length) {this.synchTask();}
       // const itemFormValueChange = ([prev, next]: [number, number]) =>
       // {
       //     if(prev != next)
@@ -41,6 +41,6 @@ export class OnTaskSuccessSchedularComponent implements OnInit{
     const failure = (data)=>{};
     const taskParam: SchedulerTaskParam = new SchedulerTaskParam();
     //taskParam.IsPeriodType = true;
-    this.service.getOrgTaskEvents(taskParam).subscribe(success, failure);
+    this.service.getOrgTaskScheduleLookup(taskParam).subscribe(success, failure);
   }
 }

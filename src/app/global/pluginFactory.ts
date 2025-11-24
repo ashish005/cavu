@@ -22,16 +22,21 @@ export class CoreProcessFactory {
             isFeeTask: null,
             actionType: null, //ACTION_ENUM.ADD | ACTION_ENUM.UPDATE
         };
-        const success = (resp: any) => { this.destroy(); cb(); };
+        const success = (resp: any) => { this.destroy(); cb(resp); };
         const failure = (e) => { this.destroy(); };
-        this.sharedService.showCustomPopup(SchedulerInfoComponent, popupOptions, data).then(success, failure);
+        //this.sharedService.showCustomPopup(SchedulerInfoComponent, popupOptions, data).then(success, failure);
+        this.wrapperResolver().then(()=> this.showPopup(SchedulerInfoComponent, popupOptions, data).then(success, failure));
     }
+
+    private wrapperResolver = ()=> this.workflowResolver.lookupResolver({});
+
     showMultiSchedulerPopup(data: any, popupHeaderOption: any, cb){
         const popupOptions = { header: popupHeaderOption || { text: `Task Scheduler`, desc: `Schedule a tasks` }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
         data = data || { actionType: ACTION_ENUM.SHOW };
         const success = (resp: any) => { this.destroy(); cb(); };
         const failure = (e) => { this.destroy(); };
-        return this.sharedService.showCustomPopup(MultiSchedulerInfoComponent, popupOptions, data).then(success, failure);
+        //this.sharedService.showCustomPopup(MultiSchedulerInfoComponent, popupOptions, data).then(success, failure);
+        this.wrapperResolver().then(()=> this.showPopup(MultiSchedulerInfoComponent, popupOptions, data).then(success, failure));
     }
     showFrequencyCalenderTestPopup(data: any, popupHeaderOption: any){
         const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };

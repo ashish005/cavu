@@ -8,9 +8,7 @@ import {NotFoundComponent} from "./not-found.component";
 import {AppSetupService, GlobalModule} from "@app-global";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {AuthInterceptor} from "./auth.interceptor";
-
 function StartupServiceFactory(setupService: AppSetupService) { return () => setupService.loadApp(); }
-
 export const appSetupGuard: CanActivateFn = (route, state) => {
   const setupService = inject(AppSetupService);
   const router = inject(Router);

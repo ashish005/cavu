@@ -13,7 +13,7 @@ import {OrgWorkflowAPIResolver} from "@app-global";
 
 export const OrgProcessTaskRoutes: Routes = [
   {
-    path: '', component: Layout,  resolve: { lookup: OrgWorkflowAPIResolver },
+    path: '', component: Layout, resolve: { lookup: OrgWorkflowAPIResolver },
     children:[
       { path: '', pathMatch: 'full', redirectTo:'dashboard' },
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },

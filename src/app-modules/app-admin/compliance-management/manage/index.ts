@@ -7,7 +7,6 @@ import {COMPLIANCE_COMPONENTS} from "./components";
 import {ComplianceAPIResolver, ComplianceRegulatoryService, ComplianceService} from "./services";
 import {COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 import {ReactiveFormsModule} from "@angular/forms";
-
 @NgModule({
   imports: [
     CommonModule, ReactiveFormsModule,
@@ -17,5 +16,4 @@ import {ReactiveFormsModule} from "@angular/forms";
   providers: [ComplianceAPIResolver, ComplianceService, ComplianceRegulatoryService],
   declarations: [COMPLIANCE_VIEWS, COMPLIANCE_COMPONENTS, COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS]
 })
-
 export class ComplianceManageModule {}

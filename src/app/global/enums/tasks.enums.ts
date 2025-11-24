@@ -5,15 +5,11 @@ export enum FREQUENCY_TYPE {
     MONTHLY = "MONTHLY",
     ON_EVENT = "ON_EVENT"
 }
-
-export const DEPOSIT_DURATION_TYPE: Array<any> = [
-    { name: 'Every Month', id: 1, masterType: FREQUENCY_TYPE.MONTHLY },
-    { name: 'Bi Monthly', id: 2, masterType: FREQUENCY_TYPE.MONTHLY },
-    { name: 'Quarterly', id: 3, masterType: FREQUENCY_TYPE.MONTHLY },
-    { name: 'Semester Wise', id: 6, masterType: FREQUENCY_TYPE.MONTHLY },
-    { name: 'One Time', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
-];
-
+export enum YEAR_MODE_ENUM {
+    CUSTOM = "custom",
+    CALENDER_YEAR = "calendarYear",
+    FINANCIAL_YEAR = "financialYear"
+}
 export const WEEK_DAYS: Array<any> = [
     { name: 'Monday', id:1, isChecked: true },
     { name: 'Tuesday', id:2, isChecked: false },
@@ -76,4 +72,9 @@ export const WEEK_OF: Array<any> = [
     { name: 'Third', id:3, isChecked: false},
     { name: 'Fourth', id:4, isChecked: false},
     { name: 'Last', id:-1, isChecked: false}
+];
+export const YEAR_MODES: Array<any> = [
+    { id: YEAR_MODE_ENUM.CUSTOM, name: 'Custom Year' },
+    { id: YEAR_MODE_ENUM.CALENDER_YEAR, name: 'Calendar Year' },
+    { id: YEAR_MODE_ENUM.FINANCIAL_YEAR, name: 'Financial Year' }
 ];

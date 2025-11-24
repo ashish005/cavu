@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ViewExtender} from "@app-global";
+import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 import {ActivatedRoute} from "@angular/router";
 import { ComplianceService, ComplianceAPIResolver } from "../services";
 import {Compliance, ComplianceQueryOptions} from "../domains/compliance.serializer";
@@ -25,10 +25,10 @@ export class ComplianceView extends ViewExtender<Compliance> implements OnInit{
             {headerName: 'Regulatory', field: 'regulatoryName' },
             {headerName: 'Executive Name', field: 'empExecutiveName' },
             //{headerName: 'Rate', field: 'name', cellTemplate: ComplianceRateCellComponent },
-            {headerName: 'Subscription', field: 'subscriptionName' },
             //{headerName: 'Regulatory Authority', field: 'regulatoryName', cellTemplate: ComplianceRegulatoryNameCellComponent },
             //{headerName: 'Renewal Date', field: 'regulatoryRenewalDate', cellTemplate: DateFormatCell },
-            {headerName: 'Due Date', field: 'taskName', cellTemplate: ComplianceSchedulerCellComponent }
+            {headerName: 'Due Date', field: 'taskName', cellTemplate: ComplianceSchedulerCellComponent },
+            {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ]
     }
 

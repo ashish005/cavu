@@ -71,7 +71,7 @@
             </div>
             <ul class="nav nav-xs no-border float-right">
                 <li class="nav-item mx-1">
-                    <button type="click" class="btn btn-sm primary m-2" data-dismiss="modal"
+                    <button type="click" class="btn btn-sm theme" data-dismiss="modal"
                             (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
                         <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
                         'Submitting...' : actionType}}

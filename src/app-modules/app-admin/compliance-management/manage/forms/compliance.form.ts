@@ -25,8 +25,9 @@ export class ComplianceForm {
             orgTaskScheduleId: [null],
 
             empExecutiveId: [null],
-            empExecutiveName: [null] //just for ui handling
+            empExecutiveName: [null], //just for ui handling
             //details: fb.array([this.complianceDetailFormGroup({})]),
+            isActive: [null]
         });
     }
 
@@ -57,10 +58,8 @@ export class ComplianceForm {
     get formRegulatoryId() { return <FormGroup>this.customForm.get('regulatoryId'); }
     get formSubscriptionId() { return <FormGroup>this.customForm.get('subscriptionId'); }
     get formIsTaxExempted() { return <FormGroup>this.customForm.get('isExemptedForTaxation'); }
-
     get formEmpExecutiveId(){ return this.customForm.get('empExecutiveId'); }
     get formEmpExecutive(){ return this.customForm.get('empExecutiveName'); }
-
     updateEmpExecutive(data: any){
         this.formEmpExecutiveId.setValue(data?.id);
         this.formEmpExecutive.setValue(data?.name);
@@ -72,7 +71,7 @@ export class ComplianceForm {
             complianceTypeId, regulatoryId,
             taxRegimeId, subscriptionId, taxRebateRate, isExemptedForTaxation, calculationType, rate,
             taskId, orgTaskScheduleId,
-            empExecutiveId, empExecutiveName
+            empExecutiveId, empExecutiveName, isActive
         } = row;
         this.customForm.get('id').setValue(id);
         this.customForm.get('name').setValue(name);
@@ -93,5 +92,7 @@ export class ComplianceForm {
 
         this.customForm.get('empExecutiveId').setValue(empExecutiveId);
         this.customForm.get('empExecutiveName').setValue(empExecutiveName);
+
+        this.customForm.get('isActive').setValue(isActive);
     }
 }

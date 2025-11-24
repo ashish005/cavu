@@ -39,7 +39,7 @@ export class Compliance  extends CoreResource {
 
     public schedulerFrequencyMaster: string;
     public scheduledDates: Array<string>;
-
+  public isActive: boolean;
   constructor(model: any = {}){
     super();
     const {
@@ -50,7 +50,7 @@ export class Compliance  extends CoreResource {
         empExecutiveId,
         taskName, complianceTypeName, taxRegimeName, subscriptionName, empExecutiveName,
         regulatoryName,
-        schedulerFrequencyMaster, scheduledDates
+        schedulerFrequencyMaster, scheduledDates, isActive
   } = model;
     this.id = id;
     this.name = name;
@@ -81,6 +81,7 @@ export class Compliance  extends CoreResource {
     // this.regulatoryUrl = regulatoryUrl;
       this.schedulerFrequencyMaster = schedulerFrequencyMaster;
       this.scheduledDates = (scheduledDates || []).map(r => r);
+      this.isActive = isActive;
   }
 }
 

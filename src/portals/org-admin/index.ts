@@ -1,6 +1,5 @@
 import {ComplianceLayout, ProcessLayout, SetupLayout} from "./layouts";
 import {LogLayout} from "./layouts/log.layout";
-
 export const ADMIN_SETUP = [
     {
         path: 'setup',

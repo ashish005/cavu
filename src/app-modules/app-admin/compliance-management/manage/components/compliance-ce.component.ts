@@ -15,6 +15,7 @@ import {ComplianceForm} from "../forms/compliance.form";
 import {Compliance} from "../domains/compliance.serializer";
 import { ComplianceAPIResolver, ComplianceService } from "../services";
 import {pairwise, startWith} from "rxjs";
+import {ComplianceLookup} from "../domains/compliance.lookup";
 
 @Component({
   standalone: false,
@@ -33,13 +34,15 @@ export class ComplianceCeComponent extends ComplianceForm implements OnInit {
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
   subscriptions = [];
+  lookup: ComplianceLookup;
   constructor(public override fb: FormBuilder, private service: ComplianceService, public apiResolver: ComplianceAPIResolver) {
     super(fb);
+    this.lookup = apiResolver.masterType;
     const ComplianceTypeValueChange = ([prev, next]: [any, any]) =>
     {
         if(prev != next)
         {
-            this.subscriptions = this.apiResolver.masterType.getSubscriptionsByComplianceType(next);
+            this.subscriptions = this.lookup.getSubscriptionsByComplianceType(next);
         }
     };
 
@@ -47,6 +50,15 @@ export class ComplianceCeComponent extends ComplianceForm implements OnInit {
   }
 
   ngOnInit(): void { }
+
+  frequencyTypeChange(data){
+    const { frequencyTypeId, orgTaskId, defaultDay, defaultMonth, depositDurationType} = data;
+    // this.customForm.get('defaultFrequencyTypeId').setValue(frequencyTypeId, {emitEvent: false});
+    // this.customForm.get('defaultTaskId').setValue(orgTaskId, {emitEvent: false});
+    // this.customForm.get('defaultDay').setValue(defaultDay, {emitEvent: false});
+    // this.customForm.get('defaultMonth').setValue(defaultMonth, {emitEvent: false});
+    // this.customForm.get('depositDurationType').setValue(depositDurationType, {emitEvent: false});
+  }
 
   onSubmit(form) {
     // stop here if form is invalid
