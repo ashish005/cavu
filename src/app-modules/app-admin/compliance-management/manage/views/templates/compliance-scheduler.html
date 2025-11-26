@@ -1,0 +1,38 @@
+<div class="content-main d-flex flex h-100">
+    <div class="d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex-column flex">
+                <div class="navbar flex-nowrap lt box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                    </a>
+                    <span class="text-md text-ellipsis flex">Test Scheduler</span>
+<!--                    <ng-template *ngTemplateOutlet="schedulerEl?.schedularShowCalenderTemplate"></ng-template>-->
+                </div>
+                <div class="scrollable hover">
+                    <div class="p-3">
+                        <compliance-frequency-ce #schedulerEl (onFrequencyChange)="onFrequencyChange($event)"></compliance-frequency-ce>
+                    </div>
+                </div>
+                <div class="p-2 m-2 white lt b-a mt-auto text-right">
+<!--                    <ng-template *ngTemplateOutlet="schedulerEl?.schedularActionTemplate"></ng-template>-->
+                </div>
+            </div>
+            <div class="d-flex flex-column flex">
+                <div class="navbar flex-nowrap white lt box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                    </a>
+                    <ng-template *ngTemplateOutlet="calendarYear?.headerTemplate"></ng-template>
+                </div>
+                <div class="scrollable hover">
+                    <div class="d-flex flex">
+                        <div class="d-flex flex-column flex">
+                            <calendar-year #calendarYear></calendar-year>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

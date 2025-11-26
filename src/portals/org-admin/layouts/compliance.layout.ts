@@ -25,6 +25,12 @@ export class ComplianceLayout {
             children:[
                 { routeTo: ['report'], icon:"fa fa-history", key: 'Compliance report' }
             ]
+        },
+        {
+            isFLatChildren: true, key: 'Other',
+            children:[
+                { routeTo: ['manage/scheduler'], icon:"fa fa-home", key: 'Test Scheduler' }
+            ]
         }
     ];
     constructor(public router: Router,

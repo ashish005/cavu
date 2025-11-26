@@ -74,7 +74,7 @@ export const WEEK_OF: Array<any> = [
     { name: 'Last', id:-1, isChecked: false}
 ];
 export const YEAR_MODES: Array<any> = [
-    { id: YEAR_MODE_ENUM.CUSTOM, name: 'Custom Year' },
+    //{ id: YEAR_MODE_ENUM.CUSTOM, name: 'Custom Year' },
     { id: YEAR_MODE_ENUM.CALENDER_YEAR, name: 'Calendar Year' },
     { id: YEAR_MODE_ENUM.FINANCIAL_YEAR, name: 'Financial Year' }
 ];

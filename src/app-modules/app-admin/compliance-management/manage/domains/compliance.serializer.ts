@@ -4,6 +4,20 @@ export class ComplianceQueryOptions extends CoreQueryOptions {
     constructor(model: any = <any>{}){ super(); }
 }
 
+export class ComplianceDetail {
+  id: number;
+  public name: string;
+  public dueDate: string;
+  public isActive: boolean;
+  constructor(model: any = {}){
+    const { id, name, dueDate, isActive } = model;
+    this.id = id;
+    this.name = name;
+    this.dueDate = dueDate;
+    this.isActive = isActive;
+  }
+}
+
 export class Compliance  extends CoreResource {
   public name: string;
   public description: string;
@@ -66,7 +80,6 @@ export class Compliance  extends CoreResource {
     this.orgTaskScheduleId = orgTaskScheduleId;
 
     this.empExecutiveId = empExecutiveId;
-
 
     this.taskName = taskName;
     this.complianceTypeName = complianceTypeName;

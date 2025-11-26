@@ -51,7 +51,7 @@ export class ComplianceCeComponent extends ComplianceForm implements OnInit {
 
   ngOnInit(): void { }
 
-  frequencyTypeChange(data){
+  onFrequencyChange(data){
     const { frequencyTypeId, orgTaskId, defaultDay, defaultMonth, depositDurationType} = data;
     // this.customForm.get('defaultFrequencyTypeId').setValue(frequencyTypeId, {emitEvent: false});
     // this.customForm.get('defaultTaskId').setValue(orgTaskId, {emitEvent: false});

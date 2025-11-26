@@ -1,8 +1,22 @@
 import {Injectable, Injector} from "@angular/core";
-import {Compliance, ComplianceSerializer} from "../domains/compliance.serializer";
+import {Compliance, ComplianceDetail, ComplianceSerializer} from "../domains/compliance.serializer";
 import  { OrgResourceService } from "@app-global";
+import {catchError, map} from "rxjs";
 
 @Injectable()
 export class ComplianceService extends OrgResourceService<Compliance>{
     constructor(public override injector: Injector) { super(injector, 'compliance', new ComplianceSerializer()); }
+    getComplianceSchedules(schedule: any) {
+        return this.httpClient.post(`${this.viewUrl}/schedule`, schedule, this.requestHeaders)
+            .pipe(
+                map((resp: any) => new ComplianceDetail(resp.entities)),
+                catchError(error => this.handleError(error, () => this.getComplianceSchedules(schedule)))
+            );
+    }
+    testScheduler(schedule: any){
+        return this.httpClient.post(`${this.viewUrl}/schedule/test`, schedule, this.requestHeaders)
+            .pipe(
+                catchError(error => this.handleError(error, () => this.testScheduler(schedule)))
+            );
+    }
 }

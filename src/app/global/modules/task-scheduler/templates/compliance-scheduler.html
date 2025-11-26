@@ -1,31 +1,36 @@
-<form class="flex flex-row" [formGroup]="customForm">
+<form class="flex flex-row text-xs white p-1" [formGroup]="customForm">
+    <div class="text-sm text-muted">Schedule</div>
     <div class="d-flex flex">
-        <div class="float-left">
-            <select class="md-input text-xs" formControlName="yearMode" style="width: 100px;">
+        <div class="d-inline-block">
+            <select class="md-input" formControlName="yearMode" style="width: 100px;">
                 <option *ngFor="let y of yearModes" [value]="y.id">{{y.name}}</option>
             </select>
         </div>
-        <div *ngIf="customForm.value.yearMode === 'custom'">
-            <div class="md-form-group p-0">
-                <input class="md-input" type="date" formControlName="startDate"
-                       [ngClass]="{ 'is-invalid': f['startDate'].errors }" style="max-width: 95px;">
-            </div>
-            <div class="md-form-group p-0">
-                <input class="md-input" type="date" formControlName="endDate"
-                       [ngClass]="{ 'is-invalid': f['endDate'].errors }" style="max-width: 95px;">
+        <div class="d-inline-block b-a mx-2">
+            <div class="d-flex flex">
+                <div class="d-inline-block">
+                    <div class="d-block">
+                        <select class="md-input" formControlName="frequencyMasterType" style="width: 80px;">
+                            <option *ngFor="let ft of frequencyTypes;" [ngValue]="ft.masterType">{{ft.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="d-inline-block px-2">
+                    <div class="d-flex" [ngSwitch]="customForm.value.frequencyMasterType">
+                        <ng-container *ngSwitchCase="freqEnum.FIXED_TIME" [ngTemplateOutlet]="fixedFreq"></ng-container>
+                        <ng-container *ngSwitchCase="freqEnum.MONTHLY" [ngTemplateOutlet]="monthlyFreq"></ng-container>
+                        <ng-container *ngSwitchCase="freqEnum.ON_EVENT" [ngTemplateOutlet]="eventFreq"></ng-container>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="d-flex flex">
-        <div class="float-left">
-            <select class="md-input text-xs" formControlName="frequencyMasterType" style="width: 100px;">
-                <option *ngFor="let ft of frequencyTypes;" [ngValue]="ft.masterType">{{ft.name}}</option>
-            </select>
-        </div>
-        <div class="d-flex" [ngSwitch]="customForm.value.frequencyMasterType">
-            <ng-container *ngSwitchCase="freqEnum.FIXED_TIME" [ngTemplateOutlet]="fixedFreq"></ng-container>
-            <ng-container *ngSwitchCase="freqEnum.MONTHLY" [ngTemplateOutlet]="monthlyFreq"></ng-container>
-            <ng-container *ngSwitchCase="freqEnum.ON_EVENT" [ngTemplateOutlet]="eventFreq"></ng-container>
+        <div class="d-inline-block">
+            <p class="p-1 mb-0" *ngIf="customForm.value.frequencyMasterType != freqEnum.FIXED_TIME">
+                <label class="md-check">
+                    <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No Expiration
+                </label>
+            </p>
+            <a class="btn btn-xs" (click)="reviewScheduler()">Review</a>
         </div>
     </div>
 </form>
@@ -49,10 +54,7 @@
 <ng-template #monthlyFreq>
     <div class="text-left text-sm-left" [formGroup]="customForm">
         <div class="d-inline-block">
-            <small class="text-primary">Frequency</small>
-        </div>
-        <div class="d-inline-block">
-            <select class="md-input" formControlName="monthInterval" style="width: 80px;">
+            <select class="md-input" formControlName="monthInterval" style="width: 90px;">
                 <option *ngFor="let entity of frequencyOptions;" [value]="entity.id"> {{entity.name}}</option>
             </select>
         </div>
@@ -64,31 +66,7 @@
                 <option *ngFor="let entity of days;" [ngValue]="entity.id"> {{entity.name}}</option>
             </select>
         </div>
-
-        <!-- Due Date
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">Due Date</label>
-            <input type="number" formControlName="dueDate" min="-1" max="31"
-                   class="w-full border rounded px-3 py-2" />
-            <small class="text-gray-500">Use -1 for last day of month</small>
-        </div>
-        Due Month
-        <div class="mb-4">
-            <label class="block mb-1 font-semibold">Due Month(s)</label>
-            <input type="text" formControlName="dueMonth"
-                   class="w-full border rounded px-3 py-2" placeholder="e.g., 1-12 or 1,4,7,10" />
-        </div> -->
     </div>
 </ng-template>
 <ng-template #eventFreq>
-    <div class="text-left text-sm-left" [formGroup]="customForm">
-        <div class="d-inline-block">
-            <small class="text-primary">Event</small>
-        </div>
-        <div class="d-inline-block">
-            <!--<select class="md-input" formControlName="orgTaskId">
-                <option *ngFor="let entity of tasks;" [ngValue]="entity.id"> {{entity.name}} </option>
-            </select>-->
-        </div>
-    </div>
 </ng-template>
