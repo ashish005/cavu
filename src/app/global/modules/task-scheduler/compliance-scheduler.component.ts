@@ -41,31 +41,36 @@ export class ComplianceFrequencyComponent extends FrequencyCEComponent implement
         super();
         this.orgConfig = this.setupService.appSetup.orgConfig;
         this.customForm = this.fb.group({
-            orgTaskId: [null],
             yearMode: [null, Validators.required],
-            financialStartMonth: [ null ],
+            timeZone: [null, Validators.required],
+            fyStartDay: [ null, Validators.required],
+            fyStartMonth: [ null, Validators.required],
             frequencyMasterType: [ null, Validators.required],
             hasNoExpiration: [false],
 
-            defaultDay: [null],
-            defaultMonth: [null],
+            // defaultDay: [null],
+            // defaultMonth: [null],
             //monthly
             monthInterval: [null],
-            dayNo: [null]
+            dayNo: [null],
+            monthNo: [null],
         });
     }
     get f() { return this.customForm.controls; }
     ngOnInit(){
-        const { fyStartDay, fyStartMonth} = this.orgConfig;
+        const { fyStartDay, fyStartMonth, timeZone} = this.orgConfig;
         this.customForm.patchValue({
             yearMode: YEAR_MODE_ENUM.FINANCIAL_YEAR,
+            timeZone: timeZone,
+            fyStartDay: fyStartDay,
             fyStartMonth: fyStartMonth,
             frequencyMasterType: FREQUENCY_TYPE.MONTHLY,
             hasNoExpiration: true,
-            defaultDay: fyStartDay,
-            defaultMonth: fyStartMonth,
+            // defaultDay: fyStartDay,
+            // defaultMonth: fyStartMonth,
             monthInterval: 3,
-            dayNo: fyStartDay
+            dayNo: fyStartDay,
+            monthNo: fyStartMonth
         });
         // const onFormValueChange = ([prev, next]: [any, any]) => {
         //     if(prev != next) {

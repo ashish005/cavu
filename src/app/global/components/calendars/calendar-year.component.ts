@@ -1,5 +1,4 @@
 import {Component, ElementRef, Input, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {DateHelper} from "../../helpers";
 import {CalendarYearMonthDayComponent} from "./calendar-year-month-day.component";
 import {CommonModule} from "@angular/common";
 @Component({
@@ -165,49 +164,39 @@ export class CalendarYearComponent implements OnInit {
     selectedYear: number;
     selectedYearMonths: Array<any>;
 
-    start: { year: number, month: number, date: number };
-    end: { year: number, month: number, date: number };
+    start: Date;
+    end: Date;
     ngOnInit() {}
-    applySchedular(startDate: string, endDate: string, entities: Array<string>, todayDate = new Date())
+    applySchedular(startDate: string, endDate: string, entities: Array<any>, todayDate = new Date())
     {
         this.startDate = startDate;
-        var _toDate = new Date();///"1-01-01" == endDate ||
+        /*var _toDate = new Date();///"1-01-01" == endDate ||
         if(Number.isNaN(Date.parse(endDate)) || new Date(endDate).getTime() <= _toDate.getTime()) {
             endDate = DateHelper.toDateControlFormat(_toDate.setMonth(_toDate.getMonth()+12));
-        }
+        }*/
         this.endDate = endDate;
         const data = {};
         for(let item of entities){
-            if(!data[item]){ data[item] = []; }
-            data[item].push(item);
+            if(!data[item.key]){ data[item.key] = []; }
+            data[item.key].push(item);
         }
         this.entities = data;
-        const sDate: Date = new Date(startDate);
-        const eDate: Date = new Date(endDate);
+        this.start = new Date(startDate);
+        this.end = new Date(endDate);
 
-        //sDate.setMonth(0);
-        //eDate.setFullYear(sDate.getFullYear() + 2);
-
-        this.selectedRangeForStart(sDate);
-        this.selectedRangeForEnd(eDate);
-
-        let nextYear = sDate;
         this.yearArray = [];
-        while(nextYear.getFullYear()<=eDate.getFullYear())
-        {
-            this.yearArray.push(nextYear.getFullYear());
-            nextYear.setFullYear(nextYear.getFullYear()+1);
+        for (let y = this.start.getFullYear(); y <= this.end.getFullYear(); y++) {
+            this.yearArray.push(y);
         }
         this.selectedYearChange(this.yearArray[0]);
     }
-
-    selectedRangeForStart(givendate){
+    /*selectedRangeForStart(givendate){
         this.start = { year: givendate.getFullYear(), month: givendate.getMonth(), date: givendate.getDate() };
+        debugger
     }
     selectedRangeForEnd(givendate){
         this.end = { year: givendate.getFullYear(), month: givendate.getMonth(), date: givendate.getDate() };
-    }
-
+    }*/
   onChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.selectedYearChange(value); // or handle it directly
@@ -215,19 +204,18 @@ export class CalendarYearComponent implements OnInit {
 
     selectedYearChange(year: any){
         this.selectedYear = year;
-        const current= {year: year, month: 0, date: 1 };
 
-        if(year == this.start.year)
-        {
-            current.month = this.start.month;
-        }
-
+        const start = new Date(this.start);
+        const end   = new Date(this.end);
         this.selectedYearMonths = [];
-        let monthCheck = current.month;
-        while (monthCheck < 12)
-        {
-            this.selectedYearMonths.push(new Date(year, monthCheck, current.date));
-            monthCheck++;
+        // Loop through months 0–11 for the selected year
+        for (let m = 0; m < 12; m++) {
+            const d = new Date(year, m, 1);
+            // Must not be before the start date
+            if (d < start) continue;
+            // Must not be after the end date
+            if (d > end) continue;
+            this.selectedYearMonths.push(d);
         }
     }
 }

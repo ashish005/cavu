@@ -1,7 +1,9 @@
 <table class="box mb-1 table-condensed month w-100">
     <thead>
     <tr>
-        <th class="text-xs 500 py-2" colspan="7">{{options.monthNames[month]}}</th>
+        <th class="text-xs 500 py-2" colspan="7">
+            {{options.monthNames[month]}}
+        </th>
     </tr>
     <tr>
         <ng-template ngFor let-day [ngForOf]="options.dayNames" let-i="index">
