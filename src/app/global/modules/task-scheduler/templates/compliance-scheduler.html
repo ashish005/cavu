@@ -24,12 +24,12 @@
                 </div>
             </div>
         </div>
+        <div class="d-inline-block" *ngIf="customForm.value.frequencyMasterType != freqEnum.FIXED_TIME">
+            <label class="md-check">
+                <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No Expiration
+            </label>
+        </div>
         <div class="d-inline-block">
-            <p class="p-1 mb-0" *ngIf="customForm.value.frequencyMasterType != freqEnum.FIXED_TIME">
-                <label class="md-check">
-                    <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No Expiration
-                </label>
-            </p>
             <a class="btn btn-xs" (click)="reviewScheduler()">Review</a>
         </div>
     </div>

@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF, YEAR_MODES, YEAR_MODE_ENUM} from "../../enums";
 import {OrgConfigOptions} from "../../services/models";
 import {AppSetupService} from "../../services";
-import {pairwise, startWith} from "rxjs";
+
 class FrequencyCEComponent
 {
     freqEnum = FREQUENCY_TYPE;
@@ -24,7 +24,7 @@ class FrequencyCEComponent
     months: Array<any> = MONTHS;
     days: Array<any> = DAYS;
     weeksOf: Array<any> = WEEK_OF;
-    yearModes = YEAR_MODES;
+    yearModes = YEAR_MODES.filter(r => r.showInShortScheduler);
 }
 @Component({
     standalone: false,
@@ -66,18 +66,25 @@ export class ComplianceFrequencyComponent extends FrequencyCEComponent implement
             fyStartMonth: fyStartMonth,
             frequencyMasterType: FREQUENCY_TYPE.MONTHLY,
             hasNoExpiration: true,
-            // defaultDay: fyStartDay,
-            // defaultMonth: fyStartMonth,
             monthInterval: 3,
             dayNo: fyStartDay,
             monthNo: fyStartMonth
         });
-        // const onFormValueChange = ([prev, next]: [any, any]) => {
-        //     if(prev != next) {
-        //         this.onFrequencyChange.emit(next);
-        //     }
-        // };
-        // this.customForm.valueChanges.pipe(startWith(null), pairwise()).subscribe(onFormValueChange);
+    }
+
+    applySchedular(data){
+        const { fyStartDay, fyStartMonth, timeZone} = this.orgConfig;
+        this.customForm.patchValue({
+            yearMode: data?.yearMode || YEAR_MODE_ENUM.FINANCIAL_YEAR,
+            timeZone: timeZone,
+            fyStartDay: fyStartDay,
+            fyStartMonth: fyStartMonth,
+            frequencyMasterType: data?.frequencyMasterType || FREQUENCY_TYPE.MONTHLY,
+            hasNoExpiration: true,
+            monthInterval: 3,
+            dayNo: data.dayNo || fyStartDay,
+            monthNo: data.monthNo || fyStartMonth
+        });
     }
 
     reviewScheduler(){

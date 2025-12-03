@@ -138,12 +138,12 @@ export class OrgConfigOptions {
 
     public hasValidConfig =(): boolean=> Boolean((this.currencyCode && this.cultureCode && this.timeZone));
 
-    public get assumedStartDate() { return DateHelper.toDateControlFormat(new Date()); }
-    public get assumedEndDate() {
-        var d = new Date();
-        var utcDate = new Date(d.getFullYear(), this.fyCloseMonth-1, this.fyCloseDay);
-        return DateHelper.toDateControlFormat(utcDate);
-    }
+    // public get assumedStartDate() { return DateHelper.toDateControlFormat(new Date()); }
+    // public get assumedEndDate() {
+    //     var d = new Date();
+    //     var utcDate = new Date(d.getFullYear(), this.fyCloseMonth-1, this.fyCloseDay);
+    //     return DateHelper.toDateControlFormat(utcDate);
+    // }
 }
 
 class Org {

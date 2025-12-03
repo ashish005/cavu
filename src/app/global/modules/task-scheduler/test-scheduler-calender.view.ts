@@ -21,7 +21,8 @@ export class TestSchedulerCalenderView implements OnInit {
       const data = this.schedulerEl.getSchedulerPostValues();
       const success = (resp)=>{
         this.entities = resp.entities;
-        this.calendarYear.applySchedular(this.startDate, this.endDate, this.entities);
+        //this.calendarYear.applySchedular(this.startDate, this.endDate, this.entities);
+        this.calendarYear.applySchedular(resp);
       };
       const error = (e)=>{ };
       const { startDate, endDate } = data;

@@ -43,8 +43,7 @@ export class TaskActivityComponent extends CoreEndpointBase implements OnInit, O
         this.coreState.orgTaskId = this.orgTaskId;
         this.coreState.scheduleId = this.scheduleId;
         const success = (r)=> {
-            const { startDate, endDate, todayDate } = r.data;
-            this.calendarYear.applySchedular(startDate, endDate, r.entities, todayDate);
+            this.calendarYear.applySchedular(r);
         };
         const error = (r)=> {};
         this.subscriber = this.getTaskActivities(this.coreState).subscribe(success, error);

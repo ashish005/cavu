@@ -2,7 +2,6 @@ import {Component, Injectable} from "@angular/core";
 import {CoreProcessFactory, DynamicComponent} from "@app-global";
 import {ComplianceAPIResolver} from "../services";
 import {Compliance} from "../domains/compliance.serializer";
-import {Scheduler} from "../../../org-process-management/manage/domains/scheduler.serializer";
 
 @Component({
   standalone: false,
@@ -11,12 +10,21 @@ import {Scheduler} from "../../../org-process-management/manage/domains/schedule
     <div class="item-except text-xs">
         <span class="badge lime">{{context.complianceTypeName}}</span>
         <span class="badge blue">{{context.subscriptionName}}</span>
+        <a class="btn btn-xs text-xs b-theme text-theme p-1" (click)="showComplianceDetailPopup(context)">
+            <i class="fa fa-calendar"></i>
+        </a>
     </div>
 </div>`
 })
 export class ComplianceNameCellComponent extends DynamicComponent {
     constructor(public lookupResolver: ComplianceAPIResolver) {
         super();
+    }
+
+    showComplianceDetailPopup(row: Compliance){
+        const inputData: any = { id: row.id, data: row.schedule };
+        const onSuccess = (resp: any) => {};
+        this.lookupResolver.showCompliancDetailPopup(inputData,{ text: `${row?.name}`, desc: `` }, onSuccess);
     }
 }
 @Component({

@@ -85,22 +85,6 @@ export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnD
   ngOnDestroy(){ this.subscriber?.unsubscribe(); }
   ngOnInit(){
       this.refreshScheduler(this.id);
-      this.customForm.get('hasNoExpiration')?.valueChanges.pipe(
-          debounceTime(10) // Small debounce to ensure smooth updates
-      ).subscribe(value => {
-          const endDateControl = this.customForm.get('endDate');
-          const endTimeControl = this.customForm.get('endTime');
-          const endTimeZoneControl = this.customForm.get('endTimeZone');
-          if (value) {
-              endDateControl?.disable();
-              endTimeControl?.disable();
-              endTimeZoneControl?.disable();
-          } else {
-              endDateControl?.enable();
-              endTimeControl?.enable();
-              endTimeZoneControl?.enable();
-          }
-      });
   }
   public refreshScheduler(schedulerId){
     if(!schedulerId){
@@ -163,7 +147,7 @@ export class SchedulerInfoComponent extends SchedularForm implements OnInit, OnD
       const data = this.getSchedulerPostValues();
       const { startDate, endDate, hasNoExpiration } = data;
         const success = (resp)=>{
-            this.calendarYear.applySchedular(startDate, endDate, resp.entities);
+            this.calendarYear.applySchedular(resp);
         };
         const error = (e)=>{ };
         this.schedulerService.testScheduler(data).subscribe(success, error);

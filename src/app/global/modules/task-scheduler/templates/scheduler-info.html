@@ -28,23 +28,35 @@
                         </div>
                     </div>
                     <div class="flex px-1">
-                        <select class="md-input text-xs" formControlName="yearMode" style="width: 100px;">
-                            <option *ngFor="let y of yearModes" [value]="y.id">{{y.name}}</option>
-                        </select>
+                        <div class="d-flex row m-0">
+                            <div class="col p-0">
+                                <select class="md-input text-xs" formControlName="yearMode" style="width: 100px;">
+                                    <option *ngFor="let y of yearModes" [value]="y.id">{{y.name}}</option>
+                                </select>
+                            </div>
+                            <div class="col p-0">
+                                <p class="p-0 m-0 float-right" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                                    <label class="md-check text-xs">
+                                        <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No
+                                        Expiration
+                                    </label>
+                                </p>
+                            </div>
+                        </div>
                         <ul class="nav nav-xs no-border">
                             <li class="nav-item" style="width: 30px;">
                                 <label class="text-xs text-muted">From</label>
                             </li>
                             <li class="nav-item">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="date" formControlName="startDate"
+                                    <input class="md-input text-xs" type="date" formControlName="startDate"
                                            [ngClass]="{ 'is-invalid': submitted && f['startDate'].errors }"
                                            style="max-width: 95px;">
                                 </div>
                             </li>
                             <li class="nav-item px-2">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="time" formControlName="startTime"
+                                    <input class="md-input text-xs" type="time" formControlName="startTime"
                                            [ngClass]="{ 'is-invalid': submitted && f['startTime'].errors }"
                                            style="width: 90px;">
                                 </div>
@@ -61,31 +73,23 @@
                             </li>-->
                         </ul>
                         <ul class="nav nav-xs no-border"
-                            *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
+                            *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME && !customForm.value.hasNoExpiration">
                             <li class="nav-item" style="width: 30px;">
                                 <label class="text-xs text-muted">Till</label>
                             </li>
                             <li class="nav-item">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="date" formControlName="endDate"
+                                    <input class="md-input text-xs" type="date" formControlName="endDate" min="00:01"
                                            [ngClass]="{ 'is-invalid': submitted && f['endDate'].errors }"
                                            style="max-width: 95px;">
                                 </div>
                             </li>
                             <li class="nav-item px-2">
                                 <div class="md-form-group p-0">
-                                    <input class="md-input text-sm" type="time" formControlName="endTime"
+                                    <input class="md-input text-xs" type="time" formControlName="endTime" max="23:59"
                                            [ngClass]="{ 'is-invalid': submitted && f['endTime'].errors }"
                                            style="width: 90px;">
                                 </div>
-                            </li>
-                            <li class="nav-item">
-                                <p class="p-1 mb-0" *ngIf="activeFrequency?.masterType != frequencyTypeEnum.FIXED_TIME">
-                                    <label class="md-check text-xs">
-                                        <input type="checkbox" formControlName="hasNoExpiration"><i class="blue"></i>No
-                                        Expiration
-                                    </label>
-                                </p>
                             </li>
                             <!--<li class="nav-item">
                                 <div class="md-form-group text-sm p-0">

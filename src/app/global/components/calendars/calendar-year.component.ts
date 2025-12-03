@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {CalendarYearMonthDayComponent} from "./calendar-year-month-day.component";
 import {CommonModule} from "@angular/common";
+import {FormsModule} from "@angular/forms";
 @Component({
     selector: 'calendar-year',
     templateUrl: `./templates/calendar-year.html`,
@@ -152,7 +153,7 @@ import {CommonModule} from "@angular/common";
       display: block
     }`],
     standalone: true,
-    imports: [CommonModule, CalendarYearMonthDayComponent]
+    imports: [CommonModule, FormsModule, CalendarYearMonthDayComponent]
 })
 export class CalendarYearComponent implements OnInit {
     @ViewChild('headerTemplate', { static: true }) public headerTemplate: TemplateRef<any>;
@@ -167,20 +168,22 @@ export class CalendarYearComponent implements OnInit {
     start: Date;
     end: Date;
     ngOnInit() {}
-    applySchedular(startDate: string, endDate: string, entities: Array<any>, todayDate = new Date())
+    applySchedular(resp)
     {
+        const { data, entities } = resp;
+        const { startDate, endDate, todayDate } = data;
         this.startDate = startDate;
         /*var _toDate = new Date();///"1-01-01" == endDate ||
         if(Number.isNaN(Date.parse(endDate)) || new Date(endDate).getTime() <= _toDate.getTime()) {
             endDate = DateHelper.toDateControlFormat(_toDate.setMonth(_toDate.getMonth()+12));
         }*/
         this.endDate = endDate;
-        const data = {};
+        const info = {};
         for(let item of entities){
-            if(!data[item.key]){ data[item.key] = []; }
-            data[item.key].push(item);
+            if(!info[item.key]){ info[item.key] = []; }
+            info[item.key].push(item);
         }
-        this.entities = data;
+        this.entities = info;
         this.start = new Date(startDate);
         this.end = new Date(endDate);
 
@@ -192,7 +195,7 @@ export class CalendarYearComponent implements OnInit {
     }
     /*selectedRangeForStart(givendate){
         this.start = { year: givendate.getFullYear(), month: givendate.getMonth(), date: givendate.getDate() };
-        debugger
+
     }
     selectedRangeForEnd(givendate){
         this.end = { year: givendate.getFullYear(), month: givendate.getMonth(), date: givendate.getDate() };

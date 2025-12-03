@@ -5,7 +5,7 @@
                 <small class="item-except text-xs text-muted h-1x">{{startDate}}</small>
             </div>
             <div class="flex-column">
-                <select class="float-right" (change)="onChange($event)">
+                <select class="float-right" [(ngModel)]="selectedYear" (change)="onChange($event)">
                     <ng-container *ngFor="let year of yearArray">
                         <option [value]="year">{{ year }}</option>
                     </ng-container>

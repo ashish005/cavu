@@ -3,6 +3,47 @@ import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF, YEAR_MODE_ENUM, YEAR_M
 import {Injector} from "@angular/core";
 import {AppSetupService} from "../../../services";
 import {OrgConfigOptions} from "../../../services/models/app-setup.serializer";
+import {debounceTime, pairwise, startWith} from "rxjs";
+import {DateHelper} from "../../../helpers";
+
+function getYearRange(yearMode: YEAR_MODE_ENUM | any, fyStartMonth: number, fyStartDay: number) {
+    const today = new Date();
+    const year = today.getFullYear();
+
+    if (yearMode === YEAR_MODE_ENUM.CALENDER_YEAR) {
+        return {
+            yearMode: YEAR_MODE_ENUM.CALENDER_YEAR,
+            start: new Date(year, 0, 1),     // Jan 1
+            end: new Date(year, 11, 31),     // Dec 31
+        };
+    }
+
+    if (yearMode === YEAR_MODE_ENUM.FINANCIAL_YEAR) {
+        const fyStart = new Date(year, fyStartMonth - 1, fyStartDay);
+
+        // If today is before fiscal-year start, financial year belongs to previous year
+        if (today < fyStart) {
+            return {
+                yearMode: YEAR_MODE_ENUM.FINANCIAL_YEAR,
+                start: new Date(year - 1, fyStartMonth - 1, fyStartDay),
+                end: new Date(year, fyStartMonth - 1, fyStartDay - 1),
+            };
+        }
+
+        // Otherwise fiscal year is this year → next year
+        return {
+            yearMode: YEAR_MODE_ENUM.FINANCIAL_YEAR,
+            start: new Date(year, fyStartMonth - 1, fyStartDay),
+            end: new Date(year + 1, fyStartMonth - 1, fyStartDay - 1),
+        };
+    }
+
+    return {
+        yearMode: YEAR_MODE_ENUM.CUSTOM,
+        start: today,
+        end: new Date(today.getFullYear() + 1, today.getMonth(), today.getDate() - 1)
+    };
+}
 export class SchedularForm {
   weekDays: Array<any> = WEEK_DAYS;
   months: Array<any> = MONTHS;
@@ -16,17 +57,19 @@ export class SchedularForm {
   constructor(public fb: FormBuilder, public injector: Injector) {
       this.setupService = injector.get(AppSetupService);
       this.orgConfig = this.setupService.appSetup.orgConfig;
-      const { ofcStartTime, ofcEndTime, assumedStartDate, assumedEndDate, timeZone } = this.orgConfig;
+      const { fyStartDay, fyStartMonth,
+          ofcStartTime, ofcEndTime, } = this.orgConfig;
       this.customForm = this.fb.group({
           name: [null, Validators.required],
-          yearMode: [YEAR_MODE_ENUM.CALENDER_YEAR, Validators.required],
-          financialStartMonth: [null],
-          startDate: [assumedStartDate, Validators.required],
+          yearMode: [null, Validators.required],
+          fyStartDay: [null, Validators.required],
+          fyStartMonth: [null, Validators.required],
+          startDate: [null, Validators.required],
           startTime: [ofcStartTime, Validators.required],
-          startTimeZone: [timeZone, Validators.required],
-          endDate: [assumedEndDate],
-          endTime: [ofcEndTime],
-          endTimeZone: [timeZone, Validators.required],
+          startTimeZone: [null, Validators.required],
+          endDate: [null],
+          endTime: [ofcEndTime, [ Validators.max(new Date().setHours(23, 59, 0, 0)) ]],
+          endTimeZone: [null, Validators.required],
           hasNoExpiration: [false],
 
           orgTaskId:[null, Validators.required],
@@ -47,6 +90,41 @@ export class SchedularForm {
           monthly: this.monthlyFormGroup(),
           event: this.eventFormGroup()
       });
+
+      const itemFormValueChange = ([prev, next]: [number, number]) =>
+      {
+          if(prev != next)
+          {
+              const { start, end, yearMode} = getYearRange(next, fyStartMonth, fyStartDay);
+              this.customForm.get('startDate').setValue(DateHelper.toDateControlFormat(start));
+              this.customForm.get('endDate').setValue(DateHelper.toDateControlFormat(end));
+              //this.customForm.get('startTime').setValue(ofcStartTime);
+              //this.customForm.get('endTime').setValue(ofcEndTime);
+              switch (yearMode) {
+                  case YEAR_MODE_ENUM.CALENDER_YEAR:
+                  case YEAR_MODE_ENUM.FINANCIAL_YEAR:
+                      this.disableDateControl(this.customForm.get('startDate'), this.customForm.get('startTime'), true);
+                      this.disableDateControl(this.customForm.get('endDate'), this.customForm.get('endTime'), true);
+                      break;
+                  case YEAR_MODE_ENUM.CUSTOM:
+                      this.disableDateControl(this.customForm.get('startDate'), this.customForm.get('startTime'), false);
+                      this.disableDateControl(this.customForm.get('endDate'), this.customForm.get('endTime'), false);
+                      break;
+              }
+          }
+      };
+
+      this.customForm.get('yearMode').valueChanges.pipe(startWith(null as number), pairwise(), debounceTime(10)).subscribe(itemFormValueChange);
+  }
+
+  disableDateControl(dateControl, timeControl, isDisable){
+      if (isDisable) {
+          dateControl?.disable();
+          //timeControl?.disable();
+      } else {
+          dateControl?.enable();
+          //timeControl?.enable();
+      }
   }
 
   dailyFormGroup(){
@@ -123,7 +201,7 @@ export class SchedularForm {
 
   updateSchedularForm(data: any) {
     const {
-      name, startDate, startTime, startTimeZone, endTimeZone, endDate, endTime, hasNoExpiration,
+      name, yearMode, startDate, startTime, startTimeZone, endTimeZone, endDate, endTime, hasNoExpiration,
       isTaskDelay,
       taskDelayDuration,
       isRepeatTask,
@@ -133,12 +211,21 @@ export class SchedularForm {
       isStopTaskIfLongerThan,
       taskMaxDuration
     } = data;
-    const { ofcStartTime, ofcEndTime, assumedStartDate, assumedEndDate, timeZone } = this.orgConfig;
+    const {
+        fyStartDay, fyStartMonth,
+        ofcStartTime,
+        ofcEndTime,
+        timeZone
+    } = this.orgConfig;
     this.customForm.get('name').setValue(name);
-    this.customForm.get('startDate').setValue(startDate || assumedStartDate);
+    this.customForm.get('yearMode').setValue(yearMode || YEAR_MODE_ENUM.CALENDER_YEAR);
+    this.customForm.get('fyStartDay').setValue(fyStartDay);
+    this.customForm.get('fyStartMonth').setValue(fyStartMonth);
+
+    this.customForm.get('startDate').setValue(startDate);
     this.customForm.get('startTime').setValue(startTime || ofcStartTime);
     this.customForm.get('startTimeZone').setValue(startTimeZone || timeZone);
-    this.customForm.get('endDate').setValue(endDate || assumedEndDate);
+    this.customForm.get('endDate').setValue(endDate);
     this.customForm.get('endTime').setValue(endTime || ofcEndTime);
     this.customForm.get('endTimeZone').setValue(endTimeZone || timeZone);
     this.customForm.get('hasNoExpiration').setValue(hasNoExpiration || false);
@@ -156,7 +243,6 @@ export class SchedularForm {
     this.customForm.get('isStopTaskIfLongerThan').setValue(isStopTaskIfLongerThan);
     this.customForm.get('taskMaxDuration').setValue(taskMaxDuration);
     this.customForm.get('taskMaxDuration').setValue(taskMaxDuration);
-
     this.updateDailyForm(data);
     this.updateWeeklyForm(data);
     this.updateMonthlyForm(data);

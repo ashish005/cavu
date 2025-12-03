@@ -14,9 +14,7 @@ export class TestComplianceSchedulerView implements OnInit {
   ngOnInit() {}
     onFrequencyChange(data) {
         const success = (resp)=>{
-            debugger
-            const { startDate, endDate } = resp.data;
-            this.calendarYear.applySchedular(startDate, endDate, resp.entities);
+            this.calendarYear.applySchedular(resp);
         };
         const error = (e)=>{ };
         this.service.testScheduler(data).subscribe(success, error);

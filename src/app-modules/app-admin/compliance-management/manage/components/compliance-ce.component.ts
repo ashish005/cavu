@@ -51,15 +51,6 @@ export class ComplianceCeComponent extends ComplianceForm implements OnInit {
 
   ngOnInit(): void { }
 
-  onFrequencyChange(data){
-    const { frequencyTypeId, orgTaskId, defaultDay, defaultMonth, depositDurationType} = data;
-    // this.customForm.get('defaultFrequencyTypeId').setValue(frequencyTypeId, {emitEvent: false});
-    // this.customForm.get('defaultTaskId').setValue(orgTaskId, {emitEvent: false});
-    // this.customForm.get('defaultDay').setValue(defaultDay, {emitEvent: false});
-    // this.customForm.get('defaultMonth').setValue(defaultMonth, {emitEvent: false});
-    // this.customForm.get('depositDurationType').setValue(depositDurationType, {emitEvent: false});
-  }
-
   onSubmit(form) {
     // stop here if form is invalid
     if (form.invalid) {

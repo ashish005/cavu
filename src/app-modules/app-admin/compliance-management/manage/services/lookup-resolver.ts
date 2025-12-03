@@ -6,6 +6,7 @@ import {ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService } from "@app-
 import {ComplianceCeComponent} from "../components/compliance-ce.component";
 import {ComplianceRegulatoryCeComponent} from "../components/compliance-regulatory-ce.component";
 import {ComplianceTypeLayout} from "../components/compliance-type.component";
+import {ComplianceDetailsComponent} from "../components/compliance-details.component";
 
 @Injectable()
 export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> implements Resolve<any> {
@@ -23,6 +24,20 @@ export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> 
         return this.performRouteResolver({name: 'Compliance'}, setup, success, failure);
     }
 
+    showCompliancDetailPopup(inputData, popupHeader, actionCb) {
+        const success = (resp: any) => {
+            this.sharedService.destroy();
+            actionCb(resp);
+        };
+        const failure = () => {
+            this.sharedService.destroy();
+        };
+
+        const popup = { header: popupHeader, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        let modal$ = this.sharedService.showCustomPopup(ComplianceDetailsComponent, popup, inputData);
+        modal$.then(success, failure);
+    }
+
     showCompliancPopup(inputData, popupHeader, actionCb) {
         const success = (resp: any) => {
             this.sharedService.destroy();
@@ -32,11 +47,7 @@ export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> 
             this.sharedService.destroy();
         };
 
-        const popup = {
-            header: popupHeader,
-            aside: ASIDE_CLASS.RIGHT,
-            size: ASIDE_SIZE.W_50
-        };
+        const popup = { header: popupHeader, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
         let modal$ = this.sharedService.showCustomPopup(ComplianceCeComponent, popup, inputData);
         modal$.then(success, failure);
     }
@@ -79,7 +90,7 @@ export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> 
 
     public updateComplianceScheduler(complianceId, schedulerData) {
         return this.httpClient
-            .post(`${this.baseSectorAPIUrl}compliance/${complianceId}/scheduler`, schedulerData, this.requestHeaders)
+            .post(`${this.baseSectorAPIUrl}/compliance/${complianceId}/scheduler`, schedulerData, this.requestHeaders)
             .pipe(
                 catchError(
                     error => this.handleError(error, () => this.updateComplianceScheduler(complianceId, schedulerData))

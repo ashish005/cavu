@@ -26,8 +26,28 @@ export class ComplianceForm {
 
             empExecutiveId: [null],
             empExecutiveName: [null], //just for ui handling
+            schedule: [this.scheduleFormGroup(null)],
             //details: fb.array([this.complianceDetailFormGroup({})]),
             isActive: [null]
+        });
+    }
+
+    scheduleFormGroup(data){
+        const {
+            yearMode, fyStartDay, fyStartMonth,
+            frequencyMasterType, hasNoExpiration,
+            monthInterval, dayNo, monthNo
+        } = data || {};
+        return this.fb.group(<any>{
+            yearMode: [yearMode, Validators.required],
+            timeZone: [ null, Validators.required],
+            fyStartDay: [fyStartDay],
+            fyStartMonth: [fyStartMonth],
+            frequencyMasterType: [frequencyMasterType],
+            hasNoExpiration: [hasNoExpiration],
+            monthInterval: [monthInterval],
+            dayNo: [dayNo],
+            monthNo: [monthNo]
         });
     }
 
@@ -71,7 +91,8 @@ export class ComplianceForm {
             complianceTypeId, regulatoryId,
             taxRegimeId, subscriptionId, taxRebateRate, isExemptedForTaxation, calculationType, rate,
             taskId, orgTaskScheduleId,
-            empExecutiveId, empExecutiveName, isActive
+            empExecutiveId, empExecutiveName, isActive,
+            schedule
         } = row;
         this.customForm.get('id').setValue(id);
         this.customForm.get('name').setValue(name);
@@ -94,5 +115,7 @@ export class ComplianceForm {
         this.customForm.get('empExecutiveName').setValue(empExecutiveName);
 
         this.customForm.get('isActive').setValue(isActive);
+
+        this.customForm.get('schedule').patchValue(schedule);
     }
 }

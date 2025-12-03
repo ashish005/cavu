@@ -65,6 +65,7 @@ export class SchedulerTask {
 export class SchedularDomain {
     id: any;
     name: string;
+    yearMode: number; fyStartDay: number; fyStartMonth: number;
     startDate: string;
     startTime: string;
     startTimeZone: string;
@@ -72,6 +73,7 @@ export class SchedularDomain {
     endTime: string;
     endTimeZone: string;
     hasNoExpiration: boolean;
+
     frequencyTypeId: number;
     frequencyMasterType: string;
     orgTaskId: number;
@@ -116,9 +118,18 @@ export class SchedularDomain {
 
     lastRun: any;
     constructor(model: any = <any>{}){
-        const { id, name, startDate, startTime, startTimeZone, hasNoExpiration, endDate, endTime, endTimeZone, frequencyTypeId, orgTaskId, isManual, isFeeTask} = model || {};
+        const { id,
+            name, yearMode, fyStartDay, fyStartMonth,
+            startDate, startTime, startTimeZone,
+            hasNoExpiration,
+            endDate, endTime, endTimeZone,
+            frequencyTypeId, orgTaskId, isManual, isFeeTask
+        } = model || {};
         this.id = id;
         this.name = name;
+        this.yearMode = yearMode;
+        this.fyStartDay = fyStartDay;
+        this.fyStartMonth = fyStartMonth;
         this.startDate = startDate;
         this.startTime = startTime;
         this.startTimeZone = startTimeZone;
@@ -298,6 +309,10 @@ export class SchedularParser {
     static parseDetails(model: any = {}) {
         const data = {
             name:  model.name || null,
+            yearMode: model.yearMode,
+            fyStartDay: model.fyStartDay,
+            fyStartMonth: model.fyStartMonth,
+
             startDate: model.startDate,
             startTime: model.startTime,
             startTimeZone: model.startTimeZone,
