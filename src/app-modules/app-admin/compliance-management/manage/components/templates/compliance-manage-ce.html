@@ -1,0 +1,23 @@
+<div class="container d-flex flex" role="main" *ngIf="tabs.compliance == viewType">
+    <compliance-ce #compliance [id]="id" [data]="data"></compliance-ce>
+</div>
+<div class="container d-flex flex" role="main" *ngIf="tabs.schedule == viewType">
+    <compliance-schedule-ce #schedule [id]="id" [schedulerId]="data?.orgTaskScheduleId" [data]="data?.schedule"></compliance-schedule-ce>
+</div>
+<div class="d-flex flex" role="main" *ngIf="tabs.detail == viewType">
+    <compliance-detail-ce #detail [id]="id"></compliance-detail-ce>
+</div>
+<ng-template #footerTemplate>
+    <ng-template *ngTemplateOutlet="compliance?.footerTemplate"></ng-template>
+    <ng-template *ngTemplateOutlet="schedule?.footerTemplate"></ng-template>
+    <ng-template *ngTemplateOutlet="detail?.footerTemplate"></ng-template>
+</ng-template>
+<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-pills nav-sm nav-rounded">
+            <li class="nav-item" (click)="openTab(tabs.compliance)"><a class="nav-link" [class.active]="tabs.compliance == viewType">Compliance</a></li>
+            <li class="nav-item" (click)="openTab(tabs.schedule)"><a class="nav-link" [class.active]="tabs.schedule == viewType">Schedules</a></li>
+            <li class="nav-item" (click)="openTab(tabs.detail)"><a class="nav-link" [class.active]="tabs.detail == viewType">Detail</a></li>
+        </ul>
+    </div>
+</ng-template>

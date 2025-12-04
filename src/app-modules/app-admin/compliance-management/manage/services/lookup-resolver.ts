@@ -7,6 +7,7 @@ import {ComplianceCeComponent} from "../components/compliance-ce.component";
 import {ComplianceRegulatoryCeComponent} from "../components/compliance-regulatory-ce.component";
 import {ComplianceTypeLayout} from "../components/compliance-type.component";
 import {ComplianceDetailsComponent} from "../components/compliance-details.component";
+import {ComplianceManageCeLayout} from "../components/compliance-manage-ce.layout";
 
 @Injectable()
 export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> implements Resolve<any> {
@@ -48,7 +49,7 @@ export class ComplianceAPIResolver extends OrgResourceService<ComplianceLookup> 
         };
 
         const popup = { header: popupHeader, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-        let modal$ = this.sharedService.showCustomPopup(ComplianceCeComponent, popup, inputData);
+        let modal$ = this.sharedService.showCustomPopup(ComplianceManageCeLayout, popup, inputData);
         modal$.then(success, failure);
     }
 

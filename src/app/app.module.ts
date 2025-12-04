@@ -7,6 +7,7 @@ import {AppMenuComponent} from "./app-menu.component";
 import {IdentityModule} from "./third-party";
 import {GlobalModule} from "./global";
 import {AppLibModule} from "../app-lib/app-lib.module";
+import {provideAnimations} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -16,6 +17,10 @@ import {AppLibModule} from "../app-lib/app-lib.module";
     BrowserModule,
     IdentityModule.forRoot(), AppRoutingModule, GlobalModule,
     AppLibModule
+  ],
+  providers: [
+      // Enable animations for @stepEnter
+    provideAnimations()
   ],
   bootstrap: [AppComponent]
 })

@@ -1,3 +1,5 @@
+export {ComplianceDetailService} from "./compliance.service";
+
 export {ComplianceTypeService} from "./compliance-type.service";
 
 export {ComplianceRegulatoryService} from "./compliance-regulatory.service";

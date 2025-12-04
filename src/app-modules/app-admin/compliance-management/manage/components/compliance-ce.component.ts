@@ -19,11 +19,13 @@ import {ComplianceLookup} from "../domains/compliance.lookup";
 
 @Component({
   standalone: false,
+  selector: 'compliance-ce',
   templateUrl: './templates/compliance-ce.html',
   styles: [`:host{ display: contents; }`]
 })
 export class ComplianceCeComponent extends ComplianceForm implements OnInit {
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+  @ViewChild('popupOptionsTemplate', { static: true }) public popupOptionsTemplate;
   @Input() id: any;
   @Input() set data(item: Compliance) {
     super.mergeUpdate(item || new Compliance());

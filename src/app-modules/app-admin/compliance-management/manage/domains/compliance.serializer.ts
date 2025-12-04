@@ -4,20 +4,6 @@ export class ComplianceQueryOptions extends CoreQueryOptions {
     constructor(model: any = <any>{}){ super(); }
 }
 
-export class ComplianceDetail {
-  id: number;
-  public name: string;
-  public dueDate: string;
-  public isActive: boolean;
-  constructor(model: any = {}){
-    const { id, name, dueDate, isActive } = model;
-    this.id = id;
-    this.name = name;
-    this.dueDate = dueDate;
-    this.isActive = isActive;
-  }
-}
-
 export class Compliance  extends CoreResource {
   public name: string;
   public description: string;
@@ -45,14 +31,6 @@ export class Compliance  extends CoreResource {
     public subscriptionName: string;
     public empExecutiveName: string;
     public regulatoryName: string;
-    // public regulatoryRegistrationNo: string;
-    // public regulatoryRegistrationDate: string;
-    // public regulatoryIsRenewalRequired: string;
-    // public regulatoryRenewalDate: string;
-    // public regulatoryUrl: string;
-
-    public schedulerFrequencyMaster: string;
-    public scheduledDates: Array<string>;
   public schedule: any;
 
   public isActive: boolean;
@@ -89,13 +67,6 @@ export class Compliance  extends CoreResource {
     this.subscriptionName = subscriptionName;
     this.empExecutiveName = empExecutiveName;
     this.regulatoryName = regulatoryName;
-    // this.regulatoryRegistrationNo = regulatoryRegistrationNo;
-    // this.regulatoryRegistrationDate = regulatoryRegistrationDate;
-    // this.regulatoryIsRenewalRequired = regulatoryIsRenewalRequired;
-    // this.regulatoryRenewalDate = regulatoryRenewalDate;
-    // this.regulatoryUrl = regulatoryUrl;
-      this.schedulerFrequencyMaster = schedulerFrequencyMaster;
-      this.scheduledDates = (scheduledDates || []).map(r => r);
       this.isActive = isActive;
       this.schedule = schedule;
   }

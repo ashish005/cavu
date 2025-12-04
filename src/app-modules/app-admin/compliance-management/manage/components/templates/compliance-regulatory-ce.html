@@ -65,12 +65,12 @@
                 </div>
             </div>
         </div>
-        <div class="m-2 flex-row white lt b-t mt-auto">
-            <div class="float-left p-2">
+        <ng-template #footerTemplate>
+            <div class="float-left">
                 <status-check [customForm]="customForm"></status-check>
             </div>
             <ul class="nav nav-xs no-border float-right">
-                <li class="nav-item mx-1">
+                <li class="nav-item">
                     <button type="click" class="btn btn-sm theme" data-dismiss="modal"
                             (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
                         <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
@@ -78,7 +78,7 @@
                     </button>
                 </li>
             </ul>
-        </div>
+        </ng-template>
         <!--<loader [isLoading]="isLoading"></loader>-->
     </div>
 </form>

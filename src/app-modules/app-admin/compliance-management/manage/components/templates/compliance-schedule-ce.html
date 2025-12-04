@@ -1,0 +1,36 @@
+<ng-template #popupOptionsTemplate>
+</ng-template>
+<div class="flex">
+    <compliance-frequency-ce #frequencyTypeCtrl (onFrequencyChange)="onFrequencyChange($event)"></compliance-frequency-ce>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <table class="table small-table text-xs mb-0">
+                <thead>
+                <tr>
+                    <th><span class="pl-2">Date</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-template ngFor let-row [ngForOf]="schedulerEntities" let-k="index">
+                    <tr>
+                        <td>
+                            <span class="pl-2">{{row.key}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<ng-template #footerTemplate>
+    <ul class="nav nav-xs no-border float-right">
+        <li class="nav-item">
+            <button type="click" class="btn btn-xs theme" data-dismiss="modal"
+                    (click)="onSubmit()" [disabled]="!frequencyTypeCtrl.customForm.valid || submitted">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                'Submitting...' : actionType}}
+            </button>
+        </li>
+    </ul>
+</ng-template>
