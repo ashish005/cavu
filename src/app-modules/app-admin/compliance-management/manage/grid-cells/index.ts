@@ -1,7 +1,7 @@
 import {
     ComplianceNameCellComponent, ComplianceRateCellComponent,
     ComplianceRegulatoryNameCellComponent,
-    ComplianceSchedulerCellComponent, SubscriptionCellComponent
+    ComplianceSchedulerCellComponent, ComplianceTypeCellComponent, SubscriptionCellComponent
 } from "./compliance-grid-cell.component";
 import {
     RegulatoryCredentialCellComponent,
@@ -9,12 +9,9 @@ import {
     RegulatoryRenewalCellComponent
 } from "./regulatory-grid-cell.component";
 
-
-
-
 export const COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS = [
     ComplianceRegulatoryNameCellComponent, ComplianceSchedulerCellComponent,
-    ComplianceNameCellComponent, ComplianceRateCellComponent,
+    ComplianceNameCellComponent, ComplianceRateCellComponent, ComplianceTypeCellComponent,
     SubscriptionCellComponent,
 
     RegulatoryCredentialCellComponent, RegulatoryRegCellComponent, RegulatoryRenewalCellComponent

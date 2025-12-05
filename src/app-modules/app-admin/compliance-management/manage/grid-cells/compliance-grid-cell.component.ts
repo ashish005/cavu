@@ -8,8 +8,12 @@ import {Compliance} from "../domains/compliance.serializer";
     template: `<div>
     <a class="text-xs _500">{{context.name}}</a>
     <div class="item-except text-xs">
-        <span class="badge lime">{{context.complianceTypeName}}</span>
-        <span class="badge blue">{{context.subscriptionName}}</span>
+        <a class="btn btn-xs text-xs _400" *ngIf="context.schedule?.name"
+           [ngbPopover]="schedulerDates" placement="auto" container="body"
+           (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+            <i class="fa fa-pie-chart"></i>
+        </a>
+        <ng-template #schedulerDates><small class="text-xs _500">{{context.schedule?.name}}</small></ng-template>
         <!--<a class="btn btn-xs text-xs b-theme text-theme p-1" (click)="showComplianceDetailPopup(context)">
             <i class="fa fa-calendar"></i>
         </a>-->
@@ -27,6 +31,22 @@ export class ComplianceNameCellComponent extends DynamicComponent {
         this.lookupResolver.showCompliancDetailPopup(inputData,{ text: `${row?.name}`, desc: `` }, onSuccess);
     }
 }
+
+@Component({
+    standalone: false,
+    template: `<div>
+    <a class="text-xs _500">{{context.complianceTypeName}}</a>
+    <div class="item-except text-xs">
+        <span class="badge blue">{{context.subscriptionName}}</span>
+    </div>
+</div>`
+})
+export class ComplianceTypeCellComponent extends DynamicComponent {
+    constructor(public lookupResolver: ComplianceAPIResolver) {
+        super();
+    }
+}
+
 @Component({
   standalone: false,
     template: `<div>
@@ -46,9 +66,9 @@ export class ComplianceRateCellComponent extends DynamicComponent {
     template: `<div>
     <a class="text-xs _500">{{context.regulatoryName}}</a>
     <div class="item-except text-xs h-1x">
-        <a class="text-xs pr-2"><small class="pr-1">No:</small>{{context.regulatoryRegNo}}</a>
-<!--        <a class="text-xs"> <small class="pr-1">Date</small> {{context.regulatoryRegDate | dateFormat}}</a>-->
-        <a class="badge yellow"> <small class="pr-1">Renewal</small> {{context.regulatoryRenewalDate | dateFormat}}</a>
+        <small class="badge b-a _500">{{context.regulatoryRegNo}}</small>
+        <small class="badge b-a _500">{{context.regulatoryRegDate | dateFormat}}</small>
+        <a class="badge yellow b-a _500"> <small class="pr-1">Renewal</small> {{context.regulatoryRenewalDate | dateFormat}}</a>
     </div>
 </div>`
 })

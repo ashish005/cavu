@@ -5,7 +5,7 @@ import { ComplianceService, ComplianceAPIResolver } from "../services";
 import {Compliance, ComplianceQueryOptions} from "../domains/compliance.serializer";
 import {
     ComplianceNameCellComponent, ComplianceRateCellComponent, ComplianceRegulatoryNameCellComponent,
-    ComplianceSchedulerCellComponent
+    ComplianceSchedulerCellComponent, ComplianceTypeCellComponent
 } from "../grid-cells/compliance-grid-cell.component";
 
 @Component({
@@ -22,10 +22,11 @@ export class ComplianceView extends ViewExtender<Compliance> implements OnInit{
         super(activatedRoute, service);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name', cellTemplate: ComplianceNameCellComponent },
+            {headerName: 'Type', cellTemplate: ComplianceTypeCellComponent },
             {headerName: 'Regulatory Info', cellTemplate: ComplianceRegulatoryNameCellComponent },
             {headerName: 'Executive Name', field: 'empExecutiveName' },
             //{headerName: 'Rate', field: 'name', cellTemplate: ComplianceRateCellComponent },
-            {headerName: 'Schedule', field: 'taskName', cellTemplate: ComplianceSchedulerCellComponent },
+            //{headerName: 'Schedule', field: 'taskName', cellTemplate: ComplianceSchedulerCellComponent },
             {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ]
     }
