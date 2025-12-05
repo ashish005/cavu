@@ -4,6 +4,7 @@ import {TestSchedulerCalenderView} from "./test-scheduler-calender.view";
 import {TaskActivityComponent} from "./task-activity.component";
 import {SCHEDULER_IMPORT_COMPONENT} from "./components";
 import {ComplianceFrequencyComponent} from "./compliance-scheduler.component";
+export {ShortScheduler} from "./domains/short-scheduler.domain";
 export {SchedularDomain} from "./domains/schedular.domain";
 export const SCHEDULER_VIEW_COMPONENT = [
     ...SCHEDULER_IMPORT_COMPONENT, ComplianceFrequencyComponent,

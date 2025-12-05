@@ -63,13 +63,15 @@ export class OrgSettingService extends OrgResourceService<OrgSetting> {
     private applySeed = (orgBranchId, moduleMasterType): Observable<any> => {
         const { id, businessMasterType, softwareCode, orgConfig} = super.orgSetup;
         const {
-            countryId, countryCode, timeZone, currencyCode, cultureCode
+            countryId, countryCode,
+            timeZone, ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth,
+            currencyCode, cultureCode
         } = orgConfig;
 
         const reqBody = {
             orgBranchId: orgBranchId,
             orgUnitId: id,
-            timeZone: timeZone,
+            timeZone: timeZone, ofcStartTime, ofcEndTime, fyStartDay: fyStartDay, fyStartMonth: fyStartMonth,
             countryCode: countryCode,
             countryId: countryId,
             currencyCode: currencyCode,

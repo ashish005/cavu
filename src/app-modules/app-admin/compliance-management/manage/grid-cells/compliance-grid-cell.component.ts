@@ -10,9 +10,9 @@ import {Compliance} from "../domains/compliance.serializer";
     <div class="item-except text-xs">
         <span class="badge lime">{{context.complianceTypeName}}</span>
         <span class="badge blue">{{context.subscriptionName}}</span>
-        <a class="btn btn-xs text-xs b-theme text-theme p-1" (click)="showComplianceDetailPopup(context)">
+        <!--<a class="btn btn-xs text-xs b-theme text-theme p-1" (click)="showComplianceDetailPopup(context)">
             <i class="fa fa-calendar"></i>
-        </a>
+        </a>-->
     </div>
 </div>`
 })
@@ -46,9 +46,9 @@ export class ComplianceRateCellComponent extends DynamicComponent {
     template: `<div>
     <a class="text-xs _500">{{context.regulatoryName}}</a>
     <div class="item-except text-xs h-1x">
-        <a class="text-xs pr-2"><small class="pr-1">Reg. No:</small>{{context.regulatoryRegistrationNo}}</a>
-        <a class="text-xs"> <small class="pr-1">Reg. Date</small> {{context.regulatoryRegistrationDate | dateFormat}}</a>
-        <a class="text-xs"> <small class="pr-1">Renewal Date</small> {{context.regulatoryRenewalDate | dateFormat}}</a>
+        <a class="text-xs pr-2"><small class="pr-1">No:</small>{{context.regulatoryRegNo}}</a>
+<!--        <a class="text-xs"> <small class="pr-1">Date</small> {{context.regulatoryRegDate | dateFormat}}</a>-->
+        <a class="badge yellow"> <small class="pr-1">Renewal</small> {{context.regulatoryRenewalDate | dateFormat}}</a>
     </div>
 </div>`
 })
@@ -60,13 +60,13 @@ export class ComplianceRegulatoryNameCellComponent extends DynamicComponent {
 @Component({
   standalone: false,
     template: `<div>
-        <a class="btn btn-xs text-xs b-theme text-theme p-1"
+        <!--<a class="btn btn-xs text-xs b-theme text-theme p-1"
            (click)="showScheduler(context)"
            [class.b-success]="(context.orgTaskScheduleId)"
            [class.text-success]="(context.orgTaskScheduleId)">
             <i class="fa fa-calendar"></i>
-        </a>
-        <a class="text-xs _500 pl-2">{{context.schedulerFrequencyMaster}}</a>
+        </a>-->
+        <small class="text-xs _500">{{context.schedule?.name}}</small>
     <!--<a class="btn btn-xs text-xs _400"
        [ngbPopover]="schedulerDates" placement="auto" container="body"
        (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">

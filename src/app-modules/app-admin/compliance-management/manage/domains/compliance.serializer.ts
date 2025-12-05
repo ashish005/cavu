@@ -1,4 +1,4 @@
-import {CoreQueryOptions, CoreResource} from "@app-global";
+import {CoreQueryOptions, CoreResource, ShortScheduler} from "@app-global";
 
 export class ComplianceQueryOptions extends CoreQueryOptions {
     constructor(model: any = <any>{}){ super(); }
@@ -24,14 +24,16 @@ export class Compliance  extends CoreResource {
 
   public empExecutiveId: string;
     // Just to show on ui
-
-    public taskName: string;
-    public complianceTypeName: string;
-    public taxRegimeName: string;
-    public subscriptionName: string;
-    public empExecutiveName: string;
-    public regulatoryName: string;
-  public schedule: any;
+  public taskName: string;
+  public complianceTypeName: string;
+  public taxRegimeName: string;
+  public subscriptionName: string;
+  public empExecutiveName: string;
+  public regulatoryName: string;
+  public regulatoryRegNo: string;
+  public regulatoryRegDate: string;
+  public regulatoryRenewalDate: string;
+  public schedule: ShortScheduler;
 
   public isActive: boolean;
   constructor(model: any = {}){
@@ -43,8 +45,8 @@ export class Compliance  extends CoreResource {
         taxRegimeId, subscriptionId, taxRebateRate, isExemptedForTaxation, calculationType, rate,
         empExecutiveId,
         taskName, complianceTypeName, taxRegimeName, subscriptionName, empExecutiveName,
-        regulatoryName,
-        schedulerFrequencyMaster, scheduledDates, isActive, schedule
+        regulatoryName, regulatoryRegNo, regulatoryRegDate, regulatoryRenewalDate,
+        isActive, schedule
   } = model;
     this.id = id;
     this.name = name;
@@ -66,9 +68,14 @@ export class Compliance  extends CoreResource {
     this.taxRegimeName = taxRegimeName;
     this.subscriptionName = subscriptionName;
     this.empExecutiveName = empExecutiveName;
+
     this.regulatoryName = regulatoryName;
-      this.isActive = isActive;
-      this.schedule = schedule;
+    this.regulatoryRegNo = regulatoryRegNo;
+    this.regulatoryRegDate = regulatoryRegDate;
+    this.regulatoryRenewalDate = regulatoryRenewalDate;
+
+    this.isActive = isActive;
+    this.schedule = schedule ? new ShortScheduler(schedule): null;
   }
 }
 

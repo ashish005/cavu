@@ -13,7 +13,7 @@ export * from "./services/models";
 export * from "./pipes";
 export * from "./popup-module/app-popup.enum";
 
-export * from "./modules/alert";
+export * from "./modules";
 
 export { AppTitleService } from "./app-title.service";
 export { SharedService } from "./shared.service";

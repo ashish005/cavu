@@ -60,7 +60,6 @@ export class ComplianceSchedulerComponent implements OnInit {
   schedulerEntities: Array<any>;
 
   ngOnInit(): void {
-    debugger
     this.frequencyTypeCtrl.applySchedular(this.data || {});
   }
 

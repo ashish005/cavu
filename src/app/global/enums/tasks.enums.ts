@@ -6,9 +6,9 @@ export enum FREQUENCY_TYPE {
     ON_EVENT = "ON_EVENT"
 }
 export enum YEAR_MODE_ENUM {
-    CUSTOM = "custom",
-    CALENDER_YEAR = "calendarYear",
-    FINANCIAL_YEAR = "financialYear"
+    CUSTOM = 0,
+    CALENDER_YEAR = 1,
+    FINANCIAL_YEAR = 2
 }
 export const WEEK_DAYS: Array<any> = [
     { name: 'Monday', id:1, isChecked: true },
