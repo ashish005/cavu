@@ -17,13 +17,13 @@ export class ComplianceLayout {
             isFLatChildren: true, key: 'Management',
             children:[
                 { routeTo: ['manage/list'], icon:"fa fa-home", key: 'Compliance' },
-                { routeTo: ['manage/board'], icon:"fa fa-home", key: 'Compliance Board' },
                 { routeTo: ['manage/regulatory'], icon:"fa fa-envelope", key: 'Regulatory' },
             ]
         },
         {
             isFLatChildren: true, key: 'Report',
             children:[
+                { routeTo: ['manage/board'], icon:"fa fa-home", key: 'Compliance Board' },
                 { routeTo: ['report'], icon:"fa fa-history", key: 'Compliance report' }
             ]
         },
