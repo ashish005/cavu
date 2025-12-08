@@ -23,6 +23,11 @@ import {SharedService} from "./shared.service";
 import {TranslateModule} from "@ngx-translate/core";
 import {DEPENDENT_COMPONENTS} from "./modules";
 import {CoreProcessFactory} from "./pluginFactory";
+import {CdkTableModule} from "@angular/cdk/table";
+import {CdkTreeModule} from "@angular/cdk/tree";
+import {DragDropModule} from "@angular/cdk/drag-drop";
+
+const COMMON_MODULE = [CdkTableModule, CdkTreeModule, DragDropModule];
 class LowerCaseUrlSerializer extends DefaultUrlSerializer {
     override parse(url: string): UrlTree {
         const possibleSeparators = /[?;#]/;
@@ -45,7 +50,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
     imports: [
         CommonModule, RouterModule,
         FormsModule, ReactiveFormsModule,
-        TranslateModule,
+        TranslateModule, COMMON_MODULE,
         // NgSelectModule,
         NgbModule, NgbPopoverModule, NgbTooltipModule, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         //ScrollingModule,
@@ -71,7 +76,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         // FormsModule, ReactiveFormsModule, TranslateModule,
         // ScrollingModule,
         // NgSelectModule,
-        NgbModule, NgbPopoverModule, NgbTooltipModule, //NgbCarouselModule, NgbModalModule, NgChartsModule,
+        NgbModule, NgbPopoverModule, NgbTooltipModule, COMMON_MODULE, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         // AngularEditorModule,
         // ToastaModule,
       GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS

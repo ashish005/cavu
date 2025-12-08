@@ -1,0 +1,105 @@
+/* Board scrolling */
+.board-scroll {
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+/* Columns */
+.col-kanban {
+    /*min-width: 280px;*/
+    /*flex: 0 0 auto;*/
+    flex: 1 1 0; /* Take equal remaining space */
+    min-width: 220px; /* Minimum width for small screens */
+}
+
+.kanban-column {
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 80vh;
+}
+
+.column-header {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.column-body {
+    flex-grow: 1;
+    padding: 0.5rem;
+    overflow-y: auto;
+    min-height: 80px;
+}
+
+/* Task cards */
+.task-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: grab;
+}
+
+.task-card.cdk-drag-dragging {
+    cursor: grabbing !important;
+    position: fixed !important;
+    z-index: 2000;
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+/* Drag preview */
+.drag-preview {
+    background: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    width: 260px;
+    pointer-events: auto;
+}
+
+/* Drag placeholder */
+.drag-placeholder {
+    height: 60px;
+    margin-bottom: 0.75rem;
+    border: 2px dashed #ced4da;
+    border-radius: 6px;
+    background: #e9ecef;
+}
+
+/* Empty column */
+.empty-placeholder {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Task content */
+.task-content .task-title {
+    font-weight: 500;
+}
+
+.task-content .task-meta {
+    font-size: 0.75rem;
+}
+
+/* Scrollbar styling */
+.column-body::-webkit-scrollbar {
+    width: 6px;
+}
+.column-body::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}

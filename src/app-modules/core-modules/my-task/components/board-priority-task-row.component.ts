@@ -1,7 +1,7 @@
 import {Component, Directive, Input, OnDestroy, OnInit} from "@angular/core";
 import {MyTaskQueryOptions} from "../domains/my-task.serializer";
 import {MyTaskService} from "../services/my-task.service";
-import {CoreLoaderComponent} from "../domains/loader.component";
+import {CoreLoaderComponent} from "@app-global";
 
 @Component({
   standalone: false,

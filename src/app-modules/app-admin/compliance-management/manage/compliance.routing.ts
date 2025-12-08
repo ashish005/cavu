@@ -6,6 +6,8 @@ import {ComplianceAPIResolver} from "./services/lookup-resolver";
 import {ComplianceDashboardView} from "./views/dashboard.view";
 import {OrgWorkflowAPIResolver} from "@app-global";
 import {TestComplianceSchedulerView} from "./views/test-scheduler.view";
+import {ComplianceBoardView} from "./views/compliance-board.view";
+
 export const ComplianceRoutes: Routes = [
     {
         path: '', component: Layout, resolve: { lookup: OrgWorkflowAPIResolver },
@@ -14,12 +16,13 @@ export const ComplianceRoutes: Routes = [
             { path: '', pathMatch: 'full', redirectTo:'dashboard' },
             { path: 'dashboard', component: ComplianceDashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
             { path: 'list', resolve: { items: ComplianceAPIResolver }, component: ComplianceView, data: {title: 'Manage Compliance'} },
-            { path: 'regulatory', component: ComplianceRegulatoryView, data: {title: 'Manage Compliance Regulatory'} }
+            { path: 'regulatory', component: ComplianceRegulatoryView, data: {title: 'Manage Compliance Regulatory'} },
+            { path: 'board', resolve: { items: ComplianceAPIResolver }, component: ComplianceBoardView, data: {title: 'Manage Compliance'} }
         ]
     },
     { path: 'scheduler', component: TestComplianceSchedulerView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
 
 ];
 export const COMPLIANCE_VIEWS = [
-    Layout, ComplianceDashboardView, ComplianceView, ComplianceRegulatoryView, TestComplianceSchedulerView
+    Layout, ComplianceDashboardView, ComplianceView, ComplianceRegulatoryView, ComplianceBoardView, TestComplianceSchedulerView
 ];

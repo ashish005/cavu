@@ -1,0 +1,51 @@
+<div class="container-fluid kanban-board">
+    <div class="row flex-nowrap board-scroll" cdkDropListGroup>
+        <!-- Columns -->
+        <div class="col-kanban" *ngFor="let col of columnList; trackBy: trackByColId">
+            <div class="kanban-column">
+                <!-- Column header -->
+                <div class="column-header">
+                    {{ col.name }}
+                    <span class="badge badge-primary">{{ tasksByStatus[col.statusId]?.length || 0 }}</span>
+                </div>
+
+                <!-- Column body -->
+                <div class="column-body scrollable"
+                     cdkDropList
+                     [cdkDropListData]="tasksByStatus[col.statusId]"
+                     [cdkDropListConnectedTo]="connectedLists"
+                     (cdkDropListDropped)="dropTask($event, col.statusId)">
+
+                    <!-- Tasks -->
+                    <div class="task-card"
+                         *ngFor="let task of tasksByStatus[col.statusId]"
+                         cdkDrag>
+
+                        <!-- Drag Preview -->
+                        <ng-template cdkDragPreview>
+                            <div class="drag-preview">
+                                {{ task.name }}
+                            </div>
+                        </ng-template>
+
+                        <!-- Drag Placeholder -->
+                        <ng-template cdkDragPlaceholder>
+                            <div class="drag-placeholder"></div>
+                        </ng-template>
+
+                        <!-- Task content -->
+                        <div class="task-content">
+                            <div class="task-title">{{ task.name }}</div>
+                            <div class="task-meta text-muted">{{ task.dueDate | date:'shortDate' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Empty drop zone placeholder -->
+                    <div *ngIf="!tasksByStatus[col.statusId]?.length" class="empty-placeholder">
+                        Drop tasks here
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,7 +18,7 @@ import {ManageMyScheduledTaskLogView} from "./views/manage-my-scheduled-task-log
 export const MyTaskRoutes: Routes = [
   {
     path: '', component: MyTaskLayout, data: { key: 'task', title: ''},
-    children:[
+    children: [
         { path: '', pathMatch: 'full', redirectTo:'org' },
         { path: 'dashboard', component: MyTaskDashboardView, data: { key: 'task', title: 'Dashboard'} },
         { path: 'org', data: { title: '', header: 'Task'},

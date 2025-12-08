@@ -3,7 +3,6 @@ import {Resolve} from "@angular/router";
 import {catchError, Observable, Subject} from "rxjs";
 import {ComplianceLookup, ComplianceLookupSerializer} from "../domains/compliance.lookup";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService } from "@app-global";
-import {ComplianceCeComponent} from "../components/compliance-ce.component";
 import {ComplianceRegulatoryCeComponent} from "../components/compliance-regulatory-ce.component";
 import {ComplianceTypeLayout} from "../components/compliance-type.component";
 import {ComplianceDetailsComponent} from "../components/compliance-details.component";

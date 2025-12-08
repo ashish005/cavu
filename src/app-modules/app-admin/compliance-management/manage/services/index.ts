@@ -1,3 +1,4 @@
+export {ComplianceTrackerService} from "./compliance.service";
 export {ComplianceDetailService} from "./compliance.service";
 
 export {ComplianceTypeService} from "./compliance-type.service";

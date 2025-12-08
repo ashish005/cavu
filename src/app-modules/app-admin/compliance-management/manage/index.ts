@@ -8,7 +8,7 @@ import {
   ComplianceAPIResolver,
   ComplianceDetailService,
   ComplianceRegulatoryService,
-  ComplianceService
+  ComplianceService, ComplianceTrackerService
 } from "./services";
 import {COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -18,7 +18,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     RouterModule.forChild(ComplianceRoutes),
     GlobalModule
   ],
-  providers: [ComplianceAPIResolver, ComplianceService, ComplianceRegulatoryService, ComplianceDetailService],
+  providers: [ComplianceAPIResolver, ComplianceService, ComplianceRegulatoryService, ComplianceDetailService, ComplianceTrackerService],
   declarations: [COMPLIANCE_VIEWS, COMPLIANCE_COMPONENTS, COMPLIANCE_GRID_COLUMN_CELL_COMPONENTS]
 })
 export class ComplianceManageModule {}

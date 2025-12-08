@@ -1,3 +1,5 @@
+export {CoreLoaderComponent} from "./loader.component";
+
 export {GridLoaderComponent} from "./grid-loader";
 
 export {ViewExtender} from "./view-extender";
