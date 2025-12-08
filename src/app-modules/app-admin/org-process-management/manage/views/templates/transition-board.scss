@@ -1,0 +1,45 @@
+.swimlane-board {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.phase-body {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.status-column {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-header {
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.status-tasks {
+  background: #f8f9fa;
+  min-height: 150px;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.task-card {
+  background: #fff;
+  border-radius: 6px;
+  cursor: grab;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.empty-placeholder {
+  border: 2px dashed #adb5bd;
+  height: 50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#868e96;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}

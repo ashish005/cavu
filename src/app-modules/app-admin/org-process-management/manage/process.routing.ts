@@ -10,6 +10,7 @@ import {TaskCalendarView} from "./views/task-calendar.view";
 import {TaskReminderView} from "./views/task-reminder.view";
 import {ProcessTreeView} from "./views/process-tree.view";
 import {OrgWorkflowAPIResolver} from "@app-global";
+import {ProcessBoardView} from "./views/process-board.view";
 
 export const OrgProcessTaskRoutes: Routes = [
   {
@@ -19,6 +20,7 @@ export const OrgProcessTaskRoutes: Routes = [
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
       { path: 'all', component: ProcessView, data: { title: 'Process', key: 'process', header:'process'} },
       { path: 'tree', component: ProcessTreeView, data: { title: 'Process', key: 'process', header:'process'} },
+      { path: 'board', component: ProcessBoardView, data: { title: 'Process', key: 'process', header:'process'} },
       { path: 'task', component: OrgTaskView, data: { title: 'Task', key: 'task', header:'task'} },
       { path: 'task-runner', component: TaskRunnerView, data: { title: 'Task Info', key: 'task_info', header:'Task Info'} },
       { path: 'scheduled', component: TaskScheduleView, data: { title: 'Schedules', key: 'schedule', header:'Task Schedule'} },
@@ -30,7 +32,8 @@ export const OrgProcessTaskRoutes: Routes = [
 ];
 export const ORG_PROCESS_TASK_VIEWS = [ Layout,
     DashboardView,
-    ProcessView, ProcessTreeView, OrgTaskView,
+    ProcessView, ProcessTreeView, ProcessBoardView,
+    OrgTaskView,
     TaskRunnerView, TaskScheduleView, SchedulerLogView,
     TaskCalendarView, TaskReminderView
 ];

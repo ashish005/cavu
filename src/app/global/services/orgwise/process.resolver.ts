@@ -46,7 +46,7 @@ export class WorkflowTaskPriorityLookup {
     }
 }
 export class WorkflowTaskStatusLookup {
-    id: string;
+    id: number;
     name: string;
     description: string;
     sortOrder: number;

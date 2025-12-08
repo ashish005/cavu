@@ -1,0 +1,36 @@
+<div class="container-fluid py-3">
+    <h4 class="mb-3">Process: {{ process.name }}</h4>
+
+    <div class="row flex-nowrap swimlane-board">
+        <div class="col-auto" *ngFor="let phase of phases">
+            <!-- Phase Header -->
+            <div class="phase-header text-white mb-2 p-2" [style.background]="phase.color">
+                {{ phase.name }}
+            </div>
+
+            <!-- Phase Body: Status Columns -->
+            <div class="phase-body">
+                <div class="status-column" *ngFor="let status of phaseStatuses">
+                    <div class="status-header text-center mb-2 p-1 bg-light border">
+                        {{ status.name }}
+                    </div>
+
+                    <div cdkDropList [id]="getDropListId(phase.id, status.id)"
+                         [cdkDropListData]="tasksByPhaseStatus[phase.id][status.id]"
+                         [cdkDropListConnectedTo]="connectedLists"
+                         class="status-tasks p-2"
+                         (cdkDropListDropped)="dropTask($event, phase.id, status.id)">
+                        <div class="task-card mb-2 p-2" *ngFor="let task of tasksByPhaseStatus[phase.id][status.id]" cdkDrag>
+                            <strong>{{ task.name }}</strong>
+                            <p class="text-truncate mb-0">{{ task.description }}</p>
+                        </div>
+
+                        <div *ngIf="!tasksByPhaseStatus[phase.id][status.id]?.length" class="empty-placeholder">
+                            Drop tasks here
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

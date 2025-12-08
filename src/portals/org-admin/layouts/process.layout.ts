@@ -12,6 +12,7 @@ export class ProcessLayout {
             children:[
                 { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
                 { routeTo: ['tree'], icon:"fa fa-envelope", key: 'Workflow' },
+                { routeTo: ['board'], icon:"fa fa-envelope", key: 'Workflow Board' },
             ]
         },
         {
