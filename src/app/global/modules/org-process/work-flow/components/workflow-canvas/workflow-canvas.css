@@ -1,0 +1,25 @@
+.workflow-graph {
+    height: 650px;
+    border: 1px solid #dee2e6;
+    background-color: #ffffff;
+}
+
+.phase-node {
+    cursor: pointer;
+}
+
+.node-label {
+    font-size: 13px;
+    fill: #212529;
+    pointer-events: none;
+}
+
+.transition-edge {
+    cursor: pointer;
+}
+
+.edge-label {
+    font-size: 11px;
+    fill: #495057;
+    pointer-events: none;
+}

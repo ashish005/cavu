@@ -1,0 +1,130 @@
+<!--
+<div *ngIf="phase">
+    <h4>Transition</h4>
+
+    <select [(ngModel)]="transition.toPhaseId">
+        <option [ngValue]="undefined">&#45;&#45; Any &#45;&#45;</option>
+        <option *ngFor="let p of process?.children"
+                [ngValue]="p.id">
+            {{ p.name }}
+        </option>
+    </select>
+
+    <textarea
+            placeholder="Rule expression (e.g. amount > 1000 && approved)"
+            [(ngModel)]="transition.rule">
+  </textarea>
+</div>-->
+<form [formGroup]="customForm" class="d-flex flex flex-column m-3">
+    <!-- ================= FROM ================= -->
+    <div class="row">
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="md-form-group pb-0">
+                        <select class="md-input" formControlName="fromPhaseId">
+                            <option value="">-- Select Phase --</option>
+                            <option *ngFor="let p of phases" [value]="p.id">{{ p.name }}</option>
+                        </select>
+                        <label>From Phase</label>
+                    </div>
+                </div>
+                <div class="md-form-group">
+                    <select class="md-input" formControlName="fromStatusId">
+                        <option value="">Any</option>
+                        <option *ngFor="let s of statuses" [value]="s.id">{{ s.name }}</option>
+                    </select>
+                    <label>Status</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="md-form-group pb-0">
+                        <select class="md-input" formControlName="toPhaseId">
+                            <option value="">-- Select Phase --</option>
+                            <option *ngFor="let p of phases" [value]="p.id">{{ p.name }}</option>
+                        </select>
+                        <label>To Phase</label>
+                    </div>
+                </div>
+                <div class="md-form-group">
+                    <select class="md-input" formControlName="toStatusId">
+                        <option value="">Any</option>
+                        <option *ngFor="let s of statuses" [value]="s.id">{{ s.name }}</option>
+                    </select>
+                    <label>Status</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="md-form-group">
+                <textarea class="md-input" formControlName="description" rows="2"></textarea>
+                <label>Description</label>
+            </div>
+        </div>
+    </div>
+    <!-- ================= RULES ================= -->
+    <div class="d-block">
+        <div class="float-left">
+            <h6>Transition Conditions (Optional)</h6>
+        </div>
+        <div class="float-right">
+            <select class="md-input w-auto" formControlName="ruleJoinType">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+            </select>
+            <button type="button" class="btn btn-xs" (click)="addRule()">+ Rule</button>
+        </div>
+    </div>
+    <!-- RULE BUILDER -->
+    <table class="table small-table text-xs" *ngIf="rules.length > 0">
+        <thead class="cf">
+        <tr>
+            <th>#</th>
+            <th>Property</th>
+            <th width="120">Operator</th>
+            <th>Value</th>
+            <th width="80">Active</th>
+            <th width="40"></th>
+        </tr>
+        </thead>
+        <tbody formArrayName="rules">
+        <tr *ngFor="let rule of rules.controls; let i = index"
+            [formGroupName]="i">
+            <td>{{ i + 1 }}</td>
+            <td>
+                <select class="form-select form-select-sm" formControlName="propertyName">
+                    <option *ngFor="let p of ruleProperties" [value]="p.name">{{ p.label }}</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-select form-select-sm" formControlName="operator">
+                    <option *ngFor="let op of getOperators(rule.value.propertyName)" [value]="op.value">{{ op.label }}</option>
+                </select>
+            </td>
+            <td>
+                <input class="form-control form-control-sm" formControlName="value">
+            </td>
+            <td class="text-center">
+                <input type="checkbox" formControlName="isActive">
+            </td>
+            <td>
+                <button type="button" class="btn btn-xs fa fa-trash" (click)="removeRule(i)"></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- ================= EXPRESSION PREVIEW ================= -->
+    <div class="alert alert-secondary mt-2" *ngIf="buildConditionExpression()">
+        <strong>Condition:</strong>
+        {{ buildConditionExpression() }}
+    </div>
+
+    <!-- ================= ACTIONS ================= -->
+    <ng-template #footerTemplate>
+        <button class="btn btn-xs theme" [disabled]="customForm.invalid">Save Transition</button>
+    </ng-template>
+</form>

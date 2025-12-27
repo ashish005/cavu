@@ -1,0 +1,123 @@
+<form [formGroup]="customForm" class="d-flex flex flex-column m-3">
+    <!-- ================= PHASE ================= -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="md-form-group">
+                <input formControlName="name" class="form-control md-input no-border" placeholder="Phase name"
+                       [ngClass]="{ 'is-invalid': f['name'].errors }">
+                <label> Name </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="md-form-group">
+                <input formControlName="color" type="color" style="width: 30px" class="md-input no-border">
+                <label> Color </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="md-form-group">
+                <input type="number" class="md-input" formControlName="sortOrder">
+                <label> Order </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="md-form-group">
+                <input type="checkbox" class="md-input" formControlName="isDefault">
+                <label> Default </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="">
+                <input type="checkbox" class="md-input" formControlName="isActive">
+                <label> Active </label>
+            </div>
+        </div>
+    </div>
+    <h4>Approval Steps</h4>
+    <table class="table small-table text-xs table-condensed">
+        <thead class="cf">
+            <tr>
+                <th width="30px">#</th>
+                <th>Approver</th>
+                <th width="50px">Order</th>
+                <th width="50px">Rule</th>
+                <th width="50px">Active</th>
+                <th width="80px">Action</th>
+            </tr>
+        </thead>
+        <tbody formArrayName="approvalSteps">
+        <ng-container *ngFor="let step of approvalSteps.controls; let i = index">
+            <!-- STEP -->
+            <tr [formGroupName]="i">
+                <td>{{ i + 1 }}</td>
+                <td><input type="text" formControlName="approverRole" class="md-input"></td>
+                <td><input type="number" formControlName="stepOrder" class="md-input no-border text-right"></td>
+                <td>
+                    <select class="md-input w-auto" formControlName="ruleJoinType">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                </td>
+                <td><input type="checkbox" formControlName="isActive"></td>
+                <td>
+                    <button type="button" class="btn btn-xs fa fa-trash" (click)="removeStep(i)"></button>
+                    <button type="button" (click)="addRule(null, i)">+ Rule</button>
+                </td>
+            </tr>
+            <!-- RULE LOGIC + RULES (INSIDE STEP GROUP) -->
+            <tr [formGroupName]="i">
+                <td colspan="6" class="p-0">
+                    <!-- ✅ NOW rules is correctly scoped -->
+                    <table class="table table-sm" *ngIf="rules(i).length > 0">
+                        <thead>
+                            <tr>
+                                <th width="50px">Rule #</th>
+                                <th>Property</th>
+                                <th width="80px">Operator</th>
+                                <th>Value</th>
+                                <th width="50px">Active</th>
+                                <th width="80px">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="rules">
+                            <tr *ngFor="let rule of rules(i).controls; let j = index" [formGroupName]="j">
+                            <td>{{ j + 1 }}</td>
+                            <td>
+                                <select formControlName="propertyName" class="md-input w-auto">
+                                    <option *ngFor="let p of ruleProperties" [value]="p.name"> {{ p.label }} </option>
+                                </select>
+                            </td>
+                            <td>
+                                <select formControlName="operator" class="md-input w-auto">
+                                    <option *ngFor="let op of getOperators(rule.value.propertyName)" [value]="op.value"> {{ op.label }} </option>
+                                </select>
+                            </td>
+                            <td><input formControlName="value" class="md-input w-auto"></td>
+                            <td><input type="checkbox" formControlName="isActive"></td>
+                            <td><button type="button" class="btn btn-xs fa fa-trash" (click)="removeRule(i, j)"></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- EXPRESSION PREVIEW -->
+                    <div class="alert alert-secondary mt-2" *ngIf="buildRuleExpression(i)">
+                        {{ buildRuleExpression(i) }}
+                    </div>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+    </table>
+    <!-- ================= ACTIONS ================= -->
+    <ng-template #footerTemplate>
+        <div class="row px-3">
+            <div class="col-sm-12 text-center">
+                <button type="button" class="btn btn-xs btn-outline-success" (click)="addStep()">
+                    + Add Step
+                </button>
+                <button type="submit" class="btn btn-xs btn-primary ms-2" [disabled]="customForm.invalid">
+                    Save Phase
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</form>

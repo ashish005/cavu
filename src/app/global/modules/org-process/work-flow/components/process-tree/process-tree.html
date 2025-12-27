@@ -1,0 +1,40 @@
+<div class="tree-container" tabindex="0">
+
+    <!-- Search -->
+    <div class="tree-search">
+        <input class="form-control form-control-sm" placeholder="Search..." [(ngModel)]="searchText" (input)="onSearch()" />
+    </div>
+
+    <!-- Virtual Scroll -->
+    <cdk-virtual-scroll-viewport class="tree-scroll" itemSize="32"
+                                 cdkDropList (cdkDropListDropped)="drop($event)"
+                                 #treeScroll>
+        <div
+                *cdkVirtualFor="let node of flattenedNodes; trackBy: trackById"
+                class="tree-node"
+                cdkDrag
+                #treeNode
+                [attr.data-id]="node.id"
+                [class.selected]="selectedNode?.id === node.id"
+                [style.paddingLeft.px]="node.level * 16"
+                (click)="selectNode(node)"
+                (contextmenu)="openContextMenu($event, node)"
+        >
+            <!-- Expand / Collapse Caret -->
+            <span class="tree-caret"
+            *ngIf="node.hasChildren" [class.expanded]="node.expanded"
+            (click)="toggle(node); $event.stopPropagation()">▸</span>
+            <!-- Leaf spacer -->
+            <span class="tree-caret spacer" *ngIf="!node.hasChildren"></span>
+            <span class="tree-label" [innerHTML]="highlight(node.name)"></span>
+        </div>
+
+    </cdk-virtual-scroll-viewport>
+
+    <!-- Context Menu -->
+    <div class="context-menu" *ngIf="contextNode" (mouseleave)="closeContextMenu()">
+        <div class="context-item">Add Child</div>
+        <div class="context-item">Rename</div>
+        <div class="context-item text-danger">Delete</div>
+    </div>
+</div>

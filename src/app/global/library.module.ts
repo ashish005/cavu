@@ -21,7 +21,7 @@ import {GLOBAL_DIRECTIVES} from "./directives";
 import {GLOBAL_COMPONENTS} from "./components/shared_components";
 import {SharedService} from "./shared.service";
 import {TranslateModule} from "@ngx-translate/core";
-import {DEPENDENT_COMPONENTS} from "./modules";
+import {DEPENDENT_COMPONENTS, DEPENDENT_MODULES} from "./modules";
 import {CoreProcessFactory} from "./pluginFactory";
 import {CdkTableModule} from "@angular/cdk/table";
 import {CdkTreeModule} from "@angular/cdk/tree";
@@ -59,7 +59,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         //ModalModule,
         //TooltipModule,
         // PopoverModule,
-      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES
+      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_MODULES
     ],
     providers: [
       GLOBAL_PIPES,
@@ -79,7 +79,8 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         NgbModule, NgbPopoverModule, NgbTooltipModule, COMMON_MODULE, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         // AngularEditorModule,
         // ToastaModule,
-      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS
+      GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS,
+      DEPENDENT_MODULES
     ]
 })
 export class GlobalModule {}

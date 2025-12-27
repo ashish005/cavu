@@ -1,0 +1,54 @@
+<!--
+<ngx-graph
+        class="workflow-graph"
+        [nodes]="nodes"
+        [links]="edges"
+        [layout]="'dagre'"
+        [curve]="curve"
+        [zoomToFit]="true"
+        [enableZoom]="true"
+        [enablePan]="true"
+        (nodeSelect)="onNodeSelect($event)"
+        (linkSelect)="onEdgeSelect($event)"
+>
+    &lt;!&ndash; ================= NODE ================= &ndash;&gt;
+    <ng-template #nodeTemplate let-node>
+        <svg:g class="phase-node">
+            <svg:rect
+                    width="160"
+                    height="50"
+                    rx="6"
+                    ry="6"
+                    fill="#f8f9fa"
+                    stroke="#6c757d"
+            ></svg:rect>
+
+            <svg:text
+                    x="80"
+                    y="30"
+                    text-anchor="middle"
+                    class="node-label">
+                {{ node.label }}
+            </svg:text>
+        </svg:g>
+    </ng-template>
+
+    &lt;!&ndash; ================= EDGE ================= &ndash;&gt;
+    <ng-template #linkTemplate let-link>
+        <svg:g class="transition-edge">
+            <svg:path
+                    class="line"
+                    stroke-width="2"
+                    marker-end="url(#arrow)">
+            </svg:path>
+            <svg:text class="edge-label">
+                <textPath
+                        [attr.href]="'#' + link.id"
+                        startOffset="50%"
+                        text-anchor="middle">
+                    {{ link.label }}
+                </textPath>
+            </svg:text>
+        </svg:g>
+    </ng-template>
+</ngx-graph>-->

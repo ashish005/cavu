@@ -13,8 +13,8 @@ import {ProductForm} from "../forms";
 })
 export class ProductCEComponent extends ProductForm implements OnInit
 {
-    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
-    @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+    // @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    // @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
     submitted: boolean;
 
     get actionType (){ return (this.id) ? ACTION_ENUM.UPDATE: ACTION_ENUM.ADD; };

@@ -1,4 +1,4 @@
-import {CoreQueryOptions} from "../../../../core-setup";
+import {CoreQueryOptions} from "../../../../services/models";
 
 export class TaskScheduledQueryOptions extends CoreQueryOptions {
   nextDays: string;
@@ -7,7 +7,7 @@ export class TaskScheduledQueryOptions extends CoreQueryOptions {
     this.nextDays = data.nextDays;
   }
 
-  toQueryString (){
+  override toQueryString (){
     const obj = {
       nextDays: this.nextDays || '7'
     };

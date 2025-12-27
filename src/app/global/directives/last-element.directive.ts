@@ -1,6 +1,7 @@
 import { Directive, Input, Output, EventEmitter } from '@angular/core';
 
 @Directive({
+    standalone: true,
     selector: '[lastElement]'
 })
 export class LastElementDirective {
