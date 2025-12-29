@@ -38,7 +38,8 @@
         <thead class="cf">
             <tr>
                 <th width="30px">#</th>
-                <th>Approver</th>
+                <th>Name</th>
+                <th>Assigned To</th>
                 <th width="50px">Order</th>
                 <th width="50px">Rule</th>
                 <th width="50px">Active</th>
@@ -46,11 +47,12 @@
             </tr>
         </thead>
         <tbody formArrayName="approvalSteps">
-        <ng-container *ngFor="let step of approvalSteps.controls; let i = index">
+        <ng-container *ngFor="let step of steps.controls; let i = index">
             <!-- STEP -->
             <tr [formGroupName]="i">
                 <td>{{ i + 1 }}</td>
-                <td><input type="text" formControlName="approverRole" class="md-input"></td>
+                <td><input type="text" formControlName="name" class="md-input"></td>
+                <td><input type="text" formControlName="assignedToRole" class="md-input"></td>
                 <td><input type="number" formControlName="stepOrder" class="md-input no-border text-right"></td>
                 <td>
                     <select class="md-input w-auto" formControlName="ruleJoinType">
@@ -66,7 +68,7 @@
             </tr>
             <!-- RULE LOGIC + RULES (INSIDE STEP GROUP) -->
             <tr [formGroupName]="i">
-                <td colspan="6" class="p-0">
+                <td colspan="7" class="p-0">
                     <!-- ✅ NOW rules is correctly scoped -->
                     <table class="table table-sm" *ngIf="rules(i).length > 0">
                         <thead>

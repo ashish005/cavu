@@ -30,7 +30,7 @@ export class ProcessWorkflowView {
         this.api.getAllProcess().subscribe(r => this.processTree = r.entities);
     }
 
-    onProcessSelected(process: ProcessNode) {
+    onProcessSelected(process: any) {
         this.selectedProcess = process;
         this.selectedPhase = null; // reset phase on process change
         this.api.getPhases(process.id).subscribe(p => this.phases = p.entities);
@@ -45,7 +45,7 @@ export class ProcessWorkflowView {
         this.showPhasePopup(input, { text: 'Create Phase', desc: '' });
     }
 
-    onPhaseEdit(phase: Phase) {
+    onPhaseEdit(phase: any) {
         const input = {
             id: phase.id,
             data: phase

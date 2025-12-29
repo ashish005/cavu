@@ -31,9 +31,9 @@ export interface PhaseTransition {
     id: number;
     processId: number;
     fromPhaseId: number;
-    fromStatusId?: number;
+    //fromStatusId?: number;
     toPhaseId: number;
-    toStatusId?: number;
+    //toStatusId?: number;
     description?: string;
     rule?: string;
 }

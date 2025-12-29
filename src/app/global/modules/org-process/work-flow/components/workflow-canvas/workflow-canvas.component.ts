@@ -1,5 +1,21 @@
 import {animate, style, transition, trigger} from "@angular/animations";
-import { Component, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges
+} from '@angular/core';
+import { Node, Edge } from '@swimlane/ngx-graph';
+import {BehaviorSubject, Subject} from "rxjs";
+import {Phase, PhaseTransition} from "../../models";
+export interface WorkflowRuntimeState {
+    currentPhaseId: number;
+    completedTransitionIds: number[];
+}
 
 @Component({
     selector: 'workflow-canvas',
@@ -15,71 +31,70 @@ import { Component, Input, OnInit } from '@angular/core';
     ],
     templateUrl: './workflow-canvas.html'
 })
-export class WorkflowCanvasComponent implements OnInit {
+export class WorkflowCanvasComponent {
+    @Input() phases: Phase[] = [];
+    transitions: PhaseTransition[] = [];
 
-    @Input() phases: any[] = [];
-    @Input() transitions: any[] = [];
+    /** runtime active items */
+    @Input() activePhaseIds: number[] = [];
+    @Input() activeTransitionIds: number[] = [];
 
-    nodes: any[] = [];
-    edges: any[] = [];
+    /** expose edit actions */
+    @Output() editPhase = new EventEmitter<Phase>();
+    @Output() editTransition = new EventEmitter<PhaseTransition>();
+    @Output() nodeMoved = new EventEmitter<{ id: number; x: number; y: number }>();
 
-    curve:any;
+    zoomToFit$ = new BehaviorSubject<boolean>(false);
 
-    ngOnInit(): void {
-        this.buildGraph();
+    nodes: Node[] = [];
+    links: Edge[] = [];
+
+    generateTransitions(phases: Phase[]): any[] {
+        const ordered = [...phases].sort((a, b) => a.order - b.order);
+
+        return ordered.slice(0, -1).map((p, i) => ({
+            id: i + 1,
+            fromPhaseId: p.id,
+            toPhaseId: ordered[i + 1].id,
+            description: `${p.name} → ${ordered[i+1].name}`
+        }));
     }
 
-    /* ================= BUILD GRAPH ================= */
+    ngOnChanges() {
+        this.nodes = (this.phases || []).map<Node>(p => ({
+            id: `p-${p.id}`,
+            label: p.name ?? '',
+            position: p.position,
+            data: {
+                color: p.color,
+                model: p
+            }
+        }));
 
-    buildGraph(): void {
-        this.nodes = this.phases.map(p => this.mapPhaseToNode(p));
-        this.edges = this.transitions.map(t => this.mapTransitionToEdge(t));
+        this.links = this.generateTransitions(this.phases).map<Edge>(t => ({
+            id: `l-${t.id}`,
+            source: `p-${t.fromPhaseId}`,
+            target: `p-${t.toPhaseId}`,
+            label: t.description ?? '',
+            data: {
+                rule: t.rule,
+                model: t
+            }
+        }));
+
+        this.zoomToFit$.next(true);
     }
 
-    /* ================= NODE MAPPING ================= */
-
-    private mapPhaseToNode(phase: any) {
-        return {
-            id: phase.id.toString(),
-            label: phase.name,
-            data: phase
-        };
+    onDragEnd(evt: any) {
+        const { node, x, y } = evt;
+        this.nodeMoved.emit({ id: +node.id, x: x, y: y });
     }
 
-    /* ================= EDGE MAPPING ================= */
-
-    private mapTransitionToEdge(t: any) {
-        return {
-            id: t.id.toString(),
-            source: t.fromPhaseId.toString(),
-            target: t.toPhaseId.toString(),
-            label: this.buildEdgeLabel(t),
-            data: t
-        };
+    isPhaseActive(id: string) {
+        return this.activePhaseIds?.includes(+id);
     }
 
-    private buildEdgeLabel(t: any): string {
-        if (t.conditionExpression) {
-            return t.conditionExpression;
-        }
-
-        if (t.fromStatus || t.toStatus) {
-            return `${t.fromStatus?.name || '*'} → ${t.toStatus?.name || '*'}`;
-        }
-
-        return 'Transition';
+    isLinkActive(id: string) {
+        return this.activeTransitionIds?.includes(+id);
     }
-
-    /* ================= EVENTS ================= */
-
-    onNodeSelect(node: any): void {
-        console.log('Phase selected:', node.data);
-        // 🔥 Hook: open Phase Editor
-    }
-
-    onEdgeSelect(edge: any): void {
-        console.log('Transition selected:', edge.data);
-        // 🔥 Hook: open Transition Rule Editor
-    }
-
 }

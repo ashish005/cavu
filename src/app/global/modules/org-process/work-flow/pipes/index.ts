@@ -5,7 +5,7 @@ import { Phase, PhaseStatus, PhaseTransition } from '../models';
 export class FilterTransitionsByFromPipe implements PipeTransform {
     transform(transitions: PhaseTransition[], fromPhaseId: number, fromStatusId?: number) {
         if (!transitions) return [];
-        return transitions.filter(t => t.fromPhaseId === fromPhaseId && (fromStatusId == null || t.fromStatusId === fromStatusId));
+        return transitions.filter(t => t.fromPhaseId === fromPhaseId);
     }
 }
 

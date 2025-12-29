@@ -49,42 +49,44 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
             sortOrder: [null],
             isDefault: [ false ] ,
             isActive: [ true ],
-            approvalSteps: this.fb.array([])
+            steps: this.fb.array([])
         });
     }
 
     get f() { return this.customForm.controls; }
 
-    get approvalSteps(): FormArray<FormGroup> {
-        return this.customForm.get('approvalSteps') as FormArray<FormGroup>;
+    get steps(): FormArray<FormGroup> {
+        return this.customForm.get('steps') as FormArray<FormGroup>;
     }
 
     rules(stepIndex: number): FormArray<FormGroup> {
-        return this.approvalSteps.at(stepIndex).get('rules') as FormArray<FormGroup>;
+        return this.steps.at(stepIndex).get('rules') as FormArray<FormGroup>;
     }
 
     addStep(step?: any): void {
         step = step || {
-            stepOrder: this.approvalSteps.length + 1,
+            stepOrder: this.steps.length + 1,
             isActive: true
         };
 
         const fg = this.fb.group({
             id: [step.id],
             stepOrder: [step.stepOrder],
-            approverRole: [step.approverRole, Validators.required],
+            name: [step.name, Validators.required],
+            assignedToRole: [step.assignedToRole, Validators.required],
+
             isActive: [step.isActive],
             // ✅ MUST EXIST
             ruleJoinType: [step.ruleJoinType ?? 'AND'],
             rules: this.fb.array([])
         });
 
-        this.approvalSteps.push(fg);
-        (step.rules || []).forEach(r => this.addRule(r, this.approvalSteps.length - 1));
+        this.steps.push(fg);
+        (step.rules || []).forEach(r => this.addRule(r, this.steps.length - 1));
     }
 
     removeStep(stepIndex: number): void {
-        this.approvalSteps.removeAt(stepIndex);
+        this.steps.removeAt(stepIndex);
         this.reorderSteps();
     }
 
@@ -116,7 +118,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     private reorderSteps(): void {
-        this.approvalSteps.controls.forEach((ctrl, index) => {
+        this.steps.controls.forEach((ctrl, index) => {
             ctrl.get('stepOrder')?.setValue(index + 1, { emitEvent: false });
         });
     }
@@ -128,7 +130,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     buildRuleExpression(stepIndex: number): string {
-        const step = this.approvalSteps.at(stepIndex);
+        const step = this.steps.at(stepIndex);
         const join = step.get('ruleJoinType')?.value || 'AND';
         const rules = this.rules(stepIndex).value;
 

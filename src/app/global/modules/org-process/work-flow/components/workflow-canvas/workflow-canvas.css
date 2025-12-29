@@ -1,25 +1,60 @@
-.workflow-graph {
-    height: 650px;
-    border: 1px solid #dee2e6;
-    background-color: #ffffff;
+.graph {
+    height: 600px;
+    width: 100%;
 }
 
 .phase-node {
+    cursor: move;
+    transition: 0.2s;
+
+    &.active rect {
+        stroke: #00e676;
+        stroke-width: 3;
+    }
+}
+
+.phase-link {
     cursor: pointer;
+
+    .edge.active {
+        stroke: #00e676 !important;
+        stroke-width: 3;
+    }
+
+    .rule-badges {
+        transform: translate(-10px, -10px);
+    }
 }
 
-.node-label {
-    font-size: 13px;
-    fill: #212529;
-    pointer-events: none;
+.toolbar {
+    margin-bottom: 10px;
 }
 
-.transition-edge {
-    cursor: pointer;
+.hint {
+    opacity: .7;
+    margin-top: 4px;
+    font-size: 12px;
 }
 
-.edge-label {
-    font-size: 11px;
-    fill: #495057;
-    pointer-events: none;
+.phase-node.active rect {
+    stroke: gold;
+    stroke-width: 3;
+}
+
+.phase-link.active path {
+    stroke: gold !important;
+}
+
+.phase-node.active rect {
+    stroke: gold;
+    stroke-width: 3;
+}
+
+.phase-link.active path.edge {
+    stroke: gold !important;
+}
+
+.graph {
+    width: 100%;
+    height: calc(100vh - 220px);
 }

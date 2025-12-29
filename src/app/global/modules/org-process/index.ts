@@ -12,6 +12,7 @@ import {PhaseEditorComponent} from "./work-flow/components/phase-editor/phase-ed
 import {TransitionEditorComponent} from "./work-flow/components/transition-editor/transition-editor.component";
 import {WorkflowCanvasComponent} from "./work-flow/components/workflow-canvas/workflow-canvas.component";
 import {SortByPipe} from "../../pipes/sort-by.pipe";
+import {NgxGraphModule} from "@swimlane/ngx-graph";
 
 @NgModule({
     declarations: [
@@ -22,8 +23,8 @@ import {SortByPipe} from "../../pipes/sort-by.pipe";
     ],
     imports: [
         CommonModule, FormsModule, ReactiveFormsModule,
-        CdkTreeModule, ScrollingModule, DragDropModule, SortByPipe
+        CdkTreeModule, ScrollingModule, DragDropModule, SortByPipe, NgxGraphModule
     ],
-    exports: [ProcessWorkflowView]
+    exports: [ProcessWorkflowView, NgxGraphModule]
 })
 export class CoreProcessWorkflowModule {}

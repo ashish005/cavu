@@ -50,10 +50,7 @@ export class TransitionEditorComponent {
         processId: [null, Validators.required],
 
         fromPhaseId: [null, Validators.required],
-        fromStatusId: [null],
-
         toPhaseId: [null, Validators.required],
-        toStatusId: [null],
 
         description: [''],
         isActive: [true],

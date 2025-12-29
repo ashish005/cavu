@@ -1,54 +1,81 @@
-<!--
 <ngx-graph
-        class="workflow-graph"
+        class="graph"
         [nodes]="nodes"
-        [links]="edges"
-        [layout]="'dagre'"
-        [curve]="curve"
-        [zoomToFit]="true"
+        [links]="links"
+        [autoZoom]="true"
+        [draggingEnabled]="true"
+        [panningEnabled]="true"
         [enableZoom]="true"
-        [enablePan]="true"
-        (nodeSelect)="onNodeSelect($event)"
-        (linkSelect)="onEdgeSelect($event)"
->
-    &lt;!&ndash; ================= NODE ================= &ndash;&gt;
+        [update$]="zoomToFit$"
+        (dragEnd)="onDragEnd($event)">
+
+    <!-- NODE -->
     <ng-template #nodeTemplate let-node>
-        <svg:g class="phase-node">
+        <svg:g
+                class="phase-node"
+                [class.active]="isPhaseActive(node.id)"
+                (dblclick)="editPhase.emit(node.data.model)">
+
             <svg:rect
+                    x="-80"
+                    y="-24"
                     width="160"
-                    height="50"
-                    rx="6"
-                    ry="6"
-                    fill="#f8f9fa"
-                    stroke="#6c757d"
-            ></svg:rect>
+                    height="48"
+                    rx="10"
+                    [attr.fill]="node.data?.color || '#3f51b5'">
+            </svg:rect>
 
             <svg:text
-                    x="80"
-                    y="30"
                     text-anchor="middle"
-                    class="node-label">
+                    alignment-baseline="middle"
+                    fill="#fff">
                 {{ node.label }}
             </svg:text>
+
         </svg:g>
     </ng-template>
 
-    &lt;!&ndash; ================= EDGE ================= &ndash;&gt;
+
+    <!-- EDGE -->
     <ng-template #linkTemplate let-link>
-        <svg:g class="transition-edge">
+
+        <svg:g
+                class="phase-link"
+                (click)="editTransition.emit(link.data.model)">
+
             <svg:path
-                    class="line"
                     stroke-width="2"
-                    marker-end="url(#arrow)">
+                    fill="none"
+                    class="edge"
+                    stroke="#888"
+                    [class.active]="isLinkActive(link.id)">
             </svg:path>
-            <svg:text class="edge-label">
-                <textPath
-                        [attr.href]="'#' + link.id"
-                        startOffset="50%"
-                        text-anchor="middle">
-                    {{ link.label }}
-                </textPath>
-            </svg:text>
+
+            <!-- RULE BADGE -->
+            <svg:g
+                    *ngIf="link.data?.rule"
+                    class="badge"
+                    transform="translate(0,-12)">
+
+                <svg:rect
+                        x="-10"
+                        y="-8"
+                        rx="6"
+                        width="20"
+                        height="16"
+                        fill="#222">
+                </svg:rect>
+
+                <svg:text
+                        text-anchor="middle"
+                        alignment-baseline="middle"
+                        fill="#fff">
+                    R
+                </svg:text>
+            </svg:g>
+
         </svg:g>
+
     </ng-template>
-</ngx-graph>-->
+
+</ngx-graph>
