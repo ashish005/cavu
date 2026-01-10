@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ComplianceAPIResolver, ComplianceTrackerService} from "../services";
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -9,6 +9,8 @@ import {BoardTrackerTaskQueryOptions} from "../domains/compliance-tracker.serial
   templateUrl: './templates/compliance-board.html'
 })
 export class ComplianceBoardView implements OnInit {
+  @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+  @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
   connectedLists: string[] = [];
   queryOption: BoardTrackerTaskQueryOptions = new BoardTrackerTaskQueryOptions();
 
