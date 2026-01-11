@@ -1,0 +1,56 @@
+<ng-container [formGroup]="customForm">
+    <td>
+        <div *ngIf="formId.value">
+            <a class="item-title _500">
+                {{formName?.value}}
+                <small class="float-right text-sm text-muted"></small>
+            </a>
+            <div class="item-except text-xs h-1x">
+                <small>{{formDesc?.value}}</small>
+            </div>
+        </div>
+        <div class="md-form-group p-0" *ngIf="!formId.value">
+            <input id="search" placeholder="Type some text" type="text" class="md-input text-sm title _500"
+                   autofocus (keyup)="particularFocus=true"
+                   placeholder="Enter Particular Name" [formControl]="particularsSearch" autocomplete="off">
+            <small class="parsley-required" style="color: #f95b5b;"></small>
+        </div>
+        <!--<div class="scroll-y" style="width: 100%; height: 300px;left: 0; z-index: 1001;">-->
+        <ul class="drop list inset" *ngIf="particularFocus" style="max-height: 250px; margin: 0px 10px 0px 0px; position: absolute; width: 80%; z-index: 9; overflow-y: auto;" [hidden]="!particularFocus">
+            <li class="match list-item" *ngIf="isNew">
+                <div class="list-body">
+                    <a class="item-title _500">{{particularsSearch?.value }}
+                        <div class="float-right" *ngIf="isNew">
+                            <add-ledger (cb)="newAccount($event)">New Ledger</add-ledger>
+                        </div>
+                    </a>
+                </div>
+            </li>
+            <li class="match list-item" *ngFor="let item of particular$" (click)="applySelect(item)">
+                <div class="list-body">
+                    <div class="item-except text-xs h-1x">
+                        <a class="item-title _500">{{item?.name }} {{item?.code }}
+                            <small class="float-right text-sm text-muted">
+                                {{item?.accountNatureName}}
+                                <span class="badge green px-2">{{item?.accountGroupName}}</span>
+                            </small>
+                        </a>
+                        <small>{{item?.name }}</small>
+                    </div>
+                    <!--<div class="item-except text-xs" style="font-size: .6rem">
+                        <a class="text-primary">Balance {{item.balance }}</a>
+                        <span >Balance <small class="px-1">{{item.Balance }}</small></span>
+                    </div>-->
+                </div>
+            </li>
+        </ul>
+        <!--<textarea class="form-control p-1" formControlName="remark"></textarea>-->
+    </td>
+    <td>
+        <input class="form-control p-1 text-right" formControlName="amount" placeholder="XX.XX" appTwoDigitDecimaNumber (focusout)="onPriceFocusOutEvent($event)">
+    </td>
+    <td>
+        <!--<input class="form-control p-1 text-right" formControlName="netAmount" placeholder="XX.XX" appTwoDigitDecimaNumber>-->
+        <div class="text-right" style="height: 20px; background-color: transparent">{{formForeignAmount?.value | voucherCurrency: currencyCode }}</div>
+    </td>
+</ng-container>

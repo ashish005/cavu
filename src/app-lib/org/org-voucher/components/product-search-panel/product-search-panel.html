@@ -1,0 +1,77 @@
+<div class="card overflow-hidden card-h-100vh" data-select2-id="select2-data-15-p4yk">
+    <h4 class="p-3 m-0 bg-light">
+        Product Section
+    </h4>
+    <ul class="nav nav-xs flex-row no-border float-right">
+        <li class="nav-item">
+            <div class="input-group">
+                <input id="search" placeholder="Type some text" type="text"
+                       autofocus (keyup)="particularFocus=true"
+                       placeholder="Enter Particular Name" [formControl]="particularsSearch" autocomplete="off"
+                                            class="form-control form-control-sm search">
+                <div class="columns columns-right btn-group float-right">
+                    <div title="Columns" class="keep-open btn-group">
+                        <button type="button" aria-label="columns" data-toggle="dropdown" aria-expanded="false"
+                                class="btn btn-default btn-sm no-shadow dropdown-toggle"
+                                style="border-right: 0px; border-left: 0px;"><i class="fa fa-th-list"></i><span
+                                class="caret"></span></button>
+                        <div x-placement="bottom-end" class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown">
+                                <form novalidate="" class="row ng-untouched ng-pristine ng-valid">
+                                    <div class="col-sm-12">
+                                        <ul class="nav nav-xs flex-row no-border float-right">
+                                            <li class="nav-item"><a class="btn btn-outline b-a btn-xs mr-3">
+                                                Clear </a></li>
+                                            <li class="nav-item"><a class="btn btn-outline b-a btn-xs mr-3">
+                                                Apply </a></li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <span class="input-group-append"><button type="button" class="btn btn-default btn-sm no-shadow"
+                                                         style="border-left: 0px;"><i
+                        class="fa fa-search"></i></button></span>
+            </div>
+        </li>
+        <li class="nav-item">
+            <button data-sort="item-title" data-toggle="tooltip" title="" data-original-title="Sort"
+                    class="btn btn-sm white ml-1 sort"><i class="fa fa-sort"></i></button>
+        </li>
+    </ul>
+    <div class="card-body pt-2 pb-4">
+        <div class="list box">
+            <div class="list-item" *ngFor="let item of particular$">
+                <div><img alt="." src="../assets/images/a0.jpg" class="w-40 circle"></div>
+                <div class="list-body">
+                    <div class="item-except text-xs h-1x">
+                        <a class="item-title _500">{{item?.name }} {{item?.code }}
+                            <small class="float-right text-sm text-muted">{{item?.accountGroupName}}</small>
+<!--                            <span class="float-right text-primary" *ngIf="item.taxDetails">HSN {{ item.taxDetails?.taxCode }} : {{ item.taxDetails?.taxRate }}%</span>-->
+                        </a>
+                        <small>{{item?.description }}</small>
+                    </div>
+                    <!--<div class="item-except text-xs" style="font-size: .6rem">
+                        <span>MRP <small>{{item.productPrice?.mrp }}</small></span>
+                        <span *ngIf="voucherMasterType == 'purchase' || voucherMasterType == 'sale'" class="px-1">Price
+                            <small *ngIf="voucherMasterType == 'purchase'">{{item.productPrice?.supplyPrice}}</small>
+                            <small *ngIf="voucherMasterType == 'sale'">{{item.productPrice?.retailPrice}}</small>
+                        </span>
+                        <span class="px-1">BarCode : {{item.productPrice?.barCode}}</span>
+                        <span class="px-1">SKU : {{item.productPrice?.sKU}}</span>
+                        <span *ngIf="item.productPrice?.isDefaultLoyalty" class="badge yellow mx-1">Loyalty</span>
+                        <span *ngIf="item.productPrice?.isTaxInclusive" class="badge green">Tax Inclusive</span>
+                    </div>-->
+                </div>
+            </div>
+            <!--<div class="list-item">
+                <div><img alt="." src="../assets/images/a1.jpg" class="w-40 circle"></div>
+                <div class="list-body"><a href="#" class="_500">Dipiscing elit.</a>
+                    <small class="d-block text-muted">Peter send you a message</small>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</div>

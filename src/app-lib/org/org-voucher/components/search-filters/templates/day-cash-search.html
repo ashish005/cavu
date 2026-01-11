@@ -1,0 +1,11 @@
+<div class="no-radius box-shadow pos-rlt">
+  <form class="flex" [formGroup]="customForm">
+    <div class="input-group">
+      <div class="columns columns-left btn-group">
+        <div class="keep-open btn-group" title="Columns">
+          <date-time-picker #dateForm [customForm]="customForm" (cb)="dateChangeCb($event)"></date-time-picker>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

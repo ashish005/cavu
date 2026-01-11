@@ -1,3 +1,5 @@
+export * from "./voucher-type";
+
 export {Referrals} from "./constants";
 
 export {FREQUENCY_TYPE, WEEK_DAYS, MONTHS, DAYS, WEEK_OF, YEAR_MODES, YEAR_MODE_ENUM } from "./tasks.enums";

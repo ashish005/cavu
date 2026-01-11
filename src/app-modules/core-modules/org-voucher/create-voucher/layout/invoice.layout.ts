@@ -4,10 +4,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 const translatePath = 'modules.project.sub_module';
 @Component({
   standalone: false,
-  template: ``
-    //template: `<voucher-ce #voucher></voucher-ce>`
+  template: `<voucher-ce #voucher></voucher-ce>`
 })
-export class InvoiceLayout implements OnInit {
+export class VoucherCreateLayout implements OnInit {
     @ViewChild('voucher', { static: true }) public voucher: any;
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public injector: Injector) {}
 

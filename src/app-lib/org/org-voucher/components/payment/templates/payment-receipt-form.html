@@ -1,0 +1,53 @@
+<div class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <table class="p-0 col-md-12 table table-striped table-condensed cf">
+            <thead class="cf">
+            <tr>
+                <th>{{ isPayment ? 'Payment':''}} Mode</th>
+                <th>Ref. No</th>
+                <th width="150px" class="text-right">
+                    {{ isPayment? 'Amount': ''}}
+                    {{ isReceipt? 'Line Total': ''}} ({{formSystemCurrencyCode.value}})
+                </th>
+                <th width="150px" class="text-right">Amount ({{formCurrencyCode.value}})</th>
+            </tr>
+            </thead>
+            <tbody formGroupName="trxn">
+            <tr>
+                <td>
+                    <div class="md-form-group p-0">
+                        <select class="md-input text-xs" formControlName="gatewayMapperId">
+                            <option *ngFor="let entity of modes;" [value]="entity.id">
+                                <i class="fa fa-dot-circle-o text-warn"></i> {{entity.name}}
+                            </option>
+                        </select>
+                    </div>
+                    <!--<select-dropdown [items]="gateways" [title]="title"
+                                     bindLabel="name"
+                                     [disabled]="formVoucherId?.value"
+                                     (cb)="updatePaymentReceiptByGatewayMapperId($event)"
+                                     [control]="formPaymentGatewayMapperId">
+                    </select-dropdown>-->
+                </td>
+                <td>
+                    <div class="md-form-group p-0" [class.hide]="!paymentModeInfo?.isReferenceNoRequired">
+                        <input class="md-input" formControlName="referenceNo" [ngClass]="{ 'is-invalid': submitted && formTrxnControl['referenceNo'].errors }">
+                        <label class="hide">Ref. No </label>
+                    </div>
+                </td>
+                <td>
+                    <div class="text-right">
+                        <input class="form-control p-1 text-right" formControlName="amount" placeholder="XX.XX" appTwoDigitDecimaNumber (focusout)="onPriceFocusOutEvent($event)">
+                    </div>
+                </td>
+                <td>
+                    <div class="text-right" style="background-color: transparent">
+                        {{formTrxnForeignAmount?.value | orgCurrency }}
+                    </div>
+                    <!--<input formControlName="netAmount" class="text-right form-control p-1" [ngClass]="{ 'is-invalid': f.netAmount.errors }">-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

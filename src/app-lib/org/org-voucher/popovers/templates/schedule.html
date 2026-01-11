@@ -1,0 +1,20 @@
+<a class="text-primary text-xs"
+   [ngbPopover]="content" placement="bottom-right" popoverTitle="Invoice Schedule"
+   container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Schedule</a>
+<ng-template #content>
+    <div style="max-width: 560px;">
+        <scheduler-info #schedulerEl
+                        [addManually]="addManually"
+                        [isManual]="isManual"
+                        [isFeeTask]="isFeeTask"
+                        [hideActionHeader]="hideActionHeader"
+                        [hideActionFooter]="hideActionFooter"
+                        (onOk)="onOkAction($event)"
+                        (onCancel)="onCancelAction($event)"></scheduler-info>
+        <loader [isLoading]="submitted"></loader>
+        <div class="popover__controls d-flex justify-content-end">
+            <button type="button" class="btn btn-xs btn-outline b-a center" (click)="p.close()">Close </button>
+            <ng-template *ngTemplateOutlet="schedulerEl.schedularActionTemplate"></ng-template>
+        </div>
+    </div>
+</ng-template>

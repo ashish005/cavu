@@ -7,6 +7,7 @@ import {OrgCoreSetupModule} from "./org-seeder";
     imports: [
         CommonModule, FormsModule, ReactiveFormsModule,
         OrgCoreSetupModule
-    ]
+    ],
+    exports: [ ]
 })
 export class AppLibModule {}

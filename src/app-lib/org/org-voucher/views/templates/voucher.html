@@ -1,0 +1,392 @@
+<div class="app container" id="app">
+    <form id="content" class="app-content" role="main" [formGroup]="customForm" (submit)="onSubmit(customForm)">
+        <div class="navbar flex-nowrap white lt box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <span class="text-md text-ellipsis flex">{{ voucherType?.name }}</span>
+            <!--<div class="d-inline-block px-4">
+                <p class="m-0" *ngIf="voucherType?.canDoLedgerOrItem">
+                    <label class="md-check text-xs">
+                        <input type="checkbox" formControlName="isItemInvoice"><i class="blue"></i>
+                        <span class="pl-2 text-primary">Product/ Service Voucher</span>
+                    </label>
+                </p>
+            </div>
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <ng-container *ngTemplateOutlet="multiCurrencyForm"></ng-container>
+                </li>
+            </ul>-->
+            <!--<div class="nav-active-border b-primary b-theme bottom">
+                    <ul class="nav nav-pills nav-xs nav-rounded flex-row">
+                        <ng-template ngFor let-row [ngForOf]="navList.children" let-j="index">
+                            <li class="nav-item">
+                                <a class="nav-link" (click)="routeToUrl(row)">
+                                    <span class="float-right ml-2"><i class="fa fa-chevron-right"></i></span>
+                                    {{row.key}}
+                                </a>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </div>-->
+        </div>
+        <div class="content-main d-flex flex" id="content-main">
+            <div class="container d-flex flex">
+                <div class="d-flex flex">
+                    <div class="d-flex flex-column flex">
+                        <div class="row p-2">
+                            <div class="col-6">
+                                <div class="clearfix"
+                                     *ngIf="formVoucherMasterType.value != 'payment' && formVoucherMasterType.value != 'receipt'">
+                                    <!--[disabled]="(formVoucherId?.value)"-->
+                                    <account-voucher-type-ahead
+                                            required="true"
+                                            controlTitle="Party - Search using Ledger name"
+                                            bindLabel="name" bindValue="accountId"
+                                            [voucherType]="formVoucherMasterType.value"
+                                            [isCreditTrxn]="voucherType?.isPrimaryCredit"
+                                            [isItemInvoice]="formIsItemInvoice.value"
+                                            (cb)="updateByLedgerAccount($event)"
+                                            [controlId]="formPartyAccountId.value"
+                                            [controlValue]="formPartyName.value">
+                                    </account-voucher-type-ahead>
+                                </div>
+                                <div class="clearfix"
+                                     *ngIf="formVoucherMasterType.value == 'payment' || formVoucherMasterType.value == 'receipt'">
+                                    <primary-payment-receipt-loaded-type-ahead
+                                            [customForm]="customForm">
+                                    </primary-payment-receipt-loaded-type-ahead>
+                                </div>
+                                <div class="text-xs">
+                                    <span class="badge">Ledgers:</span>
+                                    <ng-template ngFor let-srAccount [ngForOf]="refCreditSearchableAccounts"
+                                                 let-i="index">
+                                        <small class="px-1 b-r">{{srAccount}}</small>
+                                    </ng-template>
+                                </div>
+                            </div>
+                            <div class="col-6 text-right d-flex flex-lg-column">
+                                <div class="flex">
+                                    <div class="text-center text-sm-right">
+                                        <div class="d-inline-block px-3 text-center">
+                                            <small class="text-xs text-muted">{{voucherType?.voucherNoDisplay}}</small>
+                                            <div class="d-block">
+                                                #{{formVoucherNo.value}}
+                                                <small class="text-danger" [class.hide]="formVoucherNo.value">Not yet
+                                                    created
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="d-inline-block px-3 b-l text-center">
+                                            <small class="text-xs text-muted">{{voucherType?.voucherDateDisplay}}
+                                            </small>
+                                            <div class="d-block">
+                                                <input class="md-input text-xs"
+                                                       style="width: 90px; margin: 2px 2px 0px 2px; height: 20px;"
+                                                       type="date" formControlName="voucherDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-xs">
+                            <div class="col-12">
+                                <span class="badge">Tags:</span>
+                                <ng-template ngFor let-srAccount [ngForOf]="refDebitSearchableAccounts" let-i="index">
+                                    <small class="px-1 b-r">{{srAccount}}</small>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="scrollable hover h-100">
+                            <div class="d-flex flex box px-2">
+                                <div class="d-flex flex-column flex text-xs">
+                                    <div *ngIf="!isItemInvoice">
+                                        <account-grid-form [customForm]="customForm"
+                                                           (addItem)="addVoucherItem()"
+                                                           (removeItem)="removeVoucherItem($event)"></account-grid-form>
+                                    </div>
+                                    <div *ngIf="isItemInvoice">
+                                        <item-grid-form [customForm]="customForm"
+                                                        (addItem)="addVoucherItem()"
+                                                        (removeItem)="removeVoucherItem($event)"></item-grid-form>
+                                    </div>
+                                    <div class="flex-column white text-center"
+                                         *ngIf="voucherType?.masterType == 'purchase' || voucherType?.masterType == 'sale'">
+                                        <invoice-payment-receipt [customForm]="customForm"></invoice-payment-receipt>
+                                    </div>
+                                    <div class="px-1">
+                                        <div class="md-form-group float-label pb-0">
+                                            <input class="md-input text-xs" formControlName="notes"
+                                                   placeholder="Enter notes or bank transfer details (optional)"><label>Notes</label>
+                                        </div>
+                                        <div class="md-form-group float-label pb-0">
+                                        <textarea class="md-input text-xs" rows="2" formControlName="remark"
+                                                  spellcheck="true"
+                                                  placeholder="Enter your terms and conditions. (Pro tip: It pays to be polite. Invoices that include “please” and “thanks” get paid up to 2 days faster.)"></textarea>
+                                            <label>Terms</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2 m-1 white lt b-a mt-auto">
+                            <div class="flex-column white">
+                                <div class="float-left">
+                                    <label class="md-check" *ngIf="voucherType?.hasDraft">
+                                        <input type="checkbox" formControlName="inDraft"><i class="blue"></i>
+                                        <span class="item-title _500 pl-2">In Draft</span>
+                                    </label>
+                                </div>
+                                <div class="text-center">
+                                    <!--<div class="row">
+                                        <div class="col-6">
+                                            Amount {{formTrxnAmount?.value | orgCurrency }}
+                                        </div>
+                                        <div class="col-6">
+                                            ForeignAmount {{formTrxnForeignAmount?.value | orgCurrency }}
+                                        </div>
+                                    </div>-->
+                                    <button class="btn btn-sm b-a b-theme text-theme theme" type="submit"
+                                            [disabled]="customForm?.invalid || submitted">
+                                        <i class="fa fa-send text-success"></i>{{ submitted ? 'Submitting...' : 'Create' }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="fade aside aside-sm">
+                    <code style="white-space: pre; font-family: monospace;">
+                        {{customForm.value | json}}
+                    </code>
+                </div>-->
+                <div class="fade aside aside-sm">
+                    <div class="d-flex flex-column w-xxl">
+                        <ul class="list-group list-group-gap m-2">
+                            <!--<li class="list-group-item box py-1 px-2">
+                                <a class="text-primary float-right">Check Preview & Print</a>
+                            </li>
+                            <li class="list-group-item box py-1 px-2">
+                                <a class="text-primary float-right">Send Notification</a>
+                            </li>-->
+                            <li class="list-group-item box py-1 px-2"
+                                *ngIf="orgOption?.hasMultiCurrency && !formVoucherNo.value">
+                                <small class="text-muted">Currency:</small>
+                                <div class="md-form-group p-0 float-right">
+                                    <div class="input-group text-xs d-flex d-inline-block">
+                                        <div class="input-group-prepend text-xs">
+                                            1 {{systemCurrency?.currencyCode }} ({{systemCurrency?.symbol }}) =
+                                        </div>
+                                        <div class="input-group-append position-relative">
+                                            <input class="md-input text-right" [disabled]="hasNoConversion" type="text"
+                                                   style="width: 70px;" formControlName="currencyRate">
+                                            <div class="md-form-group p-0 float-right">
+                                                <select class="md-input text-xs text-right"
+                                                        formControlName="currencyCode">
+                                                    <option *ngFor="let entity of orgLookup?.currencies;"
+                                                            [value]="entity.currencyCode">
+                                                        {{entity.currencyCode}}({{entity.symbol}})
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item box py-1 px-2" *ngIf="voucherType?.canDoLedgerOrItem">
+                                <div class="d-inline-block">
+                                    <p class="m-0">
+                                        <label class="md-check text-xs">
+                                            <input type="checkbox" formControlName="isItemInvoice"><i class="blue"></i>
+                                            <span class="pl-2">Product/ Service Voucher</span>
+                                        </label>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="list-group-item box py-1 px-2" *ngIf="voucherType?.askForRefVoucher">
+                                <div class="d-inline-block" formGroupName="trxn">
+                                    <div class="md-form-group p-0" *ngIf="voucherType?.askForRefVoucher"
+                                         [ngClass]="{ 'hidden': !formIsReferenceNoRequired?.value }">
+                                        <input class="md-input" formControlName="referenceNo"
+                                               [ngClass]="{ 'is-invalid': submitted && formTrxnControl?.['referenceNo']?.errors }">
+                                        <label class="hide">Ref. No </label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item box py-1 px-2" *ngIf="voucherTypeWithSubItems?.length">
+                                <small class="text-muted">Sub Type</small>
+                                <div class="md-form-group p-0 float-right">
+                                    <select class="md-input text-xs text-right" formControlName="subTypeId">
+                                        <option *ngFor="let entity of voucherTypeWithSubItems;"
+                                                [ngValue]="entity.id"><i
+                                                class="fa fa-dot-circle-o text-warn"></i> {{entity.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li class="list-group-item box py-1 px-2" *ngIf="voucherType?.canSchedule">
+                                <div>
+                                    <label class="md-check" *ngIf="voucherType?.canBeRecurring">
+                                        <input type="checkbox" formControlName="isRecurringVoucher"><i class="blue"></i>
+                                        <small class="text-muted">Recurring Voucher</small>
+                                    </label>
+                                    <div class="float-right" *ngIf="voucherType?.canSchedule">
+                                        <invoice-schedule (cb)="scheduleData($event)"></invoice-schedule>
+                                    </div>
+                                </div>
+                                <span *ngIf="schedule"
+                                      class="text-sm pl-2 text-muted float-right">{{ schedule?.desc }}</span>
+                            </li>
+                            <li class="list-group-item box py-1 px-2"
+                                *ngIf="voucherType?.masterType == 'purchase' && voucherType?.askForRefParty">
+                                <small class="text-muted">{{ (!isItemInvoice)? 'Supplier': 'Reference' }}
+                                </small>
+                                <div class="d-flex column float-right">
+                                    <div class="mr-1">
+                                        <input formControlName="partyRefNo" placeHolder="Invoice No"
+                                               class="md-input text-right text-xs" style="height: 20px;">
+                                    </div>
+                                    <div class="ml-1">
+                                        <input type="date" formControlName="partyRefDate" placeHolder="Date"
+                                               class="md-input text-right text-xs" style="width: 90px; height: 20px;">
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item box py-1 px-2" *ngIf="voucherType?.askForRefVoucher">
+                                <small class="text-muted">Ref Invoice No</small>
+                                <div class="md-form-group p-0 float-right">
+                                    <input formControlName="refVoucherNo" class="md-input text-right text-xs"
+                                           style="height: 20px;">
+                                </div>
+                            </li>
+                            <!--<li class="list-group-item box px-2">
+                                <div class="panel no-border m-2">
+                                    <small class="text-muted">Trxn Schedule</small>
+                                    <div class="float-right">
+                                        <label class="md-switch">
+                                            <small class="text-muted">Scheduled</small>
+                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                acquisitionId, supplyStateId
+                            </li>
+                            <li class="list-group-item box px-2 py-0">
+                                GoodsReceiptId
+                                StorageLocationId
+                                SupplyTypeId
+                                TaxPerItem
+                                <div class="panel no-border m-2">
+                                    <div class="float-right">
+                                        <label class="md-switch">
+                                            <small class="text-muted">IsPriceWithTax</small>
+                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="panel no-border m-2">
+                                    <div class="float-right">
+                                        <label class="md-switch">
+                                            <small class="text-muted">IsPriceWithDiscount</small>
+                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                Formula
+                                IsVerified
+                                VerifiedBy
+                                VerifiedRemark
+                                TaxReturnId
+                            </li>
+                            <li class="list-group-item box px-2 py-0">
+                                WorkPeriodId
+                                ChannelId
+                                QuotationId
+                                <div class="panel no-border m-2">
+                                    <div class="float-right">
+                                        <label class="md-switch">
+                                            <small class="text-muted">IsLocalSale</small>
+                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                TableId
+                                NoOfGuest
+                                Tips
+                                DeliveryId
+                                OfferRuleId
+                            </li>-->
+                        </ul>
+                        <div class="scrollable hover">
+                            <div class="panel box no-border m-2">
+                                <!--<project-module-dropdown #projectModule-->
+                                <!--[customForm]="customForm"></project-module-dropdown>-->
+                            </div>
+                            <div class="p-1 mt-auto"></div>
+                            <div class="no-result hide">
+                                <div class="p-4 text-center">No Results</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<ng-template #headerOptionsTemplate>
+    <div class="flex flex-row">
+        <ul class="nav nav-xs flex-row no-border float-right">
+            <li class="nav-item"><button class="btn btn-xs b-theme theme" onclick="window.print();">Print</button></li>
+            <li><voucher-print></voucher-print></li>
+        </ul>
+    </div>
+</ng-template>
+<!--<ng-template #multiCurrencyForm>
+    <div class="flex d-inline-block" [formGroup]="customForm">
+        <div class="input-group text-xs d-flex d-inline-block"
+             *ngIf="orgOption?.hasMultiCurrency && !formVoucherNo.value">
+            <div>
+                <label class="px-2">Currency:</label>
+            </div>
+            <div class="input-group-prepend text-xs">
+                1 {{systemCurrency?.currencyCode }} ({{systemCurrency?.symbol }}) =
+            </div>
+            <div class="input-group-append position-relative">
+                <input class="md-input text-right" [disabled]="hasNoConversion" type="text" style="width: 70px;"
+                       formControlName="currencyRate">
+                <div class="md-form-group p-0 float-right">
+                    <select class="md-input text-xs text-right" formControlName="currencyCode">
+                        <option *ngFor="let entity of orgLookup?.currencies;" [value]="entity.currencyCode">
+                            {{entity.currencyCode}}({{entity.symbol}})
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>-->
+<ng-template #voucherSummary>
+    <div class="box box-shadow px-2 w-50">
+        <table class="table small-table text-xs">
+            <thead class="text-muted">
+            <tr>
+                <th style="border: none !important; padding: 0px;"></th>
+                <th style="border: none !important; padding: 0px;" class="text-right">Local Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-template ngFor let-sundry [ngForOf]="formSundryDetails.controls" let-i="index">
+                <tr>
+                    <td style="border: none !important;padding: 0px;">{{ sundry.value.name }}</td>
+                    <td style="border: none !important;padding: 0px;" class="text-right">{{ sundry.value.amount | number
+                        : '1.3-3' }}
+                    </td>
+                </tr>
+            </ng-template>
+            </tbody>
+        </table>
+        <add-round-off [customForm]="customForm"></add-round-off>
+    </div>
+</ng-template>

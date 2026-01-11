@@ -34,17 +34,6 @@ export class AppPermissionService extends CoreEndpointBase
             catchError(error => super.handleError(error, () => this.getPermissions(orgUserId)))
         );
 
-    // public fetchOrgLookup = () => this.httpClient
-    //     .get(`${this.baseSectorAPIUrl}appSetupLookup/${this.apiVersion}`, this.requestHeaders)
-    //     .pipe(
-    //         map((resp: any) => {
-    //             const data = new AppLookup(resp?.data);
-    //             this.coreService.orgLookup = data;
-    //             return data;
-    //         }),
-    //         catchError(error => this.handleError(error, () => this.fetchOrgLookup()))
-    //     );
-
     private setupModulePermission(data) {
         this.modulePer = null;
         const modulePer = new Map();

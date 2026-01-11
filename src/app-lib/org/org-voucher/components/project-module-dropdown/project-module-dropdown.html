@@ -1,0 +1,25 @@
+<div class="content">
+    <div class="flex text-muted p-2">
+        <small>Projects</small>
+        <small *ngIf="!(items$ | async)?.length" class="text-xs text-warning float-right">No Project </small>
+    </div>
+    <ng-template ngFor let-item [ngForOf]="(items$ | async)" let-i="index">
+        <div class="list-item p-1 text-xs" (click)="updateProject(item)">
+            <div class="list-body">
+                <a class="item-title">{{item?.name}}</a>
+                <!--<div class="item-except text-xs text-muted h-1x"><small></small></div>-->
+            </div>
+            <div *ngIf="(formProjectId.value === item?.id)"><i class="fa fa-check text-success"></i></div>
+        </div>
+        <ng-template ngFor let-module [ngForOf]="item.modules" let-i="index">
+            <div class="list-item p-1 pl-3 text-xs" (click)="updateProjectModule(module)">
+                <div class="list-body">
+                    <a class="item-title">{{module?.name}}</a>
+                    <div class="item-except text-xs text-muted h-1x"><small>{{ module.description }}</small></div>
+                </div>
+                <div *ngIf="(formProjectModuleId.value === module?.id)"><i class="fa fa-check text-success"></i></div>
+            </div>
+        </ng-template>
+    </ng-template>
+
+</div>

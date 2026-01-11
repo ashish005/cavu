@@ -1,7 +1,7 @@
-import {FREQUENCY_TYPE} from "../../enums/frequency-enums";
 import {VOUCHER_TYPES} from "../../enums/voucher-type";
+import {FREQUENCY_TYPE} from "../../enums";
 
-export class Status {
+class Status {
     id: any;
     name: string;
     isDefault: boolean;
@@ -170,6 +170,7 @@ export class OrgSession {
 export class LookupVoucherType {
     id: any;
     name: string;
+    displayText: string;
     masterType: string;
     abbreviation: string;
     voucherNoDisplay: string;
@@ -197,7 +198,7 @@ export class LookupVoucherType {
 
     constructor(model: any = {}) {
         const {
-            id, name, masterType,
+            id, name, masterType, displayText,
             abbreviation, voucherNoDisplay, voucherDateDisplay,
             sortOrder, isDefault,
             isPrimary, isTaxInclude, defaultAccountId, defaultAccountGroupId,
@@ -208,6 +209,7 @@ export class LookupVoucherType {
         } = model;
         this.id = id;
         this.name = name;
+        this.displayText = displayText;
         this.masterType = masterType;
         this.abbreviation = abbreviation;
         this.voucherNoDisplay = voucherNoDisplay;
@@ -283,8 +285,8 @@ export class LookupFrequencyType {
         this.isDefault = (masterType == FREQUENCY_TYPE.FIXED_TIME)
     }
 
-    get isMonthly(){ return this.masterType == 'MONTHLY';}
-    get isFixedTime(){ return this.masterType == 'FIXED_TIME';}
+    get isMonthly(){ return this.masterType == FREQUENCY_TYPE.MONTHLY;}
+    get isFixedTime(){ return this.masterType == FREQUENCY_TYPE.FIXED_TIME;}
 }
 
 export class LookupVoucherStatus {
@@ -301,7 +303,7 @@ export class LookupVoucherStatus {
     }
 }
 
-export class OrgBranch {
+class OrgBranch {
     id: number;
     name: string;
     timeZone: string;
@@ -323,7 +325,7 @@ export class OrgBranch {
         this.cultureCode = cultureCode;
     }
 }
-export class OrgLoginUser {
+class OrgLoginUser {
     id: number;
     orgUserId: string;
     fName: string;
@@ -346,6 +348,29 @@ export class OrgLoginUser {
     }
 }
 
+export class GroupedVoucherType {
+    accounting: Array<LookupVoucherType> = [];
+    inventory: Array<LookupVoucherType> = [];
+    order: Array<LookupVoucherType> = [];
+    acct_inventory: Array<LookupVoucherType> = [];
+    constructor(voucherTypes: Array<any>) {
+        (voucherTypes || []).forEach(current => {
+            if (current.enableInventory && current.enableAccounting) {
+                this.acct_inventory.push(current);
+            }
+            else if (current.enableAccounting) {
+                this.accounting.push(current);
+            }
+            else if (current.enableInventory) {
+                this.inventory.push(current);
+            }
+            else if (!current.enableInventory && !current.enableAccounting) {
+                this.order.push(current);
+            }
+        });
+    }
+}
+
 class VoucherCommonLookup {
     id: any;
     purchaseTypes: Array<PurchaseType>;
@@ -357,9 +382,11 @@ class VoucherCommonLookup {
 
     voucherTypes: Array<LookupVoucherType>;
     voucherSubTypes: any;
-    groupedVoucherTypes: Array<any>;
+    groupedVoucherTypes: GroupedVoucherType;
     voucherTypeDictionary: object;
     voucherProcessStatuses: Array<LookupVoucherStatus> = [];
+
+    taxMappers: Array<any> = [];
     constructor(model: any = <any>{}) {
         const {
             purchaseOrderTypes, purchaseTypes, quotationTypes, saleOrderTypes, saleTypes, voucherTypes, voucherSubTypes, voucherProcessStatuses
@@ -379,21 +406,7 @@ class VoucherCommonLookup {
             return res;
         }, {});
 
-        this.groupedVoucherTypes = this.voucherTypes.reduce((result, current) => {
-            if (current.enableInventory && current.enableAccounting) {
-                result['acct_inventory'].push(current);
-            }
-            else if (current.enableAccounting) {
-                result['accounting'].push(current);
-            }
-            else if (current.enableInventory) {
-                result['inventory'].push(current);
-            }
-            else if (!current.enableInventory && !current.enableAccounting) {
-                result['order'].push(current);
-            }
-            return result;
-        }, <any>{'accounting': [], 'inventory': [], 'order': [], 'acct_inventory': []});
+        this.groupedVoucherTypes = new GroupedVoucherType(this.voucherTypes);
     }
 
     private search = {
@@ -456,9 +469,9 @@ class VoucherCommonLookup {
                 contra: ['Bank Accounts', 'Cash Accounts'],
                 journal: ['All except Bank Accounts and Cash Accounts']
             }
-
         }
     };
+
     getSearchAccounts = (iscredit, voucherMasterType, isItemInvoice: boolean) => {
         let trxn = (iscredit) ? 'forCreditTrxn' : 'forDebitTrxn';
         let type = isItemInvoice ? 'itemWise' : 'ledgerWise';
@@ -490,7 +503,7 @@ class VoucherCommonLookup {
     };
 }
 
-export class AppLookup extends VoucherCommonLookup {
+export class OrgLookup extends VoucherCommonLookup {
     date: Date;
     orgBranch: OrgBranch;
     loginUser: OrgLoginUser;
@@ -536,13 +549,7 @@ export class AppLookup extends VoucherCommonLookup {
     }
 }
 
-
-export class AppLookupSerializer {
-    fromJson(json: any): AppLookup {
-        return new AppLookup(json);
-    }
-
-    toJson(data: any): any {
-        return null;
-    }
+export class OrgLookupSerializer {
+    fromJson(json: any): OrgLookup { return new OrgLookup(json); }
+    toJson(data: any): any { return null; }
 }

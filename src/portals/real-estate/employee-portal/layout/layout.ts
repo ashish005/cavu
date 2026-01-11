@@ -1,11 +1,11 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router, RouterLink, RouterModule} from "@angular/router";
-import {AppPermissionService} from "@app-global";
+import { AppPermissionService, OrgLookupService, OrgLookup } from "@app-global";
 import {GlobalModule} from "@app-global";
 
 @Component({
     templateUrl: './templates/layout.html',
-  standalone: true,
+  standalone: true, styles: [`::ng-deep ng-component{ display: contents;}`],
   imports: [RouterLink, RouterModule, GlobalModule]
 })
 export class MainLayout implements OnInit {
@@ -42,11 +42,12 @@ export class MainLayout implements OnInit {
       },*/
   ]);
 
-  //orgLookup: AppLookup;
+  orgLookup: OrgLookup;
   constructor(public router: Router, public activatedRoute: ActivatedRoute,
               public cdref: ChangeDetectorRef,
-                public permService: AppPermissionService){
-      //this.orgLookup = this.coreService.orgLookup;
+              public permService: AppPermissionService, public lookupService: OrgLookupService){
+      this.orgLookup = this.lookupService.getOrgLookup();
+      debugger
   }
 
   ngOnInit() {
@@ -109,12 +110,10 @@ export class MainLayout implements OnInit {
   }
 
     onActivate(componentRef){}
-
     ngAfterContentChecked() { this.cdref.detectChanges(); }
 
     routeToUrl=(path)=> this.router.navigate([path], {relativeTo: this.activatedRoute});
     // logout = () => this.coreService.logoutAndRedirectToLoginScreen();
-    //
     // getYear = () => new Date().getUTCFullYear();
     // get userName(): string { return this.coreService.currentUser?.userName; }
     // get fullName(): string { return this.coreService.currentUser ? this.coreService.currentUser.fullName : ''; }

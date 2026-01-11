@@ -1,5 +1,6 @@
-import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {Component, Injector, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
+import {OrgLookupService} from "@app-global";
 
 @Component({
   standalone: false,
@@ -12,9 +13,10 @@ export class TrxnLayout implements OnInit, OnDestroy {
     vTypeMapper: any;
 
     asideData: any;
-    constructor(public router: Router, public activatedRoute: ActivatedRoute){
+    constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupService: OrgLookupService){
         const translatePath = '';//this.activatedRoute.snapshot.data.translatePath;
-        //this.vTypeMapper = this.orgLookup.voucherTypeDictionary;
+        this.vTypeMapper = this.lookupService.getVoucherTypeDictionary();
+        debugger
         this.asideData = {
             title: `${translatePath}.title`,
             navList: [

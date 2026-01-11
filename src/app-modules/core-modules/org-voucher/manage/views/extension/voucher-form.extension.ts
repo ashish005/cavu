@@ -4,16 +4,14 @@ import {VoucherForm} from "../../forms";
 import {debounceTime, distinctUntilChanged, pairwise, startWith} from "rxjs";
 import {ClientProject, FinancePluginLookup, LookupVoucherType, SundryType} from "../../domains/finance.lookup";
 import {
-    AppLookup,
-    CalcHelper,
-    CoreService,
+    OrgLookup,
     OrgConfigOptions,
     OrgOptions,
     SchedularDomain,
     StringHelper
 } from "@app-global";
 import {FinanceVoucher, SundryDetail, VoucherItem} from "../../domains/finance-voucher.serializer";
-import {AppSetupService} from "../../../../../../app/global";
+import {AppSetupService, OrgLookupService} from "@app-global";
 
 @Directive()
 export class VoucherCommonFormExtender extends VoucherForm {
@@ -24,7 +22,7 @@ export class VoucherCommonFormExtender extends VoucherForm {
     orgActiveBranch: any;
     orgOption: OrgOptions;
     orgConfig: OrgConfigOptions;
-    public orgLookup: AppLookup;
+    public orgLookup: OrgLookup;
 
     public systemCurrency: any;
 
@@ -33,26 +31,22 @@ export class VoucherCommonFormExtender extends VoucherForm {
     public voucherTypeWithSubItems: any;
 
     get hasNoConversion() { return (this.formCurrencyId.value == this.systemCurrency?.id); }
-
     get isItemInvoice() { return !!(this.formIsItemInvoice.value); }
 
     constructor(public override fb: FormBuilder, public injector: Injector) {
         super(fb);
-
         const appSetupService = injector.get(AppSetupService);
+        const orgLookupService = injector.get(OrgLookupService);
         // this.orgActiveBranch = coreService.getActiveBranch();
-        //
-        const { appSetup } = appSetupService;//orgLookup
 
-        const { getSearchAccounts, getOrgCurrency } = orgLookup;
-
-        const { orgConfig, options } = appSetup;
+        const { orgConfig, options } = appSetupService.appSetup;
         this.orgOption = options;
         this.orgConfig = orgConfig;
 
-        //this.orgLookup = orgLookup;
-
-        //this.systemCurrency = orgLookup.getOrgCurrency(orgConfig.currencyCode);
+        const orgLookup = orgLookupService.getOrgLookup();
+        const { getSearchAccounts, getOrgCurrency, getVoucherTypeByMasterType, getVoucherSubItemsByMasterType, isVendorVoucher } = orgLookup;
+        this.orgLookup = orgLookup;
+        this.systemCurrency = orgLookup.getOrgCurrency(orgConfig.currencyCode);
 
         const isItemInvoiceChange = ([prev, next]: [boolean, boolean]) => {
             if (prev != next) {
@@ -78,9 +72,9 @@ export class VoucherCommonFormExtender extends VoucherForm {
         {
             if(prev != next)
             {
-                this.voucherType = this.orgLookup.getVoucherTypeByMasterType(next);
-                this.voucherTypeWithSubItems = this.orgLookup.getVoucherSubItemsByMasterType(next);
-                this.isVendorVoucher = this.orgLookup.isVendorVoucher(next);
+                this.voucherType = getVoucherTypeByMasterType(next);
+                this.voucherTypeWithSubItems = getVoucherSubItemsByMasterType(next);
+                this.isVendorVoucher = isVendorVoucher(next);
             }
         };
 

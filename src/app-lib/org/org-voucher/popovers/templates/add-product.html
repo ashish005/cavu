@@ -1,0 +1,79 @@
+<a class="text-primary btn btn-xs text-xs _400" [ngbPopover]="content" placement="auto"
+   popoverTitle="Add Product"
+   container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Add Product</a>
+<ng-template #content>
+    <div class="row" [formGroup]="customForm">
+        <div class="col-md-12 text-xs">
+            <div class="d-flex flex">
+                <div class="flex-column">
+                    <div class="row d-flex" formGroupName="variant">
+                        <div class="col-sm-12">
+                            <div class="md-form-group">
+                                <input class="md-input" formControlName="name">
+                                <label> Name </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="md-form-group">
+                                <input class="md-input" formControlName="description">
+                                <label> Description </label>
+                            </div>
+                        </div>
+                        <!--<div class="col-sm-3">
+                            <select-dropdown [items]="apiResolver?.masterType?.unitType"
+                                             title="Unit"
+                                             (cb)="updateUnitType($event)"
+                                             [control]="formUnitTypeId"></select-dropdown>
+                        </div>-->
+                    </div>
+                    <div class="row row-xs text-xs d-flex align-items-stretch">
+                        <div class="col-sm-4" formGroupName="variant">
+                            <label class="md-switch">
+                                <input type="checkbox" checked="checked" formControlName="isFeatured"><i class="theme"></i>
+                                <small>Featured</small>
+                            </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="md-switch">
+                                <input type="checkbox" checked="checked" formControlName="isTaxInclusive"><i class="theme"></i>
+                                <small>Tax Inclusive</small>
+                            </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="md-switch">
+                                <input type="checkbox" checked="checked" formControlName="isFixedPrice"><i class="theme"></i>
+                                <small>Fixed Price</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row row-xs mt-2 d-flex align-items-stretch">
+                        <div class="col-sm-4">
+                            <div class="md-form-group">
+                                <input class="md-input" type="number" formControlName="supplyPrice" [ngClass]="{ 'is-invalid': submitted && f['supplyPrice'].errors }">
+                                <label> Supply Price </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="md-form-group">
+                                <input class="md-input" type="number" formControlName="mrp" [ngClass]="{ 'is-invalid': submitted && f['mrp'].errors }">
+                                <label> MRP </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="md-form-group">
+                                <input class="md-input" formControlName="retailPrice" [ngClass]="{ 'is-invalid': submitted && f['retailPrice'].errors }">
+                                <label> Retail Price </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="popover__controls d-flex justify-content-end">
+                <button class="btn btn-xs btn-success text-xs mx-2" (click)="onSubmit(customForm);p.close()">OK</button>
+                <button class="btn btn-xs btn-danger text-xs" (click)="p.close()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

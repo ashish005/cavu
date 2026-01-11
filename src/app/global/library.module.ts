@@ -26,6 +26,7 @@ import {CoreProcessFactory} from "./pluginFactory";
 import {CdkTableModule} from "@angular/cdk/table";
 import {CdkTreeModule} from "@angular/cdk/tree";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {NgSelectModule} from "@ng-select/ng-select";
 
 const COMMON_MODULE = [CdkTableModule, CdkTreeModule, DragDropModule];
 class LowerCaseUrlSerializer extends DefaultUrlSerializer {
@@ -75,7 +76,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         // RouterModule,
         // FormsModule, ReactiveFormsModule, TranslateModule,
         // ScrollingModule,
-        // NgSelectModule,
+        NgSelectModule,
         NgbModule, NgbPopoverModule, NgbTooltipModule, COMMON_MODULE, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         // AngularEditorModule,
         // ToastaModule,

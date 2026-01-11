@@ -28,10 +28,10 @@ import {ComplianceReportService} from "../services/report.service";
         </div>-->
     </div>
 <ng-template #content>
-    <div class="w w-xxl" [formGroup]="customForm">
-        <div class="flex" style="height: 200px; overflow-y: scroll;">
+    <div class="w-auto" [formGroup]="customForm">
+        <div class="flex">
             <div class="row row-sm">
-                <div class="col-4">
+                <!--<div class="col-4">
                     <div class="md-form-group">
                         <input class="md-input" formControlName="lastDueAmount" [ngClass]="{ 'is-invalid': submitted && f['lastDueAmount'].errors }">
                         <label> Last Due </label>
@@ -43,7 +43,6 @@ import {ComplianceReportService} from "../services/report.service";
                         <label> Sale Amount </label>
                     </div>
                 </div>
-
                 <div class="col-4">
                     <div class="md-form-group">
                         <input class="md-input" formControlName="taxAmount" [ngClass]="{ 'is-invalid': submitted && f['taxAmount'].errors }">
@@ -55,8 +54,8 @@ import {ComplianceReportService} from "../services/report.service";
                         <input class="md-input" formControlName="rebateAmount" [ngClass]="{ 'is-invalid': submitted && f['rebateAmount'].errors }">
                         <label> Rebate </label>
                     </div>
-                </div>
-                <div class="col-6">
+                </div>-->
+                <div class="col-12">
                     <div class="md-form-group">
                         <select class="md-input" formControlName="complianceStatus">
                             <ng-template ngFor let-entity [ngForOf]="statusEnum" let-i="index">
@@ -66,7 +65,7 @@ import {ComplianceReportService} from "../services/report.service";
                         <label>Status</label>
                     </div>
                 </div>
-                <div class="col-6">
+                <!--<div class="col-6">
                     <div class="md-form-group">
                         <input class="md-input" formControlName="netPayableAmount" [ngClass]="{ 'is-invalid': submitted && f['netPayableAmount'].errors }">
                         <label> Payable </label>
@@ -77,7 +76,7 @@ import {ComplianceReportService} from "../services/report.service";
                         <input class="md-input" formControlName="netPaidAmount" [ngClass]="{ 'is-invalid': submitted && f['netPaidAmount'].errors }">
                         <label> Paid </label>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>

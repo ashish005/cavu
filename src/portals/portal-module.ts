@@ -2,7 +2,7 @@ import {RouterModule, ROUTES} from "@angular/router";
 import {NgModule} from "@angular/core";
 import {LogLayout, ProcessLayout, SetupLayout, ComplianceLayout} from "./org-admin/layouts";
 import {CommonModule} from "@angular/common";
-import {AppSetupService, GlobalModule} from "@app-global";
+import {AppSetupService, OrgLookupService, GlobalModule} from "@app-global";
 import {ADMIN_SETUP} from "./org-admin";
 enum ORG_SECTOR {
   SETUP_ORG = "setup_organizations",
@@ -42,7 +42,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
 
     return [
         {
-            path: '', //component: CoreLayout, //canLoad: [ModuleGuard],
+            path: '', resolve: {items: OrgLookupService}, //component: CoreLayout, //canLoad: [ModuleGuard],
             children: [
                 {
                     path: '', //canLoad: [OrgSetupModuleGuard],

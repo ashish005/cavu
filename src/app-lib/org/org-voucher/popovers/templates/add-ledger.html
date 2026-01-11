@@ -1,0 +1,170 @@
+<a class="text-primary btn btn-xs text-xs _400" [ngbPopover]="content" placement="auto"
+   popoverTitle="Add Product"
+   container="body" triggers="manual" [autoClose]="false" #p="ngbPopover" (click)="p.toggle()">Add Account</a>
+<ng-template #content>
+    <form class="d-flex flex" style="width: 500px; height: 400px" [formGroup]="customForm">
+        <div class="flex-column">
+            <div class="row d-flex">
+                <div class="col-sm-6">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="name"
+                               [class]="{ 'is-invalid': submitted && f['name'].errors }">
+                        <label> Name </label>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="md-form-group">
+                        <input class="md-input" formControlName="printName"
+                               [class]="{ 'is-invalid': submitted && f['printName'].errors }">
+                        <label> Print Name </label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-column">
+                <div class="b-b b-primary nav-active-primary">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" data-target="#tab4">Account Group</a></li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" data-target="#tab5">Others</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content d-flex flex-column flex">
+                    <div class="tab-pane animate fadeIn active scroll-y  p-2" style="height: 250px" id="tab4">
+                        <div class="row row-xs d-flex light">
+                            <!--<ng-template ngFor let-row [ngForOf]="service?.accountLookup.groups | sortBy:'asc': 'name'" let-i="index">
+                                <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:row}"></ng-container>
+                            </ng-template>-->
+                        </div>
+                    </div>
+                    <div class="tab-pane animate fadeIn  p-2" id="tab5">
+                        <div class="row row-xs d-flex">
+                            <div class="col-sm-4">
+                                <div class="md-form-group">
+                                    <input class="md-input" type="number" formControlName="balance"
+                                           [ngClass]="{ 'is-invalid': submitted && f['balance'].errors }">
+                                    <label> Balance </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 b-l light">
+                                <div class="d-flex flex pt-2">
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="openingBalance"
+                                               [ngClass]="{ 'is-invalid': submitted && f['openingBalance'].errors }">
+                                        <label> Opening Balance </label>
+                                    </div>
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="date" formControlName="openingBalanceDate"
+                                               [ngClass]="{ 'is-invalid': submitted && f['openingBalanceDate'].errors }">
+                                        <label> Opening Balance Date </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-xs d-flex">
+                            <div class="col-sm-4">
+                                <div class="md-form-group">
+                                    <input class="md-input" type="number" formControlName="creditLimit"
+                                           [ngClass]="{ 'is-invalid': submitted && f['creditLimit'].errors }">
+                                    <label> Credit Limit </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 b-l light">
+                                <div class="d-flex flex pt-2">
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="creditDaysSale"
+                                               [ngClass]="{ 'is-invalid': submitted && f['creditDaysSale'].errors }">
+                                        <label> Sale Credit Days </label>
+                                    </div>
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="creditDaysPurchase"
+                                               [ngClass]="{ 'is-invalid': submitted && f['creditDaysPurchase'].errors }">
+                                        <label> Purchase Credit Days </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-xs pt-2 light d-flex align-items-stretch">
+                            <div class="col-sm-6">
+                                <div class="d-flex flex">
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="currentYearBalance"
+                                               [ngClass]="{ 'is-invalid': submitted && f['currentYearBalance'].errors }">
+                                        <label> Current Year Balance </label>
+                                    </div>
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="previousYearBalance"
+                                               [ngClass]="{ 'is-invalid': submitted && f['previousYearBalance'].errors }">
+                                        <label> Previous Year Balance </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 b-l">
+                                <div class="d-flex flex">
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="currentQtrBalance"
+                                               [ngClass]="{ 'is-invalid': submitted && f['currentQtrBalance'].errors }">
+                                        <label> Current Qtr Balance </label>
+                                    </div>
+                                    <div class="col md-form-group">
+                                        <input class="md-input" type="number" formControlName="previousQtrBalance"
+                                               [ngClass]="{ 'is-invalid': submitted && f['previousQtrBalance'].errors }">
+                                        <label> Previous Qtr Balance </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           <!-- <div id="accordion" class="d-flex flex-column flex">
+                <div class="panel box no-border mb-2">
+                    <div class="box-header p-y-sm">
+                        <span class="float-right badge text-sm">
+                            <label class="md-switch">
+                                <input type="checkbox" checked="checked" formControlName="billByBill"><i
+                                    class="theme"></i>
+                                <small>Bill By Bill</small>
+                            </label>
+                        </span>
+                        <a data-toggle="collapse" data-parent="#accordion" data-target="#c_1" class="collapsed"
+                           aria-expanded="false">Add Account Group</a>
+                    </div>
+                    <div id="c_1" class="in collapse show">
+                        <div class="text-sm scroll-y w w-100 row" style="height: 100px;">
+                            &lt;!&ndash;<div class="float-left mr-2"><span class="text-md w-32 avatar rounded success">A</span></div>&ndash;&gt;
+                            <ng-template ngFor let-row [ngForOf]="service?.accountLookup.groups | sortBy:'asc': 'name'"
+                                         let-i="index">
+                                <ng-container [ngTemplateOutlet]="groupRowTemplate"
+                                              [ngTemplateOutletContext]="{row:row}"></ng-container>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel box no-border mb-2">
+                    <div class="box-header p-y-sm">
+                        <a data-toggle="collapse" data-parent="#accordion" data-target="#c_2" class="collapsed"
+                           aria-expanded="false">Others</a>
+                    </div>
+                    <div id="c_2" class="in collapse">
+
+                    </div>
+                </div>
+            </div>-->
+            <div class="d-flex flex row">
+                <div class="col-md-12 pt-2">
+                    <div class="popover__controls d-flex justify-content-end">
+                        <button class="btn btn-xs btn-success text-xs mx-2" (click)="onSubmit(customForm);p.close()">OK</button>
+                        <button class="btn btn-xs btn-danger text-xs" (click)="p.close()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #groupRowTemplate let-row='row'>
+            <div class="col-sm-4">
+                <label class="ui-check"><input type="radio" name="accountGroupId" formControlName="accountGroupId" [value]="row.id"><i class="theme"></i> {{row?.name}}</label>
+            </div>
+            <ng-template ngFor let-childRow [ngForOf]="row?.children" let-j="index">
+                <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:childRow}"></ng-container>
+            </ng-template>
+        </ng-template>
+    </form>
+</ng-template>

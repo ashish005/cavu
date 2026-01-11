@@ -1,0 +1,22 @@
+<div class="no-radius pos-rlt">
+  <form class="flex" [formGroup]="customForm">
+    <div class="input-group">
+      <div class="columns columns-left btn-group">
+        <div class="keep-open btn-group" title="Columns">
+          <date-time-picker #dateForm (cb)="dateChangeCb($event)"></date-time-picker>
+        </div>
+      </div>
+      <div>
+        <input class="form-control form-control-sm search" autofocus (mouseover)="accountFocus=true" type="text" placeholder="Enter Particular Name"  [formControl]="accountSearch" autocomplete="on">
+        <div class="search-results" [hidden]="!accountFocus">
+        <div class="search-result" *ngFor="let item of particular$" style="position: absolute; transform: translate3d(0px, 34px, 0px); top: 0px; will-change: transform;width: 100%;">
+          <a (click)="applySelect(item)">
+            <span>{{item?.name }}</span><small class="float-right text-sm text-muted">{{item?.accountGroupName}}</small>
+          </a>
+          <small class="text-muted text-ellipsis">{{item?.balance }}</small>
+        </div>
+      </div>
+      </div>
+    </div>
+  </form>
+</div>

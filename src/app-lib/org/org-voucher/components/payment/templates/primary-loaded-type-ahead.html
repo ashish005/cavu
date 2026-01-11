@@ -1,0 +1,9 @@
+<div class="md-form-group p-0" [formGroup]="customForm">
+    <div formGroupName="trxn">
+        <select class="md-input text-xs" formControlName="gatewayMapperId">
+            <option *ngFor="let entity of modes;" [value]="entity.id">
+                <i class="fa fa-dot-circle-o text-warn"></i> {{entity.name}}
+            </option>
+        </select>
+    </div>
+</div>

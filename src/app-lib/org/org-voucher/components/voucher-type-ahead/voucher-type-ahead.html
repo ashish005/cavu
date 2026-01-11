@@ -1,0 +1,24 @@
+<ng-select [items]="items$ | async" autofocus
+           [bindLabel]="bindLabel" [bindValue]="bindValue"
+           [disabled]="disabled"
+           [trackByFn]="trackByFn" [minTermLength]="minLengthTerm"
+           [loading]="loading" [multiple]="multiple"
+           [typeahead]="input$" typeToSearchText="Please enter {{minLengthTerm}} or more characters"
+            [closeOnSelect]="true"    [placeholder]="controlTitle"
+           [(ngModel)]="controlId" (change)="onChange($event)">
+    <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+        <div>
+            <!--<span class="w-40 avatar circle cyan"><i class="on b-white avatar-right"></i> </span>-->
+            <div class="list-body py-2">
+                <div class="text-xs item-title _600  text-muted" style="line-height: 1.5em;">{{item.name}}</div>
+                <div class="item-except text-xs" style="line-height: 1em;">
+                    <span><a class="text-primary _400 pr-2">Company</a> <small class="_600 text-muted">{{item.companyName}}</small></span>
+                </div>
+                <div class="item-except text-xs" style="line-height: 1em;">
+                    <span><a class="text-primary _400 pr-2">Address</a><small class="_600 text-muted">{{item.address}}</small></span>
+                    <span class="float-right"><a class="text-primary _400 pr-2">Pin</a> <small class="_600 text-muted">{{item.pincode}}</small></span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</ng-select>

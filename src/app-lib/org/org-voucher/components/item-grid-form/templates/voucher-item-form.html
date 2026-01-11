@@ -1,0 +1,105 @@
+<ng-container [formGroup]="customForm">
+    <td>
+        <div *ngIf="formId.value">
+            <a class="item-title _500">
+                {{formName?.value}}
+                <small class="float-right text-sm text-muted"></small>
+            </a>
+            <div class="item-except text-xs h-1x">
+                <small>{{formDesc?.value}}</small>
+            </div>
+        </div>
+        <div class="md-form-group p-0">
+            <input id="search" placeholder="Type some text" type="text" class="md-input text-sm title _500"
+                   autofocus (keyup)="particularFocus=true"
+                   placeholder="Enter Particular Name" [formControl]="particularsSearch" autocomplete="off">
+            <small class="parsley-required" style="color: #f95b5b;"></small>
+            <!--<div class="h-1x" *ngIf="isItemInvoice">
+                <a class="text-xs _500" *ngIf="this.formTaxCode?.value">HSN {{ this.formTaxCode?.value }} - Tax:{{ this.formTax?.value }}%</a>
+                <a class="text-xs px-2 _500" style="font-size: .6rem">
+                    <span>MRP <small>{{this.formForeignMrpPrice?.value }}</small></span>
+                    <span class="pl-1">Price <small>{{this.formForeignPrice?.value }}</small></span>
+                    <div class="float-right" *ngIf="isNew">
+                        <add-product (cb)="newProduct($event)" *ngIf="isItemInvoice">New Product/ Service</add-product>
+                        <add-ledger (cb)="newAccount($event)" *ngIf="!isItemInvoice">New Ledger</add-ledger>
+                    </div>
+                </a>
+                <div class="float-right" *ngIf="isNew">
+                    <add-product (cb)="newProduct($event)" *ngIf="isItemInvoice">New Product/ Service</add-product>
+                    <add-ledger (cb)="newAccount($event)" *ngIf="!isItemInvoice">New Ledger</add-ledger>
+                </div>
+            </div>-->
+        </div>
+        <!--<div class="scroll-y" style="width: 100%; height: 300px;left: 0; z-index: 1001;">-->
+        <ul class="drop list inset" *ngIf="particularFocus" style="max-height: 250px; margin: 0px 10px 0px 0px; position: absolute; width: 80%; z-index: 9; overflow-y: auto;" [hidden]="!particularFocus">
+            <li class="match list-item" *ngIf="isNew">
+                <div class="list-body">
+                    <a class="item-title _500">{{particularsSearch?.value }}
+                        <div class="float-right" *ngIf="isNew">
+                            <add-product (cb)="newProduct($event)">New Product/ Service</add-product>
+                        </div>
+                    </a>
+                </div>
+            </li>
+            <li class="match list-item" *ngFor="let item of particular$" (click)="applySelect(item)">
+                <div class="list-body">
+                    <div class="item-except text-xs h-1x">
+                        <a class="item-title _500">{{item?.name }} {{item?.code }}
+                            <small class="float-right text-sm text-muted">{{item?.accountGroupName}}</small>
+<!--                            <span class="float-right text-primary" *ngIf="item.taxDetails">HSN {{ item.taxDetails?.taxCode }} : {{ item.taxDetails?.taxRate }}%</span>-->
+                        </a>
+                        <small>{{item?.description }}</small>
+                    </div>
+                    <!--<div class="item-except text-xs" style="font-size: .6rem">
+                        <span>MRP <small>{{item.productPrice?.mrp }}</small></span>
+                        <span *ngIf="voucherMasterType == 'purchase' || voucherMasterType == 'sale'" class="px-1">Price
+                        <small *ngIf="voucherMasterType == 'purchase'">{{item.productPrice?.supplyPrice}}</small>
+                        <small *ngIf="voucherMasterType == 'sale'">{{item.productPrice?.retailPrice}}</small>
+                    </span>
+                        <span class="px-1">BarCode : {{item.productPrice?.barCode}}</span>
+                        <span class="px-1">SKU : {{item.productPrice?.sKU}}</span>
+                        <span *ngIf="item.productPrice?.isDefaultLoyalty" class="badge yellow mx-1">Loyalty</span>
+                        <span *ngIf="item.productPrice?.isTaxInclusive" class="badge green">Tax Inclusive</span>
+                    </div>-->
+                </div>
+            </li>
+        </ul>
+        <!--<textarea class="form-control p-1" formControlName="remark"></textarea>-->
+    </td>
+    <td colspan="2" formGroupName="product">
+        <div class="input-group">
+            <input type="text" class="text-right form-control p-1" formControlName="price" placeholder="XX.XX" appTwoDigitDecimaNumber (focusout)="onPriceFocusOutEvent($event)">
+            <div class="input-group-append">
+                <i class="fa fa-close text-muted p-1"></i>
+                <input class="text-right form-control p-1" style="width:60px" formControlName="quantity">
+                <add-taxes [customForm]="customForm"
+                           [currencyRate]="currencyRate"
+                           [currencyCode]="currencyCode"
+                           [systemCurrencyCode]="systemCurrencyCode"
+                           (cb)="updateTaxes($event)"></add-taxes>
+            </div>
+        </div>
+        <div *ngIf="formProductDiscountRate.value">
+            <div class="float-right">
+                <small class="pr-2">Discount: </small>
+                <small class="text-xs">{{formProductDiscount.value | voucherCurrency: currencyCode }} ({{ formProductDiscountRate.value }})%</small>
+            </div>
+        </div>
+    </td>
+    <td>
+        <div class="text-right" style="height: 20px; background-color: transparent">{{formProductTaxAmount.value | voucherCurrency: currencyCode }}</div>
+        <a class="text-xs _500 float-right" *ngIf="formProductTaxRate.value">Tax : {{ formProductTaxRate.value }}%</a>
+    </td>
+    <td>
+        <div class="text-right" style="height: 20px; background-color: transparent">{{formProductSubTotal?.value | voucherCurrency: systemCurrencyCode }}</div>
+        <!--<input formControlName="netAmount" class="text-right form-control p-1" [ngClass]="{ 'is-invalid': f.netAmount.errors }">-->
+        <div *ngIf="f_product['subTotal'].errors['max']">Max {{f_product['subTotal'].errors['max'].max }} allowed!</div>
+        <div *ngIf="f_product['subTotal'].errors['min']">Min {{f_product['subTotal'].errors['min'].min }} allowed!</div>
+    </td>
+    <td>
+        <div class="text-right" style="height: 20px; background-color: transparent">{{formProductForeignSubTotal?.value | voucherCurrency: currencyCode }}</div>
+        <!--<input formControlName="netAmount" class="text-right form-control p-1" [ngClass]="{ 'is-invalid': f.netAmount.errors }">-->
+        <div *ngIf="f_product['foreignSubTotal'].errors['max']">Max {{f_product['foreignSubTotal'].errors['max'].max }} allowed!</div>
+        <div *ngIf="f_product['foreignSubTotal'].errors['min']">Min {{f_product['foreignSubTotal'].errors['min'].min }} allowed!</div>
+    </td>
+</ng-container>

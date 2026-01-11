@@ -1,0 +1,74 @@
+<div class="d-flex flex" role="main">
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap white lt box-shadow d-print-none">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                           data-pjax-state="">
+                            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                        </a>
+                        <span class="text-md text-ellipsis flex">Invoice </span>
+                        <ul class="nav nav-xs flex-row no-border">
+                            <li class="px-1">
+                                <button class="btn btn-xs b-theme theme float-right" (click)="printPage()">Print</button>
+                            </li>
+                            <li class="px-1">
+                                <button class="btn btn-xs b-theme theme float-right" (click)="downloadPdf()">Download PDF</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="scrollable hover box-shadow box bg-transparent">
+                        <invoice-html-print #docPrint></invoice-html-print>
+                        <loader [isLoading]="docPrint?.isLoading"></loader>
+                    </div>
+                    <!--
+                    <div #pdf [innerHTML]="massTimingsHtml" class="scrollable hover box-shadow apply-padding"></div>
+                    <embed #pdf src="" WMODE="transparent"
+                           frameBorder="0"
+                           scrolling="auto"
+                           class="scrollable hover box-shadow p-3" height="100%" width="100%"/>-->
+                    <!--<embed #pdf src="" WMODE="transparent"
+                           type="application/pdf"
+                           frameBorder="0"
+                           scrolling="auto"
+                           class="scrollable hover box-shadow p-3" height="100%" width="100%"/>-->
+                </div>
+            </div>
+            <div class="fade aside aside-sm d-print-none" id="content-aside" *ngIf="showPrintOptions">
+                <div class="d-flex flex-column w-xl b-r modal-dialog d-print-none">
+                    <div class="navbar box-shadow">
+                        <div class="input-group flex">
+                            <input type="text" class="form-control px-0 no-bg no-border no-shadow search"
+                                   placeholder="Search" required="">
+                            <span class="input-group-btn">
+                                <button class="btn no-bg no-border no-shadow" type="button"><i
+                                        class="fa fa-search text-muted"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="scrollable hover">
+                        <div class="list animate fadeIn">
+                            <div class="p-2 px-3 text-muted text-sm">Templates</div>
+                            <ng-template ngFor let-row [ngForOf]="pdfOptionsList" let-i="index">
+                                <div class="list-item py-1" (click)="changeInvoice(row)">
+                                    <div class="list-body">
+                                        <a class="nav-text _500 py-1">{{row.name}}</a>
+                                    </div>
+                                    <div>
+                                        <small *ngIf="activeInvoice?.key == row.key">Default</small>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="no-result hide">
+                            <div class="p-4 text-center">No Results</div>
+                        </div>
+                        <loader [isLoading]="isLoading"></loader>
+                    </div>
+                    <div class="p-3 mt-auto"><span class="text-sm text-muted">Templates: </span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -53,14 +53,13 @@
 </div>
 <ng-template #navbarRightTemplate>
     <li class="nav-item dropdown d-flex align-items-center px-2">
-        <button class="btn btn-xs btn-outline theme dropdown-toggle"
-                data-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-xs btn-outline theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <i class="fa fa-fw fa-plus"></i>
-            <span class="hidden-folded d-inline">{{'layout.new_voucher'}}</span>
+            <span class="hidden-folded d-inline">Voucher</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-            <!--<li class="dropdown-item"
-                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes?.accounting; let i = index;">
+            <li class="dropdown-item"
+                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes.accounting; let i = index;">
                 <i *ngIf="voucherType.enableAccounting" class="fa fa-dot-circle-o text-success"></i>
                 <i *ngIf="voucherType.enableInventory" class="fa fa-dot-circle-o text-warning"></i>
                 <i *ngIf="!voucherType.enableAccounting && !voucherType.enableInventory"
@@ -68,7 +67,7 @@
                 <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}</a>
             </li>
             <li class="dropdown-item"
-                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes?.inventory; let i = index;">
+                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes.inventory; let i = index;">
                 <i *ngIf="voucherType.enableAccounting" class="fa fa-dot-circle-o text-success"></i>
                 <i *ngIf="voucherType.enableInventory" class="fa fa-dot-circle-o text-warning"></i>
                 <i *ngIf="!voucherType.enableAccounting && !voucherType.enableInventory"
@@ -76,7 +75,7 @@
                 <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}</a>
             </li>
             <li class="dropdown-item"
-                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes?.acct_inventory; let i = index;">
+                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes.acct_inventory; let i = index;">
                 <i *ngIf="voucherType.enableAccounting" class="fa fa-dot-circle-o text-success"></i>
                 <i *ngIf="voucherType.enableInventory" class="fa fa-dot-circle-o text-warning"></i>
                 <i *ngIf="!voucherType.enableAccounting && !voucherType.enableInventory"
@@ -84,7 +83,7 @@
                 <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}</a>
             </li>
             <li class="dropdown-item"
-                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes?.order; let i = index;">
+                *ngFor="let voucherType of orgLookup?.groupedVoucherTypes.order; let i = index;">
                 <i *ngIf="voucherType.enableAccounting" class="fa fa-dot-circle-o text-success"></i>
                 <i *ngIf="voucherType.enableInventory" class="fa fa-dot-circle-o text-warning"></i>
                 <i *ngIf="!voucherType.enableAccounting && !voucherType.enableInventory"
@@ -92,8 +91,8 @@
                 <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}
                 </a>
             </li>
-            <li class="dropdown-item"
-                *ngFor="let voucherType of orgLookup?.voucherTypes; let i = index;">
+            <!--<li class="dropdown-item"
+                *ngFor="let voucherType of orgLookup.voucherTypes; let i = index;">
                 <i *ngIf="voucherType.enableAccounting" class="fa fa-dot-circle-o text-success"></i>
                 <i *ngIf="voucherType.enableInventory" class="fa fa-dot-circle-o text-warning"></i>
                 <i *ngIf="!voucherType.enableAccounting && !voucherType.enableInventory" class="fa fa-dot-circle-o text-danger"></i>

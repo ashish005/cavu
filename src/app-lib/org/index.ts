@@ -1,0 +1,1 @@
+export {CoreVoucherCEModule} from "./org-voucher";

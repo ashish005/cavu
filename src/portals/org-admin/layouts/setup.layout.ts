@@ -25,7 +25,6 @@ export class SetupLayout {
             isFLatChildren: true, key: 'Regulations Tracker',
             children:[
                 { routeTo: ['tax-management'], icon:"fa fa-money", key: 'Tax management' },
-                { routeTo: ['compliance'], icon:"fa fa-check-square-o", key: 'Compliance Setup' },
                 { routeTo: ['payroll'], icon:"fa fa-check-square-o", key: 'Payroll' }
             ]
         },

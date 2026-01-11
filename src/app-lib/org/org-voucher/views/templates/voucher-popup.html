@@ -1,0 +1,66 @@
+<ng-template #popupOptionsTemplate>
+    <div class="container p-0">
+        <!--<ng-container *ngTemplateOutlet="orgHeader"></ng-container>-->
+        <div class="flex d-flex flex-row">
+            <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <div class="text-md text-ellipsis flex">
+                <div class="no-shadow"><h6 class="mb-0">{{ voucherType?.name }}</h6></div>
+            </div>
+            <!--<div class="nav-active-border b-primary b-theme bottom">
+                <ul class="nav nav-pills nav-xs nav-rounded flex-row">
+                    <li class="nav-item" (click)="onTabChange(tabs.ce)">
+                        <a class="nav-link" [class.active]="tabs.ce == activeTab">Edit Invoice</a></li>
+                    <li class="nav-item" (click)="onTabChange(tabs.review)">
+                        <a class="nav-link" [class.active]="tabs.review == activeTab">Preview & Print</a></li>
+                    <li class="nav-item" (click)="onTabChange(tabs.notify)">
+                        <a class="nav-link" [class.active]="tabs.notify == activeTab">Notify invoice</a></li>
+                    <li class="nav-item" (click)="onTabChange(tabs.history)">
+                        <a class="nav-link" [class.active]="tabs.history == activeTab">Notification History</a></li>
+                    &lt;!&ndash;<li class="nav-item" (click)="onTabChange(tabs.steps)"><a class="nav-link" [class.active]="tabs.steps == activeTab"> Next Steps...</a></li>&ndash;&gt;
+                </ul>
+            </div>-->
+        </div>
+    </div>
+</ng-template>
+
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex" role="main" *ngIf="tabs.ce == activeTab">
+        <voucher-ce #voucher (onOk)="callback($event)"></voucher-ce>
+    </div>
+    <div class="d-flex flex" role="main" *ngIf="tabs.review == activeTab">
+        <!--<invoice-print #docPrint></invoice-print>-->
+        <!--<div class="content-main d-flex flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex">
+                    <div class="d-flex flex-column flex">
+                        <div class="navbar flex-nowrap white lt box-shadow d-print-none">
+                            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
+                               data-pjax-state="">
+                                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                            </a>
+                            <span class="text-md text-ellipsis flex">Templates</span>
+                            <ul class="nav nav-xs flex-row no-border">
+                                <li>
+                                    <button class="btn btn-xs b-theme theme float-right" onclick="window.print();">
+                                        Print
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="scrollable hover box-shadow p-3">
+                            <invoice-html-print #docPrint></invoice-html-print>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </div>
+    <!--<div class="d-flex flex p-0" *ngIf="tabs.notify == activeTab">
+        <invoice-notification-manage [viewType]="tabs.notify" [data]="notificationInput"></invoice-notification-manage>
+    </div>
+    <div class="d-flex flex p-0" *ngIf="tabs.history == activeTab">
+        <invoice-history [voucherId]="voucherId"></invoice-history>
+    </div>-->
+</div>

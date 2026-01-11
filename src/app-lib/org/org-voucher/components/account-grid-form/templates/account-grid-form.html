@@ -1,0 +1,43 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex" [formGroup]="customForm">
+        <div class="page-section">
+            <table class="no-more-tables p-0 table table-striped table-condensed cf">
+                <thead class="cf">
+                    <tr>
+                        <th>Description</th>
+                        <th width="150px" class="text-right"> Amount ({{formSystemCurrencyCode.value}})</th>
+                        <th width="150px" class="text-right"> Amount ({{formCurrencyCode.value}}) </th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="items">
+                <ng-template ngFor let-item [ngForOf]="formItems.controls" let-i="index">
+                    <tr account-item-form
+                        [customForm]="item"
+                        [voucherMasterType]="formVoucherMasterType.value"
+                        [currencyCode]="formCurrencyCode.value"
+                        [systemCurrencyCode]="formSystemCurrencyCode.value"
+                        (cb)="voucherItemCb($event)"></tr>
+                    <tr [formGroup]="item">
+                        <td><textarea class="form-control p-1" formControlName="remark"></textarea></td>
+                        <td colspan="2"></td>
+                    </tr>
+                </ng-template>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button class="btn btn-xs" (click)="addVoucherItem()"><i class="fa fa-plus"></i></button>
+                            <div class="float-right"> Subtotal</div>
+                        </td>
+                        <td class="text-right">
+                            {{formTrxn.value.amount | voucherCurrency: formSystemCurrencyCode.value}}
+                        </td>
+                        <td class="text-right">
+                            {{formForeign.value.amount | voucherCurrency: formCurrencyCode.value}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

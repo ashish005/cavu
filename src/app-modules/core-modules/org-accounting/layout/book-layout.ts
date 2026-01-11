@@ -35,9 +35,9 @@ export class BookLayout extends LayoutExtension implements OnInit {
                     { routeTo: ['account-book'], icon:"", code:"FIN_ACC_BOOK", name: "Ledger" },
                     { routeTo: ['cash-book'], icon:"", code:"FIN_CASH_BOOK", name: "Cash Book" },
                     { routeTo: ['bank-ledger'], icon:"", code: "FIN_BNK_LEDGER", name: "Bank Ledger" },
-                    { routeTo: ['purchase-book'], icon:"", code:"FIN_ACC_BOOK", name: "Purchase Register" },
-                    { routeTo: ['sale-book'], icon:"", code:"FIN_ACC_BOOK", name: "Sale Register" },
-                    { routeTo: ['journal-book'], icon:"", code:"FIN_ACC_BOOK", name: "Journal Register" }
+                    // { routeTo: ['purchase-book'], icon:"", code:"FIN_ACC_BOOK", name: "Purchase Register" },
+                    // { routeTo: ['sale-book'], icon:"", code:"FIN_ACC_BOOK", name: "Sale Register" },
+                    // { routeTo: ['journal-book'], icon:"", code:"FIN_ACC_BOOK", name: "Journal Register" }
                 ]
             }
         ]
