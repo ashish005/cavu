@@ -91,7 +91,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     addRule(rule: any, stepIndex: number): void {
-        debugger
+
         rule = rule || {};
 
         const fg = this.fb.group({
@@ -151,7 +151,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        debugger
+
         this.customForm.patchValue(this.data);
     }
 

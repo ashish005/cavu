@@ -221,11 +221,7 @@ export class AuthService {
   public get idToken() { return this.oauthService.getIdToken(); }
   public get logoutUrl() { return this.oauthService.logoutUrl; }
 
-  get email(): string {
-    return (this.identityClaims as any)['email'] || '-';
-  }
-
-  get username(): string {
-    return (this.identityClaims as any)['preferred_username'] || '--';
-  }
+  get userId(): string { return (this.identityClaims as any)['sub'] || '-'; }
+  get email(): string { return (this.identityClaims as any)['email'] || '-'; }
+  get username(): string { return (this.identityClaims as any)['preferred_username'] || '--'; }
 }

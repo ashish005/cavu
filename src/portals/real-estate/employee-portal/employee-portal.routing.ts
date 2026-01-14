@@ -1,13 +1,14 @@
 import {Routes} from '@angular/router';
 import {DashboardView} from "./views/dashboard/dashboard";
 import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
-import {DashboardAPIResolver} from "@app-global";
+import {AppPermissionService, DashboardAPIResolver} from "@app-global";
 import {MainLayout} from "./layout/layout";
 import {ADMIN_SETUP} from "../../org-admin";
 
 export const EMPLOYEE_Routes: Routes = [
   {
     path: '', data: { title: 'Home', header:'Home' },
+    resolve: {permissions: AppPermissionService},
     component: MainLayout,
     children: [
       { path: '', pathMatch: 'full', redirectTo:'dashboard' },

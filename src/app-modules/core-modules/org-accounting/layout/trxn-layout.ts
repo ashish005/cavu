@@ -16,7 +16,7 @@ export class TrxnLayout implements OnInit, OnDestroy {
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public lookupService: OrgLookupService){
         const translatePath = '';//this.activatedRoute.snapshot.data.translatePath;
         this.vTypeMapper = this.lookupService.getVoucherTypeDictionary();
-        debugger
+
         this.asideData = {
             title: `${translatePath}.title`,
             navList: [

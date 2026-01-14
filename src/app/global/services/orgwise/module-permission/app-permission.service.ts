@@ -2,9 +2,10 @@ import {Injectable, Injector} from '@angular/core';
 import {CoreEndpointBase} from "../../endpoint-base.service";
 import {catchError, map, BehaviorSubject, Observable, forkJoin } from "rxjs";
 import {ModulePermission} from "./module-permission.model";
+import {Resolve} from "@angular/router";
 
 @Injectable({providedIn: 'root'})
-export class AppPermissionService extends CoreEndpointBase
+export class AppPermissionService extends CoreEndpointBase implements Resolve<any>
 {
   private onPermissionChanged: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   public permissionChanged$ = this.onPermissionChanged.asObservable();
@@ -14,21 +15,21 @@ export class AppPermissionService extends CoreEndpointBase
 
     constructor(override injector: Injector) { super(injector); }
 
-    resolveAppPermissions() {
+    resolve() {
         return new Promise<any>((resolve, reject) => {
             const success = (results) => { return resolve(true); };
             const failure = (err: any) => { return reject(false); };
 
+            const userId = super.getUserId();
             const setup = forkJoin(
-                //this.fetchOrgLookup(),
-                this.getPermissions(null)//(this.authService.userId)
+                this.getPermissions(userId)
             );
             return this.performRouteResolver({name: 'App Permission' }, setup, success, failure);
         });
     }
 
-    public getPermissions = (orgUserId) => this.httpClient
-        .get(`${this.baseAPIUrl}userPermission/perm-check/${orgUserId}`, this.requestHeaders)
+    public getPermissions = (orgUserId: string) => this.httpClient
+        .get(`${this.baseAPIUrl}/userPermission/perm-check/${orgUserId}`, this.requestHeaders)
         .pipe(
             map((resp: any) => { this.setupModulePermission(resp?.entities); return resp; }),
             catchError(error => super.handleError(error, () => this.getPermissions(orgUserId)))

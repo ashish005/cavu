@@ -1,10 +1,11 @@
 import {Routes} from '@angular/router';
 import {Layout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard/dashboard";
+import {AppPermissionService} from "@app-global";
 
 export const EDU_EMPLOYEE_Routes: Routes = [
     {
-        path: '',
+        path: '', resolve: {permissions: AppPermissionService},
         component: Layout, data: { code: '', title: 'Fee Type', icon: 'fa fa-dashboard', header: 'Fee Type' },
         children: [
             { path: '', pathMatch: 'full', redirectTo:'dashboard' },

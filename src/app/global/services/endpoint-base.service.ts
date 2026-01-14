@@ -36,6 +36,8 @@ export class CoreEndpointBase {
         this.loaderService = injector.get(LoaderService);
     }
 
+    public getUserId(): string { return this.authService.userId; }
+
   /**
    * Common route resolver helper
    * Handles loader, error, cancellation, and redirect logic.

@@ -13,16 +13,16 @@ export class MainLayout implements OnInit {
       {
           isFLatChildren: true, key: 'mainLayout.heading.main',
           children:[
-              { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'mainLayout.dashboard' },
+              { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
               /*{ routeTo: ['invoices'], icon:"fa fa-dashboard", name: "Invoices" },
               { routeTo: ['payments'], icon:"fa fa-dashboard", name: "Payments" },
               { routeTo: ['expenses'], icon:"fa fa-dashboard", name: "Expenses" },
               { routeTo: ['estimates'], icon:"fa fa-dashboard", name: "Estimates" },
               { routeTo: ['time-tracking'], icon:"fa fa-dashboard", name: "Time Tracking" },*/
               //{ routeTo: ['project'], icon:"fa fa-dashboard", name: "Projects" },
-              { routeTo: ['project'], icon:"fa fa-bell", code: "PERM_PROJECT", key: 'mainLayout.project' },
-              { routeTo: ['product'], icon:"fa fa-dashboard", code: "PERM_INVENTORY", key: 'mainLayout.svc_product' },
-              { routeTo: ['client/quotation'], icon:"fa fa-bell", name: "Quotation", key: 'mainLayout.quote' }
+              { routeTo: ['project'], icon:"fa fa-bell", code: "PERM_PROJECT", key: 'project' },
+              { routeTo: ['product'], icon:"fa fa-dashboard", code: "PERM_INVENTORY", key: 'svc_product' },
+              { routeTo: ['client/quotation'], icon:"fa fa-bell", name: "Quotation", key: 'quote' }
           ]
       },
       {
@@ -47,7 +47,6 @@ export class MainLayout implements OnInit {
               public cdref: ChangeDetectorRef,
               public permService: AppPermissionService, public lookupService: OrgLookupService){
       this.orgLookup = this.lookupService.getOrgLookup();
-      debugger
   }
 
   ngOnInit() {
