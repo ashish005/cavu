@@ -10,6 +10,8 @@ export class WorkflowService extends CoreEndpointBase {
     // Process + phases
     getAllProcess = (): Observable<any>=> this.httpClient.get<any>(`${super.baseSectorAPIUrl}/orgWorkflow/all`);
     getPhases = (processId: number): Observable<any> => this.httpClient.get(`${super.baseSectorAPIUrl}/orgWorkflow/${processId}/phases`);
+    createPhase = (processId: number, data: any): Observable<any> => this.httpClient.post(`${super.baseSectorAPIUrl}/orgWorkflow/${processId}/phases`, data);
+    updatePhase = (processId: number, phaseId: number, data: any): Observable<any> => this.httpClient.put(`${super.baseSectorAPIUrl}/orgWorkflow/${processId}/phases/${phaseId}`, data);
 
     // transitions
     getTransitions(processId: number) {

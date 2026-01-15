@@ -62,9 +62,8 @@ export class TransitionEditorComponent {
 
     constructor(private fb: FormBuilder) {}
 
-    get rules(): FormArray<FormGroup> {
-        return this.customForm.get('rules') as FormArray<FormGroup>;
-    }
+    get rules(): FormArray<FormGroup> { return this.customForm.get('rules') as FormArray<FormGroup>; }
+
     addRule(rule?: any): void {
         const fg = this.fb.group({
             propertyName: [rule?.propertyName, Validators.required],
@@ -72,13 +71,10 @@ export class TransitionEditorComponent {
             value: [rule?.value],
             isActive: [rule?.isActive ?? true]
         });
-
         this.rules.push(fg);
     }
 
-    removeRule(index: number): void {
-        this.rules.removeAt(index);
-    }
+    removeRule(index: number): void { this.rules.removeAt(index); }
 
     buildConditionExpression(): string {
         const join = this.customForm.get('ruleJoinType')?.value || 'AND';
@@ -89,11 +85,7 @@ export class TransitionEditorComponent {
             .join(` ${join} `);
     }
 
-    getPropertyType(prop: string): string {
-        return this.ruleProperties.find(p => p.name === prop)?.type || 'string';
-    }
+    getPropertyType(prop: string): string { return this.ruleProperties.find(p => p.name === prop)?.type || 'string'; }
 
-    getOperators(prop: string) {
-        return this.operatorsByType[this.getPropertyType(prop)];
-    }
+    getOperators(prop: string) { return this.operatorsByType[this.getPropertyType(prop)]; }
 }
