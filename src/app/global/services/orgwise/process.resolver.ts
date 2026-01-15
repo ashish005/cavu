@@ -114,7 +114,7 @@ class WorkflowPluginLookupSerializer {
 @Injectable({ providedIn: 'root' })
 export class OrgWorkflowAPIResolver extends OrgResourceService<WorkflowPluginLookup> implements Resolve<any>{
     masterType: WorkflowPluginLookup;
-    constructor(public override injector: Injector) { super(injector, `pipelineLookup/workflow`, new WorkflowPluginLookupSerializer()); }
+    constructor(public override injector: Injector) { super(injector, `orgWorkflowLookup`, new WorkflowPluginLookupSerializer()); }
     resolve(route: ActivatedRouteSnapshot) { return this.lookupResolver(route.data); }
     lookupResolver(route) {
         return new Promise((resolve, reject) => {

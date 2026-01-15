@@ -8,9 +8,8 @@ export class WorkflowService extends CoreEndpointBase {
     constructor(override injector: Injector) { super(injector); }
 
     // Process + phases
-    getAllProcess = (): Observable<any>=> this.httpClient.get<any>(`${super.baseSectorAPIUrl}/process/all`);
-
-    getPhases = (processId: number): Observable<any> => this.httpClient.get(`${super.baseSectorAPIUrl}/process/${processId}/phases`);
+    getAllProcess = (): Observable<any>=> this.httpClient.get<any>(`${super.baseSectorAPIUrl}/orgWorkflow/all`);
+    getPhases = (processId: number): Observable<any> => this.httpClient.get(`${super.baseSectorAPIUrl}/orgWorkflow/${processId}/phases`);
 
     // transitions
     getTransitions(processId: number) {

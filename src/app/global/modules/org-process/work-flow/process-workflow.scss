@@ -57,8 +57,6 @@ process-tree {
 
 /* Phase List */
 phase-list {
-  width: 220px;
-  min-width: 200px;
   background-color: #fcfcfd;
 }
 
@@ -161,7 +159,7 @@ workflow-canvas {
 }
 
 .phase-list-panel {
-  width: 220px;
+  //width: 220px;
 }
 
 .editor-panel {

@@ -13,17 +13,22 @@ import {TransitionEditorComponent} from "./work-flow/components/transition-edito
 import {WorkflowCanvasComponent} from "./work-flow/components/workflow-canvas/workflow-canvas.component";
 import {SortByPipe} from "../../pipes/sort-by.pipe";
 import {NgxGraphModule} from "@swimlane/ngx-graph";
+import {RouterLink, RouterLinkActive} from "@angular/router";
+import {PaginationComponent} from "../../components/responsive-table/pagination/pagination";
+import {TableComponent} from "../../components/responsive-table/table.component";
+import {PhaseStepTaskComponent} from "./work-flow/components/phase-step-task/phase-step-task.component";
 
 @NgModule({
     declarations: [
         ProcessWorkflowView,
-        ProcessTreeComponent, PhaseListComponent, PhaseEditorComponent, TransitionEditorComponent,
+        ProcessTreeComponent, PhaseListComponent, PhaseStepTaskComponent,
+        PhaseEditorComponent, TransitionEditorComponent,
         WorkflowCanvasComponent,
         FilterTransitionsByFromPipe, FindPhaseStatusesPipe
     ],
     imports: [
         CommonModule, FormsModule, ReactiveFormsModule,
-        CdkTreeModule, ScrollingModule, DragDropModule, SortByPipe, NgxGraphModule
+        CdkTreeModule, ScrollingModule, DragDropModule, SortByPipe, NgxGraphModule, RouterLink, RouterLinkActive, PaginationComponent, TableComponent
     ],
     exports: [ProcessWorkflowView, NgxGraphModule]
 })

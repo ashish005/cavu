@@ -46,7 +46,7 @@
                 <th width="80px">Action</th>
             </tr>
         </thead>
-        <tbody formArrayName="approvalSteps">
+        <tbody formArrayName="steps">
         <ng-container *ngFor="let step of steps.controls; let i = index">
             <!-- STEP -->
             <tr [formGroupName]="i">
@@ -116,7 +116,7 @@
                 <button type="button" class="btn btn-xs btn-outline-success" (click)="addStep()">
                     + Add Step
                 </button>
-                <button type="submit" class="btn btn-xs btn-primary ms-2" [disabled]="customForm.invalid">
+                <button type="button" (click)="savePhase()" class="btn btn-xs btn-primary ms-2" [disabled]="customForm.invalid">
                     Save Phase
                 </button>
             </div>

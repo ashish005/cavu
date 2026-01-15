@@ -13,11 +13,21 @@ export interface Phase {
     processId: number;
     id: number;
     name: string;
-    order: number;
+    description: string;
+    sortOrder: number;
     phaseStatusId: number;
     color: string;
+    slaHours: string;
     position?: { x: number; y: number }; // optional for graph layout
     statuses: PhaseStatus[]; // statuses belonging to this phase
+    steps: PhaseStep[]
+}
+
+export interface PhaseStep {
+    id: number;
+    name: string;
+    description: string;
+    sortOrder: number;
 }
 
 export interface PhaseStatus {

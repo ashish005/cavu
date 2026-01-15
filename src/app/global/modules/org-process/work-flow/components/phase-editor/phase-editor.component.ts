@@ -156,4 +156,8 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {}
+
+    savePhase(form: any){
+
+    }
 }

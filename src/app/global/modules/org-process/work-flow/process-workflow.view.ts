@@ -22,6 +22,11 @@ export class ProcessWorkflowView {
     selectedProcess?: ProcessNode;
     selectedPhase?: Phase;
     phaseTransitions: PhaseTransition[];
+    tabs: any = {
+        phases: 'phases',
+        tasks: 'tasks'
+    };
+    activeTab: string = this.tabs.phases;
     constructor(private lookup: OrgWorkflowAPIResolver, private api: WorkflowService, private sharedService: SharedService) {
         this.phaseStatuses = this.lookup.masterType.phaseStatus;
     }
@@ -75,5 +80,8 @@ export class ProcessWorkflowView {
         const success = (resp: any) => { this.sharedService.destroy(); };
         const failure = (e) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
+    }
+    openTab(tab: string) {
+        this.activeTab = tab;
     }
 }

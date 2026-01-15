@@ -18,6 +18,9 @@
           <div class="list-body text-xs">
             <b class="badge badge-pill text-success up"><i class="fa fa-lock text-sm" *ngIf="row.isLocked"></i></b>
             <span class="_500" [style.color]="row.color">{{ row.name }}</span>
+            <div>
+              {{row.steps | json}}
+            </div>
           </div>
         </div>
       </ng-template>

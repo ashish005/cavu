@@ -31,6 +31,7 @@ export class WorkflowPluginFactory {
             actionType: ACTION_ENUM.SHOW
         };
         //(data.masterType == ORG_PROCESS_TYPE.PROJECT_MANAGEMENT) {
+        debugger
         return this.resolver.resolve().then(()=> this.sharedService.showCustomPopup(ProjectStageManageView, popupOptions, data));
     }
 

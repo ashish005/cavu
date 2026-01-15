@@ -50,7 +50,7 @@ export class WorkflowCanvasComponent {
     links: Edge[] = [];
 
     generateTransitions(phases: Phase[]): any[] {
-        const ordered = [...phases].sort((a, b) => a.order - b.order);
+        const ordered = [...phases].sort((a, b) => a.sortOrder - b.sortOrder);
 
         return ordered.slice(0, -1).map((p, i) => ({
             id: i + 1,

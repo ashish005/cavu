@@ -8,7 +8,7 @@ import {ADMIN_SETUP} from "../../org-admin";
 export const EMPLOYEE_Routes: Routes = [
   {
     path: '', data: { title: 'Home', header:'Home' },
-    resolve: {permissions: AppPermissionService},
+    //resolve: {permissions: AppPermissionService},
     component: MainLayout,
     children: [
       { path: '', pathMatch: 'full', redirectTo:'dashboard' },

@@ -20,7 +20,7 @@ export const OrgProcessTaskRoutes: Routes = [
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
       { path: 'all', component: ProcessView, data: { title: 'Process', key: 'process', header:'process'} },
       { path: 'tree', component: ProcessTreeView, data: { title: 'Process', key: 'process', header:'process'} },
-      { path: 'board', component: ProcessBoardView, data: { title: 'Process', key: 'process', header:'process'} },
+      //{ path: 'board', component: ProcessBoardView, data: { title: 'Process', key: 'process', header:'process'} },
       { path: 'task', component: OrgTaskView, data: { title: 'Task', key: 'task', header:'task'} },
       { path: 'task-runner', component: TaskRunnerView, data: { title: 'Task Info', key: 'task_info', header:'Task Info'} },
       { path: 'scheduled', component: TaskScheduleView, data: { title: 'Schedules', key: 'schedule', header:'Task Schedule'} },
@@ -28,7 +28,13 @@ export const OrgProcessTaskRoutes: Routes = [
       { path: 'task-calendar', component: TaskCalendarView, data: { title: 'Task Calendar', key: 'calendar', header:'Task Calendar'} },
       { path: 'task-reminder', component: TaskReminderView, data: { title: 'Reminder', key: 'reminder', header:'Task Reminder'} }
     ]
-  }
+  },
+    {
+        path: 'board',
+        data: { title: 'Process', key: 'process', header:'process'},
+        component: ProcessBoardView,
+        resolve: {lookup: OrgWorkflowAPIResolver}
+    }
 ];
 export const ORG_PROCESS_TASK_VIEWS = [ Layout,
     DashboardView,

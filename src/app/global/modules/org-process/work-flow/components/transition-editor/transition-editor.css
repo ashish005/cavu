@@ -49,11 +49,11 @@ tr[formgroupname]::before {
     margin-right: 4px;
 }
 /* STEP TABLE AS TREE BRANCH */
-tbody[formarrayname="approvalSteps"] tr[formgroupname] {
+tbody[formarrayname="steps"] tr[formgroupname] {
     position: relative;
 }
 
-tbody[formarrayname="approvalSteps"] tr[formgroupname]::before {
+tbody[formarrayname="steps"] tr[formgroupname]::before {
     content: "├── ";
     color: #888;
     position: absolute;
@@ -61,7 +61,7 @@ tbody[formarrayname="approvalSteps"] tr[formgroupname]::before {
 }
 
 /* LAST STEP CHILD */
-tbody[formarrayname="approvalSteps"] tr:last-child[formgroupname]::before {
+tbody[formarrayname="steps"] tr:last-child[formgroupname]::before {
     content: "└── ";
 }
 

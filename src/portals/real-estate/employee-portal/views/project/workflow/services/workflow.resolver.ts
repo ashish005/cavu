@@ -8,7 +8,7 @@ export class WorkflowPluginAPIResolver extends OrgResourceService<WorkflowPlugin
   masterType: WorkflowPluginLookup;
   subscription : Subscription;
   constructor(public override injector: Injector) {
-     super(injector, `pipelineLookup/workflow`, new WorkflowPluginLookupSerializer());
+     super(injector, `orgWorkflowLookup`, new WorkflowPluginLookupSerializer());
   }
     resolve() {
         const promise = new Promise((resolve, reject) => {
