@@ -116,7 +116,7 @@
                 <button type="button" class="btn btn-xs btn-outline-success" (click)="addStep()">
                     + Add Step
                 </button>
-                <button type="button" (click)="savePhase()" class="btn btn-xs btn-primary ms-2" [disabled]="customForm.invalid">
+                <button type="button" (click)="savePhase(customForm)" class="btn btn-xs btn-primary ms-2" [disabled]="customForm.invalid">
                     Save Phase
                 </button>
             </div>

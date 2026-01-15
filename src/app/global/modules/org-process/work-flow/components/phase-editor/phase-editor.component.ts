@@ -1,6 +1,17 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild} from "@angular/core";
+import {
+    AfterViewInit,
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges,
+    TemplateRef,
+    ViewChild
+} from "@angular/core";
 import {Phase} from "../../models";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {WorkflowService} from "../../services/workflow.service";
 
 @Component({
     standalone: false,
@@ -8,6 +19,8 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
     styleUrls: [ `./phase-editor.css`]
 })
 export class PhaseEditorComponent implements OnInit, AfterViewInit {
+    submitted: boolean;
+    @Output() onOk: any;
     @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
     @Input() data?: Phase;
     customForm: FormGroup;
@@ -40,7 +53,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
         ]
     };
 
-    constructor(private fb: FormBuilder) {
+    constructor(private fb: FormBuilder, private api: WorkflowService) {
         this.customForm = this.fb.group({
             id: [null],
             name: [null, Validators.required],
@@ -158,6 +171,31 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {}
 
     savePhase(form: any){
+        if (this.customForm.invalid) { return; }
+
+        this.submitted = true;
+        const payload = { ...this.customForm.value };
+        payload.processId = this.data?.processId;
+        payload.steps = this.steps.controls.map((ctrl, idx) => {
+            const v = ctrl.value;
+            return {
+                id: v.id,
+                stepOrder: v.stepOrder,
+                name: v.name,
+                assignedToRole: v.assignedToRole,
+                isActive: v.isActive,
+                ruleJoinType: v.ruleJoinType,
+                rule: this.buildRuleExpression(idx)
+            };
+        });
+
+        const isUpdate = !!payload.id;
+        const req$ = isUpdate
+            ? this.api.updatePhase(payload.processId, payload.id, payload)
+            : this.api.createPhase(payload.processId, payload);
+        const success = (resp: any) => { this.submitted = false; this.onOk.emit(resp); };
+        const failure = (e: any) => { this.submitted = false; this.onOk.emit(e); };
+        req$.subscribe(success, failure);
 
     }
 }
