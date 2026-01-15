@@ -8,18 +8,23 @@
       <ng-template ngFor let-row [ngForOf]="phases | sortBy:'asc': 'sortOrder'"  let-i="index">
         <div class="list-group-item p-1 pl-2 box" @fade>
           <div class="float-right">
-            <span class="btn btn-xs btn-icon" (click)="select.emit(row)">
-              <i class="fa fa-wrench"></i>
-            </span>
-            <span class="btn btn-xs btn-icon" (click)="edit.emit(row)">
-              <i class="fa fa-edit"></i>
-            </span>
+            <span class="b-a badge" (click)="notification.emit(row)">Nottify</span>
+            <span class="btn btn-xs btn-icon" (click)="select.emit(row)"><i class="fa fa-wrench"></i></span>
+            <span class="btn btn-xs btn-icon" (click)="edit.emit(row)"><i class="fa fa-edit"></i></span>
           </div>
           <div class="list-body text-xs">
             <b class="badge badge-pill text-success up"><i class="fa fa-lock text-sm" *ngIf="row.isLocked"></i></b>
             <span class="_500" [style.color]="row.color">{{ row.name }}</span>
-            <div>
-              {{row.steps | json}}
+            <div class="flex-column d-block">
+              <ng-template ngFor let-step [ngForOf]="row.steps | sortBy:'asc': 'sortOrder'"  let-i="index">
+                <div class="b-a d-inline-block px-2 mx-1" >
+                  <span class="label">{{ step.name }}</span>
+                  <div class="float-right px-1">
+                    <span class="mx-1 badge red" (click)="showStepTask.emit(row)"> Add Task</span>
+                    <span class="mx-1 badge green" (click)="editStep.emit(row)"><i class="fa fa-edit"></i></span>
+                  </div>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>

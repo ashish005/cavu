@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {Phase, ProcessNode} from "../../models";
+import {Phase, PhaseStep, ProcessNode} from "../../models";
 import {animate, style, transition, trigger} from "@angular/animations";
 
 @Component({
@@ -21,4 +21,8 @@ export class PhaseListComponent {
     @Output() select = new EventEmitter<Phase>();
     @Output() edit = new EventEmitter<Phase>();
     @Output() create = new EventEmitter<Phase>();
+
+    @Output() notification = new EventEmitter<Phase>();
+    @Output() showStepTask = new EventEmitter<PhaseStep>();
+    @Output() editStep = new EventEmitter<PhaseStep>();
 }

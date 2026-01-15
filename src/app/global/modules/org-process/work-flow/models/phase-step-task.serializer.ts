@@ -18,6 +18,7 @@ export class PhaseStepTask extends CoreResource
 {
     phaseStepId: number;
     taskPriorityId: number;
+    phaseStepName: string;
     taskPriorityName: string;
     name?: string;
     remark?: string;
@@ -45,7 +46,7 @@ export class PhaseStepTask extends CoreResource
             id, name, remark, phaseStepId, taskPriorityId, taskPriorityName,
             isManual, isSystemTask, isPrimary, isVerificationRequired, isStatusOnMailRequired, isActive,
             yearMode, fyStartDay, fyStartMonth, timeZone,
-            frequencyTypeId, frequencyTypeName, dueDate, dueMonth
+            frequencyTypeId, frequencyTypeName, phaseStepName, dueDate, dueMonth
         } = model;
 
         this.id = id;
@@ -53,6 +54,7 @@ export class PhaseStepTask extends CoreResource
         this.remark = remark;
         this.phaseStepId = phaseStepId;
         this.taskPriorityId = taskPriorityId;
+        this.phaseStepName = phaseStepName;
         this.taskPriorityName = taskPriorityName;
         this.isManual = isManual;
         this.isSystemTask = isSystemTask;

@@ -19,9 +19,9 @@ import {WorkflowService} from "../../services/workflow.service";
     styleUrls: [ `./phase-editor.css`]
 })
 export class PhaseEditorComponent implements OnInit, AfterViewInit {
-    submitted: boolean;
+    submitted: boolean = false;
     @Output() onOk: any;
-    @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+    @ViewChild('footerTemplate', { static: true }) public footerTemplate!: TemplateRef<any>;
     @Input() data?: Phase;
     customForm: FormGroup;
     ruleProperties = [
@@ -95,7 +95,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
         });
 
         this.steps.push(fg);
-        (step.rules || []).forEach(r => this.addRule(r, this.steps.length - 1));
+        (step.rules || []).forEach((r: any) => this.addRule(r, this.steps.length - 1));
     }
 
     removeStep(stepIndex: number): void {
@@ -160,12 +160,24 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     getOperators(prop: string) {
-        return this.operatorsByType[this.getPropertyType(prop)];
+        const typeKey = this.getPropertyType(prop) as 'string' | 'number' | 'date';
+        return this.operatorsByType[typeKey];
     }
 
     ngOnInit() {
-
-        this.customForm.patchValue(this.data);
+        if (this.data) {
+            this.customForm.patchValue({
+                id: this.data.id,
+                name: this.data.name,
+                color: this.data.color,
+                phaseStatusId: this.data.phaseStatusId,
+                sortOrder: this.data.sortOrder,
+                isDefault: false,
+                isActive: true
+            });
+            this.steps.clear();
+            (this.data.steps || []).forEach(s => this.addStep(s));
+        }
     }
 
     ngAfterViewInit() {}
@@ -175,24 +187,24 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
 
         this.submitted = true;
         const payload = { ...this.customForm.value };
-        payload.processId = this.data?.processId;
-        payload.steps = this.steps.controls.map((ctrl, idx) => {
-            const v = ctrl.value;
-            return {
-                id: v.id,
-                stepOrder: v.stepOrder,
-                name: v.name,
-                assignedToRole: v.assignedToRole,
-                isActive: v.isActive,
-                ruleJoinType: v.ruleJoinType,
-                rule: this.buildRuleExpression(idx)
-            };
-        });
+        // payload.processId = this.data?.processId;
+        // payload.steps = this.steps.controls.map((ctrl, idx) => {
+        //     const v = ctrl.value;
+        //     return {
+        //         id: v.id,
+        //         stepOrder: v.stepOrder,
+        //         name: v.name,
+        //         assignedToRole: v.assignedToRole,
+        //         isActive: v.isActive,
+        //         ruleJoinType: v.ruleJoinType,
+        //         rule: this.buildRuleExpression(idx)
+        //     };
+        // });
 
         const isUpdate = !!payload.id;
         const req$ = isUpdate
-            ? this.api.updatePhase(payload.processId, payload.id, payload)
-            : this.api.createPhase(payload.processId, payload);
+            ? this.api.updatePhase(this.data?.processId, payload.id, payload)
+            : this.api.createPhase(this.data?.processId, payload);
         const success = (resp: any) => { this.submitted = false; this.onOk.emit(resp); };
         const failure = (e: any) => { this.submitted = false; this.onOk.emit(e); };
         req$.subscribe(success, failure);

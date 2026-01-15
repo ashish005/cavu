@@ -17,7 +17,7 @@ export interface Phase {
     sortOrder: number;
     phaseStatusId: number;
     color: string;
-    slaHours: string;
+    slaHours: number;
     position?: { x: number; y: number }; // optional for graph layout
     statuses: PhaseStatus[]; // statuses belonging to this phase
     steps: PhaseStep[]
@@ -28,6 +28,22 @@ export interface PhaseStep {
     name: string;
     description: string;
     sortOrder: number;
+    assignedToRole: string;
+    slaHours: number;
+    canAutoGenerateTask: boolean;
+
+    phaseId: number;
+    rules: PhaseStepRule[]
+}
+
+export interface PhaseStepRule {
+    id: number;
+    propertyName: string;
+    operator: string;
+    value: string;
+    ruleJoinType: string;
+
+    stepId: number;
 }
 
 export interface PhaseStatus {

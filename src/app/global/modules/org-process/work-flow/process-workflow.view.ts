@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Phase, PhaseTransition, ProcessNode} from './models';
+import {Phase, PhaseStep, PhaseTransition, ProcessNode} from './models';
 import {WorkflowService} from "./services/workflow.service";
 import {ASIDE_CLASS, ASIDE_SIZE} from "../../../popup-module/app-popup.enum";
 import {SharedService} from "../../../shared.service";
@@ -42,6 +42,7 @@ export class ProcessWorkflowView {
     }
 
     onPhaseCreate(e){
+        debugger
         const input = {
             data: {
                 processId: this.selectedProcess.id
@@ -55,6 +56,7 @@ export class ProcessWorkflowView {
             id: phase.id,
             data: phase
         };
+        input.data.processId = this.selectedProcess.id;
         this.showPhasePopup(input, { text: phase.name, desc: '' });
     }
 
@@ -65,6 +67,9 @@ export class ProcessWorkflowView {
         return this.sharedService.showCustomPopup(PhaseEditorComponent, popupOptions, data).then(success, failure);
     }
 
+    onPhaseNotification(phase: Phase){
+
+    }
     onPhaseSelected(phase: any) {
         this.selectedPhase = phase;
         const input = {
@@ -84,4 +89,7 @@ export class ProcessWorkflowView {
     openTab(tab: string) {
         this.activeTab = tab;
     }
+
+    onShowStepTask(phaseStep: PhaseStep){}
+    onEditStep(phaseStep: PhaseStep){}
 }

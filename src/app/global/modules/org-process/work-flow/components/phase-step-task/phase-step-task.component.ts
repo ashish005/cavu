@@ -31,6 +31,7 @@ export class PhaseStepTaskComponent extends ViewExtender<PhaseStepTask> implemen
     super(activatedRoute, service);
     this.gridOptions.columnDefs = [
         {headerName: 'Name', field: 'name'},
+        {headerName: 'Step', field: 'phaseStepName'},
         {headerName: 'Frequency', field: 'frequencyTypeName'},
         {headerName: 'Priority', field: 'taskPriorityName'},
         {headerName: 'Manual', field: 'isManual', cellTemplate: GridUISwitchCellComponent},
