@@ -223,5 +223,6 @@ export class AuthService {
 
   get userId(): string { return (this.identityClaims as any)['sub'] || '-'; }
   get email(): string { return (this.identityClaims as any)['email'] || '-'; }
+  get mobile(): string { return (this.identityClaims as any)['mobile'] || '-'; }
   get username(): string { return (this.identityClaims as any)['preferred_username'] || '--'; }
 }

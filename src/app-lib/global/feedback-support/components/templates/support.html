@@ -1,0 +1,107 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex">
+        <div class="row">
+            <div class="col-3">
+                <div class="list-group list-group-gap p-2">
+                    <ng-template ngFor let-row [ngForOf]="service.masterType?.supportTypes | sortBy:'asc': 'sortOrder'"
+                                 let-i="index">
+                        <div class="list-group-item p-1 px-2 box">
+                            <label class="md-check">
+                                <input type="radio" name="supportTypeId" [value]="row.id"
+                                       formControlName="supportTypeId">
+                                <i class="blue"></i> {{ row.name }}
+                            </label>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="col-9 py-3">
+                <div class="row no-gutters">
+                    <div class="col-sm-12 col-lg-12">
+                        <div class="md-form-group">
+                            <input class="md-input"
+                                   formControlName="header" [ngClass]="{ 'is-invalid': submitted && f['header'].errors }">
+                            <label> Header </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-12">
+                        <div class="md-form-group">
+              <textarea class="md-input" rows="6" placeholder="hmm.." formControlName="message"
+                        [ngClass]="{ 'is-invalid': submitted && f['message'].errors }"></textarea>
+                            <label> Message </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="panel mx-3">
+                    <label class="md-check my-1 d-block">
+                        <input type="checkbox" formControlName="includeScreenshot"><i class="theme"></i>
+                        <a>Include screenshot</a>
+                    </label>
+                    <div class="box b-a">
+                        <img #webPageImagePreview data-html2canvas-ignore="true" class="w-100" width="200px"
+                             height="200px"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="panel">
+                    <div class="p-3">
+                        <div id="result"></div>
+                        <div class="dropzone white b-a b-3x b-dashed b-primary p-a rounded text-center dz-clickable"
+                             (click)="showUploader()">
+                            <div class="dz-message my-4" appDnd (filesChangeEmiter)="onFilesChange($event)"
+                                 (filesInvalidEmiter)="onFileInvalids($event)"
+                                 allowed_extensions="['zip','jpg','png','jpeg','rar','JPG']">
+                                <h4>Drop files here or click to upload.</h4>
+                                <span class="text-muted d-block"></span>
+                            </div>
+                        </div>
+                        <input type="file" #fileControl uploader="uploader" style="visibility: hidden;" multiple
+                               (change)="onSelectChange($event)"/>
+                    </div>
+                    <div class="box-body p-2  b-a in">
+                        <div id="ims-slider" *ngIf="uploader?.queue?.length>0">
+                            <div id="thumbnail-slider">
+                                <div class="inner">
+                                    <ul
+                                            style="touch-action: pan-y; transition-property: transform; transition-timing-function: cubic-bezier(0.2, 0.88, 0.5, 1); transition-duration: 0ms;">
+                                        <li
+                                                style="display: inline-block; height: 50px; width: 100px; margin-bottom: 8px; overflow: hidden;"
+                                                *ngFor="let item of uploader?.queue">
+                                            <div class="thumb" support-thumb-preview [src]="item"
+                                                 style="cursor: pointer"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="thumbnail-slider-prev"></div>
+                                <div id="thumbnail-slider-next"></div>
+                                <div id="thumbnail-slider-pause-play"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="px-2 text-xs">{{customForm.value.pageURL}}</div>
+            </div>
+        </div>
+        <loader [isLoading]="isLoading"></loader>
+    </div>
+    <ng-template #footerTemplate>
+        <div class="float-left title _500">
+            We will use the information you give us to help address technical issues and to improve our services.
+            <p class="mb-0">Subject to our Privacy Policy and Terms of Service.</p>
+        </div>
+        <div class="text-center">
+            <button class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted"
+                    (click)="onSubmit(customForm)">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                {{ submitted ? 'Submitting...' : actionType }}
+            </button>
+        </div>
+    </ng-template>
+</form>

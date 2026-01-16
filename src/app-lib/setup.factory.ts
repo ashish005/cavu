@@ -1,11 +1,12 @@
 import {Injectable, Injector} from "@angular/core";
 import {SharedService, AlertService} from "@app-global";
 import {CoreSetupFactory} from "./org-seeder";
+import {FeedbackSupportFactory} from "./global";
 @Injectable({ providedIn: 'root' })
 export class SetupFactory {
   constructor(private sharedService: SharedService,
               private alertService: AlertService,
-              private coreSetupFactory: CoreSetupFactory) { }
+              private coreSetupFactory: CoreSetupFactory, private supportFactory: FeedbackSupportFactory) { }
 
     /*showGlobalFilterPopup(inputData, popupheader){
         const popupOptions = {
@@ -61,82 +62,8 @@ export class SetupFactory {
         };
         this.coreSetupFactory.showPreSetupPopup().then(onSuccess, onFailure);
     }
+
+    createSupportTicket=() => this.supportFactory.createSupportTicket();
+    showBellPopup=() => this.supportFactory.showBellPopup();
+    showSurveyPopup=() => this.supportFactory.showSurveyPopup();
 }
-/*
-
-@Injectable({ providedIn: 'root' })
-export class FeedbackSupportFactory {
-    sharedService: SharedService;
-    constructor(public injector: Injector) { this.sharedService = injector.get(SharedService); }
-
-    createSupportTicket(){
-        const popupOptions = {
-            header: { text: `Report Issue`, desc: 'Automatically captures the page where you are facing issues' },
-            aside: ASIDE_CLASS.RIGHT,
-            size: ASIDE_SIZE.W_50
-        };
-        const data = {
-            supportType: 'technical_support',
-            mediaType: 'dashboard'
-        };
-        const onSuccess = (resp)=> {
-            this.sharedService.destroy();
-        };
-        const onFailure = (resp)=> {
-            this.sharedService.destroy();
-        };
-        return this.sharedService.showCustomPopup(SupportComponent, popupOptions, data).then(onSuccess, onFailure);
-    }
-
-    showBellPopup(){
-        const popupOptions = {
-            header: { text: `Bell Info`, desc: 'Check all notification, events and schedules' },
-            aside: ASIDE_CLASS.RIGHT,
-            size: ASIDE_SIZE.W_50
-        };
-        const data = {};
-        const onSuccess = (resp)=> {
-            this.sharedService.destroy();
-        };
-        const onFailure = (resp)=> {
-            this.sharedService.destroy();
-        };
-        return this.sharedService.showCustomPopup(NotificationBellReminderComponent, popupOptions, data).then(onSuccess, onFailure);
-    }
-
-    showSurveyPopup(){
-        const popupOptions = {
-            header: { text: `Survey`, desc: 'How strongly do you agree or disagree with this statement?' },
-            aside: ASIDE_CLASS.BOTTOM_RIGHT,
-            size: ASIDE_SIZE.LARGE,
-            backdropDisabled: true
-        };
-        const data = {};
-
-        const onSuccess = (resp)=> {
-            this.sharedService.destroy();
-        };
-        const onFailure = (resp)=> {
-            this.sharedService.destroy();
-        };
-        return this.sharedService.showCustomPopup(SurveyComponent, popupOptions, data).then(onSuccess, onFailure);
-    }
-
-    /!*showChatPopup(){
-        const popupOptions = {
-            header: { text: `Chat`, desc: 'chat System' },
-            aside: ASIDE_CLASS.BOTTOM_RIGHT,
-            size: ASIDE_SIZE.W_25,
-            backdropDisabled: true
-        };
-
-        const data = {};
-        const onSuccess = (resp)=> {
-            this.sharedService.destroy();
-        };
-        const onFailure = (resp)=> {
-            this.sharedService.destroy();
-        };
-        return this.sharedService.showCustomPopup(ChatComponent, popupOptions, data).then(onSuccess, onFailure);
-    }*!/
-}*/

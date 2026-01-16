@@ -1,0 +1,28 @@
+<div class="d-flex flex p-3">
+  <div class="d-flex flex-column flex">
+    <div class="row">
+      <div class="col-sm-12">
+        <p>I find it easy to work with this Application</p>
+        <div class="btn-groups">
+          <div *ngFor="let item of surveyPoints" class="float-left">
+            <button class="btn btn-outline"> {{item}}</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 text-left">
+            <p class="p-0"><i class="fa fa-arrow-up"></i></p>
+            <small class="float-left clearfix">Strongly disagree</small>
+          </div>
+          <div class="col-sm-4">
+            <small>5: Neutral</small>
+          </div>
+          <div class="col-sm-4 text-right">
+            <p class="p-0"><i class="fa fa-arrow-up"></i></p>
+            <small class="float-right clearfix">Strongly agree</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

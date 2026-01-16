@@ -1,0 +1,1 @@
+export {FeedbackSupportFactory,FeedbackSupportModule} from "./feedback-support";

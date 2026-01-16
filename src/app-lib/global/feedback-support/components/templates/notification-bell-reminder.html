@@ -1,0 +1,31 @@
+<div class="d-flex flex p-3">
+  <div class="d-flex flex-column flex">
+    <div class="nav-active-border b-theme">
+      <ul class="row nav no-gutters">
+        <li class="nav-item col-4" [ngClass]="{'b-r': (i < (navList?.length-1))}"
+            *ngFor="let nav of navList; let i = index">
+          <a class="nav-link" [class.active]="activeNavId===nav.id" (click)="updateNav(nav)"> <i
+            class="fa text-md fa-ticket text-muted"></i> {{nav?.name}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="scrollable hover">
+      <div class="streamline p-2" *ngIf="isLoading"> Loading...</div>
+      <div class="pt-2 streamline" *ngIf="!isLoading">
+        <div class="sl-item" *ngIf="!data?.length">
+          <div class="sl-content">
+            <div class="sl-date text-muted">9:30</div>
+            <p> We are working to improve this feature </p></div>
+        </div>
+        <ng-template let-row ngFor let-item [ngForOf]="data" let-i="index">
+          <div class="sl-item b-info">
+            <div class="sl-content">
+              <div class="text-primary">{{item.header}}</div>
+              <div class="sl-date b-warning">{{item.body}}</div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

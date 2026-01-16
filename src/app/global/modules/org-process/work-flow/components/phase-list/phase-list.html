@@ -8,7 +8,7 @@
       <ng-template ngFor let-row [ngForOf]="phases | sortBy:'asc': 'sortOrder'"  let-i="index">
         <div class="list-group-item p-1 pl-2 box" @fade>
           <div class="float-right">
-            <span class="b-a badge" (click)="notification.emit(row)">Nottify</span>
+            <span class="b-a badge" (click)="notification.emit(row)">Notify</span>
             <span class="btn btn-xs btn-icon" (click)="select.emit(row)"><i class="fa fa-wrench"></i></span>
             <span class="btn btn-xs btn-icon" (click)="edit.emit(row)"><i class="fa fa-edit"></i></span>
           </div>

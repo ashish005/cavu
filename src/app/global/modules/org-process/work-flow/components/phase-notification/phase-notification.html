@@ -1,0 +1,70 @@
+<div class="d-flex flex-column h-100">
+  <div class="px-3 pt-3 pb-2">
+    <h6 class="mb-1">
+      Notifications for
+      <span class="text-primary">{{ phase?.name }}</span>
+    </h6>
+    <small class="text-muted">
+      Process: {{ process?.name || "-" }}
+    </small>
+  </div>
+
+  <div class="px-3 pb-3">
+    <div class="row">
+      <div class="col-sm-6">
+        <label class="md-check text-xs d-block">
+          <input type="checkbox" [(ngModel)]="notifyOnEnter">
+          <i class="blue"></i>
+          When phase starts
+        </label>
+      </div>
+      <div class="col-sm-6">
+        <label class="md-check text-xs d-block">
+          <input type="checkbox" [(ngModel)]="notifyOnExit">
+          <i class="blue"></i>
+          When phase completes
+        </label>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="text-xs text-muted d-block mb-1">Channels</label>
+      <div class="btn-group btn-group-sm flex-wrap">
+        <button
+          type="button"
+          class="btn m-1"
+          [class.theme]="isChannelSelected(c.id)"
+          [class.text-theme]="isChannelSelected(c.id)"
+          [class.b-theme]="isChannelSelected(c.id)"
+          [class.white]="!isChannelSelected(c.id)"
+          (click)="toggleChannel(c.id)"
+          *ngFor="let c of availableChannels"
+        >
+          {{ c.name }}
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="text-xs text-muted">Short message</label>
+      <textarea
+        class="md-input form-control"
+        rows="3"
+        [(ngModel)]="message"
+        placeholder="Example: Notify assignee when this phase starts or completes"
+      ></textarea>
+    </div>
+  </div>
+
+  <ng-template #footerTemplate>
+    <div class="px-3 pb-3 text-right">
+      <button type="button" class="btn btn-xs white mr-2" (click)="close()">
+        Close
+      </button>
+      <button type="button" class="btn btn-xs theme text-theme b-theme" (click)="save()">
+        Save
+      </button>
+    </div>
+  </ng-template>
+</div>
+

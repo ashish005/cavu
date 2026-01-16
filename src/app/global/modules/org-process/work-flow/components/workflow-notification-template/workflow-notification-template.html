@@ -1,0 +1,136 @@
+<div class="d-flex flex-column h-100">
+  <div class="px-3 pt-3 pb-2">
+    <h6 class="mb-1">
+      {{ contextLabel }} templates for
+      <span class="text-primary">{{ contextTitle }}</span>
+    </h6>
+    <small class="text-muted">
+      Process: {{ process?.name || "-" }}
+    </small>
+  </div>
+
+  <div class="d-flex flex px-3 pb-3">
+    <div class="w-25 pr-2">
+      <div class="list-group list-group-gap">
+        <a
+          class="list-group-item p-2 text-xs"
+          *ngFor="let t of templates; let i = index"
+          [class.active]="i === editingIndex"
+          (click)="edit(i)"
+        >
+          <div class="_500">{{ t.name || "Untitled template" }}</div>
+          <small class="text-muted">
+            {{ t.channel }} · {{ t.mediaType }}
+          </small>
+        </a>
+        <a class="list-group-item p-2 text-xs" (click)="startNew()">
+          <i class="fa fa-plus mr-1"></i>
+          Add template
+        </a>
+      </div>
+    </div>
+
+    <div class="flex pl-2">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="md-form-group">
+            <input
+              class="md-input form-control"
+              [(ngModel)]="editing.name"
+              name="name"
+              placeholder="Template name"
+            />
+            <label>Name</label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="md-form-group">
+            <select
+              class="md-input form-control"
+              [(ngModel)]="editing.channel"
+              name="channel"
+            >
+              <option *ngFor="let c of availableChannels" [ngValue]="c.id">
+                {{ c.name }}
+              </option>
+            </select>
+            <label>Channel</label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="md-form-group">
+            <input
+              type="checkbox"
+              [(ngModel)]="editing.isActive"
+              name="isActive"
+            />
+            <label>Active</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="md-form-group">
+            <input
+              class="md-input form-control"
+              [(ngModel)]="editing.subject"
+              name="subject"
+              placeholder="Subject or title"
+            />
+            <label>Subject</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="md-form-group">
+            <textarea
+              class="md-input form-control"
+              rows="6"
+              [(ngModel)]="editing.content"
+              name="content"
+              placeholder="Message content"
+            ></textarea>
+            <label>Content</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-2 text-right">
+        <button
+          type="button"
+          class="btn btn-xs white mr-2"
+          [disabled]="templates.length === 0 || editingIndex === null"
+          (click)="remove(editingIndex!)"
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          class="btn btn-xs theme text-theme b-theme"
+          (click)="saveCurrent()"
+        >
+          Save template
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #footerTemplate>
+    <div class="px-3 pb-3 text-right">
+      <button type="button" class="btn btn-xs white mr-2" (click)="close()">
+        Close
+      </button>
+      <button
+        type="button"
+        class="btn btn-xs theme text-theme b-theme"
+        (click)="saveAndClose()"
+      >
+        Save &amp; Close
+      </button>
+    </div>
+  </ng-template>
+</div>
+
