@@ -20,8 +20,8 @@ export class ProcessWorkflowView {
     phaseStatuses: WorkflowPhaseStatusLookup[] = [];
 
     selectedProcess?: ProcessNode;
-    selectedPhase?: Phase;
-    phaseTransitions: PhaseTransition[];
+    selectedPhase: Phase | null = null;
+    phaseTransitions: PhaseTransition[] = [];
     tabs: any = {
         phases: 'phases',
         tasks: 'tasks'
@@ -37,15 +37,15 @@ export class ProcessWorkflowView {
 
     onProcessSelected(process: any) {
         this.selectedProcess = process;
-        this.selectedPhase = null; // reset phase on process change
+        this.selectedPhase = null;
         this.api.getPhases(process.id).subscribe(p => this.phases = p.entities);
     }
 
-    onPhaseCreate(e){
+    onPhaseCreate(e: any){
         debugger
         const input = {
             data: {
-                processId: this.selectedProcess.id
+                processId: this.selectedProcess?.id
             }
         };
         this.showPhasePopup(input, { text: 'Create Phase', desc: '' });
@@ -56,20 +56,23 @@ export class ProcessWorkflowView {
             id: phase.id,
             data: phase
         };
-        input.data.processId = this.selectedProcess.id;
+        input.data.processId = this.selectedProcess?.id;
         this.showPhasePopup(input, { text: phase.name, desc: '' });
     }
 
     showPhasePopup(data: any, popupHeaderOption: any){
         const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
         const success = (resp: any) => { this.sharedService.destroy(); };
-        const failure = (e) => { this.sharedService.destroy(); };
+        const failure = (e: any) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(PhaseEditorComponent, popupOptions, data).then(success, failure);
     }
 
     onPhaseNotification(phase: Phase){
 
     }
+
+    onPhaseTemplates(phase: Phase) {}
+
     onPhaseSelected(phase: any) {
         this.selectedPhase = phase;
         const input = {
@@ -83,7 +86,7 @@ export class ProcessWorkflowView {
         const popupOptions= { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
 
         const success = (resp: any) => { this.sharedService.destroy(); };
-        const failure = (e) => { this.sharedService.destroy(); };
+        const failure = (e: any) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
     }
     openTab(tab: string) {

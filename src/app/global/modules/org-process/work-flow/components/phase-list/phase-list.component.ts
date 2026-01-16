@@ -20,9 +20,10 @@ export class PhaseListComponent {
     @Input() phases: Phase[] = [];
     @Output() select = new EventEmitter<Phase>();
     @Output() edit = new EventEmitter<Phase>();
-    @Output() create = new EventEmitter<Phase>();
+    @Output() create = new EventEmitter<void>();
 
     @Output() notification = new EventEmitter<Phase>();
+    @Output() manageTemplates = new EventEmitter<Phase>();
     @Output() showStepTask = new EventEmitter<PhaseStep>();
     @Output() editStep = new EventEmitter<PhaseStep>();
 }
