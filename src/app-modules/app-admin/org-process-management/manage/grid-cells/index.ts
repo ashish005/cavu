@@ -3,7 +3,7 @@ import {
     TaskNextScheduleRunCell,
     TaskSummaryNameActionCell
 } from "./task-summary-grid-cell.component";
-import {ProcessWorkFlowCellComponent} from "./process-grid-cell.component";
+
 import {
     ScheduledNameActionCell,
     ScheduledEndDateCell,
@@ -35,7 +35,6 @@ const SCHEDULED_TASK_GRID_COLUMN_CELLS = [
 ];
 
 export const PIPELINE_PROCESS_GRID_COLUMN_CELL_COMPONENTS = [
-    ProcessWorkFlowCellComponent,
     TaskNameActionCell, ReminderCellComponent, TriggerCellComponent,
     TaskSummaryNameActionCell, TaskNextScheduleRunCell,
     SCHEDULED_TASK_GRID_COLUMN_CELLS, REMINDER_GRID_COLUMN_CELLS, CALENDAR_GRID_COLUMN_CELLS

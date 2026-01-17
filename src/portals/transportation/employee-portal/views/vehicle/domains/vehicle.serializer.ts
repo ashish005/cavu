@@ -1,6 +1,6 @@
-import {CoreQueryOptions, CoreResource} from "@app-global";
+import { CoreQueryOptions, CoreResource } from "@app-global";
 
-export class VehicleQueryOptions extends CoreQueryOptions{
+export class VehicleQueryOptions extends CoreQueryOptions {
     code: string;
 
     constructor(data: any = {}){
@@ -18,6 +18,7 @@ export class VehicleQueryOptions extends CoreQueryOptions{
 
 export class Vehicle extends CoreResource
 {
+    override id: number;
     ownerUserId: string;
     ownerName: string;
     ownerEmail: string;

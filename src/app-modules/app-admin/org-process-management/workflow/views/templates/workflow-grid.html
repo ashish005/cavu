@@ -1,0 +1,27 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <!--<div class="navbar flex-nowrap box-shadow">
+            <div class="flex">
+                <a class="no-shadow">
+                    <h6 class="mb-0">Process</h6>
+                    <small class="float-left pl-4"></small>
+                </a>
+            </div>
+        </div>-->
+        <div class="scroll-y">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)">
+            </org-grid>
+        </div>
+        <div class="pl-3 pr-3 white lt b-t mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                 [page]="coreState?.page" (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>
+<ng-template>
+
+</ng-template>

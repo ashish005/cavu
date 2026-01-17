@@ -17,7 +17,8 @@ import {VehicleScheduleInspectionActionCell} from "../grid-cells/vehicle-grid-ce
 export class VehicleManageView extends ViewExtender<Vehicle> implements OnInit, OnDestroy{
   override coreState: VehicleQueryOptions = new VehicleQueryOptions();
     constructor(public router: Router,
-                public apiResolver: VehicleAPIResolver, public override activatedRoute: ActivatedRoute, public override service: VehicleService) {
+                public apiResolver: VehicleAPIResolver,
+                public override activatedRoute: ActivatedRoute, public override service: VehicleService) {
         super(activatedRoute, service);
         this.gridOptions.header =  { title: '', desc: '', add: false, refresh: true, edit: true, delete: false };
         this.gridOptions.columnDefs = [

@@ -1,0 +1,98 @@
+<form class="content-main d-flex flex h-100" [formGroup]="customForm">
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex p-2">
+            <div class="row">
+                <div class="col-8">
+                    <div class="md-form-group float-label">
+                        <input class="md-input"
+                               formControlName="name"
+                               [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                               required>
+                        <label>Name</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="md-form-group">
+                        <select class="md-input" formControlName="taskPriorityId">
+                            <ng-template ngFor let-entity [ngForOf]="lookup?.taskPriorities" let-i="index">
+                                <option [value]="entity.id">{{entity.name}}</option>
+                            </ng-template>
+                        </select>
+                        <label>Priority</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <div class="md-form-group">
+                <textarea rows="2"
+                          class="md-input"
+                          placeholder="Write here something about this task"
+                          formControlName="remark"></textarea>
+                        <label>Remark</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="md-form-group">
+                        <select class="md-input" formControlName="frequencyTypeId">
+                            <ng-template ngFor let-entity [ngForOf]="lookup?.frequencyTypes" let-i="index">
+                                <option [value]="entity.id">{{entity.name}}</option>
+                            </ng-template>
+                        </select>
+                        <label>Frequency</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <div class="text-sm">
+                        <label class="md-check">
+                            <input type="checkbox" formControlName="isManual"><i class="theme"></i> Manual
+                        </label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-sm">
+                        <label class="md-check">
+                            <input type="checkbox" formControlName="isPrimary"><i class="theme"></i> Primary
+                        </label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-sm">
+                        <label class="md-check">
+                            <input type="checkbox" formControlName="isVerificationRequired"><i class="theme"></i> Verify
+                        </label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="text-sm">
+                        <label class="md-check">
+                            <input type="checkbox" formControlName="isStatusOnMailRequired"><i class="theme"></i> Status mail
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<ng-template #footerTemplate>
+    <ul class="nav nav-xs no-border float-right">
+        <li class="nav-item">
+            <button type="button"
+                    class="btn btn-xs theme"
+                    (click)="onSubmit(customForm)"
+                    [disabled]="customForm.invalid || submitted">
+                <i *ngIf="submitted" class="fa fa-circle-o-notch fa-spin"></i>
+                {{ submitted ? 'Submitting...' : (task && task.id ? 'Update' : 'Add') }}
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn btn-xs" (click)="onCancel.emit()">
+                Cancel
+            </button>
+        </li>
+    </ul>
+</ng-template>

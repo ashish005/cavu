@@ -1,6 +1,5 @@
 import {Injectable, OnDestroy} from "@angular/core";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
-import {ProcessCeView} from "../components/process-ce.view";
 import {TaskCeComponent} from "../components/task-ce.component";
 import {TaskManagerComponent} from "../components/task-manager.component";
 @Injectable()
@@ -62,13 +61,5 @@ export class PipelineAPIResolver {
         const success = (resp: any) => { this.sharedService.destroy(); cb(); };
         const failure = (e) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(TaskCeComponent, popupOptions, data).then(success, failure);
-    }
-
-    ceProcessPopup=(data: any, popupHeaderOption: any, cb)=> {
-        data = data || { id: null, data: null };
-        const popupOptions = { header: popupHeaderOption || { text: `Process`, desc: 'Process' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-        const success = (resp: any) => { this.sharedService.destroy(); cb(); };
-        const failure = (e) => { this.sharedService.destroy(); };
-        return this.sharedService.showCustomPopup(ProcessCeView, popupOptions, data).then(success, failure);
     }
 }

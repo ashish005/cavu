@@ -1,5 +1,13 @@
 import {ErrorHandler, inject, ModuleWithProviders, NgModule} from "@angular/core";
-import {DefaultUrlSerializer, RouterModule, ROUTES, TitleStrategy, UrlSerializer, UrlTree} from "@angular/router";
+import {
+    DefaultUrlSerializer,
+    RouterLink, RouterLinkActive,
+    RouterModule,
+    ROUTES,
+    TitleStrategy,
+    UrlSerializer,
+    UrlTree
+} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 // import {ScrollingModule} from "@angular/cdk/scrolling";
@@ -27,8 +35,14 @@ import {CdkTableModule} from "@angular/cdk/table";
 import {CdkTreeModule} from "@angular/cdk/tree";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {NgSelectModule} from "@ng-select/ng-select";
+import {ScrollingModule} from "@angular/cdk/scrolling";
+import {NgxGraphModule} from "@swimlane/ngx-graph";
 
-const COMMON_MODULE = [CdkTableModule, CdkTreeModule, DragDropModule];
+const COMMON_MODULE = [
+    CdkTableModule, CdkTreeModule, DragDropModule,
+    ScrollingModule, NgxGraphModule
+];
+
 class LowerCaseUrlSerializer extends DefaultUrlSerializer {
     override parse(url: string): UrlTree {
         const possibleSeparators = /[?;#]/;

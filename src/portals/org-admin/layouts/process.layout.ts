@@ -11,30 +11,30 @@ export class ProcessLayout {
             isFLatChildren: true, key: 'main',
             children:[
                 { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
-                { routeTo: ['tree'], icon:"fa fa-envelope", key: 'Workflow' },
-                { routeTo: ['board'], icon:"fa fa-envelope", key: 'Workflow Board' },
+                { routeTo: ['master/tree'], icon:"fa fa-envelope", key: 'Org Workflow' },
+                { routeTo: ['setup'], icon:"fa fa-bell", key: 'Setup' }
             ]
         },
         {
-            isFLatChildren: true, key: 'Task',
+            isFLatChildren: true, key: 'Process Instance',
             children:[
-                { routeTo: ['task'], icon:"fa fa-envelope", key: 'Tasks' },
-                { routeTo: ['task-runner'], icon:"fa fa-envelope", key: 'Task Runner' },
+                { routeTo: ['instance/info'], icon:"fa fa-envelope", key: 'Process' },
+                { routeTo: ['instance/task-runner'], icon:"fa fa-envelope", key: 'Task Runner' },
             ]
         },
         {
             isFLatChildren: true, key: 'Schedule',
             children:[
-                { routeTo: ['scheduled'], icon:"fa fa-bell", key: 'Task Schedule' },
-                { routeTo: ['task-reminder'], icon:"fa fa-bell", key: 'reminder' },
+                { routeTo: ['instance/scheduled'], icon:"fa fa-bell", key: 'Task Schedule' },
+                { routeTo: ['instance/task-reminder'], icon:"fa fa-bell", key: 'reminder' },
                 //{ routeTo: ['task-calendar'], icon:"fa fa-bell", key: 'calendar' },
             ]
         },
         {
             isFLatChildren: true, key: 'Other',
             children:[
-                { routeTo: ['history'], icon:"fa fa-bell", key: 'History' },
-                { routeTo: ['setup'], icon:"fa fa-bell", key: 'Setup' }
+                { routeTo: ['instance/history'], icon:"fa fa-bell", key: 'History' },
+
             ]
         }
     ];

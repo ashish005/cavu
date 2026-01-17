@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import {Subscription} from "rxjs";
 import {FormBuilder} from "@angular/forms";
-import {OrgProcess, OrgProcessQueryOptions, OrgProcessSerializer} from "../domains/org-process.serializer";
+import {OrgProcess, OrgProcessQueryOptions} from "../domains/org-process.serializer";
 import {OrgResourceService} from "@app-global";
 import {PipelineAPIResolver} from "../resolver/api.resolver";
 class ProcessWorkflow extends OrgProcess {
@@ -51,19 +51,19 @@ export class WorkflowWithPhaseView extends OrgResourceService<ProcessWorkflow> i
         }, ()=>{ this.isLoading = false; });
     }
     editProcess(row: OrgProcess){
-        const inputData: any = { id: row.id, parentId: row.parentId, data: null };
+        const inputData: any = { id: row.id, data: null };
         const popupHeaderOptions = { text: `Edit: ${row.name}`, desc: `` };
-        this.apiResolver.ceProcessPopup(inputData, popupHeaderOptions, ()=>{
-            this.call(this.id);
-        });
+        // this.apiResolver.ceProcessPopup(inputData, popupHeaderOptions, ()=>{
+        //     this.call(this.id);
+        //});
     }
 
     addProcess(row: OrgProcess){
         const inputData: any = { id: null, parentId: row.id, data: null };
         const popupHeaderOptions = { text: `New Process`, desc: `` };
-        this.apiResolver.ceProcessPopup(inputData, popupHeaderOptions, ()=>{
-            this.call(this.id);
-        });
+        // this.apiResolver.ceProcessPopup(inputData, popupHeaderOptions, ()=>{
+        //     this.call(this.id);
+        // });
     }
     addTask(process: any){
         const list = (this.processList || [])[0].childItems || [];

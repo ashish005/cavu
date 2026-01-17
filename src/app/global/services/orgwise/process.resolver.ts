@@ -1,8 +1,6 @@
 import {Injectable, Injector, OnDestroy} from "@angular/core";
-import {of, Subscription} from "rxjs";
 import {OrgResourceService} from "../endpoint-base.service";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
-import {FREQUENCY_TYPE} from "../../enums";
 export class WorkflowPhaseStatusLookup {
     id: number;
     name: string;

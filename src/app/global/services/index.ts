@@ -11,5 +11,6 @@ export {TranslationService} from "./translation.service";
 export {ConfigurationService} from "./configuration.service";
 
 export * from "./orgwise";
+export * from "./models";
 
 

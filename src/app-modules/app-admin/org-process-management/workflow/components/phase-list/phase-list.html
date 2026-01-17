@@ -1,0 +1,46 @@
+<div class="d-flex flex-column">
+  <div class="p-2 px-3">
+    <span class="text-muted text-sm">Phases</span>
+    <button class="btn btn-xs b-theme text-theme text-xs border-0 float-right" (click)="create.emit()"><i class="fa fa-plus"></i> Phases</button>
+  </div>
+  <div class="scrollable hover pt-2">
+    <div class="list-group list-group-gap px-2">
+      <ng-template ngFor let-row [ngForOf]="phases | sortBy:'asc': 'sortOrder'"  let-i="index">
+        <div class="list-group-item p-1 pl-2 box" @fade>
+          <div class="float-right">
+            <span
+              class="b-a badge mr-1"
+              (click)="manageTemplates.emit(row)"
+            >
+              Templates<span *ngIf="row.notificationTemplates?.length"> ({{ row.notificationTemplates.length }})</span>
+            </span>
+            <span
+              class="b-a badge"
+              [ngClass]="{'theme text-theme': row.notification}"
+              (click)="notification.emit(row)"
+            >
+              {{ row.notification ? 'Notified' : 'Notify' }}
+            </span>
+            <span class="btn btn-xs btn-icon" (click)="select.emit(row)"><i class="fa fa-wrench"></i></span>
+            <span class="btn btn-xs btn-icon" (click)="edit.emit(row)"><i class="fa fa-edit"></i></span>
+          </div>
+          <div class="list-body text-xs">
+            <b class="badge badge-pill text-success up"><i class="fa fa-lock text-sm" *ngIf="row.isLocked"></i></b>
+            <span class="_500" [style.color]="row.color">{{ row.name }}</span>
+            <div class="flex-column d-block">
+              <ng-template ngFor let-step [ngForOf]="row.steps | sortBy:'asc': 'sortOrder'"  let-i="index">
+                <div class="b-a d-inline-block px-2 mx-1" >
+                  <span class="label">{{ step.name }}</span>
+                  <div class="float-right px-1">
+                    <span class="mx-1 badge red" (click)="showStepTask.emit(step)"> Add Task</span>
+                    <span class="mx-1 badge green" (click)="editStep.emit(step)"><i class="fa fa-edit"></i></span>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

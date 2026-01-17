@@ -9,7 +9,6 @@ export * from "./extender-classes";
 export * from './helpers';
 export * from './lookups';
 export * from "./services";
-export * from "./services/models";
 export * from "./pipes";
 export * from "./popup-module/app-popup.enum";
 
