@@ -79,6 +79,13 @@
     </div>
 </form>
 <ng-template #footerTemplate>
+    <ul class="nav nav-xs no-border float-left" *ngIf="task && task.id">
+        <li class="nav-item">
+             <button type="button" class="btn btn-xs white" (click)="onNotifications()">
+                <i class="fa fa-bell"></i> Notifications
+            </button>
+        </li>
+    </ul>
     <ul class="nav nav-xs no-border float-right">
         <li class="nav-item">
             <button type="button"

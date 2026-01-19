@@ -5,7 +5,8 @@ import {PhaseStepTaskService} from "../phase-step-task/phase-step-task.component
 
 import {Phase, PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {PhaseStepTask} from "../../domains/phase-step-task.serializer";
-import { WorkflowPluginLookup, OrgWorkflowAPIResolver } from "@app-global";
+import { WorkflowPluginLookup, OrgWorkflowAPIResolver, SharedService, ASIDE_CLASS, ASIDE_SIZE } from "@app-global";
+import {NotificationWizardComponent} from "../notification-wizard/notification-wizard.component";
 
 @Component({
     standalone: false,
@@ -30,7 +31,8 @@ export class PhaseStepTaskEditorComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private service: PhaseStepTaskService,
-        private lookupResolver: OrgWorkflowAPIResolver
+        private lookupResolver: OrgWorkflowAPIResolver,
+        private sharedService: SharedService
     ) {
         this.lookup = this.lookupResolver.masterType;
         this.customForm = this.fb.group({
@@ -104,6 +106,51 @@ export class PhaseStepTaskEditorComponent implements OnInit {
             this.submitted = false;
         }
 
-        req$.subscribe(success, error);
+        req$.subscribe({ next: success, error: error });
+    }
+
+    onNotifications() {
+        if (!this.task || !this.task.id) return;
+
+        const input = {
+            context: 'task',
+            process: this.process,
+            phase: this.phase,
+            task: this.task,
+            settings: {
+                triggers: {
+                    onEnter: this.task.notification?.notifyOnEnter,
+                    onExit: this.task.notification?.notifyOnExit
+                },
+                templates: this.task.notificationTemplates || []
+            }
+        };
+        const popupHeaderOption = {
+            text: `${this.task.name} Notifications`,
+            desc: this.step ? this.step.name : ''
+        };
+        const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        
+        const success = (resp: any) => {
+            if (resp && this.task && this.task.id) {
+                const updatedTask = {
+                    ...this.task,
+                    notification: {
+                        channels: [],
+                        message: '',
+                        ...this.task.notification,
+                        notifyOnEnter: !!resp.triggers?.onCreate,
+                        notifyOnExit: !!resp.triggers?.onComplete,
+                    },
+                    notificationTemplates: resp.templates
+                };
+                this.service.update(this.task.id, updatedTask).subscribe();
+                Object.assign(this.task, updatedTask);
+            }
+            this.sharedService.destroy();
+        };
+        const failure = () => { this.sharedService.destroy(); };
+        
+        this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
     }
 }

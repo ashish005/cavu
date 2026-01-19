@@ -1,7 +1,7 @@
 import {CoreQueryOptions, CoreResource} from "@app-global";
 
 export class PhaseStepTaskQueryOptions extends CoreQueryOptions {
-  workflowId: number;
+  workflowId?: number;
   phaseStepId?: number;
   constructor(model: any = {}){
       super(model);
@@ -21,6 +21,7 @@ export class PhaseStepTaskQueryOptions extends CoreQueryOptions {
 
 export class PhaseStepTask extends CoreResource
 {
+    override id: number;
     phaseStepId: number;
     taskPriorityId: number;
     phaseStepName: string;
@@ -45,13 +46,22 @@ export class PhaseStepTask extends CoreResource
     dueDate: string;
     dueMonth: string;
 
+    notification?: {
+        notifyOnEnter: boolean;
+        notifyOnExit: boolean;
+        channels: string[];
+        message: string;
+    };
+    notificationTemplates?: any[];
+
     constructor(model: any = {}) {
         super();
         const {
             id, name, remark, phaseStepId, taskPriorityId, taskPriorityName,
             isManual, isSystemTask, isPrimary, isVerificationRequired, isStatusOnMailRequired, isActive,
             yearMode, fyStartDay, fyStartMonth, timeZone,
-            frequencyTypeId, frequencyTypeName, phaseStepName, dueDate, dueMonth
+            frequencyTypeId, frequencyTypeName, phaseStepName, dueDate, dueMonth,
+            notification, notificationTemplates
         } = model;
 
         this.id = id;
@@ -75,6 +85,8 @@ export class PhaseStepTask extends CoreResource
         this.frequencyTypeName = frequencyTypeName;
         this.dueDate = dueDate;
         this.dueMonth = dueMonth;
+        this.notification = notification;
+        this.notificationTemplates = notificationTemplates;
     }
 }
 

@@ -1,7 +1,7 @@
 import {CoreQueryOptions, CoreResource} from "@app-global";
 
 export class OrgWorkflowsQueryOptions extends CoreQueryOptions{
-    parentId: number | string;
+    parentId?: number | string;
     constructor(model: any = {}){ super(model); }
     override toQueryString (){
         const obj = {
@@ -92,6 +92,13 @@ export class OrgWorkflow extends CoreResource {
     isLocked: boolean;
     isActive: boolean;
     phases: Array<OrgWorkflowPhase>;
+    notification?: {
+        notifyOnEnter: boolean;
+        notifyOnExit: boolean;
+        channels: string[];
+        message: string;
+    };
+    notificationTemplates?: any[];
     constructor(model: any = <any>{}){
         super();
         const {
@@ -99,13 +106,13 @@ export class OrgWorkflow extends CoreResource {
             parentId, parentName,
             //processPhase, processPhaseOn, manualStatus, manualStatusOn,
             inchargeId, inchargeName, processStatus, phases,
-            isLocked, isActive
+            isLocked, isActive, notification, notificationTemplates
         } = model;
         this.id = id;
         this.name = name;
         this.description = description;
         this.sortOrder = sortOrder;
-        this.parentId = parentId;
+        this.parentId = parentId || 0;
         this.parentName = parentName;
         // this.processPhase = processPhase;
         // this.processPhaseOn = processPhaseOn;
@@ -116,7 +123,9 @@ export class OrgWorkflow extends CoreResource {
         this.processStatus = processStatus;
         this.isLocked = isLocked;
         this.isActive = isActive;
-        this.phases = (phases || []).map(r => new OrgWorkflowPhase(r));
+        this.phases = (phases || []).map((r: any) => new OrgWorkflowPhase(r));
+        this.notification = notification;
+        this.notificationTemplates = notificationTemplates;
     }
 }
 

@@ -1,0 +1,136 @@
+<div class="d-flex flex-column h-100">
+    <div class="p-3 b-b light">
+        <h6 class="mb-0">Notification Wizard</h6>
+        <small class="text-muted">Configure notifications for {{ contextTitle }}</small>
+    </div>
+
+    <div class="d-flex flex-row flex-grow-1" style="min-height: 0;">
+        <!-- Left Nav -->
+        <div class="wizard-nav py-2 bg-light">
+            <div class="nav flex-column nav-pills">
+                <a class="nav-link py-2 px-3 text-sm" 
+                   [class.active]="activeStep === 'triggers'"
+                   (click)="activeStep = 'triggers'">
+                    <i class="fa fa-flash mr-2 text-muted"></i> Triggers
+                </a>
+                <a class="nav-link py-2 px-3 text-sm" 
+                   [class.active]="activeStep === 'templates'"
+                   (click)="activeStep = 'templates'">
+                    <i class="fa fa-envelope-o mr-2 text-muted"></i> Templates
+                    <span class="badge badge-sm badge-pill primary float-right" *ngIf="templates.length">{{ templates.length }}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="wizard-content p-3 scroll-y">
+            
+            <!-- STEP: TRIGGERS -->
+            <div *ngIf="activeStep === 'triggers'">
+                <h6 class="text-muted mb-3">When should notifications be sent?</h6>
+                
+                <div class="list-group">
+                    <div class="list-group-item" *ngFor="let t of availableTriggers">
+                        <label class="md-check d-flex align-items-center mb-0">
+                            <input type="checkbox" [(ngModel)]="triggers[t.key]">
+                            <i class="blue mr-3"></i>
+                            <div>
+                                <span class="d-block font-weight-bold">{{ t.label }}</span>
+                                <small class="text-muted">{{ t.desc }}</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-3 text-sm">
+                    <i class="fa fa-info-circle mr-1"></i>
+                    Selected triggers will use the templates defined in the Templates tab.
+                </div>
+            </div>
+
+            <!-- STEP: TEMPLATES -->
+            <div *ngIf="activeStep === 'templates'">
+                
+                <!-- List Mode -->
+                <div *ngIf="!editingTemplate">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-muted mb-0">Message Templates</h6>
+                        <button class="btn btn-xs theme" (click)="addTemplate()">
+                            <i class="fa fa-plus"></i> Add Template
+                        </button>
+                    </div>
+
+                    <div *ngIf="templates.length === 0" class="text-center p-5 text-muted bg-light b-a rounded">
+                        No templates defined. Click "Add Template" to create one.
+                    </div>
+
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                             *ngFor="let t of templates; let i = index"
+                             (click)="editTemplate(i)">
+                            <div>
+                                <span class="badge badge-sm mr-2" 
+                                      [class.badge-info]="t.channel === 'EMAIL'"
+                                      [class.badge-warning]="t.channel === 'SMS'"
+                                      [class.badge-success]="t.channel === 'INAPP'">
+                                    {{ t.channel }}
+                                </span>
+                                <strong>{{ t.name }}</strong>
+                            </div>
+                            <button class="btn btn-xs btn-icon btn-white" (click)="removeTemplate(i); $event.stopPropagation()">
+                                <i class="fa fa-trash text-danger"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Mode -->
+                <div *ngIf="editingTemplate" class="animated fadeIn">
+                    <div class="d-flex align-items-center mb-3 pb-2 b-b">
+                        <button class="btn btn-icon btn-sm btn-white mr-2" (click)="cancelEditTemplate()">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                        <h6 class="mb-0">{{ editingTemplateIndex > -1 ? 'Edit' : 'New' }} Template</h6>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-muted text-xs">Template Name</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="editingTemplate.name" placeholder="e.g. Start Notification">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-muted text-xs">Channel</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="editingTemplate.channel">
+                            <option *ngFor="let c of availableChannels" [value]="c.id">{{ c.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" *ngIf="editingTemplate.channel === 'EMAIL'">
+                        <label class="text-muted text-xs">Subject</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="editingTemplate.subject" placeholder="Email Subject">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-muted text-xs">Message Body</label>
+                        <textarea class="form-control text-sm" rows="5" [(ngModel)]="editingTemplate.body" placeholder="Enter message content..."></textarea>
+                        <small class="text-muted">You can use placeholders like {{ '{' }}phaseName{{ '}' }}, {{ '{' }}processName{{ '}' }}.</small>
+                    </div>
+
+                    <div class="text-right">
+                        <button class="btn btn-sm white mr-2" (click)="cancelEditTemplate()">Cancel</button>
+                        <button class="btn btn-sm theme" (click)="saveTemplate()">Save Template</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <ng-template #footerTemplate>
+        <div class="p-3 text-right b-t">
+            <button type="button" class="btn btn-sm white mr-2" (click)="onCancel()">Close</button>
+            <button type="button" class="btn btn-sm theme" (click)="save()">Save Configuration</button>
+        </div>
+    </ng-template>
+</div>

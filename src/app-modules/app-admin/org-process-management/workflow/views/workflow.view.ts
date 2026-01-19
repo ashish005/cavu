@@ -1,13 +1,13 @@
-import {Component, OnInit} from "@angular/core";
+import {Component} from "@angular/core";
 import {ASIDE_CLASS, ASIDE_SIZE, OrgWorkflowAPIResolver, SharedService, WorkflowPhaseStatusLookup} from "@app-global";
 import { Phase, PhaseQueryOptions, PhaseStep, PhaseTransition, WorkflowNode } from "../domains/org-workflow-node.serializer";
 import {OrgProcessPhaseService, WorkflowService} from "../services/workflow.service";
 import {
   PhaseEditorComponent,
-  PhaseNotificationComponent,
   TransitionEditorComponent,
-  WorkflowNotificationTemplateComponent
+  NotificationWizardComponent
 } from "../components";
+import {of} from "rxjs";
 
 
 @Component({
@@ -46,13 +46,13 @@ export class OrgWorkflowView {
 
     this.coreState.workflowId = process.id;
 
-    this.service.list(this.coreState).subscribe(p => {
+    this.service.list(this.coreState).subscribe((p: any) => {
       this.phases = p.entities;
       this.loadTransitions(process.id);
     });
   }
 
-  onPhaseCreate(e: any){
+  onPhaseCreate(_e: any){
     const input = {
       data: {
         processId: this.selectedProcess?.id
@@ -79,8 +79,16 @@ export class OrgWorkflowView {
 
   onPhaseNotification(phase: Phase){
     const input = {
+      context: 'phase',
       process: this.selectedProcess,
-      phase: phase
+      phase: phase,
+      settings: {
+        triggers: {
+          onEnter: phase.notification?.notifyOnEnter,
+          onExit: phase.notification?.notifyOnExit
+        },
+        templates: phase.notificationTemplates || []
+      }
     };
     const popupHeaderOption = {
       text: `${phase.name} Notifications`,
@@ -95,27 +103,37 @@ export class OrgWorkflowView {
           this.phases[index] = {
             ...current,
             notification: {
-              notifyOnEnter: !!resp.notifyOnEnter,
-              notifyOnExit: !!resp.notifyOnExit,
-              channels: resp.channels || [],
-              message: resp.message || ''
-            }
+              notifyOnEnter: !!resp.triggers?.onEnter,
+              notifyOnExit: !!resp.triggers?.onExit,
+              channels: [],
+              message: ''
+            },
+            notificationTemplates: resp.templates
           } as any;
         }
       }
       this.sharedService.destroy();
     };
     const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(PhaseNotificationComponent, popupOptions, input).then(success, failure);
+    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
   }
 
   onPhaseTemplates(phase: Phase) {
     const current = this.phases.find(p => p.id === phase.id) as any;
     const templates = current && current.notificationTemplates ? current.notificationTemplates : [];
+    
     const input = {
+      context: 'phase',
       process: this.selectedProcess,
       phase: phase,
-      templates: templates
+      activeStep: 'templates',
+      settings: {
+        triggers: {
+          onEnter: phase.notification?.notifyOnEnter,
+          onExit: phase.notification?.notifyOnExit
+        },
+        templates: templates
+      }
     };
     const popupHeaderOption = {
       text: `${phase.name} Templates`,
@@ -123,18 +141,66 @@ export class OrgWorkflowView {
     };
     const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
     const success = (resp: any) => {
-      if (resp && resp.templates) {
+      if (resp) {
         const index = this.phases.findIndex(p => p.id === phase.id);
         if (index > -1) {
           const updated = [...this.phases] as any[];
-          updated[index] = { ...updated[index], notificationTemplates: resp.templates };
+          // Update templates and potentially triggers if changed
+          updated[index] = { 
+              ...updated[index], 
+              notificationTemplates: resp.templates,
+              notification: {
+                  ...updated[index].notification,
+                  notifyOnEnter: !!resp.triggers?.onEnter,
+                  notifyOnExit: !!resp.triggers?.onExit,
+              }
+          };
           this.phases = updated as Phase[];
         }
       }
       this.sharedService.destroy();
     };
     const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(WorkflowNotificationTemplateComponent, popupOptions, input).then(success, failure);
+    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
+  }
+
+  onProcessNotification() {
+    if (!this.selectedProcess) return of(true);
+    const process: any = this.selectedProcess;
+    const input = {
+      context: 'process',
+      process: this.selectedProcess,
+      settings: {
+        triggers: {
+            onStart: process.notification?.notifyOnEnter,
+            onComplete: process.notification?.notifyOnExit
+        }, 
+        templates: process.notificationTemplates || []
+      }
+    };
+    const popupHeaderOption = {
+      text: `${this.selectedProcess.name} Notifications`,
+      desc: 'Process Level'
+    };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const success = (resp: any) => {
+        if (resp && this.selectedProcess) {
+            const updatedProcess = {
+                ...this.selectedProcess,
+                notification: {
+                    ...process.notification,
+                    notifyOnEnter: !!resp.triggers?.onStart,
+                    notifyOnExit: !!resp.triggers?.onComplete,
+                },
+                notificationTemplates: resp.templates
+            };
+            this.workflowService.update(this.selectedProcess.id, updatedProcess as any).subscribe();
+            Object.assign(this.selectedProcess, updatedProcess);
+        }
+      this.sharedService.destroy();
+    };
+    const failure = () => { this.sharedService.destroy(); };
+    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
   }
 
   onPhaseSelected(phase: any) {
@@ -164,7 +230,7 @@ export class OrgWorkflowView {
       }
       this.sharedService.destroy();
     };
-    const failure = (e: any) => { this.sharedService.destroy(); };
+    const failure = (_e: any) => { this.sharedService.destroy(); };
     return this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
   }
   openTab(tab: string) {

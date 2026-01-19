@@ -28,6 +28,9 @@
                             <h6 class="mb-0">{{selectedProcess?.name}}</h6>
                             <small class="float-left"> Management</small>
                         </a>
+                        <button class="btn btn-sm btn-icon btn-rounded white ml-2" (click)="onProcessNotification()" title="Notifications" *ngIf="selectedProcess">
+                            <i class="fa fa-bell"></i>
+                        </button>
                         <!--<ul class="nav nav-xs flex-row no-border" *ngIf="selectedProcess">
                             <li class="nav-item">
                                 <a class="btn btn-xs text-xs b-theme text-theme border-0" (click)="addProcess(activeOrgProcess)">

@@ -1,7 +1,7 @@
 import {CoreQueryOptions, CoreResource} from "@app-global";
 
 export class PhaseQueryOptions extends CoreQueryOptions{
-    workflowId: number | string;
+    workflowId?: number | string;
     constructor(model: any = {}){ super(model); }
     override toQueryString (){
         const obj = {
@@ -130,12 +130,19 @@ export class Phase extends CoreResource {
     steps: PhaseStep[];
     isLocked: boolean;
     isActive: boolean;
+    notification?: {
+        notifyOnEnter: boolean;
+        notifyOnExit: boolean;
+        channels: string[];
+        message: string;
+    };
+    notificationTemplates?: any[];
     constructor(model: any = <any>{}){
         super();
         const {
             processId, id, name, description, sortOrder,
             phaseStatusId, color, slaHours, statuses, steps,
-            isLocked, isActive
+            isLocked, isActive, notification, notificationTemplates
         } = model;
         this.processId = processId;
         this.id = id;
@@ -148,7 +155,9 @@ export class Phase extends CoreResource {
         this.isLocked = isLocked;
         this.isActive = isActive;
         this.statuses = (statuses || []).map(r => new PhaseStatus(r));
-        this.steps = (steps || []).map(r => new PhaseStep(r));
+        this.steps = (steps || []).map((r: any) => new PhaseStep(r));
+        this.notification = notification;
+        this.notificationTemplates = notificationTemplates;
     }
 }
 
