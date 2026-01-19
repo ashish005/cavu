@@ -123,8 +123,7 @@
         {{ buildConditionExpression() }}
     </div>
 
-    <!-- ================= ACTIONS ================= -->
     <ng-template #footerTemplate>
-        <button class="btn btn-xs theme" [disabled]="customForm.invalid">Save Transition</button>
+        <button class="btn btn-xs theme" [disabled]="customForm.invalid" (click)="save()">Save Transition</button>
     </ng-template>
 </form>

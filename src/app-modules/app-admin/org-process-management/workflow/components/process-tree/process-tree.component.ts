@@ -17,7 +17,6 @@ import {WorkflowNode} from "../../domains/org-workflow-node.serializer";
     selector: 'process-tree',
     standalone: false,
     templateUrl: './process-tree.html',
-    //styleUrls: [`./process-tree.css`],
     animations: [
         trigger('expand', [
             transition(':enter', [
@@ -225,5 +224,5 @@ export class ProcessTreeComponent implements OnChanges, AfterViewInit {
         return node.id;
     }
 
-    showWorkflow(e){}
+    showWorkflow(node: WorkflowNode){}
 }

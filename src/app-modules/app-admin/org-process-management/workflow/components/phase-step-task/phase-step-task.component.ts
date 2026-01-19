@@ -7,6 +7,7 @@ import {
 } from "../../domains/phase-step-task.serializer";
 import {PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {WorkflowNotificationTemplateComponent} from "../workflow-notification-template/workflow-notification-template.component";
+import {PhaseStepTaskEditorComponent} from "../phase-step-task-editor/phase-step-task-editor.component";
 import {
     ViewExtender, OrgResourceService, GridUISwitchCellComponent,
     ASIDE_CLASS, ASIDE_SIZE, SharedService
@@ -47,6 +48,9 @@ export class PhaseStepTaskComponent extends ViewExtender<PhaseStepTask> implemen
 
   ngOnInit(){
     this.coreState.workflowId = this.process?.id || 0;
+    if (this.step && this.step.id) {
+      this.coreState.phaseStepId = this.step.id;
+    }
     super.populateGrid();
   }
 
@@ -65,33 +69,47 @@ export class PhaseStepTaskComponent extends ViewExtender<PhaseStepTask> implemen
       }
   }
 
-    actionCb(row: PhaseStepTask) {
-    const anyRow: any = row;
-    const templates = anyRow.templates || [];
-    const input = {
-        process: this.process,
-        task: row,
-        templates: templates
-    };
+  addTask() {
+    if (!this.process || !this.step) {
+      return;
+    }
     const popupHeaderOption = {
-        text: row.name || '',
-        desc: this.process ? this.process.name : ''
+      text: "New Task",
+      desc: this.process ? this.process.name : ""
+    };
+    const input = {
+      process: this.process,
+      step: this.step
     };
     const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-    const success = (resp: any) => {
-        if (resp && resp.templates) {
-            const index = this.gridData.findIndex(x => x.id === anyRow.id);
-            if (index > -1) {
-                const updated = [...this.gridData] as any[];
-                updated[index] = { ...updated[index], templates: resp.templates };
-                this.gridData = updated;
-            }
-        }
-        this.sharedService.destroy();
+    const success = () => {
+      this.sharedService.destroy();
+      this.populateGrid();
     };
     const failure = () => {
-        this.sharedService.destroy();
+      this.sharedService.destroy();
     };
-    this.sharedService.showCustomPopup(WorkflowNotificationTemplateComponent, popupOptions, input).then(success, failure);
+    this.sharedService.showCustomPopup(PhaseStepTaskEditorComponent, popupOptions, input).then(success, failure);
+  }
+
+  actionCb(row: PhaseStepTask) {
+    const popupHeaderOption = {
+      text: row.name || "",
+      desc: this.process ? this.process.name : ""
+    };
+    const input = {
+      process: this.process,
+      step: this.step,
+      task: row
+    };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const success = () => {
+      this.sharedService.destroy();
+      this.populateGrid();
+    };
+    const failure = () => {
+      this.sharedService.destroy();
+    };
+    this.sharedService.showCustomPopup(PhaseStepTaskEditorComponent, popupOptions, input).then(success, failure);
   }
 }

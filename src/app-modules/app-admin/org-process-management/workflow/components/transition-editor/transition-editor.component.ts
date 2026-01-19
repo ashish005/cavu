@@ -14,7 +14,7 @@ export class TransitionEditorComponent {
     @Input() process?: WorkflowNode;
     @Input() phases?: Phase[];
     @Input() statuses?: WorkflowPhaseStatusLookup[];
-    transition: PhaseTransition = <PhaseTransition>{ fromPhaseId: null, rule: '' };
+    @Input() transition: PhaseTransition = <PhaseTransition>{ fromPhaseId: null, rule: '' };
 
     ruleProperties = [
         { name: 'amount', label: 'Amount', type: 'number' },
@@ -48,14 +48,12 @@ export class TransitionEditorComponent {
     customForm = this.fb.group({
         id: [null],
         processId: [null, Validators.required],
-
         fromPhaseId: [null, Validators.required],
+        fromStatusId: [null],
         toPhaseId: [null, Validators.required],
-
+        toStatusId: [null],
         description: [''],
         isActive: [true],
-
-        // 🔥 Rule Engine (optional)
         ruleJoinType: ['AND'],
         rules: this.fb.array([])
     });
@@ -70,6 +68,14 @@ export class TransitionEditorComponent {
     ngOnInit() {
         if (this.process) {
             this.customForm.patchValue(<any>{ processId: this.process.id });
+        }
+        if (this.transition) {
+            this.customForm.patchValue(<any>{
+                id: this.transition.id,
+                fromPhaseId: this.transition.fromPhaseId,
+                toPhaseId: this.transition.toPhaseId,
+                description: this.transition.description
+            });
         }
     }
 

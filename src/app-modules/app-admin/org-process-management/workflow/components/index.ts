@@ -6,6 +6,7 @@ export {PhaseEditorComponent} from "./phase-editor/phase-editor.component";
 export {TransitionEditorComponent} from "./transition-editor/transition-editor.component";
 export {WorkflowCanvasComponent} from "./workflow-canvas/workflow-canvas.component";
 export {PhaseStepTaskComponent} from "./phase-step-task/phase-step-task.component";
+export {PhaseStepTaskEditorComponent} from "./phase-step-task-editor/phase-step-task-editor.component";
 export {PhaseNotificationComponent} from "./phase-notification/phase-notification.component";
 export {WorkflowNotificationTemplateComponent} from "./workflow-notification-template/workflow-notification-template.component";
 
@@ -16,6 +17,7 @@ import {PhaseEditorComponent} from "./phase-editor/phase-editor.component";
 import {TransitionEditorComponent} from "./transition-editor/transition-editor.component";
 import {WorkflowCanvasComponent} from "./workflow-canvas/workflow-canvas.component";
 import {PhaseStepTaskComponent} from "./phase-step-task/phase-step-task.component";
+import {PhaseStepTaskEditorComponent} from "./phase-step-task-editor/phase-step-task-editor.component";
 import {PhaseNotificationComponent} from "./phase-notification/phase-notification.component";
 import {
     WorkflowNotificationTemplateComponent
@@ -25,6 +27,6 @@ import {
 export const WORKFLOW_COMPONENTS = [
     WorkflowCeView,
     ProcessTreeComponent, PhaseListComponent, PhaseEditorComponent,
-    TransitionEditorComponent, WorkflowCanvasComponent, PhaseStepTaskComponent,
+    TransitionEditorComponent, WorkflowCanvasComponent, PhaseStepTaskComponent, PhaseStepTaskEditorComponent,
     PhaseNotificationComponent, WorkflowNotificationTemplateComponent
 ];

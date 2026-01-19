@@ -1,50 +1,22 @@
 <div class="px-2">
-    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: flattenedNodes }">
-    </ng-container>
-    <!--<ng-template ngFor let-row [ngForOf]="flattenedNodes | sortBy:'asc': 'sortOrder'" let-i="index">
-        <div class="list-group-item p-1 pl-2 box">
-            <div class="float-right">
-                <a class="btn btn-xs btn-icon" (click)="selectNode(row)">
-                    <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-            <div class="list-body text-xs">
-                <b class="badge badge-pill text-success up" ><i class="fa fa-lock text-sm" *ngIf="row.isLocked"></i></b>
-                <a class="item-title _500">{{ row.name }}</a>
-                {{ row | json }}
-                <div class="item-except text-xs">
-                    <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showWorkflow(row)">
-                        Workflow
-                        <i class="fa fa-gears"></i>
-                    </a>
-                    &lt;!&ndash;<a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showProcesses(row)">Processes</a>
-                    <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showProcessTasks(row)">Tasks</a>
-                    <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showTaskSchedules(row)">Schedules</a>&ndash;&gt;
-                </div>
-            </div>
-        </div>
-    </ng-template>-->
+    <div class="list-group list-group-gap px-2">
+        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: data }">
+        </ng-container>
+    </div>
 </div>
 <ng-template #recursiveList let-nodes>
-    <div class="list-group list-group-gap px-2">
-        <div *ngFor="let node of nodes" class="list-group-item p-1 pl-2 box">
-            <div class="list-body text-xs">
-                <a class="_500">{{ node.name }}</a>
-            </div>
+    <div *ngFor="let node of nodes" class="list-group-item box my-1 p-0 pl-2"
+         [class.active]="selectedNode?.id === node.id">
+        <div class="list-body text-xs clear" (click)="selectNode(node)">
+            <a class="item-title _500 tree-label">{{ node.name }}</a>
             <div class="float-right">
-                    <a class="btn btn-xs b-theme text-theme text-xs border-0" (click)="showWorkflow(node)">
-                        Workflow
-                        <i class="fa fa-gears"></i>
-                    </a>
-                    <a class="btn btn-xs btn-icon" (click)="selectNode(node)">
-                        <i class="fa fa-chevron-right"></i>
-                    </a>
-                </div>
-            <!-- 🔁 Call template again -->
-            <div class="pl-2" *ngIf="node.children?.length">
-                <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: node.children }">
-                </ng-container>
+                <a class="btn btn-xs b-theme text-xs" (click)="showWorkflow(node)"><i class="fa fa-gears"></i></a>
+                <a class="btn btn-xs text-xs" (click)="selectNode(node)"><i class="fa fa-chevron-right"></i></a>
             </div>
+        </div>
+        <div class="my-1" *ngIf="node.children?.length">
+            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: node.children }">
+            </ng-container>
         </div>
     </div>
 </ng-template>

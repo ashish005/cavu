@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {ASIDE_CLASS, ASIDE_SIZE, OrgWorkflowAPIResolver, SharedService, WorkflowPhaseStatusLookup} from "@app-global";
 import { Phase, PhaseQueryOptions, PhaseStep, PhaseTransition, WorkflowNode } from "../domains/org-workflow-node.serializer";
-import {OrgProcessPhaseService} from "../services/workflow.service";
+import {OrgProcessPhaseService, WorkflowService} from "../services/workflow.service";
 import {
   PhaseEditorComponent,
   PhaseNotificationComponent,
@@ -31,6 +31,7 @@ export class OrgWorkflowView {
   selectedStepForTasks: PhaseStep | null = null;
   constructor(private lookup: OrgWorkflowAPIResolver,
               private service: OrgProcessPhaseService,
+              private workflowService: WorkflowService,
               private sharedService: SharedService) {
     this.phaseStatuses = this.lookup.masterType.phaseStatus;
   }
@@ -47,7 +48,7 @@ export class OrgWorkflowView {
 
     this.service.list(this.coreState).subscribe(p => {
       this.phases = p.entities;
-      //this.loadTransitions(process.id);
+      this.loadTransitions(process.id);
     });
   }
 
@@ -138,19 +139,28 @@ export class OrgWorkflowView {
 
   onPhaseSelected(phase: any) {
     this.selectedPhase = phase;
+    const existing = this.phaseTransitions.find(t => t.fromPhaseId === phase.id) || null;
     const input = {
-      id: phase.id,
-      data: phase,
+      id: existing ? existing.id : null,
+      data: existing || phase,
       process: this.selectedProcess,
       phases: this.phases,
-      statuses: this.phaseStatuses
+      statuses: this.phaseStatuses,
+      transition: existing || {
+        id: null,
+        processId: this.selectedProcess ? this.selectedProcess.id : null,
+        fromPhaseId: phase.id,
+        toPhaseId: null,
+        description: '',
+        rule: ''
+      }
     };
     const popupHeaderOption = { text: phase.name, desc: '' };
     const popupOptions= { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
 
     const success = (resp: any) => {
       if (resp && this.selectedProcess) {
-        //this.saveTransition(this.selectedProcess.id, resp);
+        this.saveTransition(this.selectedProcess.id, resp);
       }
       this.sharedService.destroy();
     };
@@ -173,57 +183,63 @@ export class OrgWorkflowView {
     }
   }
 
-  /*loadTransitions(processId: number) {
-    this.service.getTransitions(processId).subscribe(t => {
-      if (t && t.length) {
-        this.phaseTransitions = t;
-      } else {
-        this.seedTransitions(processId);
-      }
+  loadTransitions(workflowId: number) {
+    this.workflowService.getTransitions(workflowId).subscribe(t => {
+      this.phaseTransitions = t || [];
     });
   }
 
-  seedTransitions(processId: number) {
-    const ordered = [...this.phases].sort((a, b) => a.sortOrder - b.sortOrder);
-    const candidates: PhaseTransition[] = [];
-    for (let i = 0; i < ordered.length - 1; i++) {
-      const from = ordered[i];
-      const to = ordered[i + 1];
-      candidates.push({
-        id: 0,
-        processId: processId,
-        fromPhaseId: from.id,
-        toPhaseId: to.id,
-        description: `${from.name} → ${to.name}`
-      });
-    }
-    if (!candidates.length) {
-      this.phaseTransitions = [];
-      return;
-    }
-    const requests = candidates.map(c => this.service.createTransition(c));
-    forkJoin(requests).subscribe(() => {
-      this.service.getTransitions(processId).subscribe(t => {
-        this.phaseTransitions = t;
-      });
-    });
-  }
-
-  saveTransition(processId: number, payload: any) {
+  saveTransition(workflowId: number, payload: any) {
     const dto: PhaseTransition = {
       id: payload.id,
-      processId: processId,
+      processId: workflowId,
       fromPhaseId: payload.fromPhaseId,
       toPhaseId: payload.toPhaseId,
       description: payload.description,
       rule: payload.rule
     };
     const isUpdate = !!dto.id;
-    const req$ = isUpdate ? this.service.updateTransition(dto.id, dto) : this.service.createTransition(dto);
+    const req$ = isUpdate
+      ? this.workflowService.updateTransition(dto.id, dto)
+      : this.workflowService.createTransition(workflowId, dto);
     req$.subscribe(() => {
-      this.loadTransitions(processId);
+      this.loadTransitions(workflowId);
     });
-  }*/
+  }
+
+  onTransitionEdit(transition: PhaseTransition) {
+    if (!this.selectedProcess) {
+      return;
+    }
+    const existing = this.phaseTransitions.find(t => t.id === transition.id) || transition;
+    const input = {
+      id: existing.id,
+      data: existing,
+      process: this.selectedProcess,
+      phases: this.phases,
+      statuses: this.phaseStatuses,
+      transition: existing
+    };
+    const popupHeaderOption = {
+      text: 'Transition',
+      desc: this.getPhaseName(existing.fromPhaseId) + ' \u2192 ' + this.getPhaseName(existing.toPhaseId)
+    };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const success = (resp: any) => {
+      if (resp && this.selectedProcess) {
+        this.saveTransition(this.selectedProcess.id, resp);
+      }
+      this.sharedService.destroy();
+    };
+    const failure = (e: any) => { this.sharedService.destroy(); };
+    this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
+  }
+
+  private getPhaseName(id: number | null | undefined): string {
+    if (!id) {
+      return '';
+    }
+    const p = this.phases.find(x => x.id === id);
+    return p ? p.name : '';
+  }
 }
-
-

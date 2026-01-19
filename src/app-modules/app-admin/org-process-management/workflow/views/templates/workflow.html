@@ -55,10 +55,14 @@
                                 [process]="selectedProcess"
                                 [phases]="phases"
                                 (select)="onPhaseSelected($event)" (edit)="onPhaseEdit($event)" (create)="onPhaseCreate($event)"
-                                (notification)="onPhaseNotification($event)" (manageTemplates)="onPhaseTemplates($event)" (showStepTask)="onShowStepTask($event)" (editStep)="onEditStep($event)"
-                        >
+                                (notification)="onPhaseNotification($event)" (manageTemplates)="onPhaseTemplates($event)" (showStepTask)="onShowStepTask($event)" (editStep)="onEditStep($event)">
                         </phase-list>
-                        <workflow-canvas class="designer-panel canvas-panel" [phases]="phases" [transitions]="phaseTransitions">
+                        <workflow-canvas
+                                class="designer-panel canvas-panel"
+                                [phases]="phases"
+                                [transitions]="phaseTransitions"
+                                (editPhase)="onPhaseEdit($event)"
+                                (editTransition)="onTransitionEdit($event)">
                         </workflow-canvas>
                     </div>
                     <div class="d-flex flex-column flex" [class.hide]="activeTab != tabs.tasks">

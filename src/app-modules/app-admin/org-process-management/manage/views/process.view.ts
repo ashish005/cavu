@@ -18,11 +18,9 @@ export class ProcessView extends ViewExtender<OrgProcess> implements OnInit, OnD
         this.gridOptions.header = { title: 'Org Process', desc: 'Org Process', add: true, refresh: true, edit: true, delete: false };
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name' },
-            {headerName: 'ProcessStatus', field: 'processStatus' },
-            {headerName: 'Phase', field: 'processPhase' },
-            {headerName: 'Phase On', field: 'phaseOn', cellTemplate: DateFormatCell },
-            {headerName: 'PhaseStep', field: 'processPhaseStep' },
-            {headerName: 'Status On', field: 'phaseStepOn', cellTemplate: DateFormatCell },
+            {headerName: 'Phase', field: 'processPhase', cellFn: (row)=> `${row.processPhase + ' -> ' +  row.processPhaseStep}` },
+            {headerName: 'Status', field: 'processStatus' },
+            {headerName: 'As On', field: 'phaseStepOn', cellTemplate: DateFormatCell },
             {headerName: 'Incharge', field: 'inchargeName' },
             {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
         ];
