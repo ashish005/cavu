@@ -127,10 +127,10 @@ export class PhaseStepTaskEditorComponent implements OnInit {
             }
         };
         const popupHeaderOption = {
-            text: `${this.task.name} Notifications`,
+            text: `Task Notifications: ${this.task.name}`,
             desc: this.step ? this.step.name : ''
         };
-        const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
         
         const success = (resp: any) => {
             if (resp && this.task && this.task.id) {

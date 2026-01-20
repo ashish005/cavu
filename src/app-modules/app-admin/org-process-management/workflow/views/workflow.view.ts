@@ -92,10 +92,10 @@ export class OrgWorkflowView {
       }
     };
     const popupHeaderOption = {
-      text: `${phase.name} Notifications`,
-      desc: this.selectedProcess ? this.selectedProcess.name : ''
+      text: `Phase Notification Wizard: ${phase.name}`,
+      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
     };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
       if (resp) {
         const index = this.phases.findIndex(p => p.id === phase.id);
@@ -134,10 +134,10 @@ export class OrgWorkflowView {
       }
     };
     const popupHeaderOption = {
-      text: `${step.name} Notifications`,
-      desc: this.selectedProcess ? this.selectedProcess.name : ''
+      text: `Phase Step Notification Wizard: ${step.name}`,
+      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
     };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
       if (resp) {
         // Find phase and step to update
@@ -197,10 +197,10 @@ export class OrgWorkflowView {
       }
     };
     const popupHeaderOption = {
-      text: `${phase.name} Templates`,
-      desc: this.selectedProcess ? this.selectedProcess.name : ''
+      text: `Phase Notification Wizard: ${phase.name}`,
+      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
     };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
       if (resp) {
         const index = this.phases.findIndex(p => p.id === phase.id);
@@ -241,10 +241,10 @@ export class OrgWorkflowView {
       }
     };
     const popupHeaderOption = {
-      text: `${this.selectedProcess.name} Notifications`,
-      desc: 'Process Level'
+      text: `Notification Wizard: ${this.selectedProcess.name}`,
+      desc: `Process Level`
     };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
         if (resp && this.selectedProcess) {
             const updatedProcess = {

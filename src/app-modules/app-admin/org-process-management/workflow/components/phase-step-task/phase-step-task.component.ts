@@ -6,7 +6,6 @@ import {
     PhaseStepTaskSerializer
 } from "../../domains/phase-step-task.serializer";
 import {PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
-import {WorkflowNotificationTemplateComponent} from "../workflow-notification-template/workflow-notification-template.component";
 import {PhaseStepTaskEditorComponent} from "../phase-step-task-editor/phase-step-task-editor.component";
 import {NotificationWizardComponent} from "../notification-wizard/notification-wizard.component";
 import {

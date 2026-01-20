@@ -36,18 +36,17 @@ export class NotificationWizardComponent implements OnInit {
     selectedTriggerKey: string | null = null;
     
     // Triggers
-    triggers: any = {};
+    triggers: { [key: string]: boolean } = {};
     availableTriggers: any[] = [];
 
     // Templates
     templates: any[] = [];
-    editingTemplate: any = null;
-    editingTemplateIndex: number = -1;
+    activeTemplate: any = null;
 
     availableChannels = [
-        { id: 'EMAIL', name: 'Email' },
-        { id: 'SMS', name: 'SMS' },
-        { id: 'INAPP', name: 'In-App' }
+        { id: 'EMAIL', name: 'Email', icon: 'fa-envelope' },
+        { id: 'SMS', name: 'SMS', icon: 'fa-comment' },
+        { id: 'INAPP', name: 'In-App', icon: 'fa-bell' }
     ];
 
     constructor() {}
@@ -79,6 +78,12 @@ export class NotificationWizardComponent implements OnInit {
 
     get selectedTrigger() {
         return this.availableTriggers.find(t => t.key === this.selectedTriggerKey);
+    }
+
+    selectTrigger(key: string) {
+        this.selectedTriggerKey = key;
+        const current = this.templates.filter(t => t.trigger === key);
+        this.activeTemplate = current.length > 0 ? current[0] : null;
     }
 
     initTriggers() {
@@ -139,55 +144,26 @@ export class NotificationWizardComponent implements OnInit {
 
     // --- Template Management ---
 
-    addTemplate() {
+    addTemplate(channel: string = 'EMAIL') {
         if (!this.selectedTriggerKey) return;
 
-        this.editingTemplate = {
-            name: 'New Template',
-            channel: 'EMAIL',
+        const newTemplate = {
+            name: `${channel} Template`,
+            channel: channel,
             trigger: this.selectedTriggerKey,
             subject: '',
             body: '',
             isActive: true
         };
-        this.editingTemplateIndex = -1;
+        this.templates.push(newTemplate);
+        this.activeTemplate = newTemplate;
+        
+        // Auto-enable trigger
+        this.triggers[this.selectedTriggerKey] = true;
     }
 
-    editTemplate(template: any) {
-        this.editingTemplate = { ...template };
-        this.editingTemplateIndex = this.templates.indexOf(template);
-    }
-
-    saveTemplate() {
-        if (!this.editingTemplate) return;
-
-        if (!this.editingTemplate.name || !this.editingTemplate.channel) {
-            return;
-        }
-
-        // Channel specific validation
-        if (this.editingTemplate.channel === 'EMAIL') {
-            if (!this.editingTemplate.subject || !this.editingTemplate.body) return;
-        } else if (this.editingTemplate.channel === 'SMS' || this.editingTemplate.channel === 'INAPP') {
-            if (!this.editingTemplate.body) return;
-        }
-
-        if (this.editingTemplateIndex > -1) {
-            this.templates[this.editingTemplateIndex] = this.editingTemplate;
-        } else {
-            this.templates.push(this.editingTemplate);
-            // Auto-enable trigger
-            if (this.editingTemplate.trigger) {
-                this.triggers[this.editingTemplate.trigger] = true;
-            }
-        }
-        this.editingTemplate = null;
-        this.editingTemplateIndex = -1;
-    }
-
-    cancelEditTemplate() {
-        this.editingTemplate = null;
-        this.editingTemplateIndex = -1;
+    selectTemplate(template: any) {
+        this.activeTemplate = template;
     }
 
     removeTemplate(template: any) {
@@ -195,9 +171,23 @@ export class NotificationWizardComponent implements OnInit {
         if (index > -1) {
             this.templates.splice(index, 1);
         }
-        if (this.editingTemplateIndex === index) {
-            this.cancelEditTemplate();
+        if (this.activeTemplate === template) {
+            this.activeTemplate = this.currentTemplates.length > 0 ? this.currentTemplates[0] : null;
         }
+    }
+
+    getChannelIcon(channelId: string) {
+        const ch = this.availableChannels.find(c => c.id === channelId);
+        return ch ? ch.icon : 'fa-envelope';
+    }
+
+    get isValid() {
+        return this.templates.every(t => {
+            if (!t.name || !t.channel) return false;
+            if (t.channel === 'EMAIL' && (!t.subject || !t.body)) return false;
+            if ((t.channel === 'SMS' || t.channel === 'INAPP') && !t.body) return false;
+            return true;
+        });
     }
 
     // --- Final Save ---
