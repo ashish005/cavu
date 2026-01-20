@@ -119,10 +119,11 @@ export class PhaseStepTaskEditorComponent implements OnInit {
             task: this.task,
             settings: {
                 triggers: {
-                    onEnter: this.task.notification?.notifyOnEnter,
-                    onExit: this.task.notification?.notifyOnExit
+                    onCreate: this.task.notification?.notifyOnEnter,
+                    onComplete: this.task.notification?.notifyOnExit
                 },
-                templates: this.task.notificationTemplates || []
+                templates: this.task.notificationTemplates || [],
+                workflowEvents: this.lookup?.workflowEvents
             }
         };
         const popupHeaderOption = {

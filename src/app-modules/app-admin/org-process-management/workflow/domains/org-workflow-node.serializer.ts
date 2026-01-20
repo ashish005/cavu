@@ -19,6 +19,14 @@ export interface WorkflowNode {
     level: number;
     hasChildren: boolean;
     permissions?: string[];
+    
+    notification?: {
+        notifyOnEnter: boolean;
+        notifyOnExit: boolean;
+        channels: string[];
+        message: string;
+    };
+    notificationTemplates?: any[];
 }
 
 export interface PhaseTransition {
@@ -45,11 +53,18 @@ export class PhaseStep {
 
     isLocked: boolean;
     isActive: boolean;
+    notification?: {
+        notifyOnEnter: boolean;
+        notifyOnExit: boolean;
+        channels: string[];
+        message: string;
+    };
+    notificationTemplates?: any[];
     constructor(model: any = <any>{}){
         const {
             id, name, description, sortOrder, assignedToRole, slaHours,
             canAutoGenerateTask, phaseId, rules,
-            isLocked, isActive
+            isLocked, isActive, notification, notificationTemplates
         } = model;
         this.id = id;
         this.name = name;
@@ -59,9 +74,11 @@ export class PhaseStep {
         this.slaHours = slaHours;
         this.canAutoGenerateTask = canAutoGenerateTask;
         this.phaseId = phaseId;
-        this.rules = (rules || []).map(r => new PhaseStepRule(r));
+        this.rules = (rules || []).map((r: any) => new PhaseStepRule(r));
         this.isLocked = isLocked;
         this.isActive = isActive;
+        this.notification = notification;
+        this.notificationTemplates = notificationTemplates;
     }
 }
 
@@ -154,7 +171,7 @@ export class Phase extends CoreResource {
         this.slaHours = slaHours;
         this.isLocked = isLocked;
         this.isActive = isActive;
-        this.statuses = (statuses || []).map(r => new PhaseStatus(r));
+        this.statuses = (statuses || []).map((r: any) => new PhaseStatus(r));
         this.steps = (steps || []).map((r: any) => new PhaseStep(r));
         this.notification = notification;
         this.notificationTemplates = notificationTemplates;

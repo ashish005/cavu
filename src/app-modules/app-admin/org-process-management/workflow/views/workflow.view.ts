@@ -87,7 +87,8 @@ export class OrgWorkflowView {
           onEnter: phase.notification?.notifyOnEnter,
           onExit: phase.notification?.notifyOnExit
         },
-        templates: phase.notificationTemplates || []
+        templates: phase.notificationTemplates || [],
+        workflowEvents: this.lookup.masterType.workflowEvents
       }
     };
     const popupHeaderOption = {
@@ -118,6 +119,65 @@ export class OrgWorkflowView {
     return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
   }
 
+  onStepNotification(step: PhaseStep) {
+    const input = {
+      context: 'step',
+      process: this.selectedProcess,
+      step: step,
+      settings: {
+        triggers: {
+          onEnter: step.notification?.notifyOnEnter,
+          onExit: step.notification?.notifyOnExit
+        },
+        templates: step.notificationTemplates || [],
+        workflowEvents: this.lookup.masterType.workflowEvents
+      }
+    };
+    const popupHeaderOption = {
+      text: `${step.name} Notifications`,
+      desc: this.selectedProcess ? this.selectedProcess.name : ''
+    };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const success = (resp: any) => {
+      if (resp) {
+        // Find phase and step to update
+        const phaseIndex = this.phases.findIndex(p => p.id === step.phaseId);
+        if (phaseIndex > -1) {
+          const phase = this.phases[phaseIndex];
+          const stepIndex = phase.steps.findIndex(s => s.id === step.id);
+          
+          if (stepIndex > -1) {
+             const updatedStep = {
+               ...phase.steps[stepIndex],
+               notification: {
+                 notifyOnEnter: !!resp.triggers?.onEnter,
+                 notifyOnExit: !!resp.triggers?.onExit,
+                 channels: [],
+                 message: ''
+               },
+               notificationTemplates: resp.templates
+             };
+             
+             // Update step in phase
+             const updatedSteps = [...phase.steps];
+             updatedSteps[stepIndex] = updatedStep;
+             
+             this.phases[phaseIndex] = {
+               ...phase,
+               steps: updatedSteps
+             };
+             
+             // Persist changes
+             this.service.update(phase.id, this.phases[phaseIndex] as any).subscribe();
+          }
+        }
+      }
+      this.sharedService.destroy();
+    };
+    const failure = () => { this.sharedService.destroy(); };
+    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
+  }
+
   onPhaseTemplates(phase: Phase) {
     const current = this.phases.find(p => p.id === phase.id) as any;
     const templates = current && current.notificationTemplates ? current.notificationTemplates : [];
@@ -132,7 +192,8 @@ export class OrgWorkflowView {
           onEnter: phase.notification?.notifyOnEnter,
           onExit: phase.notification?.notifyOnExit
         },
-        templates: templates
+        templates: templates,
+        workflowEvents: this.lookup.masterType.workflowEvents
       }
     };
     const popupHeaderOption = {
@@ -175,7 +236,8 @@ export class OrgWorkflowView {
             onStart: process.notification?.notifyOnEnter,
             onComplete: process.notification?.notifyOnExit
         }, 
-        templates: process.notificationTemplates || []
+        templates: process.notificationTemplates || [],
+        workflowEvents: this.lookup.masterType.workflowEvents
       }
     };
     const popupHeaderOption = {

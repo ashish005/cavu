@@ -41,7 +41,7 @@ class OrgWorkflowPhaseStep {
         this.assignedToRole = assignedToRole;
         this.stepOrder = stepOrder;
         this.isActive = isActive;
-        this.rules = (rules || []).map(r => new OrgWorkflowPhaseStepRole(r));
+        this.rules = (rules || []).map((r: any) => new OrgWorkflowPhaseStepRole(r));
     }
 }
 
@@ -72,7 +72,7 @@ class OrgWorkflowPhase {
         this.phaseStatusName = phaseStatusName;
         this.color = color;
         this.isActive = isActive;
-        this.steps = (steps || []).map(r => new OrgWorkflowPhaseStep(r));
+        this.steps = (steps || []).map((r: any) => new OrgWorkflowPhaseStep(r));
     }
 }
 

@@ -33,6 +33,7 @@
                   <span class="label">{{ step.name }}</span>
                   <div class="float-right px-1">
                     <span class="mx-1 badge red" (click)="showStepTask.emit(step)"> Add Task</span>
+                    <span class="mx-1 badge blue" (click)="notificationStep.emit(step)" [ngClass]="{'theme text-theme': step.notification}"><i class="fa fa-bell"></i></span>
                     <span class="mx-1 badge green" (click)="editStep.emit(step)"><i class="fa fa-edit"></i></span>
                   </div>
                 </div>

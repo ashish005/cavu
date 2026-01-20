@@ -1,3 +1,4 @@
+@use "sass:color";
 $primary-color: #607D8B;
 
 :host {
@@ -62,7 +63,7 @@ $primary-color: #607D8B;
         }
 
         .search__btn {
-          background: darken($primary-color, 20%);
+          background: color.adjust($primary-color, $lightness: -20%);
           height: 40px;
           border: none;
           width: 120px;
@@ -75,7 +76,7 @@ $primary-color: #607D8B;
           transition: all .4s ease-out;
 
           &:hover {
-            background: darken($primary-color, 28%);
+            background: color.adjust($primary-color, $lightness: -28%);
           }
         }
         .search__icon {

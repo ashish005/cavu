@@ -26,4 +26,5 @@ export class PhaseListComponent {
     @Output() manageTemplates = new EventEmitter<Phase>();
     @Output() showStepTask = new EventEmitter<PhaseStep>();
     @Output() editStep = new EventEmitter<PhaseStep>();
+    @Output() notificationStep = new EventEmitter<PhaseStep>();
 }
