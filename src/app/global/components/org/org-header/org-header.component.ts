@@ -65,6 +65,5 @@ export class OrgHeaderComponent implements OnInit {
     updateLanguage = (lan) => null;
     // updateAppSession = (session) => this.coreService.updateAppSession(session);
     updateAppSession = (session) => null;
-    toggleThemeSwitcher = () => null;
-    // toggleThemeSwitcher = () => this.coreService.toggleThemeSwitcher();
+  toggleThemeSwitcher = () => this.appSetupService.toggleThemeSwitcher();
 }

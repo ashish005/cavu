@@ -28,6 +28,9 @@ export class NotificationWizardComponent implements OnInit {
     
     // Initial settings
     @Input() settings: any = {};
+    @Input() userTypes: any[] = [];
+    @Input() notificationTypes: any[] = [];
+    @Input() userRoles: any[] = [];
 
     onOk!: (payload?: any) => void;
     onCancel!: () => void;
@@ -139,7 +142,10 @@ export class NotificationWizardComponent implements OnInit {
     }
 
     initTemplates() {
-        this.templates = (this.settings.templates || []).map((t: any) => ({ ...t }));
+        this.templates = (this.settings.templates || []).map((t: any) => ({ 
+            ...t,
+            permissions: t.permissions || [] 
+        }));
     }
 
     // --- Template Management ---
@@ -153,7 +159,13 @@ export class NotificationWizardComponent implements OnInit {
             trigger: this.selectedTriggerKey,
             subject: '',
             body: '',
-            isActive: true
+            isActive: true,
+            // New Notification Fields
+            userTypeId: null,
+            notificationTypeId: null,
+            executionLink: '',
+            appEvent: this.selectedTriggerKey,
+            permissions: []
         };
         this.templates.push(newTemplate);
         this.activeTemplate = newTemplate;
@@ -181,9 +193,29 @@ export class NotificationWizardComponent implements OnInit {
         return ch ? ch.icon : 'fa-envelope';
     }
 
+    // Helper to toggle permission
+    togglePermission(roleId: any) {
+        if (!this.activeTemplate) return;
+        if (!this.activeTemplate.permissions) this.activeTemplate.permissions = [];
+        
+        const index = this.activeTemplate.permissions.indexOf(roleId);
+        if (index > -1) {
+            this.activeTemplate.permissions.splice(index, 1);
+        } else {
+            this.activeTemplate.permissions.push(roleId);
+        }
+    }
+
+    hasPermission(roleId: any) {
+        return this.activeTemplate?.permissions?.includes(roleId);
+    }
+
     get isValid() {
         return this.templates.every(t => {
             if (!t.name || !t.channel) return false;
+            // Basic validation
+            if (!t.userTypeId || !t.notificationTypeId) return false; 
+            
             if (t.channel === 'EMAIL' && (!t.subject || !t.body)) return false;
             if ((t.channel === 'SMS' || t.channel === 'INAPP') && !t.body) return false;
             return true;

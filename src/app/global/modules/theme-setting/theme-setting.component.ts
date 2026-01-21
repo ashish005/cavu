@@ -5,7 +5,7 @@ import {ThemeManagerService} from "./services/theme-manager.service";
 @Component({
     selector: 'theme-setting',
     templateUrl: './templates/theme-setting.html',
-    providers: [OrgThemeSettingService, ThemeManagerService],
+    providers: [OrgThemeSettingService],
   standalone: false
 })
 export class ThemeSettingComponent implements OnInit {

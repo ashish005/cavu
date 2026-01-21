@@ -28,7 +28,9 @@ export class ThemeManagerService {
     selectedBaseThemeOption: string = 'light';
     selectedThemeOption: string;
   public showThemeSetting: boolean = false;
-  public toggleThemeSwitcher() { this.showThemeSetting = !this.showThemeSetting; }
+
+  activeTheme: OrgTheme;
+  public toggleThemeSwitcher () { this.showThemeSetting = !this.showThemeSetting; }
 
     constructor(@Inject(DOCUMENT) private document: Document) {}
 
@@ -58,7 +60,9 @@ export class ThemeManagerService {
     };
 
     applySetting(opt: OrgTheme) {
-        const {code, font, fontId, id, isBoxedLayout, isFixedAside, isFixedContent, isFoldedAside, isFullscreen, name} = opt || this.defaultTheme;
+        debugger
+        this.activeTheme = opt || this.defaultTheme;
+        const {code, font, fontId, id, isBoxedLayout, isFixedAside, isFixedContent, isFoldedAside, isFullscreen, name} = this.activeTheme;
 
         const cssList: any = this.document.body.classList;
         ['light', 'dark'].forEach(baseThm => {

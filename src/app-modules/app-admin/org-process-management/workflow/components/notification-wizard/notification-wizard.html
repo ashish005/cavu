@@ -83,10 +83,62 @@
                 <!-- Edit Form -->
                 <div *ngIf="activeTemplate" class="animated fadeIn p-3 b-a b-t-0 bg-white">
                     
-                    <div class="form-group">
-                        <label class="text-muted text-xs">Template Name</label>
-                        <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.name" placeholder="e.g. Start Notification">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-muted text-xs">Name <span class="text-danger">*</span></label>
+                                <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.name" placeholder="Notification Name" maxlength="100">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-muted text-xs">App Event</label>
+                                <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.appEvent" [disabled]="true" maxlength="100">
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-muted text-xs">User Type <span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" [(ngModel)]="activeTemplate.userTypeId">
+                                    <option [ngValue]="null">Select User Type</option>
+                                    <option *ngFor="let u of userTypes" [ngValue]="u.id">{{ u.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="text-muted text-xs">Notification Type <span class="text-danger">*</span></label>
+                                <select class="form-control form-control-sm" [(ngModel)]="activeTemplate.notificationTypeId">
+                                    <option [ngValue]="null">Select Notification Type</option>
+                                    <option *ngFor="let n of notificationTypes" [ngValue]="n.id">{{ n.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-muted text-xs">Execution Link</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.executionLink" placeholder="Optional URL" maxlength="300">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-muted text-xs d-block">Permissions</label>
+                        <div class="d-flex flex-wrap">
+                            <div *ngFor="let role of userRoles" class="mr-3 mb-2">
+                                <label class="checkbox-inline custom-checkbox text-sm">
+                                    <input type="checkbox" [checked]="hasPermission(role.id)" (change)="togglePermission(role.id)">
+                                    <span>{{ role.name }}</span>
+                                </label>
+                            </div>
+                            <div *ngIf="userRoles.length === 0" class="text-muted text-xs font-italic">No roles available.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="b-b mb-3"></div>
+                    <h6 class="text-muted text-xs text-uppercase mb-3">Channel Configuration ({{ activeTemplate.channel }})</h6>
 
                     <div class="form-group" *ngIf="activeTemplate.channel === 'EMAIL'">
                         <label class="text-muted text-xs">Subject</label>

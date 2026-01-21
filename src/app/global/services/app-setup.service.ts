@@ -16,11 +16,6 @@ export class AppSetupService {
     private loaderService: LoaderService;
     private httpClient: HttpClient;
     private themeManager: ThemeManagerService;
-    constructor(private injector: Injector) {
-        this.loaderService = injector.get(LoaderService);
-        this.httpClient = injector.get(HttpClient);
-        this.themeManager = injector.get(ThemeManagerService);
-    }
 
     public showPreSetupPopup: { (): void } | undefined;
     public showGlobalFilterPopup: { (): void } | undefined;
@@ -29,6 +24,13 @@ export class AppSetupService {
     public createSupportTicket: { (): void } | undefined;
     public showSurveyPopup: { (): void } | undefined;
 
+    public toggleThemeSwitcher: { (): void } | undefined;
+    constructor(private injector: Injector) {
+        this.loaderService = injector.get(LoaderService);
+        this.httpClient = injector.get(HttpClient);
+        this.themeManager = injector.get(ThemeManagerService);
+        this.toggleThemeSwitcher = () => this.themeManager.toggleThemeSwitcher();
+    }
   loadApp = () => {
     this.loaderService.show();
     const promise = new Promise<boolean>((resolve, reject) => {

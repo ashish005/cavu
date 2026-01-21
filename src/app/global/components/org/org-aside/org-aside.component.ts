@@ -8,6 +8,7 @@ import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {AuthService} from "@app-third-party";
 import {CommonModule} from "@angular/common";
 import {OrgLogoComponent} from "../org-logo/org-logo.component";
+import {ThemeManagerService} from "../../../modules/theme-setting/services/theme-manager.service";
 
 @Component({
   selector: 'org-aside',
@@ -23,7 +24,10 @@ export class OrgAsideComponent {
         this.navList = val || [];
     };
   //activeFragment: any;
-  constructor(public router: Router, public activatedRoute: ActivatedRoute, public authService: AuthService){
+  constructor(public router: Router,
+              public activatedRoute: ActivatedRoute,
+              public authService: AuthService,
+              public themeManager: ThemeManagerService){
     //this.activeFragment = this.route.fragment.pipe(share());
   }
 
