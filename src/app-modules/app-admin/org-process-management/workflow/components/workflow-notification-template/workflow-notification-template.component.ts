@@ -1,4 +1,4 @@
-import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, Output, TemplateRef, ViewChild} from "@angular/core";
 import {OrgWorkflowPhase, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {OrgWorkflowPhaseStepTask} from "../../domains/phase-step-task.serializer";
 
@@ -15,8 +15,8 @@ export class WorkflowNotificationTemplateComponent {
   @Input() task?: OrgWorkflowPhaseStepTask;
   @Input() templates: any[] = [];
 
-  onOk: (payload?: any) => void;
-  onCancel: () => void;
+  @Output() onOk: EventEmitter<any> = new EventEmitter(null);
+  @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
 
   editingIndex: number | null = null;
   editing: any = this.createEmptyTemplate();
@@ -106,13 +106,11 @@ export class WorkflowNotificationTemplateComponent {
         taskId: this.task?.id,
         templates: this.templates
       };
-      this.onOk(payload);
+      this.onOk.emit(payload);
     }
   }
 
   close() {
-    if (this.onCancel) {
-      this.onCancel();
-    }
+    this.onCancel.emit();
   }
 }

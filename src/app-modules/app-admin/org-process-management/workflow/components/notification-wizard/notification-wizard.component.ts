@@ -54,8 +54,8 @@ export class NotificationWizardComponent implements OnInit {
     @Input() notificationTypes: any[] = [];
     @Input() userRoles: any[] = [];
 
-    @Output() onOk = new EventEmitter<any>();
-    @Output() onCancel = new EventEmitter<void>();
+    @Output() onOk: EventEmitter<any> = new EventEmitter(null);
+    @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
 
     // UI State
     selectedTriggerKey: string | null = null;

@@ -1,5 +1,4 @@
 import {Component, Injectable, Injector, Input, OnChanges, OnInit, Optional, SimpleChanges, OnDestroy} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {OrgWorkflowView} from "../workflow.view";
 import {
     ASIDE_CLASS,
@@ -7,13 +6,11 @@ import {
     GridUISwitchCellComponent, OrgResourceService,
     OrgWorkflowAPIResolver,
     SharedService,
-    ViewExtender,
-    GlobalModule, GRID_COMPONENT
+    ViewExtender
 } from "@app-global";
 import {
     OrgWorkflowPhaseStepTask,
-    OrgWorkflowPhaseStepTaskQueryOptions,
-    OrgWorkflowPhaseStepTaskSerializer
+    OrgWorkflowPhaseStepTaskQueryOptions
 } from "../../domains/phase-step-task.serializer";
 import {OrgWorkflowPhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {ActivatedRoute} from "@angular/router";
@@ -23,44 +20,12 @@ import {
 } from "../../components";
 import {Subscription} from "rxjs";
 import {OrgWorkflowPhaseStepTaskService} from "../../services/workflow.service";
+import {PhaseStepTaskActionCell} from "../../grid-cells/workflow-task-grid-cell.component";
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, GlobalModule],
-    template: `
-      <div class="btn-group">
-        <button class="btn btn-xs btn-icon btn-rounded" [class.text-primary]="context.notification?.notifyOnEnter" (click)="onNotification(context)" title="Notification">
-            <i class="fa fa-bell"></i>
-        </button>
-        <button class="btn btn-xs btn-icon btn-rounded" (click)="onEdit(context)" title="Edit">
-            <i class="fa fa-pencil"></i>
-        </button>
-      </div>
-    `
-})
-export class PhaseStepTaskActionCell extends DynamicComponent {
-    private parent: any;
-    
-    agInit(params: any) {
-        this.parent = params.context.componentParent;
-        // @ts-ignore
-        this.context = params.data;
-    }
-
-    onNotification(task: OrgWorkflowPhaseStepTask){
-        this.parent.onNotification(task);
-    }
-    onEdit(task: OrgWorkflowPhaseStepTask){
-        this.parent.actionCb(task);
-    }
-}
-
-@Component({
-  standalone: true,
-  imports: [CommonModule, GlobalModule, PhaseStepTaskActionCell, GRID_COMPONENT],
+  standalone: false,
   templateUrl: './templates/workflow-task-grid.html',
-    styles: [':host { display: contents; }'],
-    providers: [OrgWorkflowPhaseStepTaskService]
+  styles: [':host { display: contents; }']
 })
 export class OrgWorkflowTaskGridView extends ViewExtender<OrgWorkflowPhaseStepTask> implements OnInit, OnChanges, OnDestroy {
     @Input() process?: WorkflowNode;

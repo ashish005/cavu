@@ -1,4 +1,4 @@
-import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, Output, TemplateRef, ViewChild} from "@angular/core";
 import {OrgWorkflowPhase, OrgWorkflowPhaseStatus, OrgWorkflowPhaseTransition, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {WorkflowPhaseStatusLookup} from "@app-global";
@@ -58,8 +58,8 @@ export class TransitionEditorComponent {
         rules: this.fb.array([])
     });
 
-    onOk: (payload?: any) => void;
-    onCancel: () => void;
+    @Output() onOk: EventEmitter<any> = new EventEmitter(null);
+    @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
 
     constructor(private fb: FormBuilder) {}
 
@@ -119,8 +119,6 @@ export class TransitionEditorComponent {
             rules: value.rules,
             rule: this.buildConditionExpression()
         };
-        if (this.onOk) {
-            this.onOk(payload);
-        }
+        this.onOk.emit(payload);
     }
 }

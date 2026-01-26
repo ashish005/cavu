@@ -1,4 +1,4 @@
-import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, Output, TemplateRef, ViewChild} from "@angular/core";
 import {OrgWorkflowPhase, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 
 @Component({
@@ -12,8 +12,8 @@ export class PhaseNotificationComponent {
   @Input() process?: WorkflowNode;
   @Input() phase?: OrgWorkflowPhase;
 
-  onOk?: (payload?: any) => void;
-  onCancel?: () => void;
+  @Output() onOk: EventEmitter<any> = new EventEmitter(null);
+  @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
 
   notifyOnEnter: boolean = true;
   notifyOnExit: boolean = false;
@@ -42,22 +42,18 @@ export class PhaseNotificationComponent {
   }
 
   save() {
-    if (this.onOk) {
-      const payload = {
-        processId: this.process?.id,
-        phaseId: this.phase?.id,
-        notifyOnEnter: this.notifyOnEnter,
-        notifyOnExit: this.notifyOnExit,
-        channels: this.selectedChannels,
-        message: this.message
-      };
-      this.onOk(payload);
-    }
+    const payload = {
+      processId: this.process?.id,
+      phaseId: this.phase?.id,
+      notifyOnEnter: this.notifyOnEnter,
+      notifyOnExit: this.notifyOnExit,
+      channels: this.selectedChannels,
+      message: this.message
+    };
+    this.onOk.emit(payload);
   }
 
   close() {
-    if (this.onCancel) {
-      this.onCancel();
-    }
+    this.onCancel.emit();
   }
 }

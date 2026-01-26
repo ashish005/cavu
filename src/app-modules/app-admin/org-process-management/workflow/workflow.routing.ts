@@ -4,7 +4,7 @@ import {Layout} from "./layout/layout";
 import {OrgWorkflowView} from "./views/workflow.view";
 import {WorkflowGridView} from "./views/workflow-grid.view";
 import {OrgWorkflowPhaseGridView} from "./views/tree/workflow-phase-grid.view";
-import {OrgWorkflowTaskGridView, PhaseStepTaskActionCell} from "./views/tree/workflow-task-grid.view";
+import {OrgWorkflowTaskGridView} from "./views/tree/workflow-task-grid.view";
 import {OrgWorkflowNotificationGridView} from "./views/tree/workflow-notification-grid.view";
 
 export const OrgProcessTaskRoutes: Routes = [
@@ -34,6 +34,5 @@ export const OrgProcessTaskRoutes: Routes = [
 export const ORG_WORKFLOW_VIEWS = [
     Layout,
     OrgWorkflowView, WorkflowGridView,
-    OrgWorkflowPhaseGridView,
-    OrgWorkflowNotificationGridView
+    OrgWorkflowTaskGridView, OrgWorkflowPhaseGridView, OrgWorkflowNotificationGridView
 ];

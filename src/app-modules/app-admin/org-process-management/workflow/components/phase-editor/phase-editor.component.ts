@@ -1,6 +1,6 @@
 import {
     AfterViewInit,
-    Component,
+    Component, EventEmitter,
     Input,
     OnChanges,
     OnInit,
@@ -21,7 +21,8 @@ import {OrgWorkflowPhaseService, WorkflowService} from "../../services/workflow.
 })
 export class PhaseEditorComponent implements OnInit, AfterViewInit {
     submitted: boolean = false;
-    @Output() onOk: any;
+    @Output() onOk: EventEmitter<any> = new EventEmitter(null);
+    @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
     @ViewChild('footerTemplate', { static: true }) public footerTemplate!: TemplateRef<any>;
     @Input() data?: OrgWorkflowPhase;
     customForm: FormGroup;
@@ -81,18 +82,20 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     addStep(step?: any): void {
+        debugger
         step = step || {
-            stepOrder: this.steps.length + 1,
+            sortOrder: this.steps.length + 1,
             isActive: true
         };
 
         const fg = this.fb.group({
             id: [step.id],
-            stepOrder: [step.stepOrder],
+            sortOrder: [step.sortOrder],
             name: [step.name, Validators.required],
             assignedToRole: [step.assignedToRole, Validators.required],
 
             isActive: [step.isActive],
+            slaHours: [step.slaHours],
             // ✅ MUST EXIST
             ruleJoinType: [step.ruleJoinType ?? 'AND'],
             rules: this.fb.array([])
@@ -116,7 +119,8 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
             propertyName: [rule.propertyName, Validators.required],
             operator: [rule.operator],
             value: [rule.value],
-            isActive: [rule.isActive ?? true]
+            isActive: [rule.isActive ?? true],
+            slaHours: [rule.slaHours]
         });
 
         fg.get('operator')?.valueChanges?.subscribe(op => {
