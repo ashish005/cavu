@@ -17,8 +17,8 @@ export class OrgProcess extends CoreResource {
     eventMasterType: string;
     phaseOn: string;
     phaseStepOn: string;
-    processPhase: string;
-    processPhaseStep: string;
+    currentPhase: string;
+    currentStep: string;
     processStatus: string;
     inchargeId: number;
     inchargeName: string;
@@ -29,7 +29,7 @@ export class OrgProcess extends CoreResource {
       const {
           id, name,
           entityId, entityName, eventMasterType,
-          phaseOn, phaseStepOn, processPhase, processPhaseStep,
+          phaseOn, phaseStepOn, currentPhase, currentStep,
           //processPhase, processPhaseOn, manualStatus, manualStatusOn,
           inchargeId, inchargeName, processStatus, phases,
           isLocked, isActive
@@ -42,8 +42,8 @@ export class OrgProcess extends CoreResource {
 
       this.phaseOn = phaseOn;
       this.phaseStepOn = phaseStepOn;
-      this.processPhase = processPhase;
-      this.processPhaseStep = processPhaseStep;
+      this.currentPhase = currentPhase;
+      this.currentStep = currentStep;
 
       this.inchargeId = inchargeId;
       this.inchargeName = inchargeName;

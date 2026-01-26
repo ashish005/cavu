@@ -7,7 +7,7 @@ import {WORKFLOW_COMPONENTS} from "./components";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ORG_WORKFLOW_VIEWS, OrgProcessTaskRoutes} from "./workflow.routing";
 import {FilterTransitionsByFromPipe, FindPhaseStatusesPipe} from "./pipes";
-import {OrgProcessPhaseService, WorkflowService} from "./services/workflow.service";
+import {OrgWorkflowPhaseService, WorkflowService} from "./services/workflow.service";
 import {WORKFLOW_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 
 @NgModule({
@@ -16,7 +16,7 @@ import {WORKFLOW_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
     RouterModule.forChild(OrgProcessTaskRoutes),
     GlobalModule
   ],
-  providers: [ WorkflowService, OrgProcessPhaseService ],
+  providers: [ WorkflowService, OrgWorkflowPhaseService ],
   declarations: [ ORG_WORKFLOW_VIEWS, WORKFLOW_COMPONENTS, WORKFLOW_GRID_COLUMN_CELL_COMPONENTS, FilterTransitionsByFromPipe, FindPhaseStatusesPipe ],
 })
 

@@ -79,7 +79,7 @@
                         <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
                            aria-expanded="false">{{process.startPhaseName?? '&#45;&#45;'}}</a>
                         <div class="dropdown-menu  text-xs" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
-                            <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.phases | sortBy:'asc': 'sortOrder'" let-i="index">
                                 <a class="dropdown-item"
                                    (click)="onProcessStartPhasesChange(process, phase)"
                                    [class.active]="(process.startPhaseId == phase.id)">{{phase.name}}</a>
@@ -99,7 +99,7 @@
                         <div class="dropdown-menu  text-xs" x-placement="bottom-start"
                              style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
                             <ng-template ngFor let-phase
-                                         [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'"
+                                         [ngForOf]="apiResolver.masterType?.phases | sortBy:'asc': 'sortOrder'"
                                          let-i="index">
                                 <a class="dropdown-item" (click)="onProcessEndPhasesChange(process, phase)"
                                    [class.active]="(process.endPhaseId == phase.id)">{{phase.name}}</a>

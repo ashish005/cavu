@@ -1,6 +1,6 @@
 import {CoreQueryOptions, CoreResource} from "@app-global";
 
-export class PhaseQueryOptions extends CoreQueryOptions{
+export class OrgWorkflowPhaseQueryOptions extends CoreQueryOptions{
     workflowId?: number | string;
     constructor(model: any = {}){ super(model); }
     override toQueryString (){
@@ -27,9 +27,10 @@ export interface WorkflowNode {
         message: string;
     };
     notificationTemplates?: any[];
+    notifications?: any[];
 }
 
-export interface PhaseTransition {
+export interface OrgWorkflowPhaseTransition {
     id: number;
     processId: number;
     fromPhaseId: number;
@@ -40,7 +41,7 @@ export interface PhaseTransition {
     rule?: string;
 }
 
-export class PhaseStep {
+export class OrgWorkflowPhaseStep {
     id: number;
     name: string;
     description: string;
@@ -49,7 +50,7 @@ export class PhaseStep {
     slaHours: number;
     canAutoGenerateTask: boolean;
     phaseId: number;
-    rules: PhaseStepRule[];
+    rules: OrgWorkflowPhaseStepRule[];
 
     isLocked: boolean;
     isActive: boolean;
@@ -60,11 +61,12 @@ export class PhaseStep {
         message: string;
     };
     notificationTemplates?: any[];
+    notifications?: any[];
     constructor(model: any = <any>{}){
         const {
             id, name, description, sortOrder, assignedToRole, slaHours,
             canAutoGenerateTask, phaseId, rules,
-            isLocked, isActive, notification, notificationTemplates
+            isLocked, isActive, notification, notificationTemplates, notifications
         } = model;
         this.id = id;
         this.name = name;
@@ -74,15 +76,16 @@ export class PhaseStep {
         this.slaHours = slaHours;
         this.canAutoGenerateTask = canAutoGenerateTask;
         this.phaseId = phaseId;
-        this.rules = (rules || []).map((r: any) => new PhaseStepRule(r));
+        this.rules = (rules || []).map((r: any) => new OrgWorkflowPhaseStepRule(r));
         this.isLocked = isLocked;
         this.isActive = isActive;
         this.notification = notification;
         this.notificationTemplates = notificationTemplates;
+        this.notifications = notifications;
     }
 }
 
-export class PhaseStepRule {
+export class OrgWorkflowPhaseStepRule {
     id: number;
     propertyName: string;
     operator: string;
@@ -109,7 +112,7 @@ export class PhaseStepRule {
     }
 }
 
-export class PhaseStatus {
+export class OrgWorkflowPhaseStatus {
     id: number;
     phaseId: number;
     name: string;
@@ -133,18 +136,20 @@ export class PhaseStatus {
     }
 }
 
-export class Phase extends CoreResource {
+export class OrgWorkflowPhase extends CoreResource {
     processId: number;
     override id: number;
     name: string;
     description: string;
     sortOrder: number;
     phaseStatusId: number;
+    phaseStatusName?: string;
+    isDefault?: boolean;
     color: string;
     slaHours: number;
     position?: { x: number; y: number }; // optional for graph layout
-    statuses: PhaseStatus[]; // statuses belonging to this phase
-    steps: PhaseStep[];
+    statuses: OrgWorkflowPhaseStatus[]; // statuses belonging to this phase
+    steps: OrgWorkflowPhaseStep[];
     isLocked: boolean;
     isActive: boolean;
     notification?: {
@@ -154,12 +159,13 @@ export class Phase extends CoreResource {
         message: string;
     };
     notificationTemplates?: any[];
+    notifications?: any[];
     constructor(model: any = <any>{}){
         super();
         const {
             processId, id, name, description, sortOrder,
-            phaseStatusId, color, slaHours, statuses, steps,
-            isLocked, isActive, notification, notificationTemplates
+            phaseStatusId, phaseStatusName, isDefault, color, slaHours, statuses, steps,
+            isLocked, isActive, notification, notificationTemplates, notifications
         } = model;
         this.processId = processId;
         this.id = id;
@@ -167,18 +173,21 @@ export class Phase extends CoreResource {
         this.description = description;
         this.sortOrder = sortOrder;
         this.phaseStatusId = phaseStatusId;
+        this.phaseStatusName = phaseStatusName;
+        this.isDefault = isDefault;
         this.color = color;
         this.slaHours = slaHours;
         this.isLocked = isLocked;
         this.isActive = isActive;
-        this.statuses = (statuses || []).map((r: any) => new PhaseStatus(r));
-        this.steps = (steps || []).map((r: any) => new PhaseStep(r));
+        this.statuses = (statuses || []).map((r: any) => new OrgWorkflowPhaseStatus(r));
+        this.steps = (steps || []).map((r: any) => new OrgWorkflowPhaseStep(r));
         this.notification = notification;
         this.notificationTemplates = notificationTemplates;
+        this.notifications = notifications;
     }
 }
 
-export class PhaseSerializer {
-    fromJson(json: any): Phase { return new Phase(json); }
+export class OrgWorkflowPhaseSerializer {
+    fromJson(json: any): OrgWorkflowPhase { return new OrgWorkflowPhase(json); }
     toJson(data: any): any { return data; }
 }

@@ -94,15 +94,21 @@ export class WorkflowPluginLookup {
     taskPriorities: Array<WorkflowTaskPriorityLookup>;
     taskStatus: Array<WorkflowTaskStatusLookup>;
     workflowEvents: any;
+    userTypes: any[];
+    notificationTypes: any[];
+    userRoles: any[];
 
     constructor(model: any = <any>{}){
-        const { phaseStatus, processStatus, taskPriorities, taskStatus, frequencyTypes, workflowEvents } = model;
+        const { phaseStatus, processStatus, taskPriorities, taskStatus, frequencyTypes, workflowEvents, userTypes, notificationTypes, userRoles } = model;
         this.processStatus = (processStatus || []).map(r => new WorkflowProcessStatusLookup(r));
         this.phaseStatus = (phaseStatus || []).map(r => new WorkflowPhaseStatusLookup(r));
         this.taskPriorities = (taskPriorities || []).map(r => new WorkflowTaskPriorityLookup(r));
         this.taskStatus = (taskStatus || []).map(r => new WorkflowTaskStatusLookup(r));
         this.frequencyTypes = (frequencyTypes || []).map(r => new EventFrequencyTypeLookup(r));
         this.workflowEvents = workflowEvents;
+        this.userTypes = userTypes || [];
+        this.notificationTypes = notificationTypes || [];
+        this.userRoles = userRoles || [];
     }
     public defaultFrequency=()=> (this.frequencyTypes || []).find(r => r.isDefault);
     public defaultTaskPriority=()=> (this.taskPriorities || []).find(r => r.isDefault);

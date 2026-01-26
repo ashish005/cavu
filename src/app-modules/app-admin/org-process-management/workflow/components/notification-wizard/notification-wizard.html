@@ -12,7 +12,9 @@
                             <i class="fa fa-bolt mr-2 text-muted"></i>
                             {{ t.label }}
                         </div>
-                        <i *ngIf="triggers[t.key]" class="fa fa-check-circle text-success text-xs"></i>
+                        <span *ngIf="notificationsMap[t.key] && notificationsMap[t.key].length > 0" class="badge badge-pill badge-success text-xs">
+                            {{ notificationsMap[t.key]?.length }}
+                        </span>
                     </div>
                 </a>
             </div>
@@ -21,138 +23,172 @@
         <!-- Right Content: Selected Trigger Details -->
         <div class="wizard-content p-1 scroll-y" *ngIf="selectedTrigger">
             
-            <!-- Trigger Header & Toggle -->
-            <div class="d-flex justify-content-between align-items-center">
+            <!-- Trigger Header -->
+            <div class="d-flex justify-content-between align-items-center p-2 bg-white b-b">
                 <div>
                     <h5 class="mb-1">{{ selectedTrigger.label }}</h5>
                     <div class="text-muted text-sm">{{ selectedTrigger.desc }}</div>
                 </div>
-                <div class="d-flex align-items-center">
-                    <ul class="nav nav-tabs px-2">
-                        <li class="nav-item ml-auto d-flex align-items-center">
-                            <div class="btn-group">
-                                <button *ngFor="let c of availableChannels" class="btn btn-xs btn-icon btn-white" (click)="addTemplate(c.id)" [title]="'Add ' + c.name">
-                                    <i class="fa {{ c.icon }}"></i>
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                    <label class="switch switch-sm mb-0 mr-2">
-                        <input type="checkbox" [(ngModel)]="triggers[selectedTrigger.key]">
-                        <span></span>
-                    </label>
-                    <span [class.text-muted]="!triggers[selectedTrigger.key]" 
-                          [class.text-success]="triggers[selectedTrigger.key]"
-                          class="text-sm font-weight-bold">
-                          {{ triggers[selectedTrigger.key] ? 'Enabled' : 'Disabled' }}
-                    </span>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary" (click)="addNotification(selectedTrigger.key)">
+                        <i class="fa fa-plus mr-1"></i> Add Notification Rule
+                    </button>
                 </div>
             </div>
-            <div class="b-b mb-2"></div>
-            <div *ngIf="!triggers[selectedTrigger.key]" class="alert alert-warning text-sm">
-                <i class="fa fa-exclamation-triangle mr-1"></i>
-                Enable this notification event to add and manage templates.
+
+            <!-- Empty State -->
+            <div *ngIf="currentNotifications.length === 0" class="text-center p-5 text-muted">
+                <div class="mb-3">
+                    <i class="fa fa-bell-o fa-3x text-light"></i>
+                </div>
+                <h5>No Notifications Configured</h5>
+                <p class="mb-3">Create a notification rule to alert users when this event occurs.</p>
+                <button class="btn btn-sm btn-primary" (click)="addNotification(selectedTrigger.key)">
+                    Create First Notification
+                </button>
             </div>
 
-            <div *ngIf="triggers[selectedTrigger.key]">
-                
-                <!-- Tabs -->
-                <ul class="nav nav-tabs text-xs">
-                    <li class="nav-item" *ngFor="let t of currentTemplates">
-                        <a class="nav-link p-1 px-2" [class.active]="activeTemplate === t" (click)="selectTemplate(t)" href="javascript:;">
-                            <i class="fa {{ getChannelIcon(t.channel) }} mr-1"></i> {{ t.name }}
-                            <span class="ml-2 text-muted hover-danger" (click)="removeTemplate(t); $event.stopPropagation()">&times;</span>
-                        </a>
-                    </li>
-                    <!--<li class="nav-item ml-auto d-flex align-items-center">
-                        <span class="text-muted text-xs mr-2">Add:</span>
-                        <div class="btn-group">
-                            <button *ngFor="let c of availableChannels" class="btn btn-xs btn-icon btn-white" (click)="addTemplate(c.id)" [title]="'Add ' + c.name">
-                                <i class="fa {{ c.icon }}"></i>
+            <!-- List of Notification Rules (Cards) -->
+            <div class="p-3">
+                <div *ngFor="let notif of currentNotifications; let i = index" class="card mb-3 b-a" 
+                     [class.border-primary]="activeNotification === notif"
+                     [class.border-danger]="isInvalid(notif)">
+                    
+                    <!-- Card Header (Toggle & Summary) -->
+                    <div class="card-header p-2 d-flex align-items-center justify-content-between bg-light cursor-pointer" 
+                         (click)="selectNotification(notif)">
+                        <div class="d-flex align-items-center">
+                            <label class="switch switch-sm mb-0 mr-3" (click)="$event.stopPropagation()">
+                                <input type="checkbox" [(ngModel)]="notif.isActive">
+                                <span></span>
+                            </label>
+                            <span class="font-weight-bold mr-2">{{ notif.name || 'Untitled Notification' }}</span>
+                            <span class="badge badge-light border">{{ notif.templates.length }} Channels</span>
+                            <i class="fa fa-exclamation-triangle text-danger ml-2" *ngIf="isInvalid(notif)" title="Configuration incomplete"></i>
+                        </div>
+                        <div>
+                             <button class="btn btn-xs btn-icon btn-white text-danger" (click)="removeNotification(notif); $event.stopPropagation()" title="Delete Rule">
+                                <i class="fa fa-trash"></i>
                             </button>
+                            <i class="fa fa-chevron-down ml-2 text-muted" [class.fa-chevron-up]="activeNotification === notif"></i>
                         </div>
-                    </li>-->
-                </ul>
+                    </div>
 
-                <!-- Empty State -->
-                <div *ngIf="currentTemplates.length === 0" class="text-center p-5 text-muted bg-light b-a rounded">
-                    <p class="mb-2">No templates defined for this event.</p>
-                    <small>Add a template to configure notifications.</small>
+                    <!-- Card Body (Expanded Details) -->
+                    <div class="card-body p-0" *ngIf="activeNotification === notif">
+                        <div class="p-3">
+                            
+                            <!-- General Settings -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-muted text-xs">Rule Name <span class="text-danger">*</span></label>
+                                        <input class="form-control form-control-sm" [(ngModel)]="notif.name" placeholder="e.g. Notify Manager via Email">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-muted text-xs">App Event</label>
+                                        <input class="form-control form-control-sm" [value]="notif.appEvent" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-muted text-xs">User Type <span class="text-danger">*</span></label>
+                                        <select class="form-control form-control-sm" [(ngModel)]="notif.userTypeId" (change)="onUserTypeChange()">
+                                            <option [ngValue]="null">Select User Type</option>
+                                            <option *ngFor="let u of userTypes" [ngValue]="u.id">{{ u.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="text-muted text-xs">Notification Type <span class="text-danger">*</span></label>
+                                        <select class="form-control form-control-sm" [(ngModel)]="notif.notificationTypeId">
+                                            <option [ngValue]="null">Select Notification Type</option>
+                                            <option *ngFor="let n of notificationTypes" [ngValue]="n.id">{{ n.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-muted text-xs d-block">Permissions (Who receives this?)</label>
+                                <div class="d-flex flex-wrap p-2 bg-light rounded border">
+                                    <div *ngFor="let role of filteredUserRoles" class="mr-3 mb-2">
+                                        <label class="checkbox-inline custom-checkbox text-sm mb-0">
+                                            <input type="checkbox" [checked]="hasPermission(role.id)" (change)="togglePermission(role.id)">
+                                            <span>{{ role.name }}</span>
+                                        </label>
+                                    </div>
+                                    <div *ngIf="filteredUserRoles.length === 0" class="text-muted text-xs font-italic">No roles available. Select a User Type first.</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="text-muted text-xs">Execution Link</label>
+                                <input class="form-control form-control-sm" [(ngModel)]="notif.executionLink" placeholder="Optional Action URL">
+                            </div>
+
+                            <hr>
+
+                            <!-- Channels / Templates -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-muted text-xs text-uppercase mb-0 font-weight-bold">Communication Channels</h6>
+                                <div class="btn-group">
+                                    <button *ngFor="let c of availableChannels" class="btn btn-xs btn-white" (click)="addTemplate(c.id)">
+                                        <i class="fa {{ c.icon }} mr-1"></i> Add {{ c.name }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Channel Tabs -->
+                            <ul class="nav nav-tabs text-xs mb-0">
+                                <li class="nav-item" *ngFor="let t of notif.templates">
+                                    <a class="nav-link p-1 px-3" [class.active]="activeTemplate === t" (click)="selectTemplate(t)" href="javascript:;">
+                                        <i class="fa {{ getChannelIcon(t.channel) }} mr-1"></i> {{ t.name }}
+                                        <span class="ml-2 text-muted hover-danger" (click)="removeTemplate(t); $event.stopPropagation()">&times;</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div *ngIf="notif.templates.length === 0" class="text-center p-3 text-muted bg-light border-left border-right border-bottom">
+                                <small>No channels added. Click above to add Email, SMS, etc.</small>
+                            </div>
+
+                            <!-- Channel Editor -->
+                            <div *ngIf="activeTemplate && notif.templates.includes(activeTemplate)" class="animated fadeIn p-3 border-left border-right border-bottom bg-white">
+                                <div class="form-group">
+                                    <label class="text-muted text-xs">Template Name</label>
+                                    <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.name">
+                                </div>
+
+                                <div class="form-group" *ngIf="activeTemplate.channel === 'EMAIL'">
+                                    <label class="text-muted text-xs">Subject</label>
+                                    <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.subject" placeholder="Email Subject">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-muted text-xs">Message Body</label>
+                                    <textarea class="form-control text-sm" rows="4" [(ngModel)]="activeTemplate.body" placeholder="Message content..."></textarea>
+                                    <div class="mt-1">
+                                        <span class="badge badge-light border mr-1">Insert:</span>
+                                        <code *ngFor="let token of availableTokens" 
+                                              class="text-xs mr-2 text-primary cursor-pointer hover-bold" 
+                                              (click)="insertToken(token)"
+                                              title="Click to insert">
+                                            {{ '{' }}{{ token }}{{ '}' }}
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Edit Form -->
-                <div *ngIf="activeTemplate" class="animated fadeIn p-3 b-a b-t-0 bg-white">
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-muted text-xs">Name <span class="text-danger">*</span></label>
-                                <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.name" placeholder="Notification Name" maxlength="100">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-muted text-xs">App Event</label>
-                                <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.appEvent" [disabled]="true" maxlength="100">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-muted text-xs">User Type <span class="text-danger">*</span></label>
-                                <select class="form-control form-control-sm" [(ngModel)]="activeTemplate.userTypeId">
-                                    <option [ngValue]="null">Select User Type</option>
-                                    <option *ngFor="let u of userTypes" [ngValue]="u.id">{{ u.name }}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="text-muted text-xs">Notification Type <span class="text-danger">*</span></label>
-                                <select class="form-control form-control-sm" [(ngModel)]="activeTemplate.notificationTypeId">
-                                    <option [ngValue]="null">Select Notification Type</option>
-                                    <option *ngFor="let n of notificationTypes" [ngValue]="n.id">{{ n.name }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="text-muted text-xs">Execution Link</label>
-                        <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.executionLink" placeholder="Optional URL" maxlength="300">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="text-muted text-xs d-block">Permissions</label>
-                        <div class="d-flex flex-wrap">
-                            <div *ngFor="let role of userRoles" class="mr-3 mb-2">
-                                <label class="checkbox-inline custom-checkbox text-sm">
-                                    <input type="checkbox" [checked]="hasPermission(role.id)" (change)="togglePermission(role.id)">
-                                    <span>{{ role.name }}</span>
-                                </label>
-                            </div>
-                            <div *ngIf="userRoles.length === 0" class="text-muted text-xs font-italic">No roles available.</div>
-                        </div>
-                    </div>
-                    
-                    <div class="b-b mb-3"></div>
-                    <h6 class="text-muted text-xs text-uppercase mb-3">Channel Configuration ({{ activeTemplate.channel }})</h6>
-
-                    <div class="form-group" *ngIf="activeTemplate.channel === 'EMAIL'">
-                        <label class="text-muted text-xs">Subject</label>
-                        <input class="form-control form-control-sm" [(ngModel)]="activeTemplate.subject" placeholder="Email Subject">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="text-muted text-xs">Message Body</label>
-                        <textarea class="form-control text-sm" rows="5" [(ngModel)]="activeTemplate.body" placeholder="Enter message content..."></textarea>
-                        <small class="text-muted">You can use placeholders like {{ '{' }}phaseName{{ '}' }}, {{ '{' }}processName{{ '}' }}.</small>
-                    </div>
-
-                </div>
-
             </div>
         </div>
     </div>
@@ -160,7 +196,7 @@
     <!-- Footer -->
     <ng-template #footerTemplate>
         <div class="text-right">
-            <button type="button" class="btn btn-sm white mr-2" (click)="onCancel()">Close</button>
+            <button type="button" class="btn btn-sm white mr-2" (click)="cancel()">Close</button>
             <button type="button" class="btn btn-sm theme" (click)="save()" [disabled]="!isValid">Save Configuration</button>
         </div>
     </ng-template>

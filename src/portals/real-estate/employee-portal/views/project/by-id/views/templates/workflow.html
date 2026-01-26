@@ -156,7 +156,7 @@
                                 <div class="dropdown-menu" x-placement="bottom-start"
                                      style="position: absolute; transform: translate3d(1023px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
                                     <ng-template ngFor let-phase
-                                                 [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'"
+                                                 [ngForOf]="apiResolver.masterType?.phases | sortBy:'asc': 'sortOrder'"
                                                  let-i="index">
                                         <a class="dropdown-item" (click)="onEndStatusChange(process, phase)"
                                            [class.active]="(process.endPhaseId == phase.id)">{{phase.name}}</a>
@@ -260,7 +260,7 @@
     <form class="d-flex flex-column flex p-3">
         <ul class="timeline" [class.timeline-center]="isCenterAlign">
             <ng-template [ngTemplateOutlet]="projectPhaseTemplateRef"
-                         [ngTemplateOutletContext]="{ list: apiResolver.masterType.projectPhases }"></ng-template>
+                         [ngTemplateOutletContext]="{ list: apiResolver.masterType.phases }"></ng-template>
         </ul>
         <loader [isLoading]="isLoading"></loader>
     </form>
@@ -386,7 +386,7 @@
                                 <div class="dropdown-menu" x-placement="bottom-start"
                                      style="position: absolute; transform: translate3d(1023px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
                                     <ng-template ngFor let-phase
-                                                 [ngForOf]="apiResolver.masterType?.projectPhases | sortBy:'asc': 'sortOrder'"
+                                                 [ngForOf]="apiResolver.masterType?.phases | sortBy:'asc': 'sortOrder'"
                                                  let-i="index">
                                         <a class="dropdown-item" (click)="onEndStatusChange(process, phase)"
                                            [class.active]="(process.endPhaseId == phase.id)">{{phase.name}}</a>

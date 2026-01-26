@@ -1,8 +1,9 @@
 import {Injectable, Injector} from '@angular/core';
 import {Observable, map, catchError} from 'rxjs';
-import {Phase, PhaseSerializer, PhaseTransition} from "../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhase, OrgWorkflowPhaseSerializer, OrgWorkflowPhaseTransition} from "../domains/org-workflow-node.serializer";
 import {OrgResourceService} from "@app-global";
 import {OrgWorkflow, OrgWorkflowSerializer} from "../domains/org-workflow.serializer";
+import {OrgWorkflowPhaseStepTask, OrgWorkflowPhaseStepTaskSerializer} from "../domains/phase-step-task.serializer";
 
 @Injectable()
 export class WorkflowService extends OrgResourceService<OrgWorkflow>{
@@ -10,7 +11,7 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
         super(injector, 'orgWorkflow', new OrgWorkflowSerializer());
     }
 
-    getTransitions(workflowId: number): Observable<PhaseTransition[]> {
+    getTransitions(workflowId: number): Observable<OrgWorkflowPhaseTransition[]> {
         const url = `${this.viewUrl}/${workflowId}/transitions`;
         return this.httpClient
             .get<any>(url, super.requestHeaders)
@@ -24,13 +25,13 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
                         toPhaseId: x.toPhaseId,
                         description: x.description || `${x.fromPhaseName} → ${x.toPhaseName}`,
                         rule: ''
-                    }) as PhaseTransition);
+                    }) as OrgWorkflowPhaseTransition);
                 }),
                 catchError(error => super.handleError(error, () => this.getTransitions(workflowId)))
             );
     }
 
-    createTransition(workflowId: number, payload: any): Observable<PhaseTransition> {
+    createTransition(workflowId: number, payload: any): Observable<OrgWorkflowPhaseTransition> {
         const url = `${this.viewUrl}/${workflowId}/transitions`;
         const body = {
             fromPhaseId: payload.fromPhaseId,
@@ -50,13 +51,13 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
                         toPhaseId: x.toPhaseId,
                         description: x.description,
                         rule: ''
-                    } as PhaseTransition;
+                    } as OrgWorkflowPhaseTransition;
                 }),
                 catchError(error => super.handleError(error, () => this.createTransition(workflowId, payload)))
             );
     }
 
-    updateTransition(id: number, payload: any): Observable<PhaseTransition> {
+    updateTransition(id: number, payload: any): Observable<OrgWorkflowPhaseTransition> {
         const url = `${this.viewUrl}/transitions/${id}`;
         const body = {
             fromPhaseId: payload.fromPhaseId,
@@ -76,7 +77,7 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
                         toPhaseId: x.toPhaseId,
                         description: x.description,
                         rule: ''
-                    } as PhaseTransition;
+                    } as OrgWorkflowPhaseTransition;
                 }),
                 catchError(error => super.handleError(error, () => this.updateTransition(id, payload)))
             );
@@ -93,30 +94,15 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
 }
 
 @Injectable()
-export class OrgProcessPhaseService extends OrgResourceService<Phase>{
-    constructor(public override injector: Injector) { super(injector, 'OrgProcessPhase', new PhaseSerializer()); }
+export class OrgWorkflowPhaseService extends OrgResourceService<OrgWorkflowPhase>{
+    constructor(public override injector: Injector) { super(injector, 'orgWorkflowPhase', new OrgWorkflowPhaseSerializer()); }
     // Process + phases
     getAllProcess = (): Observable<any>=> this.httpClient.get<any>(`${super.baseSectorAPIUrl}/orgWorkflow/all`);
+}
 
-    // transitions
-    // getTransitions(processId: number) {
-    //     return this.httpClient.get<PhaseTransition[]>(`/api/processphases/transitions/${processId}`);
-    // }
-    //
-    // createTransition(dto: PhaseTransition) {
-    //     return this.httpClient.post<PhaseTransition>(`/api/processphases/transitions`, dto);
-    // }
-    //
-    // updateTransition(id: number, dto: PhaseTransition) {
-    //     return this.httpClient.put<PhaseTransition>(`/api/processphases/transitions/${id}`, dto);
-    // }
-    //
-    // deleteTransition(id: number) {
-    //     return this.httpClient.delete(`/api/processphases/transitions/${id}`);
-    // }
-    //
-    // // Optional: persist phase position
-    // savePhasePosition(phaseId: number, x: number, y: number) {
-    //     return this.httpClient.put(`/api/processphases/${phaseId}/position`, { x, y });
-    // }
+@Injectable()
+export class OrgWorkflowPhaseStepTaskService extends OrgResourceService<OrgWorkflowPhaseStepTask>{
+    constructor(public override injector: Injector) {
+        super(injector, 'OrgWorkflowPhaseStepTask', new OrgWorkflowPhaseStepTaskSerializer());
+    }
 }

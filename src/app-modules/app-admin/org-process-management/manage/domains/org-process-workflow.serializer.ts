@@ -6,16 +6,20 @@ class OrgProcess {
     description: string;
     processStatus: string;
     processStatusOn: string;
+    currentPhase: string;
+    currentStep: string;
     manualStatus: string;
     manualStatusOn: string;
 
     constructor(model: any = <any>{}) {
-        const { id, name, description, processStatus, processStatusOn, manualStatus, manualStatusOn } = model;
+        const { id, name, description, processStatus, processStatusOn, currentPhase, currentStep, manualStatus, manualStatusOn } = model;
         this.id = id;
         this.name = name;
         this.description = description;
         this.processStatus = processStatus;
         this.processStatusOn = processStatusOn;
+        this.currentPhase = currentPhase;
+        this.currentStep = currentStep;
         this.manualStatus = manualStatus;
         this.manualStatusOn = manualStatusOn;
     }
@@ -124,8 +128,9 @@ class OrgProcessCommon extends CoreResource {
     sortOrder: string;
     masterType: string;
 
-    processPhase: string;
-    processPhaseOn: string;
+    currentPhase: string;
+    phaseOn: string;
+    currentStep: string;
     manualStatus: string;
     manualStatusOn: string;
     inchargeId: number;
@@ -135,7 +140,7 @@ class OrgProcessCommon extends CoreResource {
     constructor(model: any = <any>{}){
         super();
         const {id, name, description, parentId, sortOrder, masterType,
-            processPhase, processPhaseOn, manualStatus, manualStatusOn,
+            currentPhase, phaseOn, currentStep, manualStatus, manualStatusOn,
             inchargeId, inchargeName,
             isLocked, status
         } = model;
@@ -147,8 +152,9 @@ class OrgProcessCommon extends CoreResource {
         this.parentId = parentId;
         this.sortOrder = sortOrder;
 
-        this.processPhase = processPhase;
-        this.processPhaseOn = processPhaseOn;
+        this.currentPhase = currentPhase;
+        this.phaseOn = phaseOn;
+        this.currentStep = currentStep;
         this.manualStatus = manualStatus;
         this.manualStatusOn = manualStatusOn;
         this.inchargeId = inchargeId;
@@ -188,8 +194,8 @@ export class OrgProcessWorkflow extends OrgProcessCommon {
   childItems: Array<OrgProcessWorkflow>;
   constructor(model: any = <any>{}){
     super(model);
-    this.childItems = (model.childItems || []).map(r => new OrgProcessWorkflow(r));
-    this.tasks = (model.tasks || []).map(r => new OrgProcessTask(r));
+    this.childItems = (model.childItems || []).map((r: any) => new OrgProcessWorkflow(r));
+    this.tasks = (model.tasks || []).map((r: any) => new OrgProcessTask(r));
   }
 
   getAllTasks(){

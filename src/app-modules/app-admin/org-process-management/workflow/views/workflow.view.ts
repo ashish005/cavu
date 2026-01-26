@@ -1,314 +1,98 @@
 import {Component} from "@angular/core";
 import {ASIDE_CLASS, ASIDE_SIZE, OrgWorkflowAPIResolver, SharedService, WorkflowPhaseStatusLookup} from "@app-global";
-import { Phase, PhaseQueryOptions, PhaseStep, PhaseTransition, WorkflowNode } from "../domains/org-workflow-node.serializer";
-import {OrgProcessPhaseService, WorkflowService} from "../services/workflow.service";
-import {
-  PhaseEditorComponent,
-  TransitionEditorComponent,
-  NotificationWizardComponent
-} from "../components";
-import {of} from "rxjs";
-
+import {OrgWorkflowPhase, OrgWorkflowPhaseQueryOptions, OrgWorkflowPhaseStep, OrgWorkflowPhaseTransition, WorkflowNode} from "../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhaseService, WorkflowService} from "../services/workflow.service";
+import {TransitionEditorComponent} from "../components";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {BehaviorSubject} from "rxjs";
+import {filter} from "rxjs/operators";
 
 @Component({
   standalone: false,
   templateUrl: './templates/workflow.html'
 })
 export class OrgWorkflowView {
-  coreState: PhaseQueryOptions = new PhaseQueryOptions();
+  coreState: OrgWorkflowPhaseQueryOptions = new OrgWorkflowPhaseQueryOptions();
   processTree: WorkflowNode[] = [];
-  phases: Phase[] = [];
+  processCache = new Map<number, WorkflowNode>();
+  phases: OrgWorkflowPhase[] = [];
   phaseStatuses: WorkflowPhaseStatusLookup[] = [];
 
   selectedProcess?: WorkflowNode;
-  selectedPhase: Phase | null = null;
-  phaseTransitions: PhaseTransition[] = [];
-  tabs: any = {
-    phases: 'phases',
-    tasks: 'tasks'
-  };
-  activeTab: string = this.tabs.phases;
-  selectedStepForTasks: PhaseStep | null = null;
+  selectedProcess$ = new BehaviorSubject<WorkflowNode | undefined>(undefined);
+  selectedPhase: OrgWorkflowPhase | null = null;
+  phaseTransitions: OrgWorkflowPhaseTransition[] = [];
+
+  selectedStepForTasks: OrgWorkflowPhaseStep | null = null;
   constructor(private lookup: OrgWorkflowAPIResolver,
-              private service: OrgProcessPhaseService,
+              private service: OrgWorkflowPhaseService,
               private workflowService: WorkflowService,
-              private sharedService: SharedService) {
+              private sharedService: SharedService,
+              private router: Router,
+              private route: ActivatedRoute) {
     this.phaseStatuses = this.lookup.masterType.phaseStatus;
   }
 
   ngOnInit() {
-    this.service.getAllProcess().subscribe(r => this.processTree = r.entities);
-  }
-
-  onProcessSelected(process: any) {
-    this.selectedProcess = process;
-    this.selectedPhase = null;
-
-    this.coreState.workflowId = process.id;
-
-    this.service.list(this.coreState).subscribe((p: any) => {
-      this.phases = p.entities;
-      this.loadTransitions(process.id);
+    this.service.getAllProcess().subscribe(r => {
+        this.processTree = r.entities;
+        this.buildCache(this.processTree);
+        this.handleRouteParams();
+    });
+    this.router.events.pipe(
+        filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+        this.handleRouteParams();
     });
   }
 
-  onPhaseCreate(_e: any){
-    const input = {
-      data: {
-        processId: this.selectedProcess?.id
-      }
-    };
-    this.showPhasePopup(input, { text: 'Create Phase', desc: '' });
-  }
-
-  onPhaseEdit(phase: any) {
-    const input = {
-      id: phase.id,
-      data: phase
-    };
-    input.data.processId = this.selectedProcess?.id;
-    this.showPhasePopup(input, { text: phase.name, desc: '' });
-  }
-
-  showPhasePopup(data: any, popupHeaderOption: any){
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-    const success = (resp: any) => { this.sharedService.destroy(); };
-    const failure = (e: any) => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(PhaseEditorComponent, popupOptions, data).then(success, failure);
-  }
-
-  onPhaseNotification(phase: Phase){
-    const input = {
-      context: 'phase',
-      process: this.selectedProcess,
-      phase: phase,
-      settings: {
-        triggers: {
-          onEnter: phase.notification?.notifyOnEnter,
-          onExit: phase.notification?.notifyOnExit
-        },
-        templates: phase.notificationTemplates || [],
-        workflowEvents: this.lookup.masterType.workflowEvents
-      }
-    };
-    const popupHeaderOption = {
-      text: `Phase Notification Wizard: ${phase.name}`,
-      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
-    };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-    const success = (resp: any) => {
-      if (resp) {
-        const index = this.phases.findIndex(p => p.id === phase.id);
-        if (index > -1) {
-          const current: any = this.phases[index];
-          this.phases[index] = {
-            ...current,
-            notification: {
-              notifyOnEnter: !!resp.triggers?.onEnter,
-              notifyOnExit: !!resp.triggers?.onExit,
-              channels: [],
-              message: ''
-            },
-            notificationTemplates: resp.templates
-          } as any;
-        }
-      }
-      this.sharedService.destroy();
-    };
-    const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
-  }
-
-  onStepNotification(step: PhaseStep) {
-    const input = {
-      context: 'step',
-      process: this.selectedProcess,
-      step: step,
-      settings: {
-        triggers: {
-          onEnter: step.notification?.notifyOnEnter,
-          onExit: step.notification?.notifyOnExit
-        },
-        templates: step.notificationTemplates || [],
-        workflowEvents: this.lookup.masterType.workflowEvents
-      }
-    };
-    const popupHeaderOption = {
-      text: `Phase Step Notification Wizard: ${step.name}`,
-      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
-    };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-    const success = (resp: any) => {
-      if (resp) {
-        // Find phase and step to update
-        const phaseIndex = this.phases.findIndex(p => p.id === step.phaseId);
-        if (phaseIndex > -1) {
-          const phase = this.phases[phaseIndex];
-          const stepIndex = phase.steps.findIndex(s => s.id === step.id);
-          
-          if (stepIndex > -1) {
-             const updatedStep = {
-               ...phase.steps[stepIndex],
-               notification: {
-                 notifyOnEnter: !!resp.triggers?.onEnter,
-                 notifyOnExit: !!resp.triggers?.onExit,
-                 channels: [],
-                 message: ''
-               },
-               notificationTemplates: resp.templates
-             };
-             
-             // Update step in phase
-             const updatedSteps = [...phase.steps];
-             updatedSteps[stepIndex] = updatedStep;
-             
-             this.phases[phaseIndex] = {
-               ...phase,
-               steps: updatedSteps
-             };
-             
-             // Persist changes
-             this.service.update(phase.id, this.phases[phaseIndex] as any).subscribe();
+  buildCache(nodes: WorkflowNode[]) {
+      nodes.forEach(n => {
+          this.processCache.set(n.id, n);
+          if (n.children && n.children.length) {
+              this.buildCache(n.children);
           }
-        }
-      }
-      this.sharedService.destroy();
-    };
-    const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
+      });
   }
 
-  onPhaseTemplates(phase: Phase) {
-    const current = this.phases.find(p => p.id === phase.id) as any;
-    const templates = current && current.notificationTemplates ? current.notificationTemplates : [];
-    
-    const input = {
-      context: 'phase',
-      process: this.selectedProcess,
-      phase: phase,
-      activeStep: 'templates',
-      settings: {
-        triggers: {
-          onEnter: phase.notification?.notifyOnEnter,
-          onExit: phase.notification?.notifyOnExit
-        },
-        templates: templates,
-        workflowEvents: this.lookup.masterType.workflowEvents
-      }
-    };
-    const popupHeaderOption = {
-      text: `Phase Notification Wizard: ${phase.name}`,
-      desc: `Configure notifications for ${this.selectedProcess ? this.selectedProcess.name : ''}`
-    };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-    const success = (resp: any) => {
-      if (resp) {
-        const index = this.phases.findIndex(p => p.id === phase.id);
-        if (index > -1) {
-          const updated = [...this.phases] as any[];
-          // Update templates and potentially triggers if changed
-          updated[index] = { 
-              ...updated[index], 
-              notificationTemplates: resp.templates,
-              notification: {
-                  ...updated[index].notification,
-                  notifyOnEnter: !!resp.triggers?.onEnter,
-                  notifyOnExit: !!resp.triggers?.onExit,
+  handleRouteParams() {
+      // Logic:
+      // 1. If we are in OrgWorkflowView, this is the 'tree' route component.
+      // 2. The ID is in the child route ':id'.
+      // 3. We can inspect the entire router state or just check the first child.
+      
+      const child = this.route.firstChild;
+      if (child) {
+          // If the child is indeed the ':id' route, it should have the param.
+          const id = child.snapshot.paramMap.get('id');
+          if (id) {
+              if (!this.selectedProcess || this.selectedProcess.id !== +id) {
+                  this.loadProcess(+id);
               }
-          };
-          this.phases = updated as Phase[];
-        }
+          }
       }
-      this.sharedService.destroy();
-    };
-    const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
   }
 
-  onProcessNotification() {
-    if (!this.selectedProcess) return of(true);
-    const process: any = this.selectedProcess;
-    const input = {
-      context: 'process',
-      process: this.selectedProcess,
-      settings: {
-        triggers: {
-            onStart: process.notification?.notifyOnEnter,
-            onComplete: process.notification?.notifyOnExit
-        }, 
-        templates: process.notificationTemplates || [],
-        workflowEvents: this.lookup.masterType.workflowEvents
+  loadProcess(id: number) {
+      const process = this.processCache.get(id);
+      if (process) {
+          this.selectedProcess = process;
+          this.selectedProcess$.next(process);
+          this.selectedPhase = null;
+          this.coreState.workflowId = process.id;
+          this.reloadPhases();
+          this.loadTransitions(process.id);
       }
-    };
-    const popupHeaderOption = {
-      text: `Notification Wizard: ${this.selectedProcess.name}`,
-      desc: `Process Level`
-    };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-    const success = (resp: any) => {
-        if (resp && this.selectedProcess) {
-            const updatedProcess = {
-                ...this.selectedProcess,
-                notification: {
-                    ...process.notification,
-                    notifyOnEnter: !!resp.triggers?.onStart,
-                    notifyOnExit: !!resp.triggers?.onComplete,
-                },
-                notificationTemplates: resp.templates
-            };
-            this.workflowService.update(this.selectedProcess.id, updatedProcess as any).subscribe();
-            Object.assign(this.selectedProcess, updatedProcess);
-        }
-      this.sharedService.destroy();
-    };
-    const failure = () => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
   }
 
-  onPhaseSelected(phase: any) {
-    this.selectedPhase = phase;
-    const existing = this.phaseTransitions.find(t => t.fromPhaseId === phase.id) || null;
-    const input = {
-      id: existing ? existing.id : null,
-      data: existing || phase,
-      process: this.selectedProcess,
-      phases: this.phases,
-      statuses: this.phaseStatuses,
-      transition: existing || {
-        id: null,
-        processId: this.selectedProcess ? this.selectedProcess.id : null,
-        fromPhaseId: phase.id,
-        toPhaseId: null,
-        description: '',
-        rule: ''
-      }
-    };
-    const popupHeaderOption = { text: phase.name, desc: '' };
-    const popupOptions= { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-
-    const success = (resp: any) => {
-      if (resp && this.selectedProcess) {
-        this.saveTransition(this.selectedProcess.id, resp);
-      }
-      this.sharedService.destroy();
-    };
-    const failure = (_e: any) => { this.sharedService.destroy(); };
-    return this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
-  }
-  openTab(tab: string) {
-    this.activeTab = tab;
+  reloadPhases() {
+      this.service.list(this.coreState).subscribe((p: any) => {
+          this.phases = p.entities;
+      });
   }
 
-  onShowStepTask(phaseStep: PhaseStep){
-    this.selectedStepForTasks = phaseStep;
-    this.activeTab = this.tabs.tasks;
-  }
-
-  onEditStep(phaseStep: PhaseStep){
-    const phase = this.phases.find(p => p.id === phaseStep.phaseId);
-    if (phase) {
-      this.onPhaseEdit(phase);
-    }
+  onProcessSelected(process: any) {
+    this.router.navigate([process.id], {relativeTo: this.route});
   }
 
   loadTransitions(workflowId: number) {
@@ -318,7 +102,7 @@ export class OrgWorkflowView {
   }
 
   saveTransition(workflowId: number, payload: any) {
-    const dto: PhaseTransition = {
+    const dto: OrgWorkflowPhaseTransition = {
       id: payload.id,
       processId: workflowId,
       fromPhaseId: payload.fromPhaseId,
@@ -335,7 +119,7 @@ export class OrgWorkflowView {
     });
   }
 
-  onTransitionEdit(transition: PhaseTransition) {
+  onTransitionEdit(transition: OrgWorkflowPhaseTransition) {
     if (!this.selectedProcess) {
       return;
     }
@@ -359,7 +143,7 @@ export class OrgWorkflowView {
       }
       this.sharedService.destroy();
     };
-    const failure = (e: any) => { this.sharedService.destroy(); };
+    const failure = () => { this.sharedService.destroy(); };
     this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
   }
 

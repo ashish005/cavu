@@ -1,6 +1,6 @@
 import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
-import {Phase, PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
-import {PhaseStepTask} from "../../domains/phase-step-task.serializer";
+import {OrgWorkflowPhase, WorkflowNode} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhaseStepTask} from "../../domains/phase-step-task.serializer";
 
 @Component({
   standalone: false,
@@ -11,8 +11,8 @@ export class WorkflowNotificationTemplateComponent {
   @ViewChild("footerTemplate", { static: true }) footerTemplate!: TemplateRef<any>;
 
   @Input() process?: WorkflowNode;
-  @Input() phase?: Phase;
-  @Input() task?: PhaseStepTask;
+  @Input() phase?: OrgWorkflowPhase;
+  @Input() task?: OrgWorkflowPhaseStepTask;
   @Input() templates: any[] = [];
 
   onOk: (payload?: any) => void;
@@ -116,4 +116,3 @@ export class WorkflowNotificationTemplateComponent {
     }
   }
 }
-

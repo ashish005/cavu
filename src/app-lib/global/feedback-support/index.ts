@@ -35,7 +35,6 @@ export class FeedbackSupportFactory {
     }
 
     showBellPopup(){
-        debugger
         const popupOptions = {
             header: { text: `Bell Info`, desc: 'Check all notification, events and schedules' },
             aside: ASIDE_CLASS.RIGHT,

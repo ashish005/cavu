@@ -3,14 +3,14 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ProjectWorkflow, ProjectWorkflowQueryOptions} from "../domains/project-workflow.serializer";
 import {Subscription} from "rxjs";
 import { ProjectAPIResolver, ProjectWorkflowService } from "../services";
-import {LookupProcessPhase} from "../domains/project.lookup";
+import {OrgWorkflowPhaseLookup} from "../domains/project.lookup";
 
 @Component({
   standalone: false,
     templateUrl: './templates/workflow.html'
 })
 export class WorkflowView implements OnInit {
-    orgProjectFilter = (listItem: ProjectWorkflow, compareItem: LookupProcessPhase)=> {
+    orgProjectFilter = (listItem: ProjectWorkflow, compareItem: OrgWorkflowPhaseLookup)=> {
         return (listItem.startPhaseId == compareItem.id);
     };
     pageTitle: string;
@@ -48,13 +48,13 @@ export class WorkflowView implements OnInit {
         });
     }
 
-    onStartStatusChange(process, status: LookupProcessPhase){
+    onStartStatusChange(process, status: OrgWorkflowPhaseLookup){
         const { id, name } = status;
         process.startPhaseId = id;
         process.startPhaseName = name;
     }
 
-    onEndStatusChange(process, status: LookupProcessPhase){
+    onEndStatusChange(process, status: OrgWorkflowPhaseLookup){
         const { id, name } = status;
         process.endPhaseId = id;
         process.endPhaseName = name;

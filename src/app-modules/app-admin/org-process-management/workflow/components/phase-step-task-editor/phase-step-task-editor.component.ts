@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
 
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {PhaseStepTaskService} from "../phase-step-task/phase-step-task.component";
 
-import {Phase, PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
-import {PhaseStepTask} from "../../domains/phase-step-task.serializer";
+import {OrgWorkflowPhase, OrgWorkflowPhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhaseStepTask} from "../../domains/phase-step-task.serializer";
 import { WorkflowPluginLookup, OrgWorkflowAPIResolver, SharedService, ASIDE_CLASS, ASIDE_SIZE } from "@app-global";
 import {NotificationWizardComponent} from "../notification-wizard/notification-wizard.component";
+import {OrgWorkflowPhaseStepTaskService} from "../../services/workflow.service";
 
 @Component({
     standalone: false,
@@ -15,9 +15,9 @@ import {NotificationWizardComponent} from "../notification-wizard/notification-w
 })
 export class PhaseStepTaskEditorComponent implements OnInit {
     @Input() process?: WorkflowNode;
-    @Input() phase?: Phase;
-    @Input() step?: PhaseStep;
-    @Input() task?: PhaseStepTask;
+    @Input() phase?: OrgWorkflowPhase;
+    @Input() step?: OrgWorkflowPhaseStep;
+    @Input() task?: OrgWorkflowPhaseStepTask;
 
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
@@ -30,7 +30,7 @@ export class PhaseStepTaskEditorComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private service: PhaseStepTaskService,
+        private service: OrgWorkflowPhaseStepTaskService,
         private lookupResolver: OrgWorkflowAPIResolver,
         private sharedService: SharedService
     ) {

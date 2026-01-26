@@ -60,7 +60,6 @@ export class ThemeManagerService {
     };
 
     applySetting(opt: OrgTheme) {
-        debugger
         this.activeTheme = opt || this.defaultTheme;
         const {code, font, fontId, id, isBoxedLayout, isFixedAside, isFixedContent, isFoldedAside, isFullscreen, name} = this.activeTheme;
 

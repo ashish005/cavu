@@ -16,14 +16,14 @@ import {ProjectWorkflowService} from "../../services/project-workflow.service";
 import {Subscription} from "rxjs";
 import {ORG_PROCESS_TYPE } from "@app-base/public";
 import {WorkflowPluginAPIResolver} from "../../services/workflow.resolver";
-import {WorkflowProcessPhaseLookup} from "../../domains/lookup";
+import {OrgWorkflowPhaseLookup} from "../../domains/lookup";
 
 @Component({
     selector: 'project-workflow-manage',
     templateUrl: './templates/project-workflow.html', styles: [`:host{ display: contents; }`]
 })
 export class ProjectWorkflowManageView extends ProjectStagesForm implements OnInit, OnDestroy{
-    orgProjectFilter = (listItem: ProjectProcess, compareItem: WorkflowProcessPhaseLookup)=> {
+    orgProjectFilter = (listItem: ProjectProcess, compareItem: OrgWorkflowPhaseLookup)=> {
         return (listItem.startPhaseId == compareItem.id);
     };
     isLoading: boolean = false;
@@ -77,13 +77,13 @@ export class ProjectWorkflowManageView extends ProjectStagesForm implements OnIn
 
     expandProcess(processId){ this.open_process_id = processId; }
 
-    onStartStatusChange(process, status: WorkflowProcessPhaseLookup){
+    onStartStatusChange(process, status: OrgWorkflowPhaseLookup){
         const { id, name } = status;
         process.startPhaseId = id;
         process.startPhaseName = name;
     }
 
-    onEndStatusChange(process, status: WorkflowProcessPhaseLookup){
+    onEndStatusChange(process, status: OrgWorkflowPhaseLookup){
         const { id, name } = status;
         process.endPhaseId = id;
         process.endPhaseName = name;

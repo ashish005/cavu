@@ -1,5 +1,5 @@
 import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
-import {Phase, PhaseStatus, PhaseTransition, WorkflowNode} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhase, OrgWorkflowPhaseStatus, OrgWorkflowPhaseTransition, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {WorkflowPhaseStatusLookup} from "@app-global";
 
@@ -12,9 +12,9 @@ import {WorkflowPhaseStatusLookup} from "@app-global";
 export class TransitionEditorComponent {
     @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
     @Input() process?: WorkflowNode;
-    @Input() phases?: Phase[];
+    @Input() phases?: OrgWorkflowPhase[];
     @Input() statuses?: WorkflowPhaseStatusLookup[];
-    @Input() transition: PhaseTransition = <PhaseTransition>{ fromPhaseId: null, rule: '' };
+    @Input() transition: OrgWorkflowPhaseTransition = <OrgWorkflowPhaseTransition>{ fromPhaseId: null, rule: '' };
 
     ruleProperties = [
         { name: 'amount', label: 'Amount', type: 'number' },

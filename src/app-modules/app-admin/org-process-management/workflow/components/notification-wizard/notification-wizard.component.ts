@@ -1,9 +1,29 @@
-import {Component, Input, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {Phase, PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
-import {PhaseStepTask} from "../../domains/phase-step-task.serializer";
+import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
+import {OrgWorkflowPhase, OrgWorkflowPhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhaseStepTask} from "../../domains/phase-step-task.serializer";
 
 export type NotificationContext = 'process' | 'phase' | 'task' | 'step';
+
+export interface WizardTemplate {
+    tempId: string;
+    channel: string; // 'EMAIL', 'SMS', 'INAPP'
+    name: string;
+    subject: string;
+    body: string;
+    isActive: boolean;
+}
+
+export interface WizardNotification {
+    id?: string;
+    appEvent: string;
+    name: string;
+    userTypeId: number | null;
+    notificationTypeId: number | null;
+    executionLink: string;
+    permissions: { userRoleId: any, isEnable: boolean }[];
+    templates: WizardTemplate[];
+    isActive: boolean;
+}
 
 @Component({
     selector: 'notification-wizard',
@@ -15,6 +35,8 @@ export type NotificationContext = 'process' | 'phase' | 'task' | 'step';
         .nav-link { cursor: pointer; border-radius: 0; border-left: 3px solid transparent; color: inherit; }
         .nav-link.active { border-left-color: #0cc2aa; background: rgba(120, 130, 140, 0.05); font-weight: 500; }
         .nav-link:hover { background: rgba(120, 130, 140, 0.05); }
+        .hover-bold:hover { font-weight: bold; text-decoration: underline; }
+        .cursor-pointer { cursor: pointer; }
     `]
 })
 export class NotificationWizardComponent implements OnInit {
@@ -22,9 +44,9 @@ export class NotificationWizardComponent implements OnInit {
 
     @Input() context: NotificationContext = 'phase';
     @Input() process?: WorkflowNode;
-    @Input() phase?: Phase;
-    @Input() step?: PhaseStep;
-    @Input() task?: PhaseStepTask;
+    @Input() phase?: OrgWorkflowPhase;
+    @Input() step?: OrgWorkflowPhaseStep;
+    @Input() task?: OrgWorkflowPhaseStepTask;
     
     // Initial settings
     @Input() settings: any = {};
@@ -32,19 +54,19 @@ export class NotificationWizardComponent implements OnInit {
     @Input() notificationTypes: any[] = [];
     @Input() userRoles: any[] = [];
 
-    onOk!: (payload?: any) => void;
-    onCancel!: () => void;
+    @Output() onOk = new EventEmitter<any>();
+    @Output() onCancel = new EventEmitter<void>();
 
     // UI State
     selectedTriggerKey: string | null = null;
     
-    // Triggers
-    triggers: { [key: string]: boolean } = {};
+    // Notifications State (Keyed by Trigger/AppEvent)
+    notificationsMap: { [key: string]: WizardNotification[] } = {};
     availableTriggers: any[] = [];
 
-    // Templates
-    templates: any[] = [];
-    activeTemplate: any = null;
+    // Active Selection
+    activeNotification: WizardNotification | null = null;
+    activeTemplate: WizardTemplate | null = null;
 
     availableChannels = [
         { id: 'EMAIL', name: 'Email', icon: 'fa-envelope' },
@@ -56,11 +78,13 @@ export class NotificationWizardComponent implements OnInit {
 
     ngOnInit() {
         this.initTriggers();
-        this.initTemplates();
+        this.initNotifications();
         
         // Select first trigger by default
         if (this.availableTriggers.length > 0) {
             this.selectedTriggerKey = this.availableTriggers[0].key;
+            // Select first trigger
+            this.selectTrigger(this.selectedTriggerKey as string);
         }
     }
 
@@ -74,117 +98,179 @@ export class NotificationWizardComponent implements OnInit {
         }
     }
 
-    get currentTemplates() {
+    // --- Trigger Selection ---
+
+    selectTrigger(key: string) {
+        this.selectedTriggerKey = key;
+        
+        // Ensure array exists
+        if (!this.notificationsMap[key]) {
+            this.notificationsMap[key] = [];
+        }
+
+        // Auto-select first notification if exists, else activeNotification is null
+        const list = this.notificationsMap[key];
+        if (list.length > 0) {
+            this.selectNotification(list[0]);
+        } else {
+            this.activeNotification = null;
+            this.activeTemplate = null;
+        }
+    }
+
+    get currentNotifications(): WizardNotification[] {
         if (!this.selectedTriggerKey) return [];
-        return this.templates.filter(t => t.trigger === this.selectedTriggerKey);
+        return this.notificationsMap[this.selectedTriggerKey] || [];
     }
 
     get selectedTrigger() {
         return this.availableTriggers.find(t => t.key === this.selectedTriggerKey);
     }
 
-    selectTrigger(key: string) {
-        this.selectedTriggerKey = key;
-        const current = this.templates.filter(t => t.trigger === key);
-        this.activeTemplate = current.length > 0 ? current[0] : null;
+    // --- Notification CRUD ---
+
+    selectNotification(notification: WizardNotification) {
+        this.activeNotification = notification;
+        // Select first template if available
+        if (notification.templates && notification.templates.length > 0) {
+            this.activeTemplate = notification.templates[0];
+        } else {
+            this.activeTemplate = null;
+        }
+    }
+
+    removeNotification(notification: WizardNotification) {
+        if (!this.selectedTriggerKey) return;
+        
+        const list = this.notificationsMap[this.selectedTriggerKey];
+        const index = list.indexOf(notification);
+        if (index > -1) {
+            list.splice(index, 1);
+            
+            // Re-select another one or clear
+            if (this.activeNotification === notification) {
+                this.activeNotification = list.length > 0 ? list[0] : null;
+                this.selectNotification(this.activeNotification as WizardNotification); // re-trigger template selection
+            }
+        }
+    }
+
+    addNotification(triggerKey: string) {
+        if (!this.notificationsMap[triggerKey]) {
+            this.notificationsMap[triggerKey] = [];
+        }
+        const newNotif = this.createEmptyNotification(triggerKey);
+        this.notificationsMap[triggerKey].push(newNotif);
+        this.selectNotification(newNotif);
+    }
+
+    createEmptyNotification(triggerKey: string): WizardNotification {
+        return {
+            // tempId: this.generateId(), // Not in interface yet, add if needed or omit
+            appEvent: triggerKey,
+            name: '',
+            isActive: true,
+            userTypeId: null,
+            notificationTypeId: null,
+            executionLink: '',
+            permissions: [],
+            templates: []
+        };
     }
 
     initTriggers() {
-        // Load existing triggers from settings
-        this.triggers = { ...this.settings.triggers };
-
         // Check if workflowEvents are provided in settings
         if (this.settings.workflowEvents && this.settings.workflowEvents[this.context]) {
              this.availableTriggers = this.settings.workflowEvents[this.context];
-             return;
-        }
-
-        // Define available triggers based on context
-        switch(this.context) {
-            case 'process':
-                this.availableTriggers = [
-                    { key: 'onStart', label: 'Process Started', desc: 'When the process is initiated' },
-                    { key: 'onComplete', label: 'Process Completed', desc: 'When the process finishes successfully' },
-                    { key: 'onCancel', label: 'Process Cancelled', desc: 'When the process is cancelled' },
-                    { key: 'onReminderBeforeDue', label: 'Reminder: Before Due Date', desc: 'Scheduled reminder before the process due date' },
-                    { key: 'onReminderOverdue', label: 'Reminder: Overdue', desc: 'Scheduled reminder when the process is overdue' },
-                    { key: 'onReminderAfterStart', label: 'Reminder: After Start', desc: 'Scheduled reminder after process starts (if not completed)' }
-                ];
-                break;
-            case 'phase':
-                this.availableTriggers = [
-                    { key: 'onEnter', label: 'Phase Started', desc: 'When the workflow enters this phase' },
-                    { key: 'onExit', label: 'Phase Completed', desc: 'When the workflow exits this phase' },
-                    { key: 'onSlaBreach', label: 'SLA Breach', desc: 'When the phase exceeds its SLA' },
-                    { key: 'onReminderBeforeSla', label: 'Reminder: Before SLA Breach', desc: 'Scheduled reminder before SLA breach' },
-                    { key: 'onReminderAfterStart', label: 'Reminder: After Start', desc: 'Scheduled reminder after phase starts (if not completed)' }
-                ];
-                break;
-            case 'step':
-                this.availableTriggers = [
-                    { key: 'onEnter', label: 'Step Started', desc: 'When the step is activated' },
-                    { key: 'onExit', label: 'Step Completed', desc: 'When the step is completed' },
-                    { key: 'onReminderBeforeSla', label: 'Reminder: Before SLA Breach', desc: 'Scheduled reminder before SLA breach' },
-                    { key: 'onReminderAfterStart', label: 'Reminder: After Start', desc: 'Scheduled reminder after step starts (if not completed)' }
-                ];
-                break;
-            case 'task':
-                this.availableTriggers = [
-                    { key: 'onCreate', label: 'Task Created', desc: 'When the task is generated' },
-                    { key: 'onAssign', label: 'Task Assigned', desc: 'When the task is assigned to a user' },
-                    { key: 'onComplete', label: 'Task Completed', desc: 'When the task is marked as done' },
-                    { key: 'onOverdue', label: 'Task Overdue', desc: 'When the task passes its due date' },
-                    { key: 'onReminderBeforeDue', label: 'Reminder: Before Due Date', desc: 'Scheduled reminder before task due date' },
-                    { key: 'onReminderOverdue', label: 'Reminder: Overdue', desc: 'Scheduled reminder when the task is overdue' }
-                ];
-                break;
+        } else {
+            console.warn(`No workflow events found for context: ${this.context}`);
+            this.availableTriggers = [];
         }
     }
 
-    initTemplates() {
-        this.templates = (this.settings.templates || []).map((t: any) => ({ 
-            ...t,
-            permissions: t.permissions || [] 
-        }));
+    initNotifications() {
+        // Hydrate from settings
+        const loaded: any[] = this.settings.notifications || [];
+        
+        loaded.forEach(n => {
+            if (n.appEvent) {
+                if (!this.notificationsMap[n.appEvent]) {
+                    this.notificationsMap[n.appEvent] = [];
+                }
+                this.notificationsMap[n.appEvent].push({
+                    ...n,
+                    permissions: n.permissions || [],
+                    templates: n.templates || [],
+                    isActive: n.isActive !== false
+                });
+            }
+        });
+    }
+
+    onUserTypeChange() {
+        if (this.activeNotification) {
+            this.activeNotification.permissions = [];
+        }
+    }
+
+    get availableTokens(): string[] {
+        const tokens = ['processName'];
+        
+        if (this.context === 'phase' || this.context === 'step' || this.context === 'task') {
+            tokens.push('phaseName');
+        }
+        
+        if (this.context === 'step' || this.context === 'task') {
+            tokens.push('stepName');
+        }
+
+        if (this.context === 'task') {
+            tokens.push('taskName', 'assigneeName', 'dueDate');
+        }
+
+        return tokens;
+    }
+
+    insertToken(token: string) {
+        if (!this.activeTemplate) return;
+        
+        // Append to body by default
+        const tokenStr = `{${token}}`;
+        this.activeTemplate.body = (this.activeTemplate.body || '') + tokenStr;
     }
 
     // --- Template Management ---
 
     addTemplate(channel: string = 'EMAIL') {
-        if (!this.selectedTriggerKey) return;
+        if (!this.activeNotification) return;
 
-        const newTemplate = {
+        const newTemplate: WizardTemplate = {
+            tempId: this.generateId(),
             name: `${channel} Template`,
             channel: channel,
-            trigger: this.selectedTriggerKey,
             subject: '',
             body: '',
-            isActive: true,
-            // New Notification Fields
-            userTypeId: null,
-            notificationTypeId: null,
-            executionLink: '',
-            appEvent: this.selectedTriggerKey,
-            permissions: []
+            isActive: true
         };
-        this.templates.push(newTemplate);
-        this.activeTemplate = newTemplate;
         
-        // Auto-enable trigger
-        this.triggers[this.selectedTriggerKey] = true;
+        this.activeNotification.templates.push(newTemplate);
+        this.activeTemplate = newTemplate;
     }
 
-    selectTemplate(template: any) {
+    selectTemplate(template: WizardTemplate) {
         this.activeTemplate = template;
     }
 
-    removeTemplate(template: any) {
-        const index = this.templates.indexOf(template);
+    removeTemplate(template: WizardTemplate) {
+        if (!this.activeNotification) return;
+        
+        const index = this.activeNotification.templates.indexOf(template);
         if (index > -1) {
-            this.templates.splice(index, 1);
+            this.activeNotification.templates.splice(index, 1);
         }
+        
         if (this.activeTemplate === template) {
-            this.activeTemplate = this.currentTemplates.length > 0 ? this.currentTemplates[0] : null;
+            this.activeTemplate = this.activeNotification.templates.length > 0 ? this.activeNotification.templates[0] : null;
         }
     }
 
@@ -193,48 +279,71 @@ export class NotificationWizardComponent implements OnInit {
         return ch ? ch.icon : 'fa-envelope';
     }
 
-    // Helper to toggle permission
+    // Helper to toggle permission (Operates on Current Notification)
     togglePermission(roleId: any) {
-        if (!this.activeTemplate) return;
-        if (!this.activeTemplate.permissions) this.activeTemplate.permissions = [];
+        if (!this.activeNotification) return;
         
-        const index = this.activeTemplate.permissions.indexOf(roleId);
-        if (index > -1) {
-            this.activeTemplate.permissions.splice(index, 1);
+        const existingIndex = this.activeNotification.permissions.findIndex((p: any) => p.userRoleId === roleId);
+        if (existingIndex > -1) {
+             // If it exists, toggle
+             this.activeNotification.permissions[existingIndex].isEnable = !this.activeNotification.permissions[existingIndex].isEnable;
         } else {
-            this.activeTemplate.permissions.push(roleId);
+            // Add it
+            this.activeNotification.permissions.push({ userRoleId: roleId, isEnable: true });
         }
     }
 
     hasPermission(roleId: any) {
-        return this.activeTemplate?.permissions?.includes(roleId);
+        if (!this.activeNotification) return false;
+        const perm = this.activeNotification.permissions.find((p: any) => p.userRoleId === roleId);
+        return perm ? perm.isEnable : false;
     }
 
-    get isValid() {
-        return this.templates.every(t => {
-            if (!t.name || !t.channel) return false;
-            // Basic validation
-            if (!t.userTypeId || !t.notificationTypeId) return false; 
-            
+    get filteredUserRoles() {
+        const notif = this.activeNotification;
+        if (!notif || !notif.userTypeId) return this.userRoles;
+        return this.userRoles.filter(r => r.userTypeId === notif.userTypeId); 
+    }
+
+    isInvalid(n: WizardNotification): boolean {
+        if (!n.isActive) return false;
+        if (!n.name) return true;
+        if (!n.userTypeId || !n.notificationTypeId) return true;
+        if (!n.templates || n.templates.length === 0) return true;
+        return !n.templates.every(t => {
+            if (!t.name) return false;
             if (t.channel === 'EMAIL' && (!t.subject || !t.body)) return false;
             if ((t.channel === 'SMS' || t.channel === 'INAPP') && !t.body) return false;
             return true;
         });
     }
 
+    get isValid() {
+        // Validate all active notifications
+        // Iterate over all map values (arrays) and flatten
+        const allNotifications = Object.values(this.notificationsMap).reduce((acc, val) => acc.concat(val), []);
+
+        return allNotifications.filter(n => n.isActive).every(n => !this.isInvalid(n));
+    }
+
     // --- Final Save ---
 
     save() {
+        // Filter out inactive notifications
+        const allNotifications = Object.values(this.notificationsMap).reduce((acc, val) => acc.concat(val), []);
+        const activeNotifications = allNotifications.filter(n => n.isActive);
+
         const payload = {
             context: this.context,
             id: this.getEntityId(),
-            triggers: this.triggers,
-            templates: this.templates
+            notifications: activeNotifications
         };
         
-        if (this.onOk) {
-            this.onOk(payload);
-        }
+        this.onOk.emit(payload);
+    }
+
+    cancel() {
+        this.onCancel.emit();
     }
 
     getEntityId() {
@@ -245,5 +354,9 @@ export class NotificationWizardComponent implements OnInit {
             case 'task': return this.task?.id;
             default: return null;
         }
+    }
+
+    private generateId(): string {
+        return Math.random().toString(36).substring(2, 11);
     }
 }

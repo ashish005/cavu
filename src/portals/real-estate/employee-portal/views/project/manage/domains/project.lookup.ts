@@ -1,6 +1,6 @@
 import {CoreResource} from "@app-global";
 
-export class LookupProcessPhase {
+export class OrgWorkflowPhaseLookup {
     id: number;
     name: string;
     description: string;
@@ -68,34 +68,15 @@ export class LookupTaskStatus {
     }
 }
 
-export class LookupProjectPhase {
-    id: number;
-    name: string;
-    sortOrder: number;
-    statusTypeId: number;
-    statusTypeName: string;
-
-    constructor(model: any = <any>{}){
-        const {id, name, sortOrder, statusTypeId, statusTypeName} = model;
-        this.id = id;
-        this.name = name;
-        this.sortOrder = sortOrder;
-        this.statusTypeId = statusTypeId;
-        this.statusTypeName = statusTypeName;
-    }
-}
-
 export class LookupProjectStatusType {
     id: number;
     name: string;
     sortOrder: number;
-    projectPhases: Array<LookupProjectPhase>;
     constructor(model: any = <any>{}){
         const { id, name, sortOrder } = model;
         this.id = id;
         this.name = name;
         this.sortOrder = sortOrder;
-        this.projectPhases = [];
     }
 }
 
@@ -183,53 +164,45 @@ export class ProjectLookup extends CoreResource {
     divisions: Array<LookupProjectDivision>;
     status: Array<LookupStatus>;
 
-    processPhases: Array<LookupProcessPhase>;
-    processStatus: Array<LookupProcessStatus>;
+    phases: Array<OrgWorkflowPhaseLookup>;
+    phasesStatus: Array<LookupProcessStatus>;
     taskPriorities: Array<LookupTaskPriority>;
     taskStatus: Array<LookupTaskStatus>;
 
-    projectPhases: Array<LookupProjectPhase> = [];
     projectStatusTypes: Array<LookupProjectStatusType> = [];
     constructor(model: any = <any>{}){
         super();
         const {
             projectTypes, voucherTypes, billingTypes, relationTypes, resourceTypes, divisions, status,
-            projectPhases, projectStatusTypes,
-            processStatus, processPhases, taskPriorities, taskStatus
+            projectStatusTypes,
+            phasesStatus, phases, taskPriorities, taskStatus
         } = model;
-        this.projectTypes = (projectTypes || []).map(r => new LookupProjectType(r));
-        this.relationTypes = (relationTypes || []).map(r => new LookupRelationType(r));
-        this.billingTypes = (billingTypes || []).map(r => new LookupBillingType(r));
-        this.resourceTypes = (resourceTypes || []).map(r => new LookupResourceType(r));
-        this.divisions = (divisions || []).map(r => new LookupProjectDivision(r));
-        this.status = (status || []).map(r => new LookupStatus(r));
+        this.projectTypes = (projectTypes || []).map((r: any) => new LookupProjectType(r));
+        this.status = (status || []).map((r: any) => new LookupStatus(r));
 
-        const vOptionTypes = <any>{
-            'payment': true,
-            'receipt': true,
-            'contra': true,
-            'journal': true,
-            'sale': true,
-            'purchase': true
+        this.projectStatusTypes = (projectStatusTypes || []).map((r: any) => new LookupProjectStatusType(r));
+
+        this.voucherTypes = (voucherTypes || []).map((r: any) => new LookupVoucherType(r));
+        const vOptionTypes: any = {
+            "QUOTATION": true, "PAYMENT": true, "INVOICE": true
         };
-        this.voucherOptionTypes = (voucherTypes || []).filter(r => vOptionTypes[r.masterType]);
+        this.voucherOptionTypes = (voucherTypes || []).filter((r: any) => vOptionTypes[r.masterType]);
 
-        this.processStatus = (processStatus || []).map(r => new LookupProcessStatus(r));
-        this.processPhases = (processPhases || []).map(r => new LookupProcessPhase(r));
+        this.phasesStatus = (phasesStatus || []).map((r: any) => new LookupProcessStatus(r));
+        this.phases = (phases || []).map((r: any) => new OrgWorkflowPhaseLookup(r));
 
-        this.taskPriorities = (taskPriorities || []).map(r => new LookupTaskPriority(r));
-        this.taskStatus = (taskStatus || []).map(r => new LookupTaskStatus(r));
+        this.taskPriorities = (taskPriorities || []).map((r: any) => new LookupTaskPriority(r));
+        this.taskStatus = (taskStatus || []).map((r: any) => new LookupTaskStatus(r));
 
-        this.projectPhases = (projectPhases || []).map(r => new LookupProjectPhase(r));
-        this.projectStatusTypes = (projectStatusTypes || []).map(r => new LookupProjectStatusType(r));
+        this.billingTypes = (billingTypes || []).map((r: any) => new LookupBillingType(r));
+        this.relationTypes = (relationTypes || []).map((r: any) => new LookupRelationType(r));
+        this.resourceTypes = (resourceTypes || []).map((r: any) => new LookupResourceType(r));
+        this.divisions = (divisions || []).map((r: any) => new LookupProjectDivision(r));
     }
 
-    getVoucherTypeById(typId: number){
-        return this.voucherTypes.find(r => r.id == typId) || new LookupVoucherType();
-    }
-
-    findVoucherTypeByName(masterType){
-        return this.voucherTypes.find(r => r.masterType == masterType);
+    getVoucherTypeByMasterType(masterType: any)
+    {
+        return (this.voucherTypes || []).find(r => r.masterType == masterType);
     }
 }
 

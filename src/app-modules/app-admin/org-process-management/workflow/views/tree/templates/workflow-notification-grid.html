@@ -1,0 +1,38 @@
+<div class="d-flex flex-column flex" *ngIf="parent && parent.selectedProcess">
+    <div class="p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Process Notifications</h6>
+            <button class="btn btn-sm btn-outline-primary" (click)="onProcessNotification()">
+                <i class="fa fa-cog mr-1"></i> Manage
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped b-t b-b">
+                <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Channels</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let n of parent.selectedProcess.notifications || []">
+                    <td>{{n.appEvent}}</td>
+                    <td>
+                        <span *ngFor="let t of n.templates" class="badge badge-sm badge-outline primary mr-1">
+                            {{t.mediaType}}
+                        </span>
+                    </td>
+                    <td>
+                        <i class="fa fa-check text-success" *ngIf="n.isActive"></i>
+                        <i class="fa fa-times text-muted" *ngIf="!n.isActive"></i>
+                    </td>
+                </tr>
+                <tr *ngIf="!parent.selectedProcess.notifications || parent.selectedProcess.notifications.length === 0">
+                    <td colspan="3" class="text-muted text-center p-3">No notifications configured.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

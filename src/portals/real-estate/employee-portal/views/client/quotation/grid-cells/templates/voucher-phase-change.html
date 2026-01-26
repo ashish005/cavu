@@ -6,16 +6,16 @@
                 <div class="px-1"><small class="text-xs text-muted">Phase</small></div>
                 <div class="input-group-prepend pr-1">
                     <a class="dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">{{process.processPhase?? '&#45;&#45;'}}</a>
+                       aria-expanded="false">{{process.currentPhase?? '--'}}</a>
                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
-                        <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.processPhases | sortBy:'asc': 'sortOrder'" let-i="index">
-                            <a class="dropdown-item" (click)="onProcessPhasesChange(process, phase)" [class.active]="(process.processPhase == phase.name)">{{phase.name}}</a>
+                        <ng-template ngFor let-phase [ngForOf]="apiResolver.masterType?.phases | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="dropdown-item" (click)="onPhaseChange(process, phase)" [class.active]="(process.currentPhase == phase.name)">{{phase.name}}</a>
                         </ng-template>
                     </div>
                 </div>
                 <input type="date" class="md-input form-control no-border"
-                       [value]="process.processPhaseOn"
-                       (change)="onProcessPhaseDateChange(process, $event.target.value)"
+                       [value]="process.phaseOn"
+                       (change)="onPhaseDateChange(process, $event.target.value)"
                        style="height: 20px;">
             </div>
         </li>

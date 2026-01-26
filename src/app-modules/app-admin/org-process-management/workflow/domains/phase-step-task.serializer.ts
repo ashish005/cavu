@@ -1,6 +1,6 @@
 import {CoreQueryOptions, CoreResource} from "@app-global";
 
-export class PhaseStepTaskQueryOptions extends CoreQueryOptions {
+export class OrgWorkflowPhaseStepTaskQueryOptions extends CoreQueryOptions {
   workflowId?: number;
   phaseStepId?: number;
   constructor(model: any = {}){
@@ -19,7 +19,7 @@ export class PhaseStepTaskQueryOptions extends CoreQueryOptions {
   }
 }
 
-export class PhaseStepTask extends CoreResource
+export class OrgWorkflowPhaseStepTask extends CoreResource
 {
     override id: number;
     phaseStepId: number;
@@ -53,6 +53,7 @@ export class PhaseStepTask extends CoreResource
         message: string;
     };
     notificationTemplates?: any[];
+    notifications?: any[];
 
     constructor(model: any = {}) {
         super();
@@ -61,7 +62,7 @@ export class PhaseStepTask extends CoreResource
             isManual, isSystemTask, isPrimary, isVerificationRequired, isStatusOnMailRequired, isActive,
             yearMode, fyStartDay, fyStartMonth, timeZone,
             frequencyTypeId, frequencyTypeName, phaseStepName, dueDate, dueMonth,
-            notification, notificationTemplates
+            notification, notificationTemplates, notifications
         } = model;
 
         this.id = id;
@@ -87,10 +88,11 @@ export class PhaseStepTask extends CoreResource
         this.dueMonth = dueMonth;
         this.notification = notification;
         this.notificationTemplates = notificationTemplates;
+        this.notifications = notifications;
     }
 }
 
-export class PhaseStepTaskSerializer {
-  fromJson(json: any): PhaseStepTask { return new PhaseStepTask(json); }
+export class OrgWorkflowPhaseStepTaskSerializer {
+  fromJson(json: any): OrgWorkflowPhaseStepTask { return new OrgWorkflowPhaseStepTask(json); }
   toJson(data: any): any { return data; }
 }

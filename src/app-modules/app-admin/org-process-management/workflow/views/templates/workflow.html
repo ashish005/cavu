@@ -8,7 +8,6 @@
                     </a>-->
                     <div class="p-2 px-3">
                         <span class="text-muted text-sm">Process</span>
-                        <!--                        <a class="btn btn-xs b-theme text-theme text-xs border-0 float-right" (click)="showProcessPhases()"><i class="fa fa-cogs"></i> Phases</a>-->
                         <!--                        <a class="btn btn-xs b-theme text-theme text-xs border-0 float-right" (click)="showScheduledTasks()"><i class="fa fa-tasks"></i> Tasks</a>-->
                     </div>
                     <div class="scrollable hover pt-2">
@@ -28,9 +27,6 @@
                             <h6 class="mb-0">{{selectedProcess?.name}}</h6>
                             <small class="float-left"> Management</small>
                         </a>
-                        <button class="btn btn-sm btn-icon btn-rounded white ml-2" (click)="onProcessNotification()" title="Notifications" *ngIf="selectedProcess">
-                            <i class="fa fa-bell"></i>
-                        </button>
                         <!--<ul class="nav nav-xs flex-row no-border" *ngIf="selectedProcess">
                             <li class="nav-item">
                                 <a class="btn btn-xs text-xs b-theme text-theme border-0" (click)="addProcess(activeOrgProcess)">
@@ -44,54 +40,18 @@
                             </li>
                         </ul>-->
                         <ul class="nav nav-xs flex-row" *ngIf="selectedProcess">
-                            <li class="nav-item" (click)="openTab(tabs.phases)">
-                                <a class="nav-link" [class.active]="tabs.phases == activeTab">Phases</a>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[selectedProcess.id, 'phases']" routerLinkActive="active">Phases</a>
                             </li>
-                            <li class="nav-item" (click)="openTab(tabs.tasks)">
-                                <a class="nav-link" [class.active]="tabs.tasks == activeTab">Tasks</a>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[selectedProcess.id, 'tasks']" routerLinkActive="active" (click)="selectedStepForTasks = null">Tasks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[selectedProcess.id, 'notifications']" routerLinkActive="active">Notifications</a>
                             </li>
                         </ul>
                     </div>
-                    <div class="d-flex flex-column flex" [class.hide]="activeTab != tabs.phases">
-                        <phase-list
-                                class="designer-panel phase-list-panel"
-                                [process]="selectedProcess"
-                                [phases]="phases"
-                                (select)="onPhaseSelected($event)" (edit)="onPhaseEdit($event)" (create)="onPhaseCreate($event)"
-                                (notification)="onPhaseNotification($event)" (manageTemplates)="onPhaseTemplates($event)" (showStepTask)="onShowStepTask($event)" (editStep)="onEditStep($event)" (notificationStep)="onStepNotification($event)">
-                        </phase-list>
-                        <workflow-canvas
-                                class="designer-panel canvas-panel"
-                                [phases]="phases"
-                                [transitions]="phaseTransitions"
-                                (editPhase)="onPhaseEdit($event)"
-                                (editTransition)="onTransitionEdit($event)">
-                        </workflow-canvas>
-                    </div>
-                    <div class="d-flex flex-column flex" [class.hide]="activeTab != tabs.tasks">
-                        <div class="navbar flex-nowrap white lt box-shadow">
-                            <a data-toggle="modal" data-target="#content-aside"
-                               data-modal="" class="mr-1 d-md-none"
-                               data-pjax-state=""><span
-                                    class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
-                            <span class="text-md text-ellipsis flex">Chat with Robot</span>
-                            <ul class="nav nav-xs flex-row no-border">
-                                <li class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#profile"
-                                                        data-modal="" data-pjax-state=""><span
-                                        class="btn btn-sm btn-icon btn-rounded success"><i class="fa fa-user"></i></span></a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
-                                                        data-original-title="Phone Call" data-pjax-state=""><span
-                                        class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
-                                </li>
-                                <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
-                                                        data-original-title="Face Call" data-pjax-state=""><span
-                                        class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-video-camera"></i></span></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <phase-task-grid [process]="selectedProcess" [step]="selectedStepForTasks"></phase-task-grid>
-                    </div>
+                    <router-outlet></router-outlet>
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
 import {CoreQueryOptions} from "@app-global";
 
-export class ProcessPhaseQueryOptions extends CoreQueryOptions{}
+export class WorkflowPhaseStatusQueryOptions extends CoreQueryOptions{}
 
-export class ProcessPhase {
+export class WorkflowPhaseStatus {
   id: number;
   name: string;
   description: string;
@@ -28,7 +28,7 @@ export class ProcessPhase {
   }
 }
 
-export class ProcessPhaseSerializer {
-  fromJson(json: any): ProcessPhase { return new ProcessPhase(json); }
+export class WorkflowPhaseStatusSerializer {
+  fromJson(json: any): WorkflowPhaseStatus { return new WorkflowPhaseStatus(json); }
   toJson(data: any): any { return data; }
 }

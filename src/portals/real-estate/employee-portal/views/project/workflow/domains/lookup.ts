@@ -43,7 +43,7 @@ export class WorkflowTaskOrgUserGroupLookup {
         this.id = model.id;
         this.name = model.name;
         this.categoryId = model.categoryId;
-        this.rules =  (model.rules || []).map(r => new WorkflowUserGroupRule(r));
+        this.rules =  (model.rules || []).map((r: any) => new WorkflowUserGroupRule(r));
     }
 }
 
@@ -55,7 +55,7 @@ export class WorkflowTaskUserGroupCategoryLookup {
     constructor(model: any = <any>{}){
         this.id = model.id;
         this.name = model.name;
-        this.groups = (model.groups || []).map(r => new WorkflowTaskOrgUserGroupLookup(r));
+        this.groups = (model.groups || []).map((r: any) => new WorkflowTaskOrgUserGroupLookup(r));
     }
 }
 
@@ -125,7 +125,7 @@ export class WorkflowOrgProcessLookup {
         this.masterType = model.masterType;
         this.parentId = model.parentId;
         this.sortOrder = model.sortOrder;
-        this.childItems = (model.childItems || []).map(r => new WorkflowOrgProcessLookup(r));
+        this.childItems = (model.childItems || []).map((r: any) => new WorkflowOrgProcessLookup(r));
     }
 }
 
@@ -167,17 +167,17 @@ export class WorkflowProjectStatusTypeLookup {
     id: number;
     name: string;
     sortOrder: number;
-    projectPhases: Array<WorkflowProjectPhaseLookup>;
+    phases: Array<WorkflowProjectPhaseLookup>;
     constructor(model: any = <any>{}){
         const { id, name, sortOrder } = model;
         this.id = id;
         this.name = name;
         this.sortOrder = sortOrder;
-        this.projectPhases = [];
+        this.phases = [];
     }
 }
 
-export class WorkflowProcessPhaseLookup {
+export class OrgWorkflowPhaseLookup {
     id: number;
     name: string;
     description: string;
@@ -257,12 +257,11 @@ export class WorkflowPluginLookup extends CoreResource {
     groups: Array<WorkflowTaskOrgUserGroupLookup> = [];
     columnFilters: Array<WorkflowOrgColumnFilterLookup> ;
 
-    processPhases: Array<WorkflowProcessPhaseLookup>;
-    processStatus: Array<WorkflowProcessStatusLookup>;
+    phases: Array<OrgWorkflowPhaseLookup>;
+    phasesStatus: Array<WorkflowProcessStatusLookup>;
     taskPriorities: Array<WorkflowTaskPriorityLookup>;
     taskStatus: Array<WorkflowTaskStatusLookup>;
 
-    projectPhases: Array<WorkflowProjectPhaseLookup> = [];
     projectStatusTypes: Array<WorkflowProjectStatusTypeLookup> = [];
 
     orgProcessMapping: any;
@@ -270,44 +269,38 @@ export class WorkflowPluginLookup extends CoreResource {
         super();
         const {
             taskTypes, orgProcess, frequencyTypes, mediaTypes,
-            userTypes, notificationTypes, categories, columnFilters, processPhases, processStatus, taskPriorities,
-            taskStatus, projectPhases, projectStatusTypes
+            userTypes, notificationTypes, categories, columnFilters, phases, phasesStatus, taskPriorities,
+            taskStatus, projectStatusTypes
         } = model;
-        this.taskTypes = (taskTypes || []).map(r => new WorkflowTaskTypeLookup(r));
-        this.orgProcess = (orgProcess || []).map(r => new WorkflowOrgProcessLookup(r));
-        this.frequencyTypes = (frequencyTypes || []).map(r => new WorkflowFrequencyTypeLookup(r));
-        this.mediaTypes = (mediaTypes || []).map(r => new WorkflowTemplateMediaTypeLookup(r));
-        this.userTypes = (userTypes || []).map(r => new WorkflowNotificationUserTypeLookup(r));
-        this.notificationTypes = (notificationTypes || []).map(r => new WorkflowTaskNotificationTypeLookup(r));
+        this.taskTypes = (taskTypes || []).map((r: any) => new WorkflowTaskTypeLookup(r));
+        this.orgProcess = (orgProcess || []).map((r: any) => new WorkflowOrgProcessLookup(r));
+        this.frequencyTypes = (frequencyTypes || []).map((r: any) => new WorkflowFrequencyTypeLookup(r));
+        this.mediaTypes = (mediaTypes || []).map((r: any) => new WorkflowTemplateMediaTypeLookup(r));
+        this.userTypes = (userTypes || []).map((r: any) => new WorkflowNotificationUserTypeLookup(r));
+        this.notificationTypes = (notificationTypes || []).map((r: any) => new WorkflowTaskNotificationTypeLookup(r));
 
-        this.categories = (categories || []).map(r => new WorkflowTaskUserGroupCategoryLookup(r));
-        this.columnFilters = (columnFilters || []).map(r => new WorkflowOrgColumnFilterLookup(r));
+        this.categories = (categories || []).map((r: any) => new WorkflowTaskUserGroupCategoryLookup(r));
+        this.columnFilters = (columnFilters || []).map((r: any) => new WorkflowOrgColumnFilterLookup(r));
 
-        this.processStatus = (processStatus || []).map(r => new WorkflowProcessStatusLookup(r));
-        this.processPhases = (processPhases || []).map(r => new WorkflowProcessPhaseLookup(r));
+        this.phasesStatus = (phasesStatus || []).map((r: any) => new WorkflowProcessStatusLookup(r));
+        this.phases = (phases || []).map((r: any) => new OrgWorkflowPhaseLookup(r));
 
-        this.taskPriorities = (taskPriorities || []).map(r => new WorkflowTaskPriorityLookup(r));
-        this.taskStatus = (taskStatus || []).map(r => new WorkflowTaskStatusLookup(r));
+        this.taskPriorities = (taskPriorities || []).map((r: any) => new WorkflowTaskPriorityLookup(r));
+        this.taskStatus = (taskStatus || []).map((r: any) => new WorkflowTaskStatusLookup(r));
 
-        this.projectPhases = (projectPhases || []).map(r => new WorkflowProjectPhaseLookup(r));
-        this.projectStatusTypes = (projectStatusTypes || []).map(r => new WorkflowProjectStatusTypeLookup(r));
+        this.projectStatusTypes = (projectStatusTypes || []).map((r: any) => new WorkflowProjectStatusTypeLookup(r));
 
-        this.groups = (this.categories).reduce((result, curr)=>{
+        this.groups = (this.categories).reduce((result: any[], curr: any)=>{
             result = result.concat(...curr.groups);
             return result;
         }, []);
 
-        const redueProcess = (result, curr)=>{
+        const redueProcess = (result: any, curr: any)=>{
             result[curr.id] = { id: curr.id, parentId: curr.parentId };
             (curr.childItems || []).reduce(redueProcess, result);
             return result;
         };
         this.orgProcessMapping = this.orgProcess.reduce(redueProcess, {});
-
-        this.projectStatusTypes.map(r => {
-            const statuses = this.projectPhases.filter(k => k.statusTypeId == r.id);
-            r.projectPhases.push(...statuses);
-        });
     }
 
     getFiltersByUserTypeId(userTypeId)

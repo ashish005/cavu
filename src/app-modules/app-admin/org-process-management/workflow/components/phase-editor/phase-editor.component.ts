@@ -11,8 +11,8 @@ import {
 } from "@angular/core";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
-import {Phase} from "../../domains/org-workflow-node.serializer";
-import {OrgProcessPhaseService, WorkflowService} from "../../services/workflow.service";
+import {OrgWorkflowPhase} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhaseService, WorkflowService} from "../../services/workflow.service";
 
 @Component({
     standalone: false,
@@ -23,7 +23,7 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     submitted: boolean = false;
     @Output() onOk: any;
     @ViewChild('footerTemplate', { static: true }) public footerTemplate!: TemplateRef<any>;
-    @Input() data?: Phase;
+    @Input() data?: OrgWorkflowPhase;
     customForm: FormGroup;
     ruleProperties = [
         { name: 'amount', label: 'Amount', type: 'number' },
@@ -54,12 +54,15 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
         ]
     };
 
-    constructor(private fb: FormBuilder, private service: OrgProcessPhaseService,) {
+    isEdit: boolean = false;
+    constructor(
+        private fb: FormBuilder,
+        private service: OrgWorkflowPhaseService
+    ) {
         this.customForm = this.fb.group({
             id: [null],
             name: [null, Validators.required],
             color: [null],
-            phaseStatusId: [null],
             sortOrder: [null],
             isDefault: [ false ] ,
             isActive: [ true ],
@@ -171,7 +174,6 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
                 id: this.data.id,
                 name: this.data.name,
                 color: this.data.color,
-                phaseStatusId: this.data.phaseStatusId,
                 sortOrder: this.data.sortOrder,
                 isDefault: false,
                 isActive: true

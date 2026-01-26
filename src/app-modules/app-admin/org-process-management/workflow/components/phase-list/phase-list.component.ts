@@ -1,3 +1,4 @@
+/*
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {Phase, PhaseStep, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 import {animate, style, transition, trigger} from "@angular/animations";
@@ -28,3 +29,4 @@ export class PhaseListComponent {
     @Output() editStep = new EventEmitter<PhaseStep>();
     @Output() notificationStep = new EventEmitter<PhaseStep>();
 }
+*/

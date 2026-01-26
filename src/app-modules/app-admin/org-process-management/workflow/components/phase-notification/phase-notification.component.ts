@@ -1,5 +1,5 @@
 import {Component, Input, TemplateRef, ViewChild} from "@angular/core";
-import {Phase, WorkflowNode} from "../../domains/org-workflow-node.serializer";
+import {OrgWorkflowPhase, WorkflowNode} from "../../domains/org-workflow-node.serializer";
 
 @Component({
   standalone: false,
@@ -10,10 +10,10 @@ export class PhaseNotificationComponent {
   @ViewChild("footerTemplate", { static: true }) footerTemplate!: TemplateRef<any>;
 
   @Input() process?: WorkflowNode;
-  @Input() phase?: Phase;
+  @Input() phase?: OrgWorkflowPhase;
 
-  onOk: (payload?: any) => void;
-  onCancel: () => void;
+  onOk?: (payload?: any) => void;
+  onCancel?: () => void;
 
   notifyOnEnter: boolean = true;
   notifyOnExit: boolean = false;
@@ -61,4 +61,3 @@ export class PhaseNotificationComponent {
     }
   }
 }
-
