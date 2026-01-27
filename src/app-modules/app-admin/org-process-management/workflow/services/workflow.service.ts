@@ -11,7 +11,7 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
         super(injector, 'orgWorkflow', new OrgWorkflowSerializer());
     }
 
-    getTransitions(workflowId: number): Observable<OrgWorkflowPhaseTransition[]> {
+  getTransitions(workflowId: number): Observable<OrgWorkflowPhaseTransition[]> {
         const url = `${this.viewUrl}/${workflowId}/transitions`;
         return this.httpClient
             .get<any>(url, super.requestHeaders)
@@ -22,8 +22,10 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
                         id: x.id,
                         processId: x.processId,
                         fromPhaseId: x.fromPhaseId,
+                        fromStatusId: x.fromStatusId,
                         fromPhaseName: x.fromPhaseName,
                         toPhaseId: x.toPhaseId,
+                        toStatusId: x.toStatusId,
                         toPhaseName: x.toPhaseName,
                         description: x.description,
                         rule: x.rule

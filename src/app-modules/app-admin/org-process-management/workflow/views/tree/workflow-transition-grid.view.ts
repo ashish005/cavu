@@ -5,7 +5,9 @@ import {OrgWorkflowPhaseTransition} from "../../domains/org-workflow-node.serial
 import {TransitionEditorComponent} from "../../components";
 import {WorkflowService} from "../../services/workflow.service";
 import {animate, style, transition, trigger} from "@angular/animations";
-import { Node, Edge } from '@swimlane/ngx-graph';
+import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
+// @ts-ignore
+import * as shape from 'd3-shape';
 
 @Component({
   standalone: false,
@@ -26,8 +28,13 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 export class OrgWorkflowPhaseTransitionGridView {
   nodes: Node[] = [];
   links: Edge[] = [];
+  clusters: ClusterNode[] = [];
+  curve: any = shape.curveBundle.beta(1);
   private _lastPhases: any[] = [];
   private _lastTransitions: any[] = [];
+  viewMode: 'phase' | 'state' = 'phase';
+
+  selectedSourceNodeId: string | null = null;
 
   constructor(
       @Optional() public parent: OrgWorkflowView,
@@ -52,21 +59,92 @@ export class OrgWorkflowPhaseTransitionGridView {
       }
   }
 
+  setViewMode(mode: 'phase' | 'state') {
+      this.viewMode = mode;
+      this.selectedSourceNodeId = null; // Reset selection on mode change
+      this.updateNodes();
+      this.updateLinks();
+      this.cdr.markForCheck();
+  }
+
   updateNodes() {
       if (!this.parent || !this.parent.phases) {
           this.nodes = [];
+          this.clusters = [];
           this.cdr.markForCheck();
           return;
       }
-      this.nodes = this.parent.phases.map(p => ({
-          id: 'phase-' + p.id.toString(),
-          label: p.name,
-          dimension: { width: 150, height: 50 },
-          data: { 
-              color: p.color || '#a8385d',
-              phase: p 
-          }
-      }));
+      const nodes: Node[] = [];
+      const clusters: ClusterNode[] = [];
+      const phases = this.parent.phases || [];
+
+      if (this.viewMode === 'phase') {
+          phases.forEach(p => {
+              if (p && p.id) {
+                  const nodeId = 'phase-' + p.id;
+                  nodes.push({
+                      id: nodeId,
+                      label: p.name,
+                      dimension: { width: 160, height: 54 },
+                      data: { 
+                          color: p.color || '#a8385d', 
+                          phase: p,
+                          isSelected: this.selectedSourceNodeId === nodeId 
+                      }
+                  });
+              }
+          });
+      } else {
+          phases.forEach(p => {
+              if (p && p.id) {
+                  const statusNodeIds: string[] = [];
+                  // Add Status Nodes
+                  (p.statuses || []).forEach(s => {
+                      if (s && s.id) {
+                          const nodeId = 'phase-' + p.id + '-status-' + s.id;
+                          statusNodeIds.push(nodeId);
+                          nodes.push({
+                              id: nodeId,
+                              label: s.name, // Simplified label (context provided by cluster)
+                              dimension: { width: 140, height: 40 },
+                              data: { 
+                                  color: s.color || p.color || '#a8385d', 
+                                  phase: p, 
+                                  status: s,
+                                  isSelected: this.selectedSourceNodeId === nodeId 
+                              }
+                          });
+                      }
+                  });
+
+                  // Add Cluster
+                  clusters.push({
+                      id: 'cluster-' + p.id,
+                      label: p.name,
+                      childNodeIds: statusNodeIds,
+                      data: { color: p.color || '#a8385d' }
+                  });
+
+                  // Fallback: If no statuses, add Phase Node inside cluster
+                  if (statusNodeIds.length === 0) {
+                       const nodeId = 'phase-' + p.id;
+                       nodes.push({
+                          id: nodeId,
+                          label: p.name,
+                          dimension: { width: 160, height: 54 },
+                          data: { 
+                              color: p.color || '#a8385d', 
+                              phase: p,
+                              isSelected: this.selectedSourceNodeId === nodeId 
+                          }
+                       });
+                       clusters[clusters.length - 1].childNodeIds!.push(nodeId);
+                  }
+              }
+          });
+      }
+      this.nodes = nodes;
+      this.clusters = clusters;
       this.cdr.markForCheck();
   }
 
@@ -76,15 +154,135 @@ export class OrgWorkflowPhaseTransitionGridView {
           this.cdr.markForCheck();
           return;
       }
-      this.links = this.parent.phaseTransitions.map(t => ({
-          id: 'edge-' + t.id.toString(),
-          source: 'phase-' + t.fromPhaseId.toString(),
-          target: 'phase-' + t.toPhaseId.toString(),
-          label: t.rule ? 'Has Rule' : '',
-          data: { transition: t }
-      }));
+
+      // Create a Set of valid node IDs for fast lookup to prevent dangling edges
+      const validNodeIds = new Set(this.nodes.map(n => n.id));
+
+      const edges: Edge[] = [];
+      (this.parent.phaseTransitions || []).forEach(t => {
+          if (!t || !t.id) return;
+
+          let source = 'phase-' + t.fromPhaseId;
+          let target = 'phase-' + t.toPhaseId;
+          
+          if (this.viewMode === 'state') {
+              // Determine Source Node
+              if (t.fromStatusId) {
+                  source = 'phase-' + t.fromPhaseId + '-status-' + t.fromStatusId;
+              } else {
+                  // Fallback: Use last status of fromPhase
+                  const fromPhase = this.parent.phases.find(p => p.id === t.fromPhaseId);
+                  if (fromPhase && fromPhase.statuses && fromPhase.statuses.length > 0) {
+                      const lastStatus = fromPhase.statuses[fromPhase.statuses.length - 1];
+                      source = 'phase-' + t.fromPhaseId + '-status-' + lastStatus.id;
+                  }
+              }
+
+              // Determine Target Node
+              if (t.toStatusId) {
+                  target = 'phase-' + t.toPhaseId + '-status-' + t.toStatusId;
+              } else {
+                  // Fallback: Use first status of toPhase
+                  const toPhase = this.parent.phases.find(p => p.id === t.toPhaseId);
+                  if (toPhase && toPhase.statuses && toPhase.statuses.length > 0) {
+                      const firstStatus = toPhase.statuses[0];
+                      target = 'phase-' + t.toPhaseId + '-status-' + firstStatus.id;
+                  }
+              }
+          }
+
+          // Only add edge if both source and target nodes exist
+          if (validNodeIds.has(source) && validNodeIds.has(target)) {
+              edges.push({
+                  id: 'edge-' + t.id,
+                  source,
+                  target,
+                  label: t.rule ? t.rule : '',
+                  data: { transition: t }
+              });
+          }
+      });
+      this.links = edges;
       this.cdr.markForCheck();
   }
+
+  getLinkLabelX(link: any) {
+      const pts = (link && link.points) || [];
+      if (!pts.length) return 0;
+      const i = Math.floor(pts.length / 2);
+      return pts[i].x;
+  }
+
+  getLinkLabelY(link: any) {
+      const pts = (link && link.points) || [];
+      if (!pts.length) return 0;
+      const i = Math.floor(pts.length / 2);
+      return pts[i].y - 6;
+  }
+
+    onNodeClick(event: any) {
+        if (!event || !event.id) return;
+        
+        // If clicking the same node, deselect
+        if (this.selectedSourceNodeId === event.id) {
+            this.selectedSourceNodeId = null;
+            this.updateNodes();
+            return;
+        }
+
+        // If no source selected, select this one
+        if (!this.selectedSourceNodeId) {
+            this.selectedSourceNodeId = event.id;
+            this.updateNodes();
+            return;
+        }
+
+        // If source selected and clicking different node -> Create Transition
+        const sourceId = this.selectedSourceNodeId;
+        const targetId = event.id;
+        
+        this.selectedSourceNodeId = null;
+        this.updateNodes(); // Clear selection immediately
+        
+        this.openCreateTransitionFromNodes(sourceId, targetId);
+    }
+
+    parseNodeId(id: string): { phaseId: number, statusId: number | undefined } {
+        const parts = id.split('-');
+        // phase-{id} -> ['phase', '1']
+        // phase-{id}-status-{sid} -> ['phase', '1', 'status', '2']
+        if (parts.length === 2) {
+            return { phaseId: +parts[1], statusId: undefined };
+        }
+        if (parts.length === 4) {
+            return { phaseId: +parts[1], statusId: +parts[3] };
+        }
+        return { phaseId: 0, statusId: undefined };
+    }
+
+    openCreateTransitionFromNodes(sourceNodeId: string, targetNodeId: string) {
+        const source = this.parseNodeId(sourceNodeId);
+        const target = this.parseNodeId(targetNodeId);
+
+        const transition: OrgWorkflowPhaseTransition = {
+            id: 0,
+            processId: this.parent?.selectedProcess?.id || 0,
+            fromPhaseId: source.phaseId,
+            fromStatusId: source.statusId,
+            toPhaseId: target.phaseId,
+            toStatusId: target.statusId,
+            description: '',
+            rule: ''
+        };
+
+        const input = {
+            process: this.parent?.selectedProcess,
+            phases: this.parent?.phases,
+            statuses: this.parent?.phaseStatuses,
+            transition
+        };
+        this.showTransitionPopup(input, { text: 'Create Transition', desc: '' });
+    }
 
     onTransitionCreate(_e: any){
         const input = {
@@ -92,29 +290,6 @@ export class OrgWorkflowPhaseTransitionGridView {
             phases: this.parent?.phases,
             statuses: this.parent?.phaseStatuses,
             transition: null
-        };
-        this.showTransitionPopup(input, { text: 'Create Transition', desc: '' });
-    }
-
-    onNodeClick(event: any) {
-        const phase = event && event.data && event.data.phase;
-        if (!phase) {
-            this.onTransitionCreate(null);
-            return;
-        }
-        const transition: OrgWorkflowPhaseTransition = {
-            id: 0,
-            processId: this.parent?.selectedProcess?.id || 0,
-            fromPhaseId: phase.id,
-            toPhaseId: 0,
-            description: '',
-            rule: ''
-        };
-        const input = {
-            process: this.parent?.selectedProcess,
-            phases: this.parent?.phases,
-            statuses: this.parent?.phaseStatuses,
-            transition
         };
         this.showTransitionPopup(input, { text: 'Create Transition', desc: '' });
     }
