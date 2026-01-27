@@ -10,11 +10,13 @@ import {FilterTransitionsByFromPipe, FindPhaseStatusesPipe} from "./pipes";
 import {OrgWorkflowPhaseService, OrgWorkflowPhaseStepTaskService, WorkflowService} from "./services/workflow.service";
 import {WORKFLOW_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 
+import {NgxGraphModule} from "@swimlane/ngx-graph";
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild(OrgProcessTaskRoutes),
-    GlobalModule
+    GlobalModule, NgxGraphModule
   ],
   providers: [ WorkflowService, OrgWorkflowPhaseService, OrgWorkflowPhaseStepTaskService ],
   declarations: [ ORG_WORKFLOW_VIEWS, WORKFLOW_COMPONENTS, WORKFLOW_GRID_COLUMN_CELL_COMPONENTS, FilterTransitionsByFromPipe, FindPhaseStatusesPipe ],

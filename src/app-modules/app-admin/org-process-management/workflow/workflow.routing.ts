@@ -6,6 +6,7 @@ import {WorkflowGridView} from "./views/workflow-grid.view";
 import {OrgWorkflowPhaseGridView} from "./views/tree/workflow-phase-grid.view";
 import {OrgWorkflowTaskGridView} from "./views/tree/workflow-task-grid.view";
 import {OrgWorkflowNotificationGridView} from "./views/tree/workflow-notification-grid.view";
+import {OrgWorkflowPhaseTransitionGridView} from "./views/tree/workflow-transition-grid.view";
 
 export const OrgProcessTaskRoutes: Routes = [
   {
@@ -24,6 +25,7 @@ export const OrgProcessTaskRoutes: Routes = [
                         { path: 'phases', component: OrgWorkflowPhaseGridView, data: { title: 'Process', key: 'process', header:'process'} },
                         { path: 'tasks', component: OrgWorkflowTaskGridView, data: { title: 'Process', key: 'process', header:'process'} },
                         { path: 'notifications', component: OrgWorkflowNotificationGridView, data: { title: 'Process', key: 'process', header:'process'} },
+                        { path: 'transitions', component: OrgWorkflowPhaseTransitionGridView, data: { title: 'Process', key: 'process', header:'process'} },
                     ]
                 }
             ]
@@ -34,5 +36,6 @@ export const OrgProcessTaskRoutes: Routes = [
 export const ORG_WORKFLOW_VIEWS = [
     Layout,
     OrgWorkflowView, WorkflowGridView,
-    OrgWorkflowTaskGridView, OrgWorkflowPhaseGridView, OrgWorkflowNotificationGridView
+    OrgWorkflowTaskGridView, OrgWorkflowPhaseGridView, OrgWorkflowNotificationGridView,
+    OrgWorkflowPhaseTransitionGridView
 ];

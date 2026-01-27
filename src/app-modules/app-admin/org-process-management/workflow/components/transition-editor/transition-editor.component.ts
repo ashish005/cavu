@@ -10,11 +10,11 @@ import {WorkflowPhaseStatusLookup} from "@app-global";
     styleUrls: [ `./transition-editor.css`]
 })
 export class TransitionEditorComponent {
-    @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+    @ViewChild('footerTemplate', { static: true }) public footerTemplate!: TemplateRef<any>;
     @Input() process?: WorkflowNode;
     @Input() phases?: OrgWorkflowPhase[];
     @Input() statuses?: WorkflowPhaseStatusLookup[];
-    @Input() transition: OrgWorkflowPhaseTransition = <OrgWorkflowPhaseTransition>{ fromPhaseId: null, rule: '' };
+    @Input() transition: OrgWorkflowPhaseTransition = <OrgWorkflowPhaseTransition>{ id: 0, processId: 0, fromPhaseId: 0, toPhaseId: 0, rule: '' };
 
     ruleProperties = [
         { name: 'amount', label: 'Amount', type: 'number' },
@@ -58,8 +58,8 @@ export class TransitionEditorComponent {
         rules: this.fb.array([])
     });
 
-    @Output() onOk: EventEmitter<any> = new EventEmitter(null);
-    @Output() onCancel: EventEmitter<any> = new EventEmitter(null);
+    @Output() onOk: EventEmitter<any> = new EventEmitter();
+    @Output() onCancel: EventEmitter<any> = new EventEmitter();
 
     constructor(private fb: FormBuilder) {}
 
@@ -102,7 +102,7 @@ export class TransitionEditorComponent {
 
     getPropertyType(prop: string): string { return this.ruleProperties.find(p => p.name === prop)?.type || 'string'; }
 
-    getOperators(prop: string) { return this.operatorsByType[this.getPropertyType(prop)]; }
+    getOperators(prop: string) { return (this.operatorsByType as any)[this.getPropertyType(prop)]; }
 
     save() {
         if (this.customForm.invalid) {
@@ -113,7 +113,9 @@ export class TransitionEditorComponent {
             id: value.id,
             processId: value.processId || this.process?.id,
             fromPhaseId: value.fromPhaseId,
+            fromStatusId: value.fromStatusId,
             toPhaseId: value.toPhaseId,
+            toStatusId: value.toStatusId,
             description: value.description,
             ruleJoinType: value.ruleJoinType,
             rules: value.rules,

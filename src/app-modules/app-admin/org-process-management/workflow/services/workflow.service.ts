@@ -20,12 +20,14 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
                     const items = resp?.entities || resp?.Entities || resp?.data || [];
                     return (items as any[]).map(x => ({
                         id: x.id,
-                        processId: x.workflowId,
+                        processId: x.processId,
                         fromPhaseId: x.fromPhaseId,
+                        fromPhaseName: x.fromPhaseName,
                         toPhaseId: x.toPhaseId,
-                        description: x.description || `${x.fromPhaseName} → ${x.toPhaseName}`,
-                        rule: ''
-                    }) as OrgWorkflowPhaseTransition);
+                        toPhaseName: x.toPhaseName,
+                        description: x.description,
+                        rule: x.rule
+                    }));
                 }),
                 catchError(error => super.handleError(error, () => this.getTransitions(workflowId)))
             );
@@ -35,23 +37,17 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
         const url = `${this.viewUrl}/${workflowId}/transitions`;
         const body = {
             fromPhaseId: payload.fromPhaseId,
+            fromStatusId: payload.fromStatusId,
             toPhaseId: payload.toPhaseId,
-            isAllowed: true,
-            description: payload.description
+            toStatusId: payload.toStatusId,
+            description: payload.description,
+            rule: payload.rule
         };
         return this.httpClient
             .post<any>(url, body, super.requestHeaders)
             .pipe(
                 map((resp: any) => {
-                    const x = resp?.data || resp;
-                    return {
-                        id: x.id,
-                        processId: x.workflowId,
-                        fromPhaseId: x.fromPhaseId,
-                        toPhaseId: x.toPhaseId,
-                        description: x.description,
-                        rule: ''
-                    } as OrgWorkflowPhaseTransition;
+                    return resp?.data || resp;
                 }),
                 catchError(error => super.handleError(error, () => this.createTransition(workflowId, payload)))
             );
@@ -61,23 +57,17 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
         const url = `${this.viewUrl}/transitions/${id}`;
         const body = {
             fromPhaseId: payload.fromPhaseId,
+            fromStatusId: payload.fromStatusId,
             toPhaseId: payload.toPhaseId,
-            isAllowed: true,
-            description: payload.description
+            toStatusId: payload.toStatusId,
+            description: payload.description,
+            rule: payload.rule
         };
         return this.httpClient
             .put<any>(url, body, super.requestHeaders)
             .pipe(
                 map((resp: any) => {
-                    const x = resp?.data || resp;
-                    return {
-                        id: x.id,
-                        processId: x.workflowId,
-                        fromPhaseId: x.fromPhaseId,
-                        toPhaseId: x.toPhaseId,
-                        description: x.description,
-                        rule: ''
-                    } as OrgWorkflowPhaseTransition;
+                    return resp?.data || resp;
                 }),
                 catchError(error => super.handleError(error, () => this.updateTransition(id, payload)))
             );
