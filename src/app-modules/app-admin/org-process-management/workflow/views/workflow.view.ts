@@ -136,7 +136,7 @@ export class OrgWorkflowView {
       text: 'Transition',
       desc: this.getPhaseName(existing.fromPhaseId) + ' \u2192 ' + this.getPhaseName(existing.toPhaseId)
     };
-    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
       if (resp && this.selectedProcess) {
         this.saveTransition(this.selectedProcess.id, resp);

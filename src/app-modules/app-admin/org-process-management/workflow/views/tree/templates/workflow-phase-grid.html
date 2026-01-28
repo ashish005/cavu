@@ -15,6 +15,13 @@
               Templates<span *ngIf="row.notificationTemplates?.length"> ({{ row.notificationTemplates.length }})</span>
             </span>
                         <span
+                                class="b-a badge mr-1"
+                                (click)="onPhaseTransitions(row)"
+                                title="Manage Transitions"
+                        >
+                            <i class="fa fa-exchange"></i> Transitions
+                        </span>
+                        <span
                                 class="b-a badge"
                                 [ngClass]="{'theme text-theme': row.notification}"
                                 (click)="onPhaseNotification(row)"

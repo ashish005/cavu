@@ -5,12 +5,14 @@ export class WorkflowPhaseStatusLookup {
     id: number;
     name: string;
     isDefault: boolean;
+    color: string;
 
     constructor(model: any = <any>{}){
         const {id, name, isDefault, color} = model;
         this.id = id;
         this.name = name;
         this.isDefault = isDefault;
+        this.color = color;
     }
 }
 export class WorkflowProcessStatusLookup {

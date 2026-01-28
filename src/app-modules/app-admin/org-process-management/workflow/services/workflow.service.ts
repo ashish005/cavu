@@ -35,6 +35,29 @@ export class WorkflowService extends OrgResourceService<OrgWorkflow>{
             );
     }
 
+    bulkUpdateTransitions(workflowId: number, payload: { saves: any[], deletes: number[] }): Observable<any> {
+        const url = `${this.viewUrl}/${workflowId}/transitions/bulk`;
+        const body = {
+            saves: (payload.saves || []).map(s => ({
+                id: s.id || 0,
+                processId: workflowId,
+                fromPhaseId: s.fromPhaseId,
+                fromStatusId: s.fromStatusId,
+                toPhaseId: s.toPhaseId,
+                toStatusId: s.toStatusId,
+                description: s.description,
+                rule: s.rule
+            })),
+            deletes: payload.deletes || []
+        };
+        return this.httpClient
+            .put<any>(url, body, super.requestHeaders)
+            .pipe(
+                map((resp: any) => resp),
+                catchError(error => super.handleError(error, () => this.bulkUpdateTransitions(workflowId, payload)))
+            );
+    }
+
     createTransition(workflowId: number, payload: any): Observable<OrgWorkflowPhaseTransition> {
         const url = `${this.viewUrl}/${workflowId}/transitions`;
         const body = {

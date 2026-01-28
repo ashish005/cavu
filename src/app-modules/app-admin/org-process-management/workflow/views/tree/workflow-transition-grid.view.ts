@@ -6,6 +6,7 @@ import {TransitionEditorComponent} from "../../components";
 import {WorkflowService} from "../../services/workflow.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
+import { forkJoin, of, Observable } from 'rxjs';
 // @ts-ignore
 import * as shape from 'd3-shape';
 
@@ -264,7 +265,7 @@ export class OrgWorkflowPhaseTransitionGridView {
         const source = this.parseNodeId(sourceNodeId);
         const target = this.parseNodeId(targetNodeId);
 
-        const transition: OrgWorkflowPhaseTransition = {
+        const newTransition: OrgWorkflowPhaseTransition = {
             id: 0,
             processId: this.parent?.selectedProcess?.id || 0,
             fromPhaseId: source.phaseId,
@@ -275,21 +276,29 @@ export class OrgWorkflowPhaseTransitionGridView {
             rule: ''
         };
 
+        // Pass ALL transitions for this phase to allow switching statuses in editor
+        const existingTransitions = (this.parent?.phaseTransitions || []).filter(t => t.fromPhaseId === source.phaseId);
+
         const input = {
             process: this.parent?.selectedProcess,
             phases: this.parent?.phases,
             statuses: this.parent?.phaseStatuses,
-            transition
+            transitions: existingTransitions,
+            newTransition: newTransition,
+            sourcePhaseId: source.phaseId,
+            sourceStatusId: source.statusId
         };
-        this.showTransitionPopup(input, { text: 'Create Transition', desc: '' });
+        this.showTransitionPopup(input, { text: 'Manage Transitions', desc: '' });
     }
 
     onTransitionCreate(_e: any){
+        // Generic create button - maybe select first phase? Or just empty?
+        // For now, let's just open empty.
         const input = {
             process: this.parent?.selectedProcess,
             phases: this.parent?.phases,
             statuses: this.parent?.phaseStatuses,
-            transition: null
+            transitions: []
         };
         this.showTransitionPopup(input, { text: 'Create Transition', desc: '' });
     }
@@ -301,26 +310,55 @@ export class OrgWorkflowPhaseTransitionGridView {
     }
 
     onTransitionEdit(transition: OrgWorkflowPhaseTransition) {
+        // Pass ALL transitions for this phase
+        const existingTransitions = (this.parent?.phaseTransitions || []).filter(t => t.fromPhaseId === transition.fromPhaseId);
+        
         const input = {
             process: this.parent?.selectedProcess,
             phases: this.parent?.phases,
             statuses: this.parent?.phaseStatuses,
-            transition: transition
+            transitions: existingTransitions,
+            sourcePhaseId: transition.fromPhaseId,
+            sourceStatusId: transition.fromStatusId
         };
-        this.showTransitionPopup(input, { text: 'Edit Transition', desc: '' });
+        this.showTransitionPopup(input, { text: 'Manage Transitions', desc: '' });
+    }
+
+    getTransitionsFrom(phaseId: number, statusId: number | undefined): OrgWorkflowPhaseTransition[] {
+        return (this.parent?.phaseTransitions || []).filter(t => 
+            t.fromPhaseId === phaseId && 
+            t.fromStatusId === (statusId || null)
+        );
     }
 
     showTransitionPopup(data: any, popupHeaderOption: any){
-        const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
         const success = (resp: any) => {
             this.sharedService.destroy();
             if(resp) {
-                if (resp.id) {
-                    this.service.updateTransition(resp.id, resp).subscribe(() => {
-                        this.parent?.loadTransitions(this.parent?.selectedProcess?.id || 0);
+                const saves: any[] = resp.save || [];
+                const deletes: number[] = resp.delete || [];
+                
+                const obs = [];
+
+                if (saves.length > 0) {
+                    saves.forEach(s => {
+                        if (s.id) {
+                            obs.push(this.service.updateTransition(s.id, s));
+                        } else {
+                            obs.push(this.service.createTransition(this.parent?.selectedProcess?.id || 0, s));
+                        }
                     });
-                } else {
-                    this.service.createTransition(this.parent?.selectedProcess?.id || 0, resp).subscribe(() => {
+                }
+
+                if (deletes.length > 0) {
+                    deletes.forEach(id => {
+                        obs.push(this.service.deleteTransition(id));
+                    });
+                }
+
+                if (obs.length > 0) {
+                    forkJoin(obs).subscribe(() => {
                         this.parent?.loadTransitions(this.parent?.selectedProcess?.id || 0);
                     });
                 }

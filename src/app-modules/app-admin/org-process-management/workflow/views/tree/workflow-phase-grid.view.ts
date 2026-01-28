@@ -3,7 +3,7 @@ import {OrgWorkflowView} from "../workflow.view";
 import {ASIDE_CLASS, ASIDE_SIZE, OrgWorkflowAPIResolver, SharedService} from "@app-global";
 import {OrgWorkflowPhase, OrgWorkflowPhaseStep} from "../../domains/org-workflow-node.serializer";
 import {NotificationWizardComponent, PhaseEditorComponent, TransitionEditorComponent} from "../../components";
-import {OrgWorkflowPhaseService} from "../../services/workflow.service";
+import {OrgWorkflowPhaseService, WorkflowService} from "../../services/workflow.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {of} from "rxjs";
 import {animate, style, transition, trigger} from "@angular/animations";
@@ -28,6 +28,7 @@ export class OrgWorkflowPhaseGridView {
       @Optional() public parent: OrgWorkflowView,
       private sharedService: SharedService,
       private service: OrgWorkflowPhaseService,
+      private workflowService: WorkflowService,
       private lookup: OrgWorkflowAPIResolver,
       private router: Router,
       private route: ActivatedRoute
@@ -194,6 +195,37 @@ export class OrgWorkflowPhaseGridView {
         return this.sharedService.showCustomPopup(NotificationWizardComponent, popupOptions, input).then(success, failure);
     }
 
+    onPhaseTransitions(phase: OrgWorkflowPhase) {
+        const existingTransitions = (this.parent?.phaseTransitions || []).filter(t => t.fromPhaseId === phase.id);
+
+        const input = {
+            process: this.parent?.selectedProcess,
+            phases: this.parent?.phases,
+            statuses: this.parent?.phaseStatuses,
+            transitions: existingTransitions,
+            sourcePhaseId: phase.id,
+            // sourceStatusId: null // Optional, let user pick status
+        };
+
+        const popupOptions = { header: { text: `Manage Transitions: ${phase.name}`, desc: 'Configure transitions exiting this phase' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
+        const success = (resp: any) => {
+            this.sharedService.destroy();
+            if(resp) {
+                const saves: any[] = resp.save || [];
+                const deletes: number[] = resp.delete || [];
+
+                if (saves.length > 0 || deletes.length > 0) {
+                    const workflowId = this.parent?.selectedProcess?.id || 0;
+                    this.workflowService.bulkUpdateTransitions(workflowId, { saves, deletes }).subscribe(() => {
+                        this.parent?.loadTransitions(workflowId);
+                    });
+                }
+            }
+        };
+        const failure = (e: any) => { this.sharedService.destroy(); };
+        this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);
+    }
+
     onPhaseSelected(phase: any) {
       if(!this.parent) return of(true);
         this.parent.selectedPhase = phase;
@@ -214,7 +246,7 @@ export class OrgWorkflowPhaseGridView {
             }
         };
         const popupHeaderOption = { text: phase.name, desc: '' };
-        const popupOptions= { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+        const popupOptions= { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
 
         const success = (resp: any) => {
             if (resp && this.parent && this.parent.selectedProcess) {
