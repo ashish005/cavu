@@ -153,7 +153,7 @@ export class PreLoadedVoucherTypeAheadComponent extends CoreEndpointBase impleme
         q.isItemInvoice = `${!!this.isItemInvoice}`;
         q.isCreditTrxn = `${!!this.isCreditTrxn}`;
         return this.httpClient
-            .get(`${this.baseSectorAPIUrl}voucherLookup/particular/account/${this.voucherType}/${name}?${q.toQueryString()}`, this.requestHeaders)
+            .get(`${this.baseSectorAPIUrl}/voucherLookup/particular/account/${this.voucherType}/${name}?${q.toQueryString()}`, this.requestHeaders)
             .pipe(
                 //tap(data => this.notifyResponse(data)),
                 catchError(error => this.handleError(error, () => this.getByControlType(name)))

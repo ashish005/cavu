@@ -7,13 +7,13 @@ export class FinanceVoucherService extends CoreEndpointBase {
     constructor(public override injector: Injector) { super(injector); }
 
     fetchAccountListByParticularName = (voucherMasterType: string, isCreditTrxn: boolean, name: string) => this.httpClient
-        .get(`${this.baseSectorAPIUrl}voucherLookup/particular/account/${voucherMasterType}/${name}?isItemInvoice=false&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
+        .get(`${this.baseSectorAPIUrl}/voucherLookup/particular/account/${voucherMasterType}/${name}?isItemInvoice=false&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
         .pipe(
             catchError(error => this.handleError(error, () => this.fetchAccountListByParticularName(voucherMasterType, isCreditTrxn, name)))
         );
 
     fetchItemListByParticularName = (voucherMasterType: string, isCreditTrxn: boolean, name: string) => this.httpClient
-        .get(`${this.baseSectorAPIUrl}voucherLookup/particular/product/${voucherMasterType}/${name}?isItemInvoice=true&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
+        .get(`${this.baseSectorAPIUrl}/voucherLookup/particular/product/${voucherMasterType}/${name}?isItemInvoice=true&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
         .pipe(
             catchError(error => this.handleError(error, () => this.fetchItemListByParticularName(voucherMasterType, isCreditTrxn, name)))
         );

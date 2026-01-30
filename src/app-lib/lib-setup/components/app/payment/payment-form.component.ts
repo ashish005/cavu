@@ -141,7 +141,7 @@ export class PaymentComponent extends CoreEndpointBase implements OnInit {
 
     ngOnInit(){
         this.isLoading = true;
-        const lookup = this.httpClient.get(`${this.baseSectorAPIUrl}paymentGatewayLookup/paymentModes`, this.requestHeaders).toPromise();
+        const lookup = this.httpClient.get(`${this.baseSectorAPIUrl}/paymentGatewayLookup/paymentModes`, this.requestHeaders).toPromise();
         lookup.then((r: any)=> {
             this.isLoading = false;
             this.paymentModes = (r.data.paymentGateways || []).map(r => new GatewayMapper(r));

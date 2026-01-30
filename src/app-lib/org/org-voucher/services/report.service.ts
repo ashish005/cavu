@@ -4,22 +4,23 @@ import { CoreEndpointBase } from "@app-global";
 
 @Injectable()
 export class FinanceVoucherService extends CoreEndpointBase {
+    path: string = 'voucherLookup/particular';
     constructor(public override injector: Injector) { super(injector); }
 
     fetchAccountListByParticularName=(voucherMasterType: string, name: string, q) => this.httpClient
-        .get(`${this.baseSectorAPIUrl}voucherLookup/particular/account/${voucherMasterType}/${name}?${q.toQueryString()}`, this.requestHeaders)
+        .get(`${this.baseSectorAPIUrl}/${this.path}/account/${voucherMasterType}/${name}?${q.toQueryString()}`, this.requestHeaders)
         .pipe(
             catchError(error => this.handleError(error, () => this.fetchAccountListByParticularName(voucherMasterType, name, q)))
         );
 
     /*fetchAccountListByParticularName = (voucherMasterType: string, isCreditTrxn: boolean, name: string) => this.httpClient
-        .get(`${this.baseSectorAPIUrl}voucherLookup/particular/account/${voucherMasterType}/${name}?isItemInvoice=false&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
+        .get(`${this.baseSectorAPIUrl}/${this.path}/account/${voucherMasterType}/${name}?isItemInvoice=false&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
         .pipe(
             catchError(error => this.handleError(error, () => this.fetchAccountListByParticularName(voucherMasterType, isCreditTrxn, name)))
         );*/
 
     fetchItemListByParticularName = (voucherMasterType: string, isCreditTrxn: boolean, name: string) => this.httpClient
-        .get(`${this.baseSectorAPIUrl}voucherLookup/particular/product/${voucherMasterType}/${name}?isItemInvoice=true&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
+        .get(`${this.baseSectorAPIUrl}/${this.path}/product/${voucherMasterType}/${name}?isItemInvoice=true&isCreditTrxn=${isCreditTrxn}`, this.requestHeaders)
         .pipe(
             catchError(error => this.handleError(error, () => this.fetchItemListByParticularName(voucherMasterType, isCreditTrxn, name)))
         );

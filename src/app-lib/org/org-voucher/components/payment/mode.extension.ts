@@ -79,7 +79,7 @@ export class ModeExtension extends CoreEndpointBase {
         // q.isItemInvoice = `${!!this.isItemInvoice}`;
         // q.isCreditTrxn = `${!!this.isCreditTrxn}`;
         return this.httpClient
-            .get(`${this.baseSectorAPIUrl}paymentGatewayLookup/paymentModes`, this.requestHeaders)//?${q.toQueryString()}
+            .get(`${this.baseSectorAPIUrl}/paymentGatewayLookup/paymentModes`, this.requestHeaders)//?${q.toQueryString()}
             .pipe(
                 //tap(data => super.notifyResponse(data)),
                 catchError(error => this.handleError(error, () => this.getByControlType()))
