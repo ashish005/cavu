@@ -9,7 +9,8 @@ import {debounceTime, switchMap, of} from "rxjs";
     templateUrl: './templates/item-grid-form.html'
 })
 export class ItemGridFormComponent implements OnInit {
-    @Input() customForm: FormGroup;
+    @Input() customForm!: FormGroup;
+    @Input() orgOption: any;
     get formItems (): FormArray<FormGroup>{ return this.customForm.get('items') as FormArray<FormGroup>; }
 
     get formTrxn() { return <FormGroup>this.customForm.get('trxn'); }
@@ -43,7 +44,7 @@ export class ItemGridFormComponent implements OnInit {
     @Output() addItem: EventEmitter<any> = new EventEmitter<any>();
     @Output() removeItem: EventEmitter<number> = new EventEmitter<number>();
     public addVoucherItem(){ this.addItem.emit(null); }
-    public removeVoucherItem(index){ this.removeItem.emit(index); }
+    public removeVoucherItem(index: number){ this.removeItem.emit(index); }
 
     constructor(public fb: FormBuilder) {}
     ngOnInit() {
@@ -56,7 +57,7 @@ export class ItemGridFormComponent implements OnInit {
                 this.formItems.controls.forEach(this.voucherItemCb);
             }
         };
-        this.formCurrencyRate.valueChanges.pipe(startWith(null as string), pairwise(), debounceTime(200)).subscribe(currencyRateChange);
+        this.formCurrencyRate.valueChanges.pipe(startWith(null as unknown as string), pairwise(), debounceTime(200)).subscribe(currencyRateChange);
     }
 
     /*updateVoucherSummary = () => {
@@ -133,7 +134,7 @@ export class ItemGridFormComponent implements OnInit {
 
     updateTotal()
     {
-        const { taxAmount, discount, subTotal } = (this.formItems.value || []).reduce((result, item)=>{
+        const { taxAmount, discount, subTotal } = (this.formItems.value || []).reduce((result: any, item: any)=>{
             const curr = item.product;
 
             result.taxAmount += +(curr.taxAmount || 0);
@@ -142,7 +143,7 @@ export class ItemGridFormComponent implements OnInit {
             return result;
         }, { taxAmount: 0, discount: 0, subTotal: 0 });
 
-        const { taxAmount: f_taxAmount, discount: f_discount, subTotal: f_subTotal } = (this.formItems.value || []).reduce((result, item)=>{
+        const { taxAmount: f_taxAmount, discount: f_discount, subTotal: f_subTotal } = (this.formItems.value || []).reduce((result: any, item: any)=>{
             const curr = item.product;
 
             result.taxAmount += +(curr.foreignTaxAmount || 0);

@@ -1,4 +1,5 @@
 export * from "./voucher-type";
+export * from "./voucher-status";
 
 export {Referrals} from "./constants";
 

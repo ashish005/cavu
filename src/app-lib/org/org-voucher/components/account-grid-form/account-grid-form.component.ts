@@ -8,7 +8,8 @@ import {StringHelper} from "@app-global";
     templateUrl: './templates/account-grid-form.html'
 })
 export class AccountGridFormComponent implements OnInit {
-    @Input() customForm: FormGroup;
+    @Input() customForm!: FormGroup;
+    @Input() orgOption: any;
     get formItems (): FormArray<FormGroup>{ return this.customForm.get('items') as FormArray<FormGroup>; }
 
     get formTrxn() { return <FormGroup>this.customForm.get('trxn'); }
@@ -25,7 +26,7 @@ export class AccountGridFormComponent implements OnInit {
     @Output() addItem: EventEmitter<any> = new EventEmitter<any>();
     @Output() removeItem: EventEmitter<number> = new EventEmitter<number>();
     public addVoucherItem(){ this.addItem.emit(null); }
-    public removeVoucherItem(index){ this.removeItem.emit(index); }
+    public removeVoucherItem(index: number){ this.removeItem.emit(index); }
     constructor(public fb: FormBuilder) {}
     ngOnInit() {}
 
@@ -40,10 +41,10 @@ export class AccountGridFormComponent implements OnInit {
     }
 
     updateTotal(){
-        const foreignAmount = this.formItems.value.reduce((total: number, curr)=> total + +(curr.foreignAmount || 0), 0);
-        const amount = this.formItems.value.reduce((total: number, curr)=> total + +(curr.amount || 0), 0);
-        this.formTrxn.get('amount').setValue(amount);
-        this.formForeign.get('amount').setValue(foreignAmount);
+        const foreignAmount = this.formItems.value.reduce((total: number, curr: any)=> total + +(curr?.foreignAmount || 0), 0);
+        const amount = this.formItems.value.reduce((total: number, curr: any)=> total + +(curr?.amount || 0), 0);
+        this.formTrxn.get('amount')?.setValue(amount);
+        this.formForeign.get('amount')?.setValue(foreignAmount);
     }
 
     protected readonly FormGroup = FormGroup;

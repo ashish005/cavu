@@ -1,5 +1,4 @@
 import {Component, Optional, ChangeDetectionStrategy, ChangeDetectorRef} from "@angular/core";
-import {OrgWorkflowView} from "../workflow.view";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService} from "@app-global";
 import {OrgWorkflowPhaseTransition} from "../../domains/org-workflow-node.serializer";
 import {TransitionEditorComponent} from "../../components";
@@ -9,6 +8,7 @@ import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
 import { forkJoin, of, Observable } from 'rxjs';
 // @ts-ignore
 import * as shape from 'd3-shape';
+import {OrgWorkflowView} from "../workflow.view";
 
 @Component({
   standalone: false,
@@ -336,13 +336,13 @@ export class OrgWorkflowPhaseTransitionGridView {
         const success = (resp: any) => {
             this.sharedService.destroy();
             if(resp) {
-                const saves: any[] = resp.save || [];
-                const deletes: number[] = resp.delete || [];
+                const saveList: any[] = resp.save || [];
+                const deleteList: number[] = resp.delete || [];
                 
-                const obs = [];
+                const obs: Observable<any>[] = [];
 
-                if (saves.length > 0) {
-                    saves.forEach(s => {
+                if (saveList.length > 0) {
+                    saveList.forEach(s => {
                         if (s.id) {
                             obs.push(this.service.updateTransition(s.id, s));
                         } else {
@@ -351,8 +351,8 @@ export class OrgWorkflowPhaseTransitionGridView {
                     });
                 }
 
-                if (deletes.length > 0) {
-                    deletes.forEach(id => {
+                if (deleteList.length > 0) {
+                    deleteList.forEach(id => {
                         obs.push(this.service.deleteTransition(id));
                     });
                 }
@@ -364,7 +364,7 @@ export class OrgWorkflowPhaseTransitionGridView {
                 }
             }
         };
-        const failure = (e: any) => { this.sharedService.destroy(); };
+        const failure = (_e: any) => { this.sharedService.destroy(); };
         return this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, data).then(success, failure);
     }
     

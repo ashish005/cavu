@@ -2,6 +2,7 @@ import {Routes} from "@angular/router";
 import {AccountingAPIResolver} from "./services";
 import {AccountingLayout} from "./layout/layout";
 import {LedgerView} from "./views/ledger.view";
+import {AccountingDashboardView} from "./views/dashboard/dashboard.view";
 
 import {BookLayout} from "./layout/book-layout";
 import {
@@ -20,7 +21,8 @@ export const AccountingRoutes: Routes = [
         path: '', component: AccountingLayout, resolve: { items: AccountingAPIResolver },
         data: {code: 'FIN'},
         children: [
-            { path: '', pathMatch: 'full', redirectTo:'ledger' },
+            { path: '', pathMatch: 'full', redirectTo:'dashboard' },
+            { path: 'dashboard', component: AccountingDashboardView, data: {code: "FIN", title: 'Dashboard', header:'Accounting Dashboard'}},
             { path: 'ledger', component: LedgerView, data: {code: "FIN", title: 'Ledger', header:'Ledger'}},
             {
                 path: 'book', component: BookLayout, data: {code: 'FIN', title: 'Ledger Book', header: 'Ledger Book'}, //resolve: { items: FinanceAPIResolver },
@@ -79,6 +81,7 @@ export const AccountingRoutes: Routes = [
 
 export const ACCOUNTING_VIEWS = [
     AccountingLayout,
+    AccountingDashboardView,
     LedgerView, BookLayout, DayBookView, CashBookView, LedgerBookView, BankLedgerView,
     TrialBalanceView, TrialBalanceByLedgerView, LedgerReportMonthlyView,
     ReportLayout, BalanceSheetReportView, ProfitLossReportView,

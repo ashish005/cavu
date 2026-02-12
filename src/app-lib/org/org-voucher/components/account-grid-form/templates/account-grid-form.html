@@ -13,6 +13,7 @@
                 <ng-template ngFor let-item [ngForOf]="formItems.controls" let-i="index">
                     <tr account-item-form
                         [customForm]="item"
+                        [orgOption]="orgOption"
                         [voucherMasterType]="formVoucherMasterType.value"
                         [currencyCode]="formCurrencyCode.value"
                         [systemCurrencyCode]="formSystemCurrencyCode.value"

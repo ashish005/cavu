@@ -1,35 +1,30 @@
 <div class="app container" id="app">
     <form id="content" class="app-content" role="main" [formGroup]="customForm" (submit)="onSubmit(customForm)">
-        <div class="navbar flex-nowrap white lt box-shadow">
-            <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
-                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
-            </a>
-            <span class="text-md text-ellipsis flex">{{ voucherType?.name }}</span>
-            <!--<div class="d-inline-block px-4">
-                <p class="m-0" *ngIf="voucherType?.canDoLedgerOrItem">
-                    <label class="md-check text-xs">
-                        <input type="checkbox" formControlName="isItemInvoice"><i class="blue"></i>
-                        <span class="pl-2 text-primary">Product/ Service Voucher</span>
-                    </label>
-                </p>
+        <div class="d-flex align-items-center justify-content-between p-3 white b-b mb-3">
+            <div class="d-flex align-items-center">
+                <a data-toggle="modal" data-target="#content-aside" class="mr-3 d-md-none btn btn-sm btn-icon primary">
+                    <i class="fa fa-th"></i>
+                </a>
+                <h5 class="m-0 mr-3 _600">{{ voucherType?.name }}</h5>
+                <span class="badge badge-light" *ngIf="formVoucherNo.value">#{{formVoucherNo.value}}</span>
+                <span class="badge badge-warning" *ngIf="!formVoucherNo.value">New</span>
             </div>
-            <ul class="nav nav-xs flex-row no-border">
-                <li class="nav-item">
-                    <ng-container *ngTemplateOutlet="multiCurrencyForm"></ng-container>
-                </li>
-            </ul>-->
-            <!--<div class="nav-active-border b-primary b-theme bottom">
-                    <ul class="nav nav-pills nav-xs nav-rounded flex-row">
-                        <ng-template ngFor let-row [ngForOf]="navList.children" let-j="index">
-                            <li class="nav-item">
-                                <a class="nav-link" (click)="routeToUrl(row)">
-                                    <span class="float-right ml-2"><i class="fa fa-chevron-right"></i></span>
-                                    {{row.key}}
-                                </a>
-                            </li>
-                        </ng-template>
-                    </ul>
-                </div>-->
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center mr-3" *ngIf="orgOption?.hasMultiCurrency">
+                    <span class="text-muted text-xs mr-2">Currency</span>
+                    <select class="form-control form-control-sm w-auto mr-1" formControlName="currencyCode" (change)="onCurrencyChange($event)">
+                        <option *ngFor="let c of orgLookup.currencies" [value]="c.currencyCode">{{c.currencyCode}}</option>
+                    </select>
+                    <input *ngIf="hasForeignCurrency" type="number" class="form-control form-control-sm w-sm" style="width: 80px" formControlName="currencyRate" placeholder="Rate">
+                </div>
+
+                <button class="btn btn-sm btn-outline-primary mr-2" type="button" (click)="submitAndNew()">
+                    <i class="fa fa-plus-circle"></i> Save & New
+                </button>
+                <button class="btn btn-sm btn-primary" type="submit" [disabled]="customForm?.invalid || submitted">
+                    <i class="fa fa-check"></i> Save
+                </button>
+            </div>
         </div>
         <div class="content-main d-flex flex" id="content-main">
             <div class="container d-flex flex">
@@ -104,17 +99,43 @@
                                 <div class="d-flex flex-column flex text-xs">
                                     <div *ngIf="!isItemInvoice">
                                         <account-grid-form [customForm]="customForm"
+                                                           [orgOption]="orgOption"
                                                            (addItem)="addVoucherItem()"
                                                            (removeItem)="removeVoucherItem($event)"></account-grid-form>
                                     </div>
                                     <div *ngIf="isItemInvoice">
                                         <item-grid-form [customForm]="customForm"
+                                                        [orgOption]="orgOption"
                                                         (addItem)="addVoucherItem()"
                                                         (removeItem)="removeVoucherItem($event)"></item-grid-form>
                                     </div>
                                     <div class="flex-column white text-center"
                                          *ngIf="voucherType?.masterType == 'purchase' || voucherType?.masterType == 'sale'">
                                         <invoice-payment-receipt [customForm]="customForm"></invoice-payment-receipt>
+                                    </div>
+                                    <div class="px-1 mt-2" *ngIf="orgOption?.hasAdditionalCostOfPurchase">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <span class="text-xs text-muted font-weight-bold">Additional Costs</span>
+                                            <button class="btn btn-xs btn-outline-primary ml-auto" type="button" (click)="addNewAdditionalCost(null)">
+                                                <i class="fa fa-plus"></i> Add
+                                            </button>
+                                        </div>
+                                        <div formArrayName="additionalCosts">
+                                            <div *ngFor="let item of formAdditionalCosts.controls; let i=index" [formGroupName]="i" class="d-flex align-items-center mb-1">
+                                                <div class="flex-grow-1 mr-1">
+                                                    <account-voucher-type-ahead
+                                                            placeholder="Select Cost Ledger"
+                                                            bindLabel="name" bindValue="accountId"
+                                                            [isCreditTrxn]="false"
+                                                            [isItemInvoice]="false"
+                                                            (cb)="item.get('ledgerId').setValue($event.accountId)"
+                                                            [controlId]="item.get('ledgerId').value">
+                                                    </account-voucher-type-ahead>
+                                                </div>
+                                                <input type="number" formControlName="amount" class="form-control form-control-sm w-sm mr-1" placeholder="Amount">
+                                                <button class="btn btn-xs btn-icon btn-danger" type="button" (click)="removeAdditionalCost(i)"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="px-1">
                                         <div class="md-form-group float-label pb-0">
@@ -140,18 +161,6 @@
                                     </label>
                                 </div>
                                 <div class="text-center">
-                                    <!--<div class="row">
-                                        <div class="col-6">
-                                            Amount {{formTrxnAmount?.value | orgCurrency }}
-                                        </div>
-                                        <div class="col-6">
-                                            ForeignAmount {{formTrxnForeignAmount?.value | orgCurrency }}
-                                        </div>
-                                    </div>-->
-                                    <button class="btn btn-sm b-a b-theme text-theme theme" type="submit"
-                                            [disabled]="customForm?.invalid || submitted">
-                                        <i class="fa fa-send text-success"></i>{{ submitted ? 'Submitting...' : 'Create' }}
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -171,30 +180,6 @@
                             <li class="list-group-item box py-1 px-2">
                                 <a class="text-primary float-right">Send Notification</a>
                             </li>-->
-                            <li class="list-group-item box py-1 px-2"
-                                *ngIf="orgOption?.hasMultiCurrency && !formVoucherNo.value">
-                                <small class="text-muted">Currency:</small>
-                                <div class="md-form-group p-0 float-right">
-                                    <div class="input-group text-xs d-flex d-inline-block">
-                                        <div class="input-group-prepend text-xs">
-                                            1 {{systemCurrency?.currencyCode }} ({{systemCurrency?.symbol }}) =
-                                        </div>
-                                        <div class="input-group-append position-relative">
-                                            <input class="md-input text-right" [disabled]="hasNoConversion" type="text"
-                                                   style="width: 70px;" formControlName="currencyRate">
-                                            <div class="md-form-group p-0 float-right">
-                                                <select class="md-input text-xs text-right"
-                                                        formControlName="currencyCode">
-                                                    <option *ngFor="let entity of orgLookup?.currencies;"
-                                                            [value]="entity.currencyCode">
-                                                        {{entity.currencyCode}}({{entity.symbol}})
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
                             <li class="list-group-item box py-1 px-2" *ngIf="voucherType?.canDoLedgerOrItem">
                                 <div class="d-inline-block">
                                     <p class="m-0">
@@ -261,68 +246,9 @@
                                            style="height: 20px;">
                                 </div>
                             </li>
-                            <!--<li class="list-group-item box px-2">
-                                <div class="panel no-border m-2">
-                                    <small class="text-muted">Trxn Schedule</small>
-                                    <div class="float-right">
-                                        <label class="md-switch">
-                                            <small class="text-muted">Scheduled</small>
-                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                acquisitionId, supplyStateId
-                            </li>
-                            <li class="list-group-item box px-2 py-0">
-                                GoodsReceiptId
-                                StorageLocationId
-                                SupplyTypeId
-                                TaxPerItem
-                                <div class="panel no-border m-2">
-                                    <div class="float-right">
-                                        <label class="md-switch">
-                                            <small class="text-muted">IsPriceWithTax</small>
-                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="panel no-border m-2">
-                                    <div class="float-right">
-                                        <label class="md-switch">
-                                            <small class="text-muted">IsPriceWithDiscount</small>
-                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                Formula
-                                IsVerified
-                                VerifiedBy
-                                VerifiedRemark
-                                TaxReturnId
-                            </li>
-                            <li class="list-group-item box px-2 py-0">
-                                WorkPeriodId
-                                ChannelId
-                                QuotationId
-                                <div class="panel no-border m-2">
-                                    <div class="float-right">
-                                        <label class="md-switch">
-                                            <small class="text-muted">IsLocalSale</small>
-                                            <input type="checkbox" checked="checked"> <i class="blue"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                TableId
-                                NoOfGuest
-                                Tips
-                                DeliveryId
-                                OfferRuleId
-                            </li>-->
                         </ul>
                         <div class="scrollable hover">
                             <div class="panel box no-border m-2">
-                                <!--<project-module-dropdown #projectModule-->
-                                <!--[customForm]="customForm"></project-module-dropdown>-->
                             </div>
                             <div class="p-1 mt-auto"></div>
                             <div class="no-result hide">
@@ -343,30 +269,6 @@
         </ul>
     </div>
 </ng-template>
-<!--<ng-template #multiCurrencyForm>
-    <div class="flex d-inline-block" [formGroup]="customForm">
-        <div class="input-group text-xs d-flex d-inline-block"
-             *ngIf="orgOption?.hasMultiCurrency && !formVoucherNo.value">
-            <div>
-                <label class="px-2">Currency:</label>
-            </div>
-            <div class="input-group-prepend text-xs">
-                1 {{systemCurrency?.currencyCode }} ({{systemCurrency?.symbol }}) =
-            </div>
-            <div class="input-group-append position-relative">
-                <input class="md-input text-right" [disabled]="hasNoConversion" type="text" style="width: 70px;"
-                       formControlName="currencyRate">
-                <div class="md-form-group p-0 float-right">
-                    <select class="md-input text-xs text-right" formControlName="currencyCode">
-                        <option *ngFor="let entity of orgLookup?.currencies;" [value]="entity.currencyCode">
-                            {{entity.currencyCode}}({{entity.symbol}})
-                        </option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-template>-->
 <ng-template #voucherSummary>
     <div class="box box-shadow px-2 w-50">
         <table class="table small-table text-xs">

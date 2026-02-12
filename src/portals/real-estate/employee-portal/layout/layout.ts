@@ -1,12 +1,12 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router, RouterLink, RouterModule} from "@angular/router";
 import { AppPermissionService, OrgLookupService, OrgLookup } from "@app-global";
-import {GlobalModule} from "@app-global";
+import {GlobalModule, EMPLOYEE_COMMON_ROUES} from "@app-global";
 
 @Component({
     templateUrl: './templates/layout.html',
   standalone: true, styles: [`::ng-deep ng-component{ display: contents;}`],
-  imports: [RouterLink, RouterModule, GlobalModule]
+  imports: [RouterModule, GlobalModule]
 })
 export class MainLayout implements OnInit {
   public navList: Array<any> = this.permService.getEmployeeNavList([
@@ -20,26 +20,12 @@ export class MainLayout implements OnInit {
               { routeTo: ['estimates'], icon:"fa fa-dashboard", name: "Estimates" },
               { routeTo: ['time-tracking'], icon:"fa fa-dashboard", name: "Time Tracking" },*/
               //{ routeTo: ['project'], icon:"fa fa-dashboard", name: "Projects" },
-              { routeTo: ['project'], icon:"fa fa-bell", code: "PERM_PROJECT", key: 'project' },
-              { routeTo: ['product'], icon:"fa fa-dashboard", code: "PERM_INVENTORY", key: 'svc_product' },
-              { routeTo: ['client/quotation'], icon:"fa fa-bell", name: "Quotation", key: 'quote' }
+              { routeTo: ['project'], icon:"fa fa-bell", key: 'project' },//code: "PERM_PROJECT"
+              { routeTo: ['product'], icon:"fa fa-dashboard", key: 'svc_product' },//code: "PERM_INVENTORY",
+              { routeTo: ['client/quotation'], icon:"fa fa-bell", key: 'Quotation' }
           ]
       },
-      {
-          isFLatChildren: false, key: 'mainLayout.heading.contact',
-          children:[
-              { routeTo: ['org-emp'], icon:"fa fa-group", code: "EMP", key: 'mainLayout.user.employee' },
-              { routeTo: ['vendor'], icon:"fa fa-bell", code: "PERM_VENDOR", key: 'mainLayout.user.supplier' },//code: "COM"
-              { routeTo: ['client'], icon:"fa fa-bell", code: "PERM_CLIENT", key: 'mainLayout.user.client' },//code: "COM"
-          ]
-      },
-      /*{
-          isFLatChildren: false, key: 'mainLayout.heading.pay_roll',
-          children:[
-              { routeTo: ['salary'], icon:"fa fa-credit-card", code: "SAL", name: "Salary", key: 'layout.salary' },
-              { routeTo: ['salary/payroll'], icon:"fa fa-users", code:'SAL_PAYROLL', name: "Pay Roll", key: 'layout.payroll' }
-          ]
-      },*/
+      ...EMPLOYEE_COMMON_ROUES
   ]);
 
   orgLookup: OrgLookup;

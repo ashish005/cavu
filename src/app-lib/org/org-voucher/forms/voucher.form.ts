@@ -1,13 +1,13 @@
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {pairwise, startWith} from "rxjs";
 import {OrgLookup, OrgConfigOptions, OrgOptions, LookupVoucherType, CalcHelper, AppSetupService, OrgLookupService} from "@app-global";
-import {FinanceVoucher, SundryDetail, VoucherItem} from "../domains/finance-voucher.serializer";
+import {FinanceVoucher, SundryDetail, VoucherItem, AdditionalCost} from "../domains/finance-voucher.serializer";
 import {Directive, Injector} from "@angular/core";
 
 //@Directive()
 class VoucherFormExtender {
-    protected refCreditSearchableAccounts: Array<any>;
-    protected refDebitSearchableAccounts: Array<any>;
+    protected refCreditSearchableAccounts!: Array<any>;
+    protected refDebitSearchableAccounts!: Array<any>;
 
     orgActiveBranch: any;
     orgOption: OrgOptions;
@@ -15,8 +15,8 @@ class VoucherFormExtender {
     public orgLookup: OrgLookup;
 
     public systemCurrency: any;
-    public isVendorVoucher: boolean;
-    public voucherType: LookupVoucherType;
+    public isVendorVoucher!: boolean;
+    public voucherType!: LookupVoucherType;
     public voucherTypeWithSubItems: any;
 
     constructor(public injector: Injector) {
@@ -127,9 +127,12 @@ export class VoucherForm extends VoucherFormExtender {
 
             systemCurrencyCode: [null, Validators.required], //just to convert system currency in voucher
 
-            notes: [null],
-            remark: [null],
+            notes: [''],
+            remark: [''],
             inDraft: [true],
+
+            isZeroValued: [false],
+            additionalCosts: this.fb.array([]),
 
             trxn: this.fb.group({
                 gatewayAccountId: [null],
@@ -162,8 +165,15 @@ export class VoucherForm extends VoucherFormExtender {
             subTypeId: [null],
             isRecurringVoucher: [null],
 
+            isPostDated: [false],
+            isOptional: [false],
+            isMemorandum: [false],
+            isReversing: [false],
+            jobOrderId: [null],
+            costCenterClassId: [null],
+
             // refVoucherId: [null],
-            refVoucherNo: [null],
+            refVoucherNo: [''],
             // refVoucherTypeId: [null],
             // trxnId: [null],
             // trxnTypeId: [null],
@@ -206,10 +216,13 @@ export class VoucherForm extends VoucherFormExtender {
         const currencyCodeChange = ([prev, next]: [string, string]) => {
             if(prev != next)
             {
-                const { id, symbol, currencyCode } = this.orgLookup.getOrgCurrency(next);
-                this.formCurrencyId.setValue(<any>id);
-                this.formCurrencySymbol.setValue(<any>symbol);
-                this.formCurrencyCode.setValue(<any>currencyCode);
+                const currency = this.orgLookup.getOrgCurrency(next);
+                if(currency) {
+                    const { id, symbol, currencyCode } = currency;
+                    this.formCurrencyId.setValue(<any>id);
+                    this.formCurrencySymbol.setValue(<any>symbol);
+                    this.formCurrencyCode.setValue(<any>currencyCode);
+                }
             }
         };
 
@@ -217,15 +230,18 @@ export class VoucherForm extends VoucherFormExtender {
         {
             if(prev != next)
             {
-                this.voucherType = this.orgLookup.getVoucherTypeByMasterType(next);
+                const vType = this.orgLookup.getVoucherTypeByMasterType(next);
+                if (vType) {
+                    this.voucherType = vType;
+                }
                 this.voucherTypeWithSubItems = this.orgLookup.getVoucherSubItemsByMasterType(next);
                 this.isVendorVoucher = this.orgLookup.isVendorVoucher(next);
             }
         };
 
-        this.formVoucherMasterType.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(formVoucherMasterTypeChange);
-        this.formCurrencyCode.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(currencyCodeChange);
-        this.formIsItemInvoice.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(isItemInvoiceChange);
+        this.formVoucherMasterType.valueChanges.pipe(startWith(null as unknown as string), pairwise()).subscribe(formVoucherMasterTypeChange);
+        this.formCurrencyCode.valueChanges.pipe(startWith(null as unknown as string), pairwise()).subscribe(currencyCodeChange);
+        this.formIsItemInvoice.valueChanges.pipe(startWith(null as unknown as boolean), pairwise()).subscribe(isItemInvoiceChange);
     }
 
     get f() { return this.customForm.controls; }
@@ -260,6 +276,7 @@ export class VoucherForm extends VoucherFormExtender {
     get formItems (): FormArray{ return <FormArray>this.customForm.get('items'); }
     get formBillToBillTrxn (): FormArray{ return <FormArray>this.customForm.get('billToBillTrxn'); }
     get formSundryDetails (): FormArray{ return <FormArray>this.customForm.get('sundryDetails'); }
+    get formAdditionalCosts(): FormArray { return <FormArray>this.customForm.get('additionalCosts'); }
 
     get formTrxnAmount() { return <FormGroup>this.formTrxn.get('amount'); }
     get formTrxnForeignAmount() { return <FormGroup>this.formForeign.get('amount'); }
@@ -295,7 +312,9 @@ export class VoucherForm extends VoucherFormExtender {
             voucherNo, voucherDate, voucherMasterType,
             currencyId, currencyRate, currencyCode, currencySymbol, systemCurrencyCode,
             isItemInvoice, enableAccounting, enableInventory,
-            notes, remark
+            notes, remark,
+            isPostDated, isOptional, isMemorandum, isReversing, jobOrderId, costCenterClassId,
+            isZeroValued, additionalCosts
         } = data;
 
         this.formVoucherMasterType.setValue(<any>voucherMasterType);
@@ -303,6 +322,14 @@ export class VoucherForm extends VoucherFormExtender {
         this.formIsItemInvoice.setValue(<any>isItemInvoice || false);
         this.formEnableAccounting.setValue(<any>enableAccounting);
         this.formEnableInventory.setValue(<any>enableInventory);
+
+        this.customForm.get('isPostDated')!.setValue(isPostDated);
+        this.customForm.get('isOptional')!.setValue(isOptional);
+        this.customForm.get('isMemorandum')!.setValue(isMemorandum);
+        this.customForm.get('isReversing')!.setValue(isReversing);
+        this.customForm.get('jobOrderId')!.setValue(jobOrderId);
+        this.customForm.get('costCenterClassId')!.setValue(costCenterClassId);
+        this.customForm.get('isZeroValued')!.setValue(isZeroValued);
 
         this.formPartyAccountId.setValue(<any>partyAccountId);
         this.formPartyAccountGroupId.setValue(<any>partyAccountGroupId);
@@ -312,16 +339,16 @@ export class VoucherForm extends VoucherFormExtender {
         this.formVoucherNo.setValue(<any>voucherNo);
         this.formVoucherDate.setValue(<any>voucherDate);
 
-        this.customForm.get('inDraft').setValue(inDraft);
-        this.customForm.get('notes').setValue(notes);
-        this.customForm.get('remark').setValue(remark);
+        this.customForm.get('inDraft')!.setValue(inDraft);
+        this.customForm.get('notes')!.setValue(notes || "");
+        this.customForm.get('remark')!.setValue(remark || "");
 
-        this.customForm.get('currencyId').setValue(currencyId, { emitEvent: false });
-        this.customForm.get('currencyRate').setValue(currencyRate, { emitEvent: false });
-        this.customForm.get('currencyCode').setValue(currencyCode, { emitEvent: false });
-        this.customForm.get('currencySymbol').setValue(currencySymbol, { emitEvent: false });
+        this.customForm.get('currencyId')!.setValue(currencyId, { emitEvent: false });
+        this.customForm.get('currencyRate')!.setValue(currencyRate, { emitEvent: false });
+        this.customForm.get('currencyCode')!.setValue(currencyCode, { emitEvent: false });
+        this.customForm.get('currencySymbol')!.setValue(currencySymbol, { emitEvent: false });
 
-        this.customForm.get('systemCurrencyCode').setValue(systemCurrencyCode, { emitEvent: false });
+        this.customForm.get('systemCurrencyCode')!.setValue(systemCurrencyCode, { emitEvent: false });
 
         /*const {
             subTypeId,
@@ -356,10 +383,12 @@ export class VoucherForm extends VoucherFormExtender {
         this.formItems.controls.length = 0;
         this.formBillToBillTrxn.controls.length = 0;
         this.formSundryDetails.controls.length = 0;
+        this.formAdditionalCosts.controls.length = 0;
 
         (items || []).map(r => { this.addNewVoucherItem(r);});
         (billToBillTrxn || []).map(r => { this.addNewBillToBillTrxn(r);});
         (sundryDetails || []).map(r => { this.addNewSundryDetail(r);});
+        (additionalCosts || []).map(r => { this.addNewAdditionalCost(r);});
 
         this.populateTrxnInfo(trxn);
 
@@ -374,25 +403,25 @@ export class VoucherForm extends VoucherFormExtender {
         // }
     }
 
-    populateTrxnInfo(data) {
+    populateTrxnInfo(data: any) {
         const {
             gatewayAccountId, gatewayAccountGroupId, gatewayMapperId, modeId,
             paymentSystemMaster, cardTypeId, referenceNo, balance, amount, foreignAmount
         } = data;
 
-        this.formTrxn.get('gatewayAccountId').setValue(gatewayAccountId);
-        this.formTrxn.get('gatewayAccountGroupId').setValue(gatewayAccountGroupId);
-        this.formTrxn.get('gatewayMapperId').setValue(gatewayMapperId);
+        this.formTrxn.get('gatewayAccountId')!.setValue(gatewayAccountId);
+        this.formTrxn.get('gatewayAccountGroupId')!.setValue(gatewayAccountGroupId);
+        this.formTrxn.get('gatewayMapperId')!.setValue(gatewayMapperId);
 
-        this.formTrxn.get('paymentSystemMaster').setValue(paymentSystemMaster);
+        this.formTrxn.get('paymentSystemMaster')!.setValue(paymentSystemMaster);
 
-        this.formTrxn.get('modeId').setValue(modeId);
-        this.formTrxn.get('cardTypeId').setValue(cardTypeId);
-        this.formTrxn.get('referenceNo').setValue(referenceNo);
+        this.formTrxn.get('modeId')!.setValue(modeId);
+        this.formTrxn.get('cardTypeId')!.setValue(cardTypeId);
+        this.formTrxn.get('referenceNo')!.setValue(referenceNo);
 
-        this.formTrxn.get('balance').setValue(balance);
-        this.formTrxn.get('amount').setValue(amount);
-        this.formForeign.get('amount').setValue(foreignAmount);
+        this.formTrxn.get('balance')!.setValue(balance);
+        this.formTrxn.get('amount')!.setValue(amount);
+        this.formForeign.get('amount')!.setValue(foreignAmount);
 
         const voucherMasterType = this.formVoucherMasterType.value;
         // if(this.excludeItemForVoucher.some(r => r == voucherMasterType))
@@ -416,9 +445,11 @@ export class VoucherForm extends VoucherFormExtender {
 
     // convenience getter for easy access to form fields
     public addNewVoucherItem(r: VoucherItem){ this.formItems.push(this.populateVoucherItems(r)); }
-    public removeVoucherItem(index){ this.formItems.removeAt(index); }
+    public removeVoucherItem(index: number){ this.formItems.removeAt(index); }
     public addNewBillToBillTrxn(r: any){ this.formBillToBillTrxn.push(this.populateBillToBillTrxns(r)); }
     public addNewSundryDetail(r: SundryDetail){ this.formSundryDetails.push(this.populateSundryDetails(r)); }
+    public addNewAdditionalCost(r: AdditionalCost){ this.formAdditionalCosts.push(this.populateAdditionalCost(r)); }
+    public removeAdditionalCost(index: number){ this.formAdditionalCosts.removeAt(index); }
 
     public addVoucherItem(){ this.addNewVoucherItem(new VoucherItem()); }
 
@@ -436,7 +467,7 @@ export class VoucherForm extends VoucherFormExtender {
         });
     }
 
-    formVoucherTaxRow(data) {
+    formVoucherTaxRow(data: any) {
         const { id, taxMapperId, taxRate, taxAmount, isTaxInclusive, amount, discount, discountRate } = data;
         return this.fb.group(<any>{
             id: [id],
@@ -481,14 +512,25 @@ export class VoucherForm extends VoucherFormExtender {
         });
     }
 
+    populateAdditionalCost(data: AdditionalCost) {
+        const { ledgerId, amount, type, value } = data || new AdditionalCost();
+        return this.fb.group({
+            ledgerId: [ledgerId, Validators.required],
+            amount: [amount || 0],
+            type: [type || 'amount'],
+            value: [value || 0]
+        });
+    }
+
     populateVoucherItems(data: VoucherItem) {
-        const { id, name, desc, remark, accountId, accountGroupId, isPrimary, netAmount, foreignAmount, product } = data;
+        const { id, name, desc, remark, accountId, accountGroupId, isPrimary, netAmount, foreignAmount, product, costCenterId, costCategoryId, costCenterClassId } = data;
         const {
             variantId, variantName,
             voucherId, taxRate, taxCode, taxId, taxMapperId, trxnId,
             isFixedPrice,
             discount, discountRate,
-            mrp, price, productId, productTypeId, quantity, taxAmount, isTaxInclusive, baseUnitTypeId
+            mrp, price, productId, productTypeId, quantity, taxAmount, isTaxInclusive, baseUnitTypeId,
+            actualQuantity, billedQuantity, batchNo, mfgDate, expiryDate, trackingNo, godownId
         } = product;
 
         const systemPrice: number = price || 0;
@@ -512,6 +554,10 @@ export class VoucherForm extends VoucherFormExtender {
             accountId: [accountId],
             accountGroupId: [accountGroupId],
             isPrimary: [isPrimary],
+            
+            costCenterId: [costCenterId],
+            costCategoryId: [costCategoryId],
+            costCenterClassId: [costCenterClassId],
 
             amount: [netAmount || 0],
             foreignAmount: [foreignAmount || 0], // set manually
@@ -532,6 +578,15 @@ export class VoucherForm extends VoucherFormExtender {
 
                 isFixedPrice: [isFixedPrice],
                 quantity: [quantity],
+                
+                actualQuantity: [actualQuantity],
+                billedQuantity: [billedQuantity],
+                batchNo: [batchNo],
+                mfgDate: [mfgDate],
+                expiryDate: [expiryDate],
+                trackingNo: [trackingNo],
+                godownId: [godownId],
+                
                 taxRate: [taxRate],
                 discountRate: [discountRate || 0],
 

@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {VoucherService} from "../services/voucher.service";
 import {FinancialVoucherExtension} from "../extension/voucher-form.extension";
-import {VOUCHER_TYPES} from "@app-global";
+import {VOUCHER_TYPES, VOUCHER_STATUS} from "@app-global";
 
 const translatePath = 'modules.project.sub_module';
 @Component({
@@ -26,17 +26,66 @@ export class VoucherLayout extends FinancialVoucherExtension {
     }
     get formIsReferenceNoRequired() { return <FormGroup>this.formTrxn.get('isReferenceNoRequired'); }
 
-    public populateVoucherByMasterType = (voucherMasterType) => super.populateVoucher(this.getDefaultVoucher(voucherMasterType));
-    public populateVoucherById = (voucherMasterType, voucherId) => this.voucherService.
-        getVoucherDetails(voucherMasterType, voucherId).subscribe((resp) => {}, (resp) => { });
+    onCurrencyChange(event: any) {
+        const currencyCode = event.target.value;
+        const currency = this.orgLookup.getOrgCurrency(currencyCode);
+        if (currency) {
+            this.customForm.patchValue({
+                currencyId: currency.id,
+                currencySymbol: currency.symbol,
+                currencyCode: currency.currencyCode
+            });
+            
+            // If it's system currency, rate is 1
+            if (currency.id === this.systemCurrency?.id) {
+                 this.customForm.patchValue({ currencyRate: 1 });
+            }
+        }
+    }
+    
+    get hasForeignCurrency() {
+        return this.customForm.get('currencyId')?.value !== this.systemCurrency?.id;
+    }
+
+    public populateVoucherByMasterType = (voucherMasterType: string) => super.populateVoucher(this.getDefaultVoucher(voucherMasterType));
+    public populateVoucherById = (voucherMasterType: string, voucherId: number) => this.voucherService.
+        getVoucherDetails(voucherMasterType, voucherId).subscribe((resp: any) => {}, (resp: any) => { });
 
 
-    routeToUrl=(item)=> this.router.navigate([item.key], {relativeTo: this.activatedRoute.parent});
+    routeToUrl=(item: any)=> this.router.navigate([item.key], {relativeTo: this.activatedRoute.parent});
 
-    onSubmit(form) {
+    submitForm(form: FormGroup, createNew: boolean = false) {
         // stop here if form is invalid
         if (form.invalid) { return; }
-        const success = (resp: any) => { this.submitted = false; this.onOk.emit(true); };
+
+        // Capture current state for "Save & New"
+        const currentCurrencyId = this.customForm.get('currencyId')?.value;
+        const currentCurrencyRate = this.customForm.get('currencyRate')?.value;
+        const currentCurrencyCode = this.customForm.get('currencyCode')?.value;
+        const currentCurrencySymbol = this.customForm.get('currencySymbol')?.value;
+        const isForeign = currentCurrencyId !== this.systemCurrency?.id;
+
+        const success = (resp: any) => { 
+            this.submitted = false; 
+            if (createNew) {
+                const masterType = this.voucherType.masterType;
+                const voucherData = this.getDefaultVoucher(masterType);
+                
+                // Persist currency settings for consecutive entry
+                if (isForeign) {
+                    voucherData.currencyId = currentCurrencyId;
+                    voucherData.currencyRate = currentCurrencyRate;
+                    voucherData.currencyCode = currentCurrencyCode;
+                    voucherData.currencySymbol = currentCurrencySymbol;
+                }
+                
+                this.populateVoucher(voucherData);
+                this.customForm.markAsPristine();
+                this.customForm.markAsUntouched();
+            } else {
+                this.onOk.emit(true); 
+            }
+        };
         const failure = () => { this.submitted = false; };
 
         const value = form.getRawValue();
@@ -45,7 +94,7 @@ export class VoucherLayout extends FinancialVoucherExtension {
         const getPendingBalance=()=>
         {
             const { amount, billToBillTrxn } = value;
-            return amount || 0 - (billToBillTrxn || []).reduce(function(result, curr) { return result + curr.trxnAmount; }, 0);
+            return amount || 0 - (billToBillTrxn || []).reduce(function(result: number, curr: any) { return result + curr.trxnAmount; }, 0);
         };
         //value.sundryDetails = value.sundryDetails.filter(r => r.sundryTypeId > 0);
         const voucherMasterType = value.voucherMasterType;
@@ -54,7 +103,7 @@ export class VoucherLayout extends FinancialVoucherExtension {
             const trxn = value.trxn;
             value.billToBillTrxn = [];
             const dueAmount = getPendingBalance();//this.voucherWrapr.getPendingBalance()
-            const foreignAmount = trxn.foreignAmount;
+            const foreignAmount = value.foreign?.amount || trxn.foreignAmount;
             const trxnAmount = foreignAmount*value.currencyRate;//System currency
             value.billToBillTrxn.push(<any>
                 {
@@ -81,6 +130,14 @@ export class VoucherLayout extends FinancialVoucherExtension {
         }
         //if(this.schedule){ value.schedule = this.schedule; }
 
+        // Ensure backend compatibility
+        value.foreignAmount = value.foreign?.amount || 0;
+        value.netAmount = value.amount;
+        value.currencyId = Number(value.currencyId);
+        value.currencyRate = Number(value.currencyRate);
+        
+        value.voucherStatus = value.inDraft ? VOUCHER_STATUS.PENDING : VOUCHER_STATUS.COMPLETED;
+
         const payload = value;
         this.submitted = true;
         if(voucherId) {
@@ -88,6 +145,14 @@ export class VoucherLayout extends FinancialVoucherExtension {
         } else {
             this.createVoucher(payload).then(success, failure);
         }
+    }
+
+    submitAndNew() {
+        this.submitForm(this.customForm, true);
+    }
+
+    onSubmit(form: any) {
+        this.submitForm(form, false);
     }
     protected createVoucher = (value: any) => this.voucherService.create(value).toPromise();
     protected updateVoucher = (voucherId: number, value: any) => this.voucherService.update(voucherId, value).toPromise();

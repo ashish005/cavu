@@ -45,7 +45,7 @@
         </div>-->
       </div>
     </div>
-    <!--<div class="pl-3 pr-3 py-2"><breadcrumb></breadcrumb></div>-->
+    <div class="pl-3 pr-3 py-2"><app-breadcrumb></app-breadcrumb></div>
     <div class="content-main d-flex flex" id="content-main">
       <router-outlet (activate)='onActivate($event)'></router-outlet>
     </div>
@@ -53,7 +53,7 @@
 </div>
 <ng-template #navbarRightTemplate>
     <li class="nav-item dropdown d-flex align-items-center px-2">
-        <button class="btn btn-xs btn-outline theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-sm btn-outline theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <i class="fa fa-fw fa-plus"></i>
             <span class="hidden-folded d-inline">Voucher</span>
         </button>
@@ -117,7 +117,7 @@
     <!--<div class="navbar-collapse order-lg-1 collapse mx-2">
         <global-search></global-search>
     </div>-->
-    <li class="nav-item dropdown d-flex align-items-center px-2">
+    <!--<li class="nav-item dropdown d-flex align-items-center px-2">
         <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="hidden-folded d-inline">Account & Finance</span>
         </button>
@@ -200,5 +200,5 @@
                 </a>
             </li>
         </ul>
-    </li>
+    </li>-->
 </ng-template>

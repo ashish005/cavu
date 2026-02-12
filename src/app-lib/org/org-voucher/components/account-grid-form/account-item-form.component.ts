@@ -9,11 +9,12 @@ import {LookupVoucherType, OrgLookupService} from "@app-global";
 
 @Directive()
 class AccountItemForm {
-    @Input() customForm: FormGroup;
-    @Input() voucherMasterType: string;
+    @Input() customForm!: FormGroup;
+    @Input() voucherMasterType!: string;
+    @Input() orgOption: any;
     /*@Input() currencyRate: number;// foreign currency rate*/
-    @Input() currencyCode: string;// foreign currency symbol
-    @Input() systemCurrencyCode: string; //System currency symbol
+    @Input() currencyCode!: string;// foreign currency symbol
+    @Input() systemCurrencyCode!: string; //System currency symbol
     @Output() cb: EventEmitter<any> = new EventEmitter<any>();
 
     // convenience getter for easy access to form fields
@@ -81,32 +82,35 @@ export class AccountItemFormComponent extends AccountItemForm implements OnInit 
     }
     particularsSearch = new FormControl();
     particularFocus: boolean = false;
-    particular$: Array<ParticularSearchModal>;
+    particular$!: Array<ParticularSearchModal>;
 
     loadingParticular: boolean = false;
-    clonedName: string;
+    clonedName!: string;
     public get isNew(){ return (this.clonedName != this.particularsSearch?.value); };
 
     ngOnInit() {
         //Particular
         this.particularFocus = false;
-        this.clonedName = this.formName.value;
+        this.clonedName = this.formName?.value;
 
         const orgLookup = this.orgLookupService.getOrgLookup();
-        const voucherType: LookupVoucherType = orgLookup.getVoucherTypeByMasterType(this.voucherMasterType);
+        const voucherType: LookupVoucherType | undefined = orgLookup.getVoucherTypeByMasterType(this.voucherMasterType);
+        
+        if (!voucherType) return;
+
         const { isPrimaryCredit } = voucherType;
         const isCreditTrxn = !!!isPrimaryCredit;
 
-        const particularRes = (entities)=> {
+        const particularRes = (entities: any[])=> {
             this.particularFocus = true;
             this.loadingParticular = false;
-            this.particular$ = (entities || []).map(r => new ParticularSearchModal(r));
+            this.particular$ = (entities || []).map((r: any) => new ParticularSearchModal(r));
         };
 
         this.particularsSearch.valueChanges.pipe(
             debounceTime(200),
             switchMap(particulars => {
-                this.formName.setValue(particulars);
+                this.formName?.setValue(particulars);
                 if (particulars && particulars.length >= 2 && this.particularFocus){
                     this.loadingParticular = true;
                     return this.getByControlType(this.voucherMasterType, isCreditTrxn, particulars);
@@ -114,10 +118,10 @@ export class AccountItemFormComponent extends AccountItemForm implements OnInit 
                 return of([]);
             })
         ).subscribe(particularRes);
-        this.particularsSearch.setValue(this.formName.value);
+        this.particularsSearch.setValue(this.formName?.value);
     }
 
-    getByControlType(voucherMasterType, isCreditTrxn, particulars): Observable<any> {
+    getByControlType(voucherMasterType: string, isCreditTrxn: boolean, particulars: string): Observable<any> {
         const q = new LookupQueryOptions();
         q.isItemInvoice = `false`;
         q.isCreditTrxn = `${!!isCreditTrxn}`;
@@ -128,7 +132,7 @@ export class AccountItemFormComponent extends AccountItemForm implements OnInit 
         )
     }
 
-    onPriceFocusOutEvent(event)
+    onPriceFocusOutEvent(event: any)
     {
         /*const formPrice = StringHelper.tillDecimalPlaces(event.target.value*this.currencyRate);
         this.formPrice.setValue(<any>formPrice, { emitEvent: false });
@@ -142,7 +146,7 @@ export class AccountItemFormComponent extends AccountItemForm implements OnInit 
 
         this.particularsSearch.setValue(name, { emitEvent: false });
 
-        this.formName.setValue(name, { emitEvent: false });
+        this.formName?.setValue(name, { emitEvent: false });
         this.formAccountId.setValue(<any>accountId,{ emitEvent: false });
         this.formAccountGroupId.setValue(<any>accountGroupId, { emitEvent: false });
     }

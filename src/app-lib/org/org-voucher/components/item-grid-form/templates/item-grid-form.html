@@ -39,7 +39,42 @@
                                     </div>
                                 </div>
                             </div>
-                            <textarea class="form-control p-1" formControlName="remark"></textarea>
+                            
+                            <div class="row my-1" *ngIf="orgOption?.hasCostCenters || orgOption?.hasCostCenterClasses || orgOption?.hasBatchWiseDetails || orgOption?.hasTrackingNumbers || orgOption?.hasActualAndBilledQuantities || orgOption?.hasGodowns">
+                                 <div class="col-sm-3" *ngIf="orgOption?.hasGodowns" formGroupName="product">
+                                     <small class="text-muted text-xs">Godown / Location</small>
+                                     <input class="form-control form-control-sm p-1 text-xs" formControlName="godownId">
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="orgOption?.hasCostCenters">
+                                     <small class="text-muted text-xs">Cost Center</small>
+                                     <input class="form-control form-control-sm p-1 text-xs" formControlName="costCenterId">
+                                 </div>
+                                 <div class="col-sm-3" *ngIf="orgOption?.hasCostCenterClasses">
+                                     <small class="text-muted text-xs">Cost Class</small>
+                                     <input class="form-control form-control-sm p-1 text-xs" formControlName="costCenterClassId">
+                                 </div>
+                                 <div class="col-sm-5" *ngIf="orgOption?.hasBatchWiseDetails" formGroupName="product">
+                                     <small class="text-muted text-xs">Batch (No/Mfg/Exp)</small>
+                                     <div class="d-flex">
+                                        <input class="form-control form-control-sm p-1 text-xs mr-1" formControlName="batchNo" placeholder="Batch">
+                                        <input type="date" class="form-control form-control-sm p-1 text-xs mr-1" formControlName="mfgDate" style="width: 85px">
+                                        <input type="date" class="form-control form-control-sm p-1 text-xs" formControlName="expiryDate" style="width: 85px">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-2" *ngIf="orgOption?.hasTrackingNumbers" formGroupName="product">
+                                     <small class="text-muted text-xs">Tracking No</small>
+                                     <input class="form-control form-control-sm p-1 text-xs" formControlName="trackingNo">
+                                 </div>
+                                  <div class="col-sm-2" *ngIf="orgOption?.hasActualAndBilledQuantities" formGroupName="product">
+                                     <small class="text-muted text-xs">Actual / Billed</small>
+                                     <div class="d-flex">
+                                        <input class="form-control form-control-sm p-1 text-xs mr-1" formControlName="actualQuantity" type="number" placeholder="Act">
+                                        <input class="form-control form-control-sm p-1 text-xs" formControlName="billedQuantity" type="number" placeholder="Bil">
+                                     </div>
+                                 </div>
+                            </div>
+
+                            <textarea class="form-control p-1" formControlName="remark" placeholder="Remark"></textarea>
                         </td>
                         <td colspan="2"></td>
                     </tr>

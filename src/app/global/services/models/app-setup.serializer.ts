@@ -24,6 +24,20 @@ export class OrgOptions {
     hasMultiCurrency: boolean;
     hasMultiLanguage: boolean;
 
+    // Advanced Voucher Entry Features
+    hasCostCenters: boolean;
+    hasJobCosting: boolean;
+    hasBatchWiseDetails: boolean;
+    hasTrackingNumbers: boolean;
+    hasZeroValuedEntries: boolean;
+    hasActualAndBilledQuantities: boolean;
+    hasMfgExpiryDates: boolean;
+    hasInventory: boolean;
+    hasOptionalVouchers: boolean;
+    hasOrderProcessing: boolean;
+    hasCostCenterClasses: boolean;
+    hasAdditionalCostOfPurchase: boolean;
+
     isEducational: boolean;
     isRealEstate: boolean;
     isTransportation: boolean;
@@ -36,6 +50,10 @@ export class OrgOptions {
             hasMultipleStudyMode, hasMultipleClassSection, hasMultipleCourseSection,
             hasMultiProjectModule, hasProjectWorkFlow,
             hasMultiCurrency, hasMultiLanguage,
+
+            hasCostCenters, hasJobCosting, hasBatchWiseDetails, hasTrackingNumbers,
+            hasZeroValuedEntries, hasActualAndBilledQuantities, hasMfgExpiryDates,
+            hasInventory, hasOptionalVouchers, hasOrderProcessing, hasCostCenterClasses, hasAdditionalCostOfPurchase,
 
             isEducational, isRealEstate, isTransportation, isHealthCare, isHospitality
         } = model;
@@ -51,6 +69,19 @@ export class OrgOptions {
 
         this.hasMultiCurrency = hasMultiCurrency;
         this.hasMultiLanguage = hasMultiLanguage;
+
+        this.hasCostCenters = hasCostCenters;
+        this.hasJobCosting = hasJobCosting;
+        this.hasBatchWiseDetails = hasBatchWiseDetails;
+        this.hasTrackingNumbers = hasTrackingNumbers;
+        this.hasZeroValuedEntries = hasZeroValuedEntries;
+        this.hasActualAndBilledQuantities = hasActualAndBilledQuantities;
+        this.hasMfgExpiryDates = hasMfgExpiryDates;
+        this.hasInventory = hasInventory;
+        this.hasOptionalVouchers = hasOptionalVouchers;
+        this.hasOrderProcessing = hasOrderProcessing;
+        this.hasCostCenterClasses = hasCostCenterClasses;
+        this.hasAdditionalCostOfPurchase = hasAdditionalCostOfPurchase;
 
         this.isEducational = isEducational;
         this.isRealEstate = isRealEstate;

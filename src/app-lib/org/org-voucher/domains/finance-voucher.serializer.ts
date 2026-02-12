@@ -1,8 +1,9 @@
 import {CoreResource} from "../../../../app/global/services/models";
 import {DateHelper, UtilHelper} from "../../../../app/global/helpers";
 import {VOUCHER_TYPES} from "../../../../app/global/enums/voucher-type";
+import {VOUCHER_STATUS} from "../../../../app/global/enums/voucher-status";
 
-class Product {
+export class Product {
     voucherId: number;
     taxCode: string;
     taxRate: number;
@@ -22,6 +23,16 @@ class Product {
     variantName: string;
     baseUnitTypeId: number;
     quantity: number;
+    
+    // Advanced Inventory Features
+    actualQuantity: number;
+    billedQuantity: number;
+    batchNo: string;
+    mfgDate: string;
+    expiryDate: string;
+    trackingNo: string;
+    godownId: string;
+
     taxAmount: number;
     isTaxInclusive: boolean;
     taxes: Array<any>;
@@ -32,7 +43,8 @@ class Product {
             isFixedPrice, discount, discountRate,
             mrp,
             price, productId, productTypeId, variantId, variantName, baseUnitTypeId, quantity, isTaxInclusive, taxes,
-            taxAmount
+            taxAmount,
+            actualQuantity, billedQuantity, batchNo, mfgDate, expiryDate, trackingNo, godownId
         } = model;
         this.voucherId = voucherId;
         this.taxRate = taxRate;
@@ -54,6 +66,15 @@ class Product {
         this.variantName = variantName;
         this.baseUnitTypeId = baseUnitTypeId;
         this.quantity = quantity;
+
+        this.actualQuantity = actualQuantity || quantity;
+        this.billedQuantity = billedQuantity || quantity;
+        this.batchNo = batchNo || "";
+        this.mfgDate = mfgDate;
+        this.expiryDate = expiryDate;
+        this.trackingNo = trackingNo || "";
+        this.godownId = godownId;
+
         this.isTaxInclusive = isTaxInclusive;
         this.taxes = taxes;
         this.taxAmount = taxAmount;
@@ -75,9 +96,9 @@ class Product {
         this.balance = model.balance;*/
     }
 
-    calculateVoucherTotalAmount(amt, qty, taxes){
+    calculateVoucherTotalAmount(amt: number, qty: number, taxes: any[]): { taxAmount: number, total: number } {
         const totalAmount = (amt * qty);
-        const total = (taxes || []).reduce((result, curr)=> {
+        const total = (taxes || []).reduce((result: {taxAmount: number, total: number}, curr: any)=> {
             const rate = parseFloat(curr.rate || 0);
             result.taxAmount += parseFloat(curr.amount || 0);
             result.total += totalAmount + ((totalAmount * rate)/100);
@@ -91,6 +112,21 @@ class Product {
     }
 }
 
+export class AdditionalCost {
+    ledgerId: string;
+    amount: number;
+    type: string; // 'percent' | 'amount'
+    value: number;
+
+    constructor(data: any = <any>{}) {
+        const { ledgerId, amount, type, value } = data;
+        this.ledgerId = ledgerId;
+        this.amount = amount || 0;
+        this.type = type || 'amount';
+        this.value = value || 0;
+    }
+}
+
 export class VoucherItem {
     id: number | string;
     name: string;
@@ -99,13 +135,19 @@ export class VoucherItem {
     accountId: string;
     accountGroupId: number;
     isPrimary: boolean;
+    
+    // Advanced Features
+    costCenterId: string;
+    costCategoryId: string;
+    costCenterClassId: string;
+    godownId: string;
 
     netAmount: number;
     foreignAmount: number;
 
     product: Product;
     constructor(model: any = <any>{}){
-        const { id, name, desc, isPrimary, remark, accountId,  accountGroupId, netAmount, foreignAmount, product } = model;
+        const { id, name, desc, isPrimary, remark, accountId,  accountGroupId, netAmount, foreignAmount, product, costCenterId, costCategoryId, costCenterClassId, godownId } = model;
         this.id = id;
         this.name = name;
         this.desc = desc;
@@ -114,13 +156,18 @@ export class VoucherItem {
 
         this.accountId = accountId;
         this.accountGroupId = accountGroupId;
+        
+        this.costCenterId = costCenterId;
+        this.costCategoryId = costCategoryId;
+        this.costCenterClassId = costCenterClassId;
+        this.godownId = godownId;
 
         this.netAmount = netAmount;
         this.foreignAmount = foreignAmount;
         this.product = new Product(product);
     }
 
-    calculateVoucherTotalAmount=(amt, qty, taxes)=> this.product.calculateVoucherTotalAmount(amt, qty, taxes);
+    calculateVoucherTotalAmount=(amt: number, qty: number, taxes: any[])=> this.product.calculateVoucherTotalAmount(amt, qty, taxes);
 }
 
 export class SundryDetail {
@@ -196,7 +243,7 @@ export class PaymentTransaction {
     foreignAmount: number; // set from voucher
 
     constructor(data: any = <any>{}){
-        const { modeId, gatewayMapperId, cardTypeId, gatewayAccountId, gatewayAccountGroupId, referenceNo, amount, balance, paymentSystemMaster } = data;
+        const { modeId, gatewayMapperId, cardTypeId, gatewayAccountId, gatewayAccountGroupId, referenceNo, amount, balance, paymentSystemMaster, foreignAmount } = data;
         this.gatewayMapperId = gatewayMapperId;
         this.modeId = modeId;
 
@@ -209,6 +256,7 @@ export class PaymentTransaction {
 
         this.amount = amount;
         this.balance = balance;
+        this.foreignAmount = foreignAmount || 0;
     }
 }
 
@@ -261,6 +309,7 @@ export class FinanceVoucher extends CoreResource {
     voucherNo: string;
     voucherDate: string;
     voucherMasterType: string;
+    voucherStatus: string;
 
     currencyId: number;
     currencyRate: number;
@@ -274,6 +323,16 @@ export class FinanceVoucher extends CoreResource {
 
     inDraft: boolean;
     subTypeId: number;
+
+    // Voucher Features
+    isPostDated: boolean;
+    isOptional: boolean;
+    isMemorandum: boolean;
+    isReversing: boolean;
+    jobOrderId: number;
+    costCenterClassId: string;
+    isZeroValued: boolean;
+    additionalCosts: Array<AdditionalCost>;
 
     // partyName: string;
     //
@@ -346,9 +405,11 @@ export class FinanceVoucher extends CoreResource {
         const {
             isItemInvoice, enableAccounting, enableInventory,
             partyAccountId, partyAccountGroupId, partyName, partyUserId,
-            voucherNo, voucherDate, voucherMasterType,
+            voucherNo, voucherDate, dueDate, voucherMasterType,
             currencyId, currencyRate, currencyCode, currencySymbol, systemCurrencyCode,
-            inDraft, subTypeId, notes, remark
+            inDraft, subTypeId, notes, remark,
+            isPostDated, isOptional, isMemorandum, isReversing, jobOrderId, costCenterClassId,
+            isZeroValued, additionalCosts, voucherStatus
         } = model;
 
         const { items, billToBillTrxn, sundryDetails, trxn } = model;
@@ -369,8 +430,8 @@ export class FinanceVoucher extends CoreResource {
         } = model;*/
 
         this.isItemInvoice = isItemInvoice || false;
-        // this.enableAccounting = ;// ui to show
-        // this.enableInventory = ;// ui to show
+        this.enableAccounting = enableAccounting || false;
+        this.enableInventory = enableInventory || false;
         this.partyName = partyName;
         this.partyUserId = partyUserId;
         this.partyAccountId = partyAccountId;
@@ -387,10 +448,20 @@ export class FinanceVoucher extends CoreResource {
         this.systemCurrencyCode = systemCurrencyCode;
 
         this.inDraft = inDraft;
-        this.notes = notes;
-        this.remark = remark;
+        this.voucherStatus = voucherStatus || (inDraft ? VOUCHER_STATUS.PENDING : VOUCHER_STATUS.COMPLETED);
+        this.notes = notes || "";
+        this.remark = remark || "";
 
         this.subTypeId = subTypeId || null;
+
+        this.isPostDated = isPostDated || false;
+        this.isOptional = isOptional || false;
+        this.isMemorandum = isMemorandum || false;
+        this.isReversing = isReversing || false;
+        this.jobOrderId = jobOrderId;
+        this.costCenterClassId = costCenterClassId;
+        this.isZeroValued = isZeroValued || false;
+        this.additionalCosts = (additionalCosts || []).map((x: any) => new AdditionalCost(x));
 
         // this.trxnId = trxnId;
         // this.trxnTypeId = trxnTypeId;
@@ -428,9 +499,9 @@ export class FinanceVoucher extends CoreResource {
         // this.rounding = rounding;
         // this.partyAccountGroupMaster = partyAccountGroupMaster;
 
-        this.items = (items || []).map(r => new VoucherItem(r));
-        this.billToBillTrxn = (billToBillTrxn || []).map(r => new BillToBillTrxn(r));
-        this.sundryDetails = (sundryDetails || []).map(r => new SundryDetail(r));
+        this.items = (items || []).map((r: any) => new VoucherItem(r));
+        this.billToBillTrxn = (billToBillTrxn || []).map((r: any) => new BillToBillTrxn(r));
+        this.sundryDetails = (sundryDetails || []).map((r: any) => new SundryDetail(r));
         this.trxn = new PaymentTransaction(trxn);
 
         const remaining = this.getPendingBalance();

@@ -44,6 +44,14 @@
                 </div>
             </li>
         </ul>
+        
+        <div class="row my-1" *ngIf="orgOption?.hasCostCenters">
+             <div class="col-sm-6">
+                 <small class="text-muted text-xs">Cost Center</small>
+                 <input class="form-control form-control-sm p-1 text-xs" formControlName="costCenterId">
+             </div>
+        </div>
+
         <!--<textarea class="form-control p-1" formControlName="remark"></textarea>-->
     </td>
     <td>

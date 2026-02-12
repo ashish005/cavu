@@ -21,8 +21,6 @@ export const EDU_EMPLOYEE_Routes: Routes = [
             //
             // { path: 'course', canLoad:[ModuleGuard], loadChildren: () => import('portals/education/employee-portal/views/course/manage').then(m => m.ManageCourseModule), data: { code:'COURSE', title: 'Course', header:'Course'} },
             // { path: 'seed-course', loadChildren: () => import('portals/education/employee-portal/views/course/seed').then(m => m.CourseSeederModule), data: { title: 'Course', header:'Course'} },// todo remove
-            //
-            //
             // ...PortalCommonModuleRoutes,
             // ...CoreCommonModuleRoutes
         ]

@@ -1,6 +1,7 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {forkJoin, take} from "rxjs";
+import {EMPLOYEE_COMMON_ROUES} from "@app-global";
 
 @Component({
     templateUrl: './templates/layout.html', standalone: false
@@ -56,6 +57,7 @@ export class Layout implements OnInit {
         {routeTo: ['student'], icon: "fa fa-group", code: "EMP", key: 'mainLayout.user.student'}
       ]
     },
+    ...EMPLOYEE_COMMON_ROUES
     /*{
         name: "Teacher", isFLatChildren: false, key: 'layout.ims.teacher',
         children:[

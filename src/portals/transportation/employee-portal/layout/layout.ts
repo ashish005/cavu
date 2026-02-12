@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
-import {GlobalModule} from "@app-global";
+import {AppPermissionService, GlobalModule} from "@app-global";
 
 @Component({
   templateUrl: './templates/layout.html',
@@ -9,7 +9,7 @@ import {GlobalModule} from "@app-global";
   imports: [CommonModule, GlobalModule, RouterModule]
 })
 export class MainLayout implements OnInit {
-    public navList: Array<any> = [
+    public navList: Array<any> = this.permService.getEmployeeNavList([
         {
             isFLatChildren: true, key: 'mainLayout.heading.main',
             children:[
@@ -46,9 +46,9 @@ export class MainLayout implements OnInit {
                 { routeTo: ['booking/tracker'], icon:"fa fa-bell", key: 'tracker' }
             ]
         }
-    ];
+    ]);
     constructor(public router: Router, public activatedRoute: ActivatedRoute,
-                public cdref: ChangeDetectorRef){}
+                public cdref: ChangeDetectorRef, public permService: AppPermissionService){}
 
     ngOnInit() {}
 

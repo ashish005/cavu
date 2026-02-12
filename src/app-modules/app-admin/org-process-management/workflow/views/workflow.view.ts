@@ -22,7 +22,6 @@ export class OrgWorkflowView {
   selectedProcess$ = new BehaviorSubject<WorkflowNode | undefined>(undefined);
   selectedPhase: OrgWorkflowPhase | null = null;
   phaseTransitions: OrgWorkflowPhaseTransition[] = [];
-
   selectedStepForTasks: OrgWorkflowPhaseStep | null = null;
   constructor(private lookup: OrgWorkflowAPIResolver,
               private service: OrgWorkflowPhaseService,
@@ -106,7 +105,9 @@ export class OrgWorkflowView {
       id: payload.id,
       processId: workflowId,
       fromPhaseId: payload.fromPhaseId,
+      fromStatusId: payload.fromStatusId,
       toPhaseId: payload.toPhaseId,
+      toStatusId: payload.toStatusId,
       description: payload.description,
       rule: payload.rule
     };

@@ -1,4 +1,5 @@
-import {Directive, TemplateRef, ViewChild} from '@angular/core';
+import {Component, Directive, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Directive()
 export class LayoutExtension {
