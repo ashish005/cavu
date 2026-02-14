@@ -16,16 +16,18 @@ import { BalanceSheetReportView, ProfitLossReportView } from "./views/reports";
 import {InvoiceTrxnView} from "./views/trxn/views/trxn.view";
 import {TrxnLayout} from "./layout/trxn-layout";
 
+import {AccountingAdminView} from "./views/admin/admin-setup.view";
+
 export const AccountingRoutes: Routes = [
     {
-        path: '', component: AccountingLayout, resolve: { items: AccountingAPIResolver },
+        path: '', resolve: { items: AccountingAPIResolver },
         data: {code: 'FIN'},
         children: [
-            { path: '', pathMatch: 'full', redirectTo:'dashboard' },
+            { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
             { path: 'dashboard', component: AccountingDashboardView, data: {code: "FIN", title: 'Dashboard', header:'Accounting Dashboard'}},
             { path: 'ledger', component: LedgerView, data: {code: "FIN", title: 'Ledger', header:'Ledger'}},
             {
-                path: 'book', component: BookLayout, data: {code: 'FIN', title: 'Ledger Book', header: 'Ledger Book'}, //resolve: { items: FinanceAPIResolver },
+                path: 'book', component: BookLayout, data: {code: 'FIN', title: 'Ledger Book', header: 'Ledger Book'},
                 children: [
                     { path: '', pathMatch: 'full', redirectTo:'day-book' },
                     { path: 'day-book', component: DayBookView, data: {code: "FIN_DAY_BOOK", title: 'Day Book', header: 'Day Book'} },
@@ -39,42 +41,36 @@ export const AccountingRoutes: Routes = [
                 ]
             },
             {
-                path: 'report', component: ReportLayout, //data: { code: 'FIN_REPORT', title: 'Report', header: 'Manage Finance'},
+                path: 'report', component: ReportLayout,
                 children:[
                     { path: '', pathMatch: 'full', redirectTo:'balance-sheet' },
                     { path: 'balance-sheet', component: BalanceSheetReportView, data: { code: "FIN_BS", title: 'Balance Sheet', header:'Balance Sheet'} },
                     { path: 'profit-loss', component: ProfitLossReportView, data: { code: "FIN_PRL", title: 'Profit Loss', header:'Profit Loss'} }
                 ]
-            }
-        ]
-    },
-    {
-        path: 'trxn', component: TrxnLayout,
-        data: { code: 'FIN_REPORT', title: 'Invoice Report', header: 'Management Report'},
-        children: [
-            { path: '', pathMatch: 'full', redirectTo:'all' },
-            { path: 'contra', component: InvoiceTrxnView, data: { key: 'CONTRA', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-            { path: 'journal', component: InvoiceTrxnView, data: { key: 'JOURNAL', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-
-            { path: 'receipt', component: InvoiceTrxnView, data: { key: 'RECEIPT', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-            { path: 'payment', component: InvoiceTrxnView, data: { key: 'PAYMENT', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-
-            { path: 'credit-note', component: InvoiceTrxnView, data: { key: 'CREDIT_NOTE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-            { path: 'debit-note', component: InvoiceTrxnView, data: { key: 'DEBIT_NOTE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-
-            { path: 'sale', component: InvoiceTrxnView, data: { key: 'SALE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
-            { path: 'sale-order', component: InvoiceTrxnView, data: { key: 'SALE_ORDER', code: "FIN_CASH_BOOK", icon: 'fa fa-dashboard' } },
-            { path: 'sale-return', component: InvoiceTrxnView, data: { key: 'SALE_RETURN', code: "FIN_CASH_BOOK", icon: 'fa fa-dashboard' } },
-
-            { path: 'quotation', component: InvoiceTrxnView, data: { key: 'QUOTATION', code: "FIN_ACC_BOOK", icon: 'fa fa-dashboard' } },
-
-            { path: 'purchase', component: InvoiceTrxnView, data: { key: 'PURCHASE', code: "", icon: 'fa fa-dashboard' } },
-            { path: 'purchase-order', component: InvoiceTrxnView, data: { key: 'PURCHASE_ORDER', code: "", icon: 'fa fa-dashboard' } },
-            { path: 'purchase-return', component: InvoiceTrxnView, data: { key: 'PURCHASE_RETURN', code: "", icon: 'fa fa-dashboard' } },
-
-            { path: 'expense', component: InvoiceTrxnView, data: { key: 'EXPENSE', code: "", icon: 'fa fa-dashboard' } },
-            { path: 'all', component: InvoiceTrxnView, data: { code: "", icon: 'fa fa-dashboard' } }
-
+            },
+            {
+                path: 'trxn', component: TrxnLayout,
+                data: { code: 'FIN_REPORT', title: 'Invoice Report', header: 'Management Report'},
+                children: [
+                    { path: '', pathMatch: 'full', redirectTo:'all' },
+                    { path: 'contra', component: InvoiceTrxnView, data: { key: 'CONTRA', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'journal', component: InvoiceTrxnView, data: { key: 'JOURNAL', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'receipt', component: InvoiceTrxnView, data: { key: 'RECEIPT', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'payment', component: InvoiceTrxnView, data: { key: 'PAYMENT', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'credit-note', component: InvoiceTrxnView, data: { key: 'CREDIT_NOTE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'debit-note', component: InvoiceTrxnView, data: { key: 'DEBIT_NOTE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'sale', component: InvoiceTrxnView, data: { key: 'SALE', code: "FIN_DAY_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'sale-order', component: InvoiceTrxnView, data: { key: 'SALE_ORDER', code: "FIN_CASH_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'sale-return', component: InvoiceTrxnView, data: { key: 'SALE_RETURN', code: "FIN_CASH_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'quotation', component: InvoiceTrxnView, data: { key: 'QUOTATION', code: "FIN_ACC_BOOK", icon: 'fa fa-dashboard' } },
+                    { path: 'purchase', component: InvoiceTrxnView, data: { key: 'PURCHASE', code: "", icon: 'fa fa-dashboard' } },
+                    { path: 'purchase-order', component: InvoiceTrxnView, data: { key: 'PURCHASE_ORDER', code: "", icon: 'fa fa-dashboard' } },
+                    { path: 'purchase-return', component: InvoiceTrxnView, data: { key: 'PURCHASE_RETURN', code: "", icon: 'fa fa-dashboard' } },
+                    { path: 'expense', component: InvoiceTrxnView, data: { key: 'EXPENSE', code: "", icon: 'fa fa-dashboard' } },
+                    { path: 'all', component: InvoiceTrxnView, data: { code: "", icon: 'fa fa-dashboard' } }
+                ]
+            },
+            { path: 'setup', component: AccountingAdminView, data: { code: "FIN_SETUP", title: 'Accounting Setup', header: 'Accounting Setup' } }
         ]
     }
 ];
@@ -85,5 +81,6 @@ export const ACCOUNTING_VIEWS = [
     LedgerView, BookLayout, DayBookView, CashBookView, LedgerBookView, BankLedgerView,
     TrialBalanceView, TrialBalanceByLedgerView, LedgerReportMonthlyView,
     ReportLayout, BalanceSheetReportView, ProfitLossReportView,
-    TrxnLayout, InvoiceTrxnView
+    TrxnLayout, InvoiceTrxnView,
+    AccountingAdminView
 ];

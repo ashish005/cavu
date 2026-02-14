@@ -1,9 +1,8 @@
 import {Routes} from '@angular/router';
 import {DashboardView} from "./views/dashboard/dashboard";
 import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
-import {AppPermissionService, DashboardAPIResolver} from "@app-global";
+import {ADMIN_SETUP_ROUES, AppPermissionService, DashboardAPIResolver} from "@app-global";
 import {MainLayout} from "./layout/layout";
-import {ADMIN_SETUP} from "../../org-admin";
 
 export const EMPLOYEE_Routes: Routes = [
   {
@@ -24,6 +23,6 @@ export const EMPLOYEE_Routes: Routes = [
         ...PortalCommonModuleRoutes,
         ...CoreCommonModuleRoutes
     ],
-    ...ADMIN_SETUP
+    ...ADMIN_SETUP_ROUES
   }
 ];

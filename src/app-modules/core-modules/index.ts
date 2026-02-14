@@ -5,7 +5,6 @@ export const PortalCommonModuleRoutes = [
 ];
 
 export const CoreCommonModuleRoutes = [
-    { path: 'accounting', loadChildren: () => import('app-modules/core-modules/org-accounting').then(m => m.AccountingModule), data: {code: "FIN" } },
     { path: 'office-expense', loadChildren: () => import('app-modules/core-modules/office-expense').then(m => m.ExpenseModule), data: { code: 'OFC_EXPENSE', title: 'Expense', header:'Expense'} },//code: "EXPENSE",
 
     { path: 'invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/create-voucher/index').then(m => m.InvoiceCEModule), data: {code: "FIN" } },
@@ -14,7 +13,7 @@ export const CoreCommonModuleRoutes = [
 
   //{ path: 'manage-invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: {code: "FIN" } },
   { path: 'org-invoice', loadChildren: () => import('app-modules/app-admin/org-invoice/index').then(m => m.ManageMoneyModule), data: {icon:"fa fa-money", name: "Money", key: 'layout.money', title: 'Invoices', header:'Invoices' } },
-    { path: 'compliance-report', loadChildren: () => import('app-modules/app-admin/compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
+    { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 
     { path: 'org-emp', loadChildren: () => import('app-modules/core-modules/org-employee').then(m => m.OrgEmployeeModule), data: { code: "EMP", title: 'Employee', header:'Employee'} },
 

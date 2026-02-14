@@ -13,15 +13,15 @@ import {WorkflowManageModule} from "./workflow";
                 children: [
                     {
                         path: '', data: { translatePath: 'modules.project.manage' },
-                        loadChildren: () => import('app-modules/app-admin/org-process-management/manage').then(m => m.ProcessManageModule)
+                        loadChildren: () => import('./manage').then(m => m.ProcessManageModule)
                     },
                     {
                         path: 'master', data: { translatePath: 'modules.project.manage' },
-                        loadChildren: () => import('app-modules/app-admin/org-process-management/workflow').then(m => m.WorkflowManageModule)
+                        loadChildren: () => import('./workflow').then(m => m.WorkflowManageModule)
                     },
                     {
                         path: 'setup', //canLoad:[ModuleGuard],
-                        loadChildren: () => import('app-modules/app-admin/org-process-management/setup').then(m => m.ProcessSetupModule),
+                        loadChildren: () => import('./setup').then(m => m.ProcessSetupModule),
                         data: {title: 'Process', header:'Process', name: "Process", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
                     },
                 ]

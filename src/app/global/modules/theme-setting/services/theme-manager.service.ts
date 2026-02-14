@@ -82,6 +82,7 @@ export class ThemeManagerService {
         this.checkUpdateClasss(isFoldedAside, foldedAside);
 
         this.selectedThemeOption = name;
+        this.installTheme(this.getThemeByID(<any>name));
     }
 
     themesOptions: Array<ColorOptions> = [
@@ -89,16 +90,7 @@ export class ThemeManagerService {
         new ColorOptions({displayName: '', class: 'dark', value: 'dark'})
     ];
     themes: Array<AppTheme> = [
-        {
-            id: 1,
-            name: 'Default',
-            href: 'default.css',
-            isDefault: true,
-            background: '#007bff',
-            color: '#fff',
-            class: 'light',
-            isDark: false
-        },
+        {id: 1, name: 'Default', href: 'default.css', isDefault: true, background: '#007bff', color: '#fff', class: 'light', isDark: false },
         {id: 107, name: 'Black', href: 'black.css', background: '#007bff', color: '#fff', class: 'dark', isDark: true},
         {id: 100, name: 'Primary', href: 'primary.css', background: '#007bff', color: '#fff', class: 'primary'},
         {id: 101, name: 'Accent', href: 'accent.css', background: '#007bff', color: '#fff', class: 'accent'},

@@ -14,7 +14,8 @@ export class ThemeSettingComponent implements OnInit {
   submitted: boolean;
 
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
-  constructor(public fb: FormBuilder, public settingService: OrgThemeSettingService, public themeManager: ThemeManagerService) {
+  constructor(public fb: FormBuilder, public settingService: OrgThemeSettingService,
+              public themeManager: ThemeManagerService) {
       this.customForm = this.fb.group({
           id: [null],
           isFixedAside: [true],

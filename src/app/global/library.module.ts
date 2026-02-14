@@ -37,6 +37,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {NgxGraphModule} from "@swimlane/ngx-graph";
+import {ADMIN_LAYOUTS} from "./layouts";
 
 const COMMON_MODULE = [
     CdkTableModule, CdkTreeModule, DragDropModule,
@@ -84,7 +85,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         { provide: ErrorHandler, useClass: AppErrorHandler },
         { provide: 'BASE_URL', useFactory: getBaseUrl }
     ],
-    declarations: [ ...DEPENDENT_COMPONENTS ],
+    declarations: [ ...DEPENDENT_COMPONENTS, ADMIN_LAYOUTS ],
     exports: [
       CommonModule,
         // RouterModule,

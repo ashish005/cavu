@@ -100,49 +100,41 @@ export class OrgWorkflowView {
     });
   }
 
-  saveTransition(workflowId: number, payload: any) {
-    const dto: OrgWorkflowPhaseTransition = {
-      id: payload.id,
-      processId: workflowId,
-      fromPhaseId: payload.fromPhaseId,
-      fromStatusId: payload.fromStatusId,
-      toPhaseId: payload.toPhaseId,
-      toStatusId: payload.toStatusId,
-      description: payload.description,
-      rule: payload.rule
-    };
-    const isUpdate = !!dto.id;
-    const req$ = isUpdate
-      ? this.workflowService.updateTransition(dto.id, dto)
-      : this.workflowService.createTransition(workflowId, dto);
-    req$.subscribe(() => {
-      this.loadTransitions(workflowId);
-    });
-  }
-
   onTransitionEdit(transition: OrgWorkflowPhaseTransition) {
     if (!this.selectedProcess) {
       return;
     }
     const existing = this.phaseTransitions.find(t => t.id === transition.id) || transition;
+    
+    // Pass ALL transitions for this phase to allow switching statuses in editor
+    const existingTransitions = this.phaseTransitions.filter(t => t.fromPhaseId === transition.fromPhaseId);
+
     const input = {
-      id: existing.id,
-      data: existing,
       process: this.selectedProcess,
       phases: this.phases,
       statuses: this.phaseStatuses,
-      transition: existing
+      transitions: existingTransitions,
+      sourcePhaseId: transition.fromPhaseId,
+      sourceStatusId: transition.fromStatusId
     };
     const popupHeaderOption = {
-      text: 'Transition',
-      desc: this.getPhaseName(existing.fromPhaseId) + ' \u2192 ' + this.getPhaseName(existing.toPhaseId)
+      text: 'Manage Transitions',
+      desc: this.getPhaseName(transition.fromPhaseId) + ' \u2192 ' + this.getPhaseName(transition.toPhaseId)
     };
     const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
     const success = (resp: any) => {
-      if (resp && this.selectedProcess) {
-        this.saveTransition(this.selectedProcess.id, resp);
-      }
       this.sharedService.destroy();
+      if (resp && this.selectedProcess) {
+        const saves: any[] = resp.save || [];
+              const deletes: number[] = resp.delete || [];
+
+              if (saves.length > 0 || deletes.length > 0) {
+                  const workflowId = this.selectedProcess.id;
+                  this.workflowService.bulkUpdateTransitions(workflowId, { saves, deletes }).subscribe(() => {
+                      this.loadTransitions(workflowId);
+                  });
+              }
+      }
     };
     const failure = () => { this.sharedService.destroy(); };
     this.sharedService.showCustomPopup(TransitionEditorComponent, popupOptions, input).then(success, failure);

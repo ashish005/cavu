@@ -10,11 +10,11 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
             { path: '', pathMatch: 'full', redirectTo:'manage' },
             {
                 path: 'report', data: { translatePath: 'modules.project.manage' },
-                loadChildren: () => import('app-modules/app-admin/compliance-management/report').then(m => m.ComplianceReportModule)
+                loadChildren: () => import('./report').then(m => m.ComplianceReportModule)
             },
             {
                 path: 'manage', data: { title: 'Compliance', header:'Compliance'},
-                loadChildren: () => import('app-modules/app-admin/compliance-management/manage').then(m => m.ComplianceManageModule)
+                loadChildren: () => import('./manage').then(m => m.ComplianceManageModule)
             }
         ]),
         GlobalModule

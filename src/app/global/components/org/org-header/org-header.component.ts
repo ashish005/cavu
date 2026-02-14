@@ -5,12 +5,13 @@ import {Subscription, Observable} from "rxjs";
 import {CommonModule} from "@angular/common";
 import {AppSetupService} from "../../../services";
 import {AppSetup} from "../../../services/models";
+import {OrgLogoComponent} from "../org-logo/org-logo.component";
 
 @Component({
     selector: 'org-header',
     templateUrl: './org-header.html',
     standalone: true,
-  imports: [CommonModule, RouterLink, RouterModule]
+  imports: [CommonModule, RouterLink, RouterModule, OrgLogoComponent]
 })
 export class OrgHeaderComponent implements OnInit {
   isAuthenticated$: Observable<boolean>;
@@ -30,9 +31,10 @@ export class OrgHeaderComponent implements OnInit {
 
     routeToSupportPortal = (path) => this.router.navigate(['support', path], {relativeTo: this.activatedRoute.parent});
     routeToPath = (path) => this.router.navigate([path], {relativeTo: this.activatedRoute.parent});
-    routeToSetupPath = (path) => this.router.navigate(['setup', path], {relativeTo: this.activatedRoute.parent});
     goBackToEmployeePortal = () => this.router.navigate(['app'], {relativeTo: this.activatedRoute.root});
-    routeToModulePath = (path) => this.router.navigate(['app', path], {relativeTo: this.activatedRoute.root});
+
+    routeToSetupPath = (path) => this.router.navigate(['admin', 'setup', path], {relativeTo: this.activatedRoute.parent});
+    routeToModulePath = (path) => this.router.navigate(['app', 'admin', path], {relativeTo: this.activatedRoute.root});
 
     logout = () => this.authService.logout();
 

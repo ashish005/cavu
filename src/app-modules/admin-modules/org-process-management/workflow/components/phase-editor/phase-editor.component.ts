@@ -82,7 +82,6 @@ export class PhaseEditorComponent implements OnInit, AfterViewInit {
     }
 
     addStep(step?: any): void {
-        debugger
         step = step || {
             sortOrder: this.steps.length + 1,
             isActive: true

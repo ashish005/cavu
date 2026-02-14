@@ -7,7 +7,6 @@ import {
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {AuthService} from "@app-third-party";
 import {CommonModule} from "@angular/common";
-import {OrgLogoComponent} from "../org-logo/org-logo.component";
 import {ThemeManagerService} from "../../../modules/theme-setting/services/theme-manager.service";
 
 @Component({
@@ -15,7 +14,7 @@ import {ThemeManagerService} from "../../../modules/theme-setting/services/theme
   templateUrl:'./org-aside.html',
   //styles: [`:host{ display: contents; }`]
   standalone: true,
-  imports: [ CommonModule, RouterModule, OrgLogoComponent ]
+  imports: [ CommonModule, RouterModule ]
 })
 export class OrgAsideComponent {
     @Input() showInbox: boolean | string = false;

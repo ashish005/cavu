@@ -5,8 +5,7 @@ import {TransitionEditorComponent} from "../../components";
 import {WorkflowService} from "../../services/workflow.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
-import { forkJoin, of, Observable } from 'rxjs';
-// @ts-ignore
+
 import * as shape from 'd3-shape';
 import {OrgWorkflowView} from "../workflow.view";
 
@@ -335,31 +334,14 @@ export class OrgWorkflowPhaseTransitionGridView {
         const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
         const success = (resp: any) => {
             this.sharedService.destroy();
-            if(resp) {
-                const saveList: any[] = resp.save || [];
-                const deleteList: number[] = resp.delete || [];
+            if(resp && this.parent && this.parent.selectedProcess) {
+                const saves: any[] = resp.save || [];
+                const deletes: number[] = resp.delete || [];
                 
-                const obs: Observable<any>[] = [];
-
-                if (saveList.length > 0) {
-                    saveList.forEach(s => {
-                        if (s.id) {
-                            obs.push(this.service.updateTransition(s.id, s));
-                        } else {
-                            obs.push(this.service.createTransition(this.parent?.selectedProcess?.id || 0, s));
-                        }
-                    });
-                }
-
-                if (deleteList.length > 0) {
-                    deleteList.forEach(id => {
-                        obs.push(this.service.deleteTransition(id));
-                    });
-                }
-
-                if (obs.length > 0) {
-                    forkJoin(obs).subscribe(() => {
-                        this.parent?.loadTransitions(this.parent?.selectedProcess?.id || 0);
+                if (saves.length > 0 || deletes.length > 0) {
+                    const workflowId = this.parent.selectedProcess.id;
+                    this.service.bulkUpdateTransitions(workflowId, { saves, deletes }).subscribe(() => {
+                        this.parent?.loadTransitions(workflowId);
                     });
                 }
             }

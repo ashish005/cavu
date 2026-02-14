@@ -3863,7 +3863,7 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
   align-items: center;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  padding: .5rem 1rem
+  padding: 0rem 1rem
 }
 
 .navbar>.container,.navbar>.container-fluid {
@@ -10047,7 +10047,7 @@ a.list-group-item.hover,a.list-group-item:focus,a.list-group-item:hover {
 /*}*/
 
 .navbar {
-  min-height: 3.5rem;
+  min-height: 2.5rem;
   display: -ms-flexbox;
   display: flex
 }
@@ -11031,22 +11031,12 @@ body {
 }
 
 .app-header~.app {
-  padding-top: 3.5rem
+  padding-top: 2.5rem
 }
 
 .app-header~.app .app-aside {
-  min-height: calc(100vh - 3.5rem)
+  min-height: calc(100vh - 2.5rem)
 }
-
-.org-header {
-  position: fixed;
-  z-index: 1040;
-  left: 0;
-  right: 0;
-  height: 1.5rem;
-}
-.org-header~.app { padding-top: 1.5rem }
-.org-header~.app .app-aside { min-height: calc(100vh - 1.5rem) }
 
 .app-aside {
   -ms-flex-negative: 0;
@@ -11099,9 +11089,6 @@ body {
 .fixed-content .app-header~.app,.is-fullscreen .app-header~.app {
   max-height: auto
 }
-.fixed-content .org-header~.app,.is-fullscreen .org-header~.app {
-  max-height: auto
-}
 
 .fixed-content .app-content .content-main,.is-fullscreen .app-content .content-main {
   overflow: auto;
@@ -11117,11 +11104,7 @@ body {
 }
 
 .fixed-content .app-header~.app .app-aside>*,.is-fullscreen .app-header~.app .app-aside>* {
-  max-height: calc(100% - 3.5rem)
-}
-
-.fixed-content .org-header~.app .app-aside>*,.is-fullscreen .org-header~.app .app-aside>* {
-  max-height: calc(100% - 1.5rem)
+  max-height: calc(100% - 2.5rem)
 }
 
 .fixed-aside .app-aside>* {
@@ -11129,11 +11112,7 @@ body {
 }
 
 .fixed-aside .app-header~.app .app-aside>* {
-  max-height: calc(100% - 3.5rem)
-}
-
-.fixed-aside .org-header~.app .app-aside>* {
-  max-height: calc(100% - 1.5rem)
+  max-height: calc(100% - 2.5rem)
 }
 
 @media (min-width: 992px) {
@@ -11196,7 +11175,7 @@ body {
 }
 
 @media print {
-  .app-aside,.app-header,.org-header,.content-footer,.content-header,.setting {
+  .app-aside,.app-header,.content-footer,.content-header,.setting {
     display: none!important
   }
 
@@ -11234,10 +11213,12 @@ body {
     padding-right: 0
   }
 
-  body.container .app-header, body.container org-header {
-    left: auto;
-    right: auto;
-    width: 71.25rem
+  body.container .app-header {
+    left: 0;
+    right: 0;
+    /*left: auto;*/
+    /*right: auto;*/
+    /*width: 71.25rem*/
   }
 }
 
