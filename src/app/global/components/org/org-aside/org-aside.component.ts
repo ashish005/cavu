@@ -30,7 +30,9 @@ export class OrgAsideComponent {
     //this.activeFragment = this.route.fragment.pipe(share());
   }
 
-  //routeToUrl=(item)=> this.router.navigate(item.routeTo, { relativeTo: this.activatedRoute.parent });
+  routeToUrl(item) {
+      this.router.navigate(item.routeTo, { relativeTo: this.activatedRoute.parent });
+  }
 
   signout = () => this.authService.logout();
 

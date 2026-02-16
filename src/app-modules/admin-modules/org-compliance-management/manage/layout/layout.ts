@@ -1,24 +1,48 @@
-import {Component, TemplateRef} from '@angular/core';
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
+import {ChangeDetectorRef, Component, TemplateRef} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
 import {ComplianceAPIResolver} from "../services";
 
 @Component({
     standalone: false,
     templateUrl: './layout.html',
-    styles: [`::ng-deep ng-component{ display: contents;} :host { display: contents;}`]
+    styles: [`::ng-deep ng-component{ display: contents;}`],
 })
 export class Layout {
-    page: any;
     public actionTemplate: TemplateRef<any>;
     public pageTitleTemplate: TemplateRef<any>;
-    constructor(public activatedRoute: ActivatedRoute, public lookupResolver: ComplianceAPIResolver){
-        this.page = this.activatedRoute.snapshot.data;
-    }
 
+    public navList: Array<any> = [
+        {
+            isFLatChildren: true, key: 'main',
+            children:[
+                { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' }
+            ]
+        },
+        {
+            isFLatChildren: true, key: 'Management',
+            children:[
+                { routeTo: ['list'], icon:"fa fa-home", key: 'Compliance' },
+                { routeTo: ['regulatory'], icon:"fa fa-envelope", key: 'Regulatory' },
+            ]
+        },
+        {
+            isFLatChildren: true, key: 'Report',
+            children:[
+                { routeTo: ['board'], icon:"fa fa-home", key: 'Compliance Board' },
+                { routeTo: ['report'], icon:"fa fa-history", key: 'Compliance report' }
+            ]
+        },
+        {
+            isFLatChildren: true, key: 'Other',
+            children:[
+                { routeTo: ['scheduler'], icon:"fa fa-home", key: 'Test Scheduler' }
+            ]
+        }
+    ];
 
-
-    onActivate(componentRef){
+    constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef, public lookupResolver: ComplianceAPIResolver){}
+    ngAfterContentChecked(){ this.cdref.detectChanges(); }
+    onActivate(componentRef) {
         this.actionTemplate = componentRef.actionTemplate;
         this.pageTitleTemplate = componentRef.pageTitleTemplate;
     }

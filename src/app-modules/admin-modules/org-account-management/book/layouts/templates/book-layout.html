@@ -1,0 +1,111 @@
+<div class="app-content" role="main">
+    <div class="content-header m-auto">
+        <book-search [code]="page?.code" (onOk)="searchActionCb($event)"></book-search>
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="fade aside aside-sm" id="content-aside">
+                <div class="d-flex flex-column w-md light lt">
+                    <!--<div class="px-3 text-muted text-sm"></div>
+                    <a class="nav-link"><span class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()">
+                        <i class="fa fa-plus float-left"></i>New Voucher</span>
+                    </a>-->
+                    <div class="scrollable hover">
+                        <div class="list-group list-group-gap p-2">
+                            <ng-template ngFor let-nav [ngForOf]="asideData?.navList | sortBy:'asc': 'sortOrder'"
+                                         let-i="index">
+                                <div class="py-2 px-0" *ngIf="nav.show">
+                                    <span class="text-muted text-sm">{{nav.name}}</span>
+                                </div>
+                                <ng-template ngFor let-item [ngForOf]="nav.children | sortBy:'asc': 'sortOrder'">
+                                    <a class="list-group-item p-0 px-2" [routerLink]="item.routeTo"
+                                       routerLinkActive="active">
+                                        <span class="float-right py-1"><i class="fa fa-chevron-right"></i></span>
+                                        <span class="nav-text py-1"><i [class]="item.icon"
+                                                                       class="pr-2"></i>{{item.name}}</span>
+                                    </a>
+                                </ng-template>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap lt">
+                        <div class="no-shadow">
+                            <h6 class="mb-0"> {{page?.title}} </h6>
+                            <small class="float-left" *ngIf="searchFilter?.name">{{ searchFilter?.name }}</small>
+                        </div>
+                        <ul class="nav nav-xs flex-row no-border">
+                            <li class="nav-item b-a mr-2">
+                                <a class="btn btn-xs btn-icon float-right"> <i class="fa fa-close"></i></a>
+                                <button class="btn btn-sm no-shadow" type="button">
+                                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                                    Opening Balance
+                                </button>
+                            </li>
+                            <li class="nav-item b-a mr-2">
+                                <a class="btn btn-xs btn-icon float-right"> <i class="fa fa-close"></i></a>
+                                <button class="btn btn-sm no-shadow" type="button">
+                                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                                    closing Balance
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="px-3 d-flex flex scroll-y">
+                        <router-outlet (activate)='onActivate($event)'></router-outlet>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> Account Book </h6>
+        <small class="float-left"><i></i> Management</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+</ng-template>
+<ng-template #actionTemplate1>
+    <div class="navbar box-shadow">
+        <!--<span class="text-md text-ellipsis flex"></span>-->
+        <ul class="nav nav-xs flex-row no-border pr-2">
+            <!--<li class="nav-item">
+              <a class="nav-link" data-toggle="modal" data-target="#profile" data-modal=""
+                                    data-pjax-state=""><span class="btn btn-sm btn-icon btn-rounded success"><i
+              class="fa fa-user"></i></span></a>
+            </li>
+            <li class="nav-item"><a class="nav-link" data-toggle="tooltip" data-placement="bottom" title=""
+                                    data-original-title="Phone Call" data-pjax-state=""><span
+              class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-phone"></i></span></a>
+            </li>-->
+            <li class="nav-item dropdown d-flex align-items-center">
+                <!--*ngIf="coreLookup?.isVoucherLookupInSync"-->
+                <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="fa fa-fw fa-plus"></i>
+                    <span class="hidden-folded d-inline">Voucher</span>
+                </button>
+                <!--<ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                    <li class="dropdown-item"
+                        *ngFor="let voucherType of coreLookup.voucherLookup?.voucherTypes; let i = index;">
+                        <i class="fa fa-dot-circle-o text-success"></i>
+                        <a (click)="onNewVoucherClick(voucherType)">{{voucherType.name}}</a>
+                    </li>
+                </ul>-->
+            </li>
+            <!--<li class="nav-item">
+                <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToExcel()"><i
+                        class="fa fa-file-excel-o"></i></span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white" (click)="exportToPDF()"><i
+                        class="fa fa-file-pdf-o green"></i></span></a>
+            </li>-->
+        </ul>
+    </div>
+</ng-template>

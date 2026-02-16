@@ -17,10 +17,14 @@ export const ComplianceRoutes: Routes = [
             { path: 'dashboard', component: ComplianceDashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
             { path: 'list', resolve: { items: ComplianceAPIResolver }, component: ComplianceView, data: {title: 'Manage Compliance'} },
             { path: 'regulatory', component: ComplianceRegulatoryView, data: {title: 'Manage Compliance Regulatory'} },
-            { path: 'board', resolve: { items: ComplianceAPIResolver }, component: ComplianceBoardView, data: {title: 'Manage Compliance'} }
+            { path: 'board', resolve: { items: ComplianceAPIResolver }, component: ComplianceBoardView, data: {title: 'Manage Compliance'} },
+            { path: 'scheduler', component: TestComplianceSchedulerView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
+            {
+                path: 'report', data: { translatePath: 'modules.project.manage' },
+                loadChildren: () => import('../report').then(m => m.ComplianceReportModule)
+            }
         ]
     },
-    { path: 'scheduler', component: TestComplianceSchedulerView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
 
 ];
 export const COMPLIANCE_VIEWS = [

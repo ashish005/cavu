@@ -11,19 +11,33 @@ import {TaskReminderView} from "./views/task-reminder.view";
 import {OrgWorkflowAPIResolver} from "@app-global";
 
 export const OrgProcessTaskRoutes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo:'dashboard' },
-  { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
     {
-        path: 'instance', component: Layout, resolve: { lookup: OrgWorkflowAPIResolver },
-        children:[
-            { path: '', pathMatch: 'full', redirectTo:'info' },
-            { path: 'info', component: ProcessView, data: { title: 'Process', key: 'process', header:'process'} },
-            { path: 'task', component: OrgTaskView, data: { title: 'Task', key: 'task', header:'task'} },
-            { path: 'task-runner', component: TaskRunnerView, data: { title: 'Task Info', key: 'task_info', header:'Task Info'} },
-            { path: 'scheduled', component: TaskScheduleView, data: { title: 'Schedules', key: 'schedule', header:'Task Schedule'} },
-            { path: 'history', component: SchedulerLogView, data: { title: 'Schedule History', key: 'schedule_history', header:'Schedule History'} },
-            { path: 'task-calendar', component: TaskCalendarView, data: { title: 'Task Calendar', key: 'calendar', header:'Task Calendar'} },
-            { path: 'task-reminder', component: TaskReminderView, data: { title: 'Reminder', key: 'reminder', header:'Task Reminder'} }
+        path: '', component: Layout,
+        children: [
+            { path: '', pathMatch: 'full', redirectTo:'dashboard' },
+            { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', key: 'dashboard', header:'Dashboard'} },
+            {
+                path: 'instance', resolve: { lookup: OrgWorkflowAPIResolver },
+                children:[
+                    { path: '', pathMatch: 'full', redirectTo:'info' },
+                    { path: 'info', component: ProcessView, data: { title: 'Process', key: 'process', header:'process'} },
+                    { path: 'task', component: OrgTaskView, data: { title: 'Task', key: 'task', header:'task'} },
+                    { path: 'task-runner', component: TaskRunnerView, data: { title: 'Task Info', key: 'task_info', header:'Task Info'} },
+                    { path: 'scheduled', component: TaskScheduleView, data: { title: 'Schedules', key: 'schedule', header:'Task Schedule'} },
+                    { path: 'history', component: SchedulerLogView, data: { title: 'Schedule History', key: 'schedule_history', header:'Schedule History'} },
+                    { path: 'task-calendar', component: TaskCalendarView, data: { title: 'Task Calendar', key: 'calendar', header:'Task Calendar'} },
+                    { path: 'task-reminder', component: TaskReminderView, data: { title: 'Reminder', key: 'reminder', header:'Task Reminder'} }
+                ]
+            },
+            {
+                path: 'master', data: { translatePath: 'modules.project.manage' },
+                loadChildren: () => import('../workflow').then(m => m.WorkflowManageModule)
+            },
+            {
+                path: 'setup', //canLoad:[ModuleGuard],
+                loadChildren: () => import('../setup').then(m => m.ProcessSetupModule),
+                data: {title: 'Process', header:'Process', name: "Process", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
+            },
         ]
     }
 ];

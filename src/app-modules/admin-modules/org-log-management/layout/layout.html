@@ -1,25 +1,16 @@
 <div class="app">
-  <div class="app-content box-shadow-0" role="main">
-    <div class="content-header white box-shadow-0">
-      <div class="navbar flex-nowrap">
-        <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
-          <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
-        </a>
-        <div class="no-shadow">
-          <h6 class="mb-0">Logs</h6>
-          <small class="float-left"></small>
-        </div>
-        <!--<div class="nav-active-border b-theme px-4 px-md-0">
-          <ul class="nav nav-xs flex-row" *ngFor="let nav of navList">
-            <li class="nav-item" *ngFor="let item of nav?.children" routerLinkActive="active">
-              <a class="nav-link" [routerLink]="item.routeTo" [fragment]="item.code">{{ item?.key  }}</a>
-            </li>
-          </ul>
-        </div>-->
-      </div>
+  <org-aside [data]="navList"></org-aside>
+  <div id="content" class="app-content">
+    <div class="navbar flex-nowrap white lt box-shadow">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+      <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
     </div>
-    <div class="content-main d-flex flex">
-      <router-outlet></router-outlet>
+    <div class="pl-3 pr-3 py-2"><app-breadcrumb></app-breadcrumb></div>
+    <div id="content-main" class="content-main d-flex flex">
+      <router-outlet (activate)='onActivate($event)'></router-outlet>
     </div>
   </div>
 </div>

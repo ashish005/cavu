@@ -1,22 +1,22 @@
 <div class="app">
-    <div class="app-content box-shadow-0" role="main">
-        <div class="navbar flex-nowrap lt">
-            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
-                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+    <org-aside [data]="navList"></org-aside>
+    <div id="content" class="app-content">
+        <div class="navbar flex-nowrap white lt box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
             </a>
-            <div class="no-shadow">
-                <h6 class="mb-0"> Process </h6>
-                <small class="float-left"> Management</small>
-            </div>
+            <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
             <div class="nav-active-border b-theme px-4 px-md-0">
                 <ul class="nav nav-xs flex-row">
                     <li class="nav-item"><a class="nav-link" routerLink="info" routerLinkActive="active">Process</a></li>
                     <li class="nav-item"><a class="nav-link" routerLink="task" routerLinkActive="active">Tasks</a></li>
                 </ul>
             </div>
+            <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
         </div>
-        <div class="content-main d-flex flex">
-            <router-outlet></router-outlet>
+        <div class="pl-3 pr-3 py-2"><app-breadcrumb></app-breadcrumb></div>
+        <div id="content-main" class="content-main d-flex flex">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
         </div>
     </div>
 </div>

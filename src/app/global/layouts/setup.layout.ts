@@ -10,7 +10,4 @@ export class SetupLayout {
     public navList: Array<any> = [];
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}
     ngAfterContentChecked(){ this.cdref.detectChanges(); }
-    onActivate(componentRef) {
-        this.navList = componentRef.navList;
-    }
 }

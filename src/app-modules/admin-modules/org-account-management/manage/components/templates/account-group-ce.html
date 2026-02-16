@@ -1,0 +1,77 @@
+<form class="flex p-3" [formGroup]="customFrom">
+    <div class="row row-sm">
+        <div class="col-sm-12">
+            <div class="md-form-group">
+                <input class="md-input" formControlName="name" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                <label> Name </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <p><label class="md-check"><input type="checkbox" formControlName="isHighPriority"> <i class="theme"></i> High Priority </label></p>
+        </div>
+        <div class="col-sm-6">
+            <p><label class="md-check"><input type="checkbox" formControlName="isNominalGroup"> <i class="theme"></i> Nominal Group </label></p>
+        </div>
+        <div class="col-sm-12">
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <button class="btn white" type="button">Account Nature</button>
+                </div>
+                    <ng-template ngFor let-nature [ngForOf]="apiResolver?.masterType?.natures" let-i="index">
+                        <div class="form-control">
+                            <label class="md-check">
+                                <input type="radio" name="accountNatureId" (click)="updateAccountNature(nature.id)" [value]="nature.id" formControlName="accountNatureId">
+                                <i class="blue"></i>
+                                {{ nature.name }}
+                            </label>
+                        </div>
+                    </ng-template>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="list">
+                <ng-template ngFor let-group [ngForOf]="groupsByNature" let-j="index">
+                    <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:group, level: 1}"></ng-container>
+                </ng-template>
+            </div>
+            <!--<select-dropdown [items]="apiResolver?.masterType?.filteredAccountGroup"
+                             title="Parent Group"
+                             (cb)="updateAccountGroup($event)"
+                             [control]="formAccountGroup"></select-dropdown>-->
+        </div>
+        <!--<div class="col-sm-12" *ngIf="formHighPriority.value">
+            This is primary account group. You can not update this.
+        </div>-->
+    </div>
+    <ng-template #footerTemplate>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button (click)="onSubmit(customFrom)" class="btn btn-sm primary m-2"
+                            [disabled]="!customFrom.valid || submitted">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+                <span *ngIf="!formAccountGroup.value"> This is root group.</span>
+            </div>
+        </div>
+    </ng-template>
+</form>
+<ng-template #groupRowTemplate let-row='row' let-level="level">
+    <div class="list-item p-1" [formGroup]="customFrom">
+        <div class="list-body">
+            <a class="item-title _500"><span class="badge primary mr-1">{{level}}</span>{{row.name}}</a>
+            <span class="text-xs item-tag tag float-right" [class.hide]="level < 3">Only 2 levels allowed</span>
+        </div>
+        <div>
+            <span [class.green]="row.status == 'Active'" class="badge mx-2">{{row.status}}</span>
+            <label class="md-check" *ngIf="level < 3">
+                <input type="radio" name="parentGroupId" [value]="row.id" formControlName="parentGroupId"><i class="blue"></i>
+            </label>
+        </div>
+    </div>
+    <ng-template ngFor let-group [ngForOf]="row.children" let-j="index">
+        <div class="pl-4">
+            <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{ row:group, level: level+1 }"></ng-container>
+        </div>
+    </ng-template>
+</ng-template>

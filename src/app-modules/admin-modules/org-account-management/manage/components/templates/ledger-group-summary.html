@@ -1,0 +1,40 @@
+<div class="d-flex flex-column h-100">
+    <div class="px-2">
+        <div class="input-group flex">
+            <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" [(ngModel)]="query" required="">
+            <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>
+        </div>
+    </div>
+    <div class="px-2 text-muted text-sm">Account Group</div>
+    <!--<a class="nav-link mt-2" (click)="addAccountGroup()">
+        <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Account Group</span>
+    </a>-->
+    <div class="scrollable hover">
+        <div class="list">
+            <ng-template ngFor let-row [ngForOf]="gridData | searchFilter: query | sortBy:'asc': 'head'" let-i="index">
+                <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:row}"></ng-container>
+            </ng-template>
+        </div>
+        <div class="no-result hide">
+            <div class="p-4 text-center">No Results</div>
+        </div>
+        <loader [isLoading]="isLoading"></loader>
+    </div>
+    <!--<div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>-->
+</div>
+<ng-template #groupRowTemplate let-row='row'>
+    <div class="list-item p-1">
+        <div class="list-body">
+            <a class="text-xs _500">{{row.head}}</a>
+        </div>
+        <div>
+            <a class="btn b-a py-0 mx-2 _500 text-sm" [class]="(row.balance < 0)? 'text-danger': ''">{{row.closingBalance | orgCurrency }}</a>
+            <a class="btn btn-xs py-1" (click)="showLedgerDetails(row)"><i class="fa fa-chevron-right"></i></a>
+        </div>
+    </div>
+    <ng-template ngFor let-childRow [ngForOf]="row?.children | searchFilter: query" let-j="index">
+        <div class="b-l ml-2">
+            <ng-container [ngTemplateOutlet]="groupRowTemplate" [ngTemplateOutletContext]="{row:childRow}"></ng-container>
+        </div>
+    </ng-template>
+</ng-template>

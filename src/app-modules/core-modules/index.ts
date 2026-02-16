@@ -8,10 +8,7 @@ export const CoreCommonModuleRoutes = [
     { path: 'office-expense', loadChildren: () => import('app-modules/core-modules/office-expense').then(m => m.ExpenseModule), data: { code: 'OFC_EXPENSE', title: 'Expense', header:'Expense'} },//code: "EXPENSE",
 
     { path: 'invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/create-voucher/index').then(m => m.InvoiceCEModule), data: {code: "FIN" } },
-    { path: 'reports', loadChildren: () => import('app-modules/core-modules/org-reports/index').then(m => m.OrgReportModule), data: {code: "FIN" } },
-    //{ path: 'invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceModule), data: {code: "FIN" } },
-
-  //{ path: 'manage-invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: {code: "FIN" } },
+    //{ path: 'manage-invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: {code: "FIN" } },
   { path: 'org-invoice', loadChildren: () => import('app-modules/app-admin/org-invoice/index').then(m => m.ManageMoneyModule), data: {icon:"fa fa-money", name: "Money", key: 'layout.money', title: 'Invoices', header:'Invoices' } },
     { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 

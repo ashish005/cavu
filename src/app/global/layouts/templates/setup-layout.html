@@ -1,12 +1,20 @@
 <header class="app-header theme flex-nowrap box-shadow">
-  <org-header [isAdminView]="true"></org-header>
+    <org-header [isAdminView]="true"></org-header>
 </header>
 <div class="app" id="app">
-  <org-aside [data]="navList"></org-aside>
-  <div id="content" class="app-content">
-    <div class="pl-3 pr-3 py-2"><app-breadcrumb></app-breadcrumb></div>
-    <div id="content-main" class="content-main d-flex flex">
-      <router-outlet (activate)='onActivate($event)'></router-outlet>
+    <router-outlet></router-outlet>
+    <div class="d-flex flex-column b-l sidenav hv" style="width: 50px;right: 0px;position: relative;">
+        <div class="flex hide-scroll">
+            <div class="nav-stacked nav-active-theme">
+                <ul class="nav">
+                    <li><a [routerLink]="'setup/org-setup'"><span class="nav-icon"><i class="fa fa-institution"></i></span><span class="nav-text">Org Setup</span></a></li>
+                    <li><a [routerLink]="'process'"><span class="nav-icon"><i class="fa fa-user-circle"></i></span><span class="nav-text">Process Setup</span></a></li>
+                    <li><a [routerLink]="'compliance'"><span class="nav-icon"><i class="fa fa-users"></i></span><span class="nav-text">Compliance Setup</span></a></li>
+                    <li><a [routerLink]="'accounting'"><span class="nav-icon"><i class="fa fa-institution"></i></span><span class="nav-text">Account & Finance</span></a></li>
+                    <li><a [routerLink]="'subscription'"><span class="nav-icon"><i class="fa fa-leaf"></i></span><span class="nav-text">Subscription Setup</span></a></li>
+                    <li><a [routerLink]="'reports'"><span class="nav-icon"><i class="fa fa-leaf"></i></span><span class="nav-text">Reports</span></a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

@@ -154,7 +154,7 @@
         <li class="nav-item align-items-center dropdown" *ngIf="isAuthenticated$ | async">
             <div class="dropdown d-flex">
                 <a href="#" data-toggle="dropdown" class="d-flex align-items-center theme text-theme dropdown-toggle">
-                    <span class="avatar w-28 theme text-theme circle"></span>
+                    <span class="avatar theme text-theme circle"></span>
                     <span id="email">{{email}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right w animate fadeIn"  x-placement="bottom-start">
@@ -214,9 +214,9 @@
             </a>
         </div>
         <div class="col dropdown-item">
-            <a (click)="routeToModulePath('process')" class="d-block text-center">
-                <i class="fa text-sm fa fa-user-circle text-muted"></i>
-                <small class="d-block _500 title">Process Setup</small>
+            <a (click)="routeToModulePath('subscription')" class="d-block text-center">
+                <i class="fa text-sm fa fa-leaf text-muted"></i>
+                <small class="d-block _500 title">Subscription Setup</small>
             </a>
         </div>
         <div class="col dropdown-item">
@@ -255,11 +255,6 @@
                 <li class="dropdown-item">
                     <a [routerLink]="['accounting', 'trxn']">
                         <small class="d-block _500 title">Trxn Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['manage-invoice']">
-                        <small class="d-block _500 title">Invoices</small>
                     </a>
                 </li>
             </ul>
@@ -338,11 +333,6 @@
                 <li class="dropdown-item">
                     <a [routerLink]="['accounting', 'trxn']">
                         <small class="d-block _500 title">Trxn Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['manage-invoice']">
-                        <small class="d-block _500 title">Invoices</small>
                     </a>
                 </li>
             </ul>

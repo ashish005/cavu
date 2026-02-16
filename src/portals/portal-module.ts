@@ -81,31 +81,17 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                       }
                       return [];
                     }
-                }
+                },
+                //...ADMIN_SETUP_ROUES
                 /*{
                     path: 'setup',
                     component: SetupLayout,
                     canActivate:[PortalAuthGuard], canLoad: [ModuleGuard],
                     children: [
                         {
-                            path: 'org-log',
-                            loadChildren: () => import('app-common/org-log/index').then(m => m.OrgLogModule),
-                            data: {title: 'Log', header: 'Log'}
-                        },
-                        {
-                            path: 'process', canLoad: [PortalAuthGuard],
-                            loadChildren: () => import('app-modules/core-modules/org-process/index').then(m => m.ProcessModule),
-                            data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'}
-                        },
-                        {
                             path: 'notification', canLoad: [PortalAuthGuard],
                             loadChildren: () => import('app-common/notification/index').then(m => m.NotificationModule),
                             data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
-                        },
-                        {
-                            path: 'compliance', canLoad: [PortalAuthGuard],
-                            loadChildren: () => import('app-common/compliance/index').then(m => m.ComplianceModule),
-                            data: {title: 'Compliance', header: 'Compliance'}
                         },
                         {
                             path: 'tax-management', canLoad: [PortalAuthGuard],
