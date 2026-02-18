@@ -220,91 +220,29 @@
             </a>
         </div>
         <div class="col dropdown-item">
-            <a (click)="routeToModulePath('compliance')" class="d-block text-center">
+            <a (click)="routeToModulePath('trxn-setup')" class="d-block text-center">
                 <i class="fa text-sm fa fa-users text-muted"></i>
-                <small class="d-block _500 title">Compliance Setup</small>
+                <small class="d-block _500 title">Bank & Transaction Setup</small>
             </a>
         </div>
     </div>
     <div class="row no-gutters px-2 pb-2">
-        <div class="col">
-            <div class="px-1 text-muted text-sm b-b b-theme">Account & Finance</div>
-            <ul class="p-0 d-inline">
-                <li class="dropdown-item">
-                    <a [routerLink]="['accounting', 'ledger']">
-                        <small class="d-block _500 title">Account</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['accounting', 'book']">
-                        <small class="d-block _500 title">Account Book</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['accounting', 'report']">
-                        <small class="d-block _500 title">Financial Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['office-expense']">
-                        <small class="d-block _500 title">Office Expenses</small>
-                    </a>
-                </li>
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['accounting', 'trxn']">
-                        <small class="d-block _500 title">Trxn Report</small>
-                    </a>
-                </li>
-            </ul>
+        <div class="col-12 px-1 text-muted text-sm b-b b-theme">Reports</div>
+        <div class="col dropdown-item">
+            <a (click)="routeToModulePath('reports')" class="d-block text-center">
+                <i class="fa text-sm fa-institution text-muted"></i>
+                <small class="d-block _500 title">Voucher Reports</small>
+            </a>
         </div>
-        <div class="col">
-            <div class="px-1 text-muted text-sm b-b b-theme">Reports</div>
-            <ul class="p-0 d-inline">
-                <li class="dropdown-item">
-                    <a [routerLink]="['reports', 'sale']">
-                        <small class="d-block _500 title">Sale Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['reports', 'purchase']">
-                        <small class="d-block _500 title">Purchase Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['reports', 'payment']">
-                        <small class="d-block _500 title">Payment Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['reports', 'receipt']">
-                        <small class="d-block _500 title">Receipt Report</small>
-                    </a>
-                </li>
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-item">
-                    <a [routerLink]="['reports', 'inventory']">
-                        <small class="d-block _500 title">Inventory Report</small>
-                    </a>
-                </li>
-            </ul>
+        <div class="col dropdown-item">
         </div>
-        <div class="col">
-            <div class="px-1 text-muted text-sm b-b b-theme">Audit & Compliance</div>
-            <ul class="p-0 d-inline">
-                <li class="dropdown-item">
-                    <a [routerLink]="['compliance']">
-                        <small class="d-block _500 title">Compliance</small>
-                    </a>
-                </li>
-            </ul>
+        <div class="col dropdown-item">
         </div>
     </div>
 </ng-template>
 <ng-template #navbarRightTemplate>
     <ng-container *ngTemplateOutlet="orgModuleTemplate"></ng-container>
-    <div class="row no-gutters px-2 pb-2">
+    <!--<div class="row no-gutters px-2 pb-2">
         <div class="col">
             <div class="px-1 text-muted text-sm b-b b-theme">Account & Finance</div>
             <ul class="p-0 d-inline">
@@ -378,5 +316,5 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>-->
 </ng-template>

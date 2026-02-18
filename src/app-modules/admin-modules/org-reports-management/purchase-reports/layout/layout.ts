@@ -9,7 +9,6 @@ import {LayoutExtension} from "../../layout-extension";
 })
 export class InvoiceReportLayout extends LayoutExtension implements OnInit {
     get showTrialBalanceOption(){ return this.page?.code == 'FIN_TB';};
-    public pageTitleTemplate: TemplateRef<any>;
     constructor(private router: Router,
                 public activatedRoute: ActivatedRoute,
                 public sharedService: SharedService){ super();

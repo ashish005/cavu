@@ -1,14 +1,3 @@
-<ng-template #actionTemplate>
-    <div class="navbar flex-nowrap">
-        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
-            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
-        </a>
-        <!--<a class="no-shadow">
-            <h6 class="mb-0">{{pageTitle }}</h6>
-            <small class="float-left pl-4">{{page?.desc }}</small>
-        </a>-->
-    </div>
-</ng-template>
 <div class="d-flex flex">
     <div class="d-flex flex-column flex">
         <div class="navbar flex-nowrap box-shadow">
@@ -33,3 +22,13 @@
         </div>
     </div>
 </div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Reminders</h6>
+        <small class="float-left"></small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+
+</ng-template>

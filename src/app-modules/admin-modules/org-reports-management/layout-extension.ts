@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 @Directive()
 export class LayoutExtension {
     @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
     page: any;
     public layout: any;
     public componentRef: any;

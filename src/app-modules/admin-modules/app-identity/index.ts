@@ -37,9 +37,7 @@ class Layout {
             isFLatChildren: true, key: 'Teams, Workflow & Logs',
             children:[
                 { routeTo: ['org-team'], icon:"fa fa-building", key: 'Team' },
-                { routeTo: ['notification'], icon:"fa fa-bell", key: 'Notification' },
-                { routeTo: ['setup-trxn'], icon:"fa fa-cc-visa", key: 'Bank' },
-                { routeTo: ['bank-trxn'], icon:"fa fa-cc-visa", key: 'Bank Integration' }
+                { routeTo: ['notification'], icon:"fa fa-bell", key: 'Notification' }
             ]
         },
         {
@@ -104,11 +102,6 @@ class Layout {
                         data: {code: "ACCESS_TAX_MGT", title: 'Tax', header: 'Manage Tax'}
                     },
                     {
-                        path: 'setup-trxn',
-                        loadChildren: () => import('app-modules/app-admin/setup-transaction/index').then(m => m.SetupTransactionModule),
-                        data: {title: 'Bank', header: 'Bank', name: "Banking", key: 'layout.banking'}//code: "ACCESS_VT_MGT",
-                    },
-                    {
                         path: 'integration',
                         loadChildren: () => import('app-modules/app-admin/integration/index').then(m => m.IntegrationModule),
                         data: {title: 'Integration', header: 'Integration'}//code: '',
@@ -117,16 +110,6 @@ class Layout {
                         path: 'quiz',
                         loadChildren: () => import('app-modules/app-admin/quiz/index').then(r => r.QuizModule),
                         data: {title: 'Quiz', header: 'Quiz'}
-                    },
-                    {
-                        path: 'transaction-setup',
-                        loadChildren: () => import('app-modules/app-admin/setup-transaction/index').then(m => m.SetupTransactionModule),
-                        data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
-                    },
-                    {
-                        path: 'bank-trxn', //canLoad:[ModuleGuard],
-                        loadChildren: () => import('app-modules/app-admin/setup-transaction/transaction').then(m => m.BankTransactionModule),
-                        data: {title: 'Trxn', header: 'Bank Trxn', name: "Bank Trxn", key: 'layout.banking'}//code: "ACCESS_VT_MGT",
                     },
                     {
                         path: 'payroll', //canLoad:[ModuleGuard],

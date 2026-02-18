@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
@@ -6,8 +6,12 @@ import {ActivatedRoute, Router} from "@angular/router";
     templateUrl: './layout.html'
 })
 export class ConfigLayout implements OnInit {
-    public actionTemplate: TemplateRef<any>;
-    public pageTitleTemplate: TemplateRef<any>;
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
+
+    public pageTitleLayoutTemplate: TemplateRef<any>;
+    public actionLayoutTemplate: TemplateRef<any>;
+
 
     pageTitle: string;
     constructor(public activatedRoute: ActivatedRoute, private router: Router){
@@ -35,7 +39,7 @@ export class ConfigLayout implements OnInit {
     ngOnInit(){}
 
     onActivate(componentRef){
-        this.actionTemplate = componentRef.actionTemplate;
-        this.pageTitleTemplate = componentRef.pageTitleTemplate;
+        this.actionLayoutTemplate = componentRef.actionTemplate;
+        this.pageTitleLayoutTemplate = componentRef.pageTitleTemplate;
     }
 }

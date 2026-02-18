@@ -33,6 +33,7 @@ export const ADMIN_SETUP_ROUES: Routes = [
             { path: 'accounting', loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN" } },
             { path: 'reports', loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN" } },
             { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/app-identity/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
+            { path: 'trxn-setup', loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN" } },
         ]
     }
 ];
@@ -42,16 +43,6 @@ export const EMPLOYEE_COMMON_ROUES = [
         isFLatChildren: false, key: 'Account & Finance',
         children:[
             { routeTo: ['office-expense'], icon:"fa fa-dashboard", key: "Office Expenses" }
-        ]
-    },
-    {
-        isFLatChildren: false, key: 'Reports',
-        children:[
-            { routeTo: ['reports/sale'], icon:"fa fa-group", code: "", key: 'Sale Report' },
-            { routeTo: ['reports/purchase'], icon:"fa fa-bell", code: "", key: 'Purchase Report' },//code: "COM"
-            { routeTo: ['reports/payment'], icon:"fa fa-bell", code: "", key: 'Payment Report' },//code: "COM"
-            { routeTo: ['reports/receipt'], icon:"fa fa-bell", code: "", key: 'Receipt Report' },//code: "COM"
-            { routeTo: ['reports/inventory'], icon:"fa fa-dashboard", key: "Inventory Report" }
         ]
     },
     {

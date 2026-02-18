@@ -1,80 +1,3 @@
-<ng-template #actionTemplate>
-    <div class="navbar flex-nowrap">
-        <a class="no-shadow">
-            <h6 class="mb-0">Scheduled Tasks</h6>
-            <small class="float-left pl-4"></small>
-        </a>
-        <!-- <ul class="nav nav-xs flex-row no-border">
-             <li class="nav-item">
-                 <div class="btn-group float-right">
-                     <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType?.orgProcess" let-j="index">
-                         <button type="button" class="btn btn-sm btn-outline b-primary" [class.active]="lookupResolver.orgProcess?.id == row.id" (click)="showData(row)"> {{row.name}} </button>
-                     </ng-template>
-                 </div>
-             </li>
-         </ul>-->
-        <!--<ul class="nav nav-xs flex-row no-border">
-            <li class="nav-item b-a mr-2">
-                <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
-                <button type="button" class="btn btn-xs text-xs no-shadow">
-                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
-                    Assigned To Me
-                </button>
-            </li>
-            <li class="nav-item b-a mr-2">
-                <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
-                <button type="button" class="btn btn-xs text-xs no-shadow">
-                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
-                    Reported By Me
-                </button>
-            </li>
-            <li class="nav-item b-a mr-2">
-                <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
-                <button type="button" class="btn btn-xs text-xs no-shadow">
-                    <a class="active"><i class="fa fa-check text-success d-none"></i></a>
-                    Verification By Me
-                </button>
-            </li>
-        </ul>-->
-        <!--<ul class="nav nav-xs flex-row no-border">
-            <li class="nav-item mr-2"><button type="button" class="btn btn-sm no-shadow"><input type="checkbox" class="active mr-2"> My Tasks </button></li>
-            <li class="nav-item mr-2"><button type="button" class="btn btn-sm no-shadow"><input type="checkbox" class="active mr-2"> My Project Tasks </button></li>
-        </ul>-->
-        <ul class="nav nav-xs flex-row no-border">
-            <!--<li class="nav-item">
-                <div class="btn-group float-right">
-                    <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
-                        <button type="button" class="btn btn-sm btn-outline b-primary" (click)="showData(row)"><i class="fa" [class]="row.icon"></i></button>
-                    </ng-template>
-                </div>
-            </li>-->
-            <li class="nav-item px-2">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
-                    <p class="my-0 px-4">October 12, 2016</p>
-                    <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
-                    </button>
-                </div>
-            </li>
-            <!--<ng-template ngFor let-item [ngForOf]="viewNavigations.task | sortBy:'asc': 'sortOrder'" let-i="index">
-                <li class="nav-item">
-                    <a class="list-group-item box p-1 px-2" [routerLink]="[item.route]" routerLinkActive="active">
-                        <span class="nav-text py-0"><i class="fa fa-calendar" class="pr-2"></i>{{item.name}}</span>
-                    </a>
-                </li>
-            </ng-template>-->
-        </ul>
-        <!--<div class="text-right float-right">
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
-                <p class="my-0 px-4">October 12, 2016</p>
-                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>-->
-    </div>
-</ng-template>
-
 <div class="d-flex flex">
     <div class="d-flex flex-column flex">
         <div class="navbar flex-nowrap box-shadow">
@@ -99,3 +22,80 @@
         </div>
     </div>
 </div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Scheduled Tasks</h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <!-- <ul class="nav nav-xs flex-row no-border">
+                 <li class="nav-item">
+                     <div class="btn-group float-right">
+                         <ng-template ngFor let-row [ngForOf]="lookupResolver.masterType?.orgProcess" let-j="index">
+                             <button type="button" class="btn btn-sm btn-outline b-primary" [class.active]="lookupResolver.orgProcess?.id == row.id" (click)="showData(row)"> {{row.name}} </button>
+                         </ng-template>
+                     </div>
+                 </li>
+             </ul>-->
+    <!--<ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item b-a mr-2">
+            <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
+            <button type="button" class="btn btn-xs text-xs no-shadow">
+                <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                Assigned To Me
+            </button>
+        </li>
+        <li class="nav-item b-a mr-2">
+            <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
+            <button type="button" class="btn btn-xs text-xs no-shadow">
+                <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                Reported By Me
+            </button>
+        </li>
+        <li class="nav-item b-a mr-2">
+            <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
+            <button type="button" class="btn btn-xs text-xs no-shadow">
+                <a class="active"><i class="fa fa-check text-success d-none"></i></a>
+                Verification By Me
+            </button>
+        </li>
+    </ul>-->
+    <!--<ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item mr-2"><button type="button" class="btn btn-sm no-shadow"><input type="checkbox" class="active mr-2"> My Tasks </button></li>
+        <li class="nav-item mr-2"><button type="button" class="btn btn-sm no-shadow"><input type="checkbox" class="active mr-2"> My Project Tasks </button></li>
+    </ul>-->
+    <ul class="nav nav-xs flex-row no-border">
+        <!--<li class="nav-item">
+            <div class="btn-group float-right">
+                <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
+                    <button type="button" class="btn btn-sm btn-outline b-primary" (click)="showData(row)"><i class="fa" [class]="row.icon"></i></button>
+                </ng-template>
+            </div>
+        </li>-->
+        <li class="nav-item px-2">
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
+                <p class="my-0 px-4">October 12, 2016</p>
+                <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
+                </button>
+            </div>
+        </li>
+        <!--<ng-template ngFor let-item [ngForOf]="viewNavigations.task | sortBy:'asc': 'sortOrder'" let-i="index">
+            <li class="nav-item">
+                <a class="list-group-item box p-1 px-2" [routerLink]="[item.route]" routerLinkActive="active">
+                    <span class="nav-text py-0"><i class="fa fa-calendar" class="pr-2"></i>{{item.name}}</span>
+                </a>
+            </li>
+        </ng-template>-->
+    </ul>
+    <!--<div class="text-right float-right">
+        <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-left"></i></button>
+            <p class="my-0 px-4">October 12, 2016</p>
+            <button type="button" class="btn btn-sm btn-outline b-primary"><i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>-->
+</ng-template>

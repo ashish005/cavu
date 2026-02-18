@@ -34,11 +34,18 @@
                        data-pjax-state="">
                         <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
                     </a>
-                    <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
-                    <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="pageTitleLayoutTemplate"></ng-template>
+                    <ng-template *ngTemplateOutlet="actionLayoutTemplate"></ng-template>
                 </div>
                 <router-outlet (activate)='onActivate($event)'></router-outlet>
             </div>
         </div>
     </div>
 </div>
+<ng-template #actionTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> Process Setup </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
+<ng-template #pageTitleTemplate></ng-template>

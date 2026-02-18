@@ -1,20 +1,8 @@
-<ng-template #actionTemplate>
-    <a class="nav-link" (click)="newCompliance()">
-        <span class="btn btn-xs btn-block btn-rounded theme"> <i class="fa fa-plus pr-2"></i> New Compliance</span>
-    </a>
-</ng-template>
-<ng-template #pageTitleTemplate>
-    <div class="no-shadow">
-        <h6 class="mb-0"> {{ pageTitle  }} </h6>
-        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
-    </div>
-</ng-template>
 <div class="d-flex flex">
     <div class="d-flex flex-column flex">
         <div class="navbar flex-nowrap box-shadow">
-            <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
-            <div>
-                <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+            <div class="no-shadow">
+                <h6 class="mb-0"> {{ pageTitle  }} </h6>
             </div>
         </div>
         <div class="scrollable hover h-100">
@@ -31,3 +19,15 @@
         </div>
     </div>
 </div>
+
+<ng-template #actionTemplate>
+    <a class="nav-link" (click)="newCompliance()">
+        <span class="btn btn-xs btn-block btn-rounded theme"> <i class="fa fa-plus pr-2"></i> New Compliance</span>
+    </a>
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ pageTitle  }} </h6>
+        <small class="float-left"><i [class]="pageIcon"></i> Management</small>
+    </div>
+</ng-template>

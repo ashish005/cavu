@@ -1,30 +1,4 @@
 <div id="content" class="app-content box-shadow-0" role="main">
-    <div class="navbar flex-nowrap">
-        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none"
-           data-pjax-state="">
-            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
-        </a>
-        <div class="no-shadow">
-            <h6 class="mb-0"> {{ layout.header }} </h6>
-            <small class="float-left"> Management</small>
-        </div>
-        <ul class="nav nav-xs flex-row no-border">
-            <li class="nav-item">
-                <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
-            </li>
-        </ul>
-        <ul class="nav nav-xs flex-row no-border">
-            <li class="nav-item">
-                <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-file-excel-o"></i></span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-file-pdf-o green"></i></span></a>
-            </li>
-            <li class="nav-item mx-1">
-                <button class="btn btn-sm btn-outline border text-theme b-theme"><i class="fa fa-hand-grab-o pr-2"></i>Activities</button>
-            </li>
-        </ul>
-    </div>
     <div class="content-main d-flex flex">
         <div class="d-flex flex">
             <div class="fade aside aside-sm" id="content-aside">
@@ -60,3 +34,22 @@
         </div>
     </div>
 </div>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ layout.header }} </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item">
+            <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-file-excel-o"></i></span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"><span class="btn btn-sm btn-icon btn-rounded white"><i class="fa fa-file-pdf-o green"></i></span></a>
+        </li>
+        <li class="nav-item mx-1">
+            <button class="btn btn-sm btn-outline border text-theme b-theme"><i class="fa fa-hand-grab-o pr-2"></i>Activities</button>
+        </li>
+    </ul>
+</ng-template>

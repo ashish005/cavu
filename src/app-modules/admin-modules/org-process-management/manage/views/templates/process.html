@@ -1,13 +1,13 @@
 <div class="d-flex flex">
     <div class="d-flex flex-column flex">
-        <!--<div class="navbar flex-nowrap box-shadow">
+        <div class="navbar flex-nowrap box-shadow">
             <div class="flex">
                 <a class="no-shadow">
                     <h6 class="mb-0">Process</h6>
                     <small class="float-left pl-4"></small>
                 </a>
             </div>
-        </div>-->
+        </div>
         <div class="scroll-y">
             <org-grid [data]="gridData"
                       [options]="gridOptions"
@@ -22,6 +22,12 @@
         </div>
     </div>
 </div>
-<ng-template>
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0"> Process Management </h6>
+        <small class="float-left"> Management</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
 
 </ng-template>

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {ComplianceService} from "../services";
 
@@ -8,6 +8,8 @@ import {ComplianceService} from "../services";
   styles: [`:host {display: contents;}`]
 })
 export class TestComplianceSchedulerView implements OnInit {
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
     @ViewChild('calendarYear', { static: true }) public calendarYear;
     @ViewChild('schedulerEl', { static: true }) public schedulerEl;
   constructor(public activatedRoute: ActivatedRoute, public service: ComplianceService){}
