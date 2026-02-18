@@ -1,5 +1,5 @@
 import {GlobalModule} from "@app-global";
-import {Component, NgModule} from "@angular/core";
+import {Component, NgModule, TemplateRef, ViewChild} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {Router, RouterModule, Routes} from "@angular/router";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -9,6 +9,8 @@ import {ReactiveFormsModule} from "@angular/forms";
     templateUrl: './layout.html'
 })
 export class Layout {
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
     public navList: Array<any> = [
         {
             isFLatChildren: true, key: 'mainLayout.heading.main',
@@ -36,17 +38,17 @@ export class Layout {
                     { path: '', pathMatch: 'full', redirectTo:'one' },
                     {
                         path: 'flat', //canLoad:[PortalAuthGuard],
-                        loadChildren: () => import('app-modules/app-admin/notification/org-notification').then(m => m.NotificationPermissionModule),
+                        loadChildren: () => import('./org-notification').then(m => m.NotificationPermissionModule),
                         data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
                     },
                     {
                         path: 'two', //canLoad:[PortalAuthGuard],
-                        loadChildren: () => import('app-modules/app-admin/notification/org-notification1').then(m => m.NotificationPermissionModule),
+                        loadChildren: () => import('./org-notification1').then(m => m.NotificationPermissionModule),
                         data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
                     },
                     {
                         path: 'one', //canLoad:[PortalAuthGuard],
-                        loadChildren: () => import('app-modules/app-admin/notification/org-new-notification').then(m => m.OrgNotificationModule),
+                        loadChildren: () => import('./org-new-notification').then(m => m.OrgNotificationModule),
                         data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
                     },
                 ]

@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -7,7 +7,8 @@ import {ActivatedRoute, Router} from '@angular/router';
   styles: [`:host { display: contents;}`]
 })
 export class PermissionLayout implements OnInit {
-  public actionTemplate: TemplateRef<any>;
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
   page: any;
     public navList: Array<any> = [
         {
@@ -23,9 +24,7 @@ export class PermissionLayout implements OnInit {
     this.page = this.activatedRoute.snapshot.data;
   }
 
-    onActivate(componentRef){
-        this.actionTemplate = componentRef.actionTemplate;
-    }
+    onActivate(componentRef){}
 
   ngOnInit(){}
 }

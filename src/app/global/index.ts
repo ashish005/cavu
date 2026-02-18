@@ -32,7 +32,7 @@ export const ADMIN_SETUP_ROUES: Routes = [
             { path: 'org-log', loadChildren: () => import('app-modules/admin-modules/org-log-management/index').then(m => m.OrgLogModule), data: {title: 'Log', header: 'Log'} },
             { path: 'accounting', loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN" } },
             { path: 'reports', loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN" } },
-            { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/app-identity/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
+            { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
             { path: 'trxn-setup', loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN" } },
             {
                 path: 'tax-management', //canLoad: [PortalAuthGuard],
@@ -43,7 +43,22 @@ export const ADMIN_SETUP_ROUES: Routes = [
                 path: 'payroll', //canLoad:[ModuleGuard],
                 loadChildren: () => import('app-modules/admin-modules/org-payroll-management').then(m => m.SalaryModule),
                 data: {title: 'Trxn', header: 'Payroll', name: "Payroll", key: 'Payroll'}//code: "ACCESS_VT_MGT",
-            }
+            },
+            {
+                path: 'org-team', loadChildren: () => import('app-modules/admin-modules/org-team-management/manage/index').then(m => m.TeamSetupModule),
+                data: {icon: "fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header: 'Team'}//code: "TEAM",
+            },
+            {
+                path: 'notification', loadChildren: () => import('app-modules/admin-modules/org-notification-managment/index').then(m => m.NotificationModule),
+                data: {
+                    icon: "fa fa-envelope-open",
+                    code: "ACCESS_NOTIFY_MGT",
+                    title: 'Access Setup',
+                    header: 'Access Setup',
+                    name: "Notification",
+                    key: 'layout.notification'
+                }
+            },
         ]
     }
 ];
@@ -64,9 +79,9 @@ export const EMPLOYEE_COMMON_ROUES = [
     {
         isFLatChildren: false, key: 'Contact',
         children:[
-            { routeTo: ['org-emp'], icon:"fa fa-group", code: "EMP", key: 'mainLayout.user.employee' },
-            { routeTo: ['vendor'], icon:"fa fa-bell", code: "PERM_VENDOR", key: 'mainLayout.user.supplier' },//code: "COM"
-            { routeTo: ['client'], icon:"fa fa-bell", code: "PERM_CLIENT", key: 'mainLayout.user.client' },//code: "COM"
+            { routeTo: ['org-emp'], icon:"fa fa-group", key: 'Employee' },// code: "EMP",
+            { routeTo: ['vendor'], icon:"fa fa-bell", key: 'Supplier' },// code: "PERM_VENDOR",
+            { routeTo: ['client'], icon:"fa fa-bell", key: 'Client' },// code: "PERM_CLIENT"
         ]
     },
     /*{

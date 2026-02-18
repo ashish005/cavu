@@ -27,13 +27,6 @@ class Layout {
             ]
         },
         {
-            isFLatChildren: true, key: 'Teams, Workflow & Logs',
-            children:[
-                { routeTo: ['org-team'], icon:"fa fa-building", key: 'Team' },
-                { routeTo: ['notification'], icon:"fa fa-bell", key: 'Notification' }
-            ]
-        },
-        {
             name: "Others", isFLatChildren: true,
             children:[
                 { routeTo: ['integration'], icon:"fa fa-graduation-cap", key: 'Other Integration' },
@@ -72,23 +65,6 @@ class Layout {
                         path: 'module-access-setup',
                         loadChildren: () => import('./access-setup/contact-access/index').then(m => m.ContactAccessSetupModule)
                     },// data: { userType: ORG_USER_TYPE.EMPLOYEE } },
-                    {
-                        path: 'org-team',
-                        loadChildren: () => import('./team-setup/manage/index').then(m => m.TeamSetupModule),
-                        data: {icon: "fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header: 'Team'}//code: "TEAM",
-                    },
-                    {
-                        path: 'notification', //canLoad: [PortalAuthGuard],
-                        loadChildren: () => import('app-modules/app-admin/notification/index').then(m => m.NotificationModule),
-                        data: {
-                            icon: "fa fa-envelope-open",
-                            code: "ACCESS_NOTIFY_MGT",
-                            title: 'Access Setup',
-                            header: 'Access Setup',
-                            name: "Notification",
-                            key: 'layout.notification'
-                        }
-                    },
                     {
                         path: 'integration',
                         loadChildren: () => import('app-modules/app-admin/integration/index').then(m => m.IntegrationModule),

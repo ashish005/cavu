@@ -20,8 +20,8 @@ export class MainLayout implements OnInit {
               { routeTo: ['estimates'], icon:"fa fa-dashboard", name: "Estimates" },
               { routeTo: ['time-tracking'], icon:"fa fa-dashboard", name: "Time Tracking" },*/
               //{ routeTo: ['project'], icon:"fa fa-dashboard", name: "Projects" },
-              { routeTo: ['project'], icon:"fa fa-bell", key: 'project' },//code: "PERM_PROJECT"
-              { routeTo: ['product'], icon:"fa fa-dashboard", key: 'svc_product' },//code: "PERM_INVENTORY",
+              { routeTo: ['project'], icon:"fa fa-bell", key: 'Project' },//code: "PERM_PROJECT"
+              { routeTo: ['product'], icon:"fa fa-dashboard", key: 'Services' },//code: "PERM_INVENTORY",
               { routeTo: ['client/quotation'], icon:"fa fa-bell", key: 'Quotation' }
           ]
       },
