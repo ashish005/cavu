@@ -34,6 +34,16 @@ export const ADMIN_SETUP_ROUES: Routes = [
             { path: 'reports', loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN" } },
             { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/app-identity/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
             { path: 'trxn-setup', loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN" } },
+            {
+                path: 'tax-management', //canLoad: [PortalAuthGuard],
+                loadChildren: () => import('app-modules/admin-modules/org-tax-management/index').then(m => m.TaxManagementModule),
+                data: {code: "ACCESS_TAX_MGT", title: 'Tax', header: 'Manage Tax'}
+            },
+            {
+                path: 'payroll', //canLoad:[ModuleGuard],
+                loadChildren: () => import('app-modules/admin-modules/org-payroll-management').then(m => m.SalaryModule),
+                data: {title: 'Trxn', header: 'Payroll', name: "Payroll", key: 'Payroll'}//code: "ACCESS_VT_MGT",
+            }
         ]
     }
 ];

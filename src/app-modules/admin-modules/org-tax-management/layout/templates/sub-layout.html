@@ -1,33 +1,25 @@
 <ng-template #actionTemplate>
-
+    <ul class="nav nav-xs flex-row no-border">
+        <li class="nav-item">
+            <div class="btn-group">
+                <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
+                    <button type="button" class="btn btn-sm btn-outline b-primary" [class.active]="activeView == row.route" (click)="changeRouteTo(row)"><i class="fa" [class]="row.icon"></i></button>
+                </ng-template>
+            </div>
+        </li>
+    </ul>
+    <!--<ul class="nav" *ngIf="canCreateNewGateway">
+        <li class="nav-item mr-2">
+            <button  class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()">
+                <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+            </button>
+        </li>
+    </ul>-->
 </ng-template>
 <ng-template #pageTitleTemplate>
-    <div class="navbar flex-nowrap lt">
-        <a data-toggle="modal" data-target="#content-aside"
-           data-modal="" class="mr-1 d-md-none"
-           data-pjax-state=""><span
-                class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
-
-        <div class="no-shadow">
-            <h6 class="mb-0"> {{ page?.header  }} </h6>
-<!--            <small class="float-left"><i [class]="pageIcon"></i> Management</small>-->
-        </div>
-        <ul class="nav nav-xs flex-row no-border">
-            <li class="nav-item">
-                <div class="btn-group">
-                    <ng-template ngFor let-row [ngForOf]="menuItems" let-j="index">
-                        <button type="button" class="btn btn-sm btn-outline b-primary" [class.active]="activeView == row.route" (click)="changeRouteTo(row)"><i class="fa" [class]="row.icon"></i></button>
-                    </ng-template>
-                </div>
-            </li>
-        </ul>
-        <!--<ul class="nav" *ngIf="canCreateNewGateway">
-            <li class="nav-item mr-2">
-                <button  class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()">
-                    <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
-                </button>
-            </li>
-        </ul>-->
+    <div class="no-shadow">
+        <h6 class="mb-0"> {{ page?.header  }} </h6>
+        <!--            <small class="float-left"><i [class]="pageIcon"></i> Management</small>-->
     </div>
 </ng-template>
 <div class="app-content box-shadow-0" role="main">

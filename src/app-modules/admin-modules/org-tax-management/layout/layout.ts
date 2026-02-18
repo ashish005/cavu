@@ -10,11 +10,24 @@ import {TaxGroupLookup} from "../domains/lookup";
 export class Layout {
   public actionTemplate: TemplateRef<any>;
   public pageTitleTemplate: TemplateRef<any>;
+
+  public actionLayoutTemplate: TemplateRef<any>;
+  public pageLayoutTitleTemplate: TemplateRef<any>;
+
+  public navList: Array<any> = [
+        {
+            isFLatChildren: true, key: 'main',
+            children:[
+                { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
+                { routeTo: ['setup'], icon:"fa fa-bell", key: 'Setup' }
+            ]
+        }
+    ];
   constructor(private router: Router, public activatedRoute: ActivatedRoute, public apiResolver: TaxManagementModuleAPIResolver){}
 
   onActivate(componentRef){
-    this.actionTemplate = componentRef.actionTemplate;
-    this.pageTitleTemplate = componentRef.pageTitleTemplate;
+    this.pageLayoutTitleTemplate = componentRef.pageTitleTemplate;
+   this.actionLayoutTemplate = componentRef.actionTemplate;
   }
 
     showAllTaxRates(e) {

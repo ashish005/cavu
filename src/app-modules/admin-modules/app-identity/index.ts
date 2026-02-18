@@ -27,13 +27,6 @@ class Layout {
             ]
         },
         {
-            isFLatChildren: true, key: 'Regulations Tracker',
-            children:[
-                { routeTo: ['tax-management'], icon:"fa fa-money", key: 'Tax management' },
-                { routeTo: ['payroll'], icon:"fa fa-check-square-o", key: 'Payroll' }
-            ]
-        },
-        {
             isFLatChildren: true, key: 'Teams, Workflow & Logs',
             children:[
                 { routeTo: ['org-team'], icon:"fa fa-building", key: 'Team' },
@@ -97,11 +90,6 @@ class Layout {
                         }
                     },
                     {
-                        path: 'tax-management', //canLoad: [PortalAuthGuard],
-                        loadChildren: () => import('app-modules/app-admin/tax-management/index').then(m => m.TaxManagementModule),
-                        data: {code: "ACCESS_TAX_MGT", title: 'Tax', header: 'Manage Tax'}
-                    },
-                    {
                         path: 'integration',
                         loadChildren: () => import('app-modules/app-admin/integration/index').then(m => m.IntegrationModule),
                         data: {title: 'Integration', header: 'Integration'}//code: '',
@@ -110,11 +98,6 @@ class Layout {
                         path: 'quiz',
                         loadChildren: () => import('app-modules/app-admin/quiz/index').then(r => r.QuizModule),
                         data: {title: 'Quiz', header: 'Quiz'}
-                    },
-                    {
-                        path: 'payroll', //canLoad:[ModuleGuard],
-                        loadChildren: () => import('app-modules/app-admin/salary').then(m => m.SalaryModule),
-                        data: {title: 'Trxn', header: 'Payroll', name: "Payroll", key: 'Payroll'}//code: "ACCESS_VT_MGT",
                     }
                 ]
             }
