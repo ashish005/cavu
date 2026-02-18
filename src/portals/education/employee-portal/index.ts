@@ -10,7 +10,7 @@ import {GlobalModule} from "@app-global";
         RouterModule.forChild(EDU_EMPLOYEE_Routes), GlobalModule
     ],
     declarations: [EDU_EMPLOYEE_VIEWS],
-    exports: [GlobalModule]
+    exports: []
 })
 
 export class EduEmployeePortal{}

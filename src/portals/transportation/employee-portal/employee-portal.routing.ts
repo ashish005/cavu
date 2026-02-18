@@ -1,7 +1,8 @@
 import {Routes} from '@angular/router';
 import {MainLayout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard/main";
-import {AppPermissionService} from "@app-global";
+import {ADMIN_SETUP_ROUES, AppPermissionService} from "@app-global";
+import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
 
 export const EMPLOYEE_Routes: Routes = [
   {
@@ -35,7 +36,9 @@ export const EMPLOYEE_Routes: Routes = [
             loadChildren: () => import('portals/transportation/employee-portal/views/payout-plan').then(m => m.PayoutPlanModule),
             data: { title: 'Payout Plan', header:'Payout Plan'}
         },
-        //...PortalCommonModuleRoutes, ...CoreCommonModuleRoutes
+        ...PortalCommonModuleRoutes,
+        ...CoreCommonModuleRoutes
     ]
-  }
+  },
+  ...ADMIN_SETUP_ROUES
 ];

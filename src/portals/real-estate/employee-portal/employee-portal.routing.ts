@@ -17,25 +17,11 @@ export const EMPLOYEE_Routes: Routes = [
         component: DashboardView,
         data: {title: 'Dashboard', header: 'Dashboard'}
       },
-
-      {
-        path: 'client',
-        loadChildren: () => import('portals/real-estate/employee-portal/views/client').then(m => m.OrgClientModule)
-      },
-      {
-        path: 'project',
-        loadChildren: () => import('portals/real-estate/employee-portal/views/project').then(m => m.ProjectModule)
-      },
-      {
-        path: 'vendor',
-        loadChildren: () => import('portals/real-estate/employee-portal/views/supplier').then(m => m.OrgSupplierModule)
-      },
-      {
-        path: 'product1',
-        loadChildren: () => import('portals/real-estate/employee-portal/views/manage-inventory').then(m => m.ManageInventoryModule)
-      },
+      { path: 'client', loadChildren: () => import('portals/real-estate/employee-portal/views/client').then(m => m.OrgClientModule) },
+      { path: 'project', loadChildren: () => import('portals/real-estate/employee-portal/views/project').then(m => m.ProjectModule) },
+      { path: 'vendor', loadChildren: () => import('portals/real-estate/employee-portal/views/supplier').then(m => m.OrgSupplierModule) },
+      { path: 'product1', loadChildren: () => import('portals/real-estate/employee-portal/views/manage-inventory').then(m => m.ManageInventoryModule) },
       {path: 'product', loadChildren: () => import('app-modules/core-modules/product').then(m => m.ProductModule)},
-
       // { path: 'quotation', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: { code:'PERM_QUOTATION', title: 'modules.quotation.title', header: 'modules.quotation.header', icon: 'fa fa-shield', hideSidebar: true, vMasterType: 'QUOTATION' } },
       ...PortalCommonModuleRoutes,
       ...CoreCommonModuleRoutes
@@ -43,3 +29,5 @@ export const EMPLOYEE_Routes: Routes = [
   },
     ...ADMIN_SETUP_ROUES
 ];
+
+export const EDU_EMPLOYEE_VIEWS = [MainLayout, DashboardView];

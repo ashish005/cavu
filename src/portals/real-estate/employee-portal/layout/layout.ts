@@ -4,9 +4,9 @@ import { AppPermissionService, OrgLookupService, OrgLookup } from "@app-global";
 import {GlobalModule, EMPLOYEE_COMMON_ROUES} from "@app-global";
 
 @Component({
-    templateUrl: './templates/layout.html',
-  standalone: true, styles: [`::ng-deep ng-component{ display: contents;}`],
-  imports: [RouterModule, GlobalModule]
+  templateUrl: './templates/layout.html',
+  standalone: false,
+  styles: [`::ng-deep ng-component{ display: contents;}`]
 })
 export class MainLayout implements OnInit {
   public navList: Array<any> = this.permService.getEmployeeNavList([

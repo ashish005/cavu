@@ -1,7 +1,8 @@
 import {Routes} from '@angular/router';
 import {Layout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard/dashboard";
-import {AppPermissionService} from "@app-global";
+import {ADMIN_SETUP_ROUES, AppPermissionService} from "@app-global";
+import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
 
 export const EDU_EMPLOYEE_Routes: Routes = [
     {
@@ -21,10 +22,10 @@ export const EDU_EMPLOYEE_Routes: Routes = [
             //
             // { path: 'course', canLoad:[ModuleGuard], loadChildren: () => import('portals/education/employee-portal/views/course/manage').then(m => m.ManageCourseModule), data: { code:'COURSE', title: 'Course', header:'Course'} },
             // { path: 'seed-course', loadChildren: () => import('portals/education/employee-portal/views/course/seed').then(m => m.CourseSeederModule), data: { title: 'Course', header:'Course'} },// todo remove
-            // ...PortalCommonModuleRoutes,
-            // ...CoreCommonModuleRoutes
+            ...PortalCommonModuleRoutes,
+            ...CoreCommonModuleRoutes
         ]
     },
-  { path: 'admin', loadChildren: () => import('portals/education/admin-portal').then(m => m.EduAdminPortal), data: { title: 'Admin', header:'Admin'} },
+    ...ADMIN_SETUP_ROUES
 ];
 export const EDU_EMPLOYEE_VIEWS = [Layout, DashboardView];

@@ -39,8 +39,10 @@ export class AppSetupService {
         loadApp.subscribe({
           next: (response: any) => {
             const { isSuccess, data, message } = response;
-            this.appSetup = data ? new AppSetup(data): null;
-            this.themeManager.applySetting(this.appSetup?.theme);
+            if(isSuccess) {
+                this.appSetup = data ? new AppSetup(data): null;
+                this.themeManager.applySetting(this.appSetup?.theme);
+            }
             // Handle your logic here, e.g., using other injected services
             // alertService.showSuccess(message);
             this.loaderService.hide();

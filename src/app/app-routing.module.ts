@@ -8,10 +8,13 @@ import {NotFoundComponent} from "./not-found.component";
 import {AppSetupService, GlobalModule} from "@app-global";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {AuthInterceptor} from "./auth.interceptor";
+
 function StartupServiceFactory(setupService: AppSetupService) { return () => setupService.loadApp(); }
+
 export const appSetupGuard: CanActivateFn = (route, state) => {
   const setupService = inject(AppSetupService);
   const router = inject(Router);
+  debugger
   if (setupService.hasAppSetup()) {
     return true;
   }
@@ -22,9 +25,15 @@ export const appSetupGuard: CanActivateFn = (route, state) => {
 const routes: Routes = [
   //{ path: '', redirectTo: 'docusign-sign', pathMatch: 'full' },
   {
-    path: 'app', loadChildren: () => import('portals/portal-module').then(m => m.PortalModule), canActivate: [ appSetupGuard, AuthGuard]
+    path: 'app',
+    canActivate: [ AuthGuard, appSetupGuard ],
+    //canLoad: [ AuthGuard, appSetupGuard ],
+    loadChildren: () => import('portals/portal-module').then(m => m.PortalModule)
   },
-  {path: '', loadChildren: () => import('portals/company').then(m => m.SetupModule) },
+  {
+    path: '',
+    loadChildren: () => import('portals/company').then(m => m.SetupModule)
+  },
   ...THIRD_PARTY_ROUTES,
   {path: '**', component: NotFoundComponent}
 ];

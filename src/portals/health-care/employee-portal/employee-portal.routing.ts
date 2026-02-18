@@ -1,8 +1,8 @@
 import {Routes} from '@angular/router';
 import {MainLayout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard/main";
-import {PortalCommonModuleRoutes} from "@app-core-module";
-import {AppPermissionService} from "@app-global";
+import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
+import {ADMIN_SETUP_ROUES, AppPermissionService} from "@app-global";
 
 export const EMPLOYEE_Routes: Routes = [
   {
@@ -12,7 +12,9 @@ export const EMPLOYEE_Routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo:'dashboard' },
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', header:'Dashboard' } },
-      ...PortalCommonModuleRoutes
+      ...PortalCommonModuleRoutes,
+      ...CoreCommonModuleRoutes
     ]
-  }
+  },
+  ...ADMIN_SETUP_ROUES
 ];

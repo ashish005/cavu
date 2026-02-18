@@ -177,6 +177,31 @@
 </ng-template>
 <ng-template #educationModuleTemplate>
     <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>
+    <li class="nav-item dropdown d-flex align-items-center px-2">
+        <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="hidden-folded d-inline">Session & Batch</span>
+        </button>
+        <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
+            <li class="dropdown-item">
+                <a [routerLink]="['session']" class="d-block">
+                    <small class="d-block _500 title">Session & Batch</small>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <div class="row no-gutters px-2 pb-2">
+        <div class="col">
+            <div class="px-1 text-muted text-sm b-b b-theme">Batch Setup</div>
+            <ul class="p-0 d-inline">
+                <li class="dropdown-item">
+                    <a [routerLink]="['session']">
+                        <small class="d-block _500 title">Session & Batch</small>
+                    </a>
+                </li>
+                <li class="dropdown-divider"></li>
+            </ul>
+        </div>
+    </div>
 </ng-template>
 <ng-template #constructionModuleTemplate>
     <ng-template *ngTemplateOutlet="navbarRightTemplate"></ng-template>

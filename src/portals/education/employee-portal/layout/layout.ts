@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {forkJoin, take} from "rxjs";
-import {EMPLOYEE_COMMON_ROUES} from "@app-global";
+import {AppPermissionService, EMPLOYEE_COMMON_ROUES, OrgLookup, OrgLookupService} from "@app-global";
 
 @Component({
     templateUrl: './templates/layout.html', standalone: false
@@ -72,7 +71,11 @@ export class Layout implements OnInit {
     },*/
   ];
 
-    constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}
+    orgLookup: OrgLookup;
+    constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef,
+                public permService: AppPermissionService, public lookupService: OrgLookupService){
+        this.orgLookup = this.lookupService.getOrgLookup();
+    }
 
     ngOnInit() {}
     onActivate(componentRef) {}
