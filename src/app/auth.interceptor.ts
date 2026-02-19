@@ -10,6 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private appSetupService: AppSetupService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     let headers = req.headers;
+    debugger
     // const token = this.auth.getAccessToken();
     // if (token) headers = headers.set('Authorization', `Bearer ${token}`);
     if (this.appSetupService.appSetup?.id) {
@@ -19,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
       const branch = (branches || []).find(r => r.isHeadBranch) || { id };
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
       headers = headers.set('X-Tenant-ID', id);
-      headers = headers.set('X-Timezone-ID', timeZone);
+      headers = headers.set('X-Timezone-ID', `${timeZone}`);
       headers = headers.set('X-Timezone-Browser', timezone);
       headers = headers.set('X-Country-ID', `${countryId}`);
       headers = headers.set('X-OrgBranch-ID', `${branch?.id}`);
