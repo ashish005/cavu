@@ -14,7 +14,6 @@ function StartupServiceFactory(setupService: AppSetupService) { return () => set
 export const appSetupGuard: CanActivateFn = (route, state) => {
   const setupService = inject(AppSetupService);
   const router = inject(Router);
-  debugger
   if (setupService.hasAppSetup()) {
     return true;
   }

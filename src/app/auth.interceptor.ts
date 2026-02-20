@@ -10,7 +10,6 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private appSetupService: AppSetupService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     let headers = req.headers;
-    debugger
     // const token = this.auth.getAccessToken();
     // if (token) headers = headers.set('Authorization', `Bearer ${token}`);
     if (this.appSetupService.appSetup?.id) {
