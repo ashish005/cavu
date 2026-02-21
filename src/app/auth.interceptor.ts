@@ -18,11 +18,11 @@ export class AuthInterceptor implements HttpInterceptor {
 
       const branch = (branches || []).find(r => r.isHeadBranch) || { id };
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "Asia/Kolkata"
-      headers = headers.set('X-Tenant-ID', id);
-      headers = headers.set('X-Timezone-ID', `${timeZone}`);
+      headers = headers.set('X-Tenant-Id', id);
+      headers = headers.set('X-Timezone-Id', `${timeZone}`);
       headers = headers.set('X-Timezone-Browser', timezone);
-      headers = headers.set('X-Country-ID', `${countryId}`);
-      headers = headers.set('X-OrgBranch-ID', `${branch?.id}`);
+      headers = headers.set('X-Country-Id', `${countryId}`);
+      headers = headers.set('X-OrgBranch-Id', `${branch?.id}`);
     }
 
     if (this.ignoredUrls.some(url => req.url.includes(url))) {

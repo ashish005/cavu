@@ -57,12 +57,18 @@ export class AuthService {
     this.isDoneLoading$
   ]).pipe(map(values => values.every(b => b)));
 
+  private readonly accessTokenStorageKey: string;
+
   private navigateToLoginPage() {
     // TODO: Remember current URL
     this.router.navigateByUrl('/login-callback');
   }
 
   constructor(private oauthService: OAuthService, private router: Router) {
+    const hostname = window.location.hostname;
+    const tenant = hostname.split('.')[0];
+    const prefix = tenant ? `${tenant}_` : '';
+    this.accessTokenStorageKey = `${prefix}access_token`;
     // Useful for debugging:
     this.isDoneLoadingSubject$.next(true);
     this.oauthService.events.subscribe(event => {
@@ -80,7 +86,7 @@ export class AuthService {
     // Until then we'll stick to this:
     window.addEventListener('storage', (event) => {
       // The `key` is `null` if the event was caused by `.clear()`
-      if (event.key !== 'access_token' && event.key !== null) {
+      if (event.key !== this.accessTokenStorageKey && event.key !== null) {
         return;
       }
 

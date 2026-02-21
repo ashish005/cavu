@@ -6,7 +6,7 @@ import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module
 
 export const EDU_EMPLOYEE_Routes: Routes = [
     {
-        path: '', resolve: {permissions: AppPermissionService},
+        path: '', //resolve: {permissions: AppPermissionService},
         component: Layout, data: { code: '', title: 'Fee Type', icon: 'fa fa-dashboard', header: 'Fee Type' },
         children: [
             { path: '', pathMatch: 'full', redirectTo:'dashboard' },

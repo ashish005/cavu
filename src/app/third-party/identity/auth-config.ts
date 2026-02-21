@@ -15,23 +15,18 @@ export function getAuthConfig(injector: Injector): AuthConfig {
     clientId: `localhost-spa`,
     responseType: 'code',
     scope: 'openid profile email offline_access api',
-    showDebugInformation: true,
+
+    showDebugInformation: !environment.production,
     clearHashAfterLogin: true,
     skipIssuerCheck: false,
 
-    disableAtHashCheck: true, // PKCE handles integrity
-
-    // ✅ Ensure tokens refresh properly
+    disableAtHashCheck: true,
     timeoutFactor: 0.90,
     oidc: true,
-
-    // 👇 Required for iframe session checks
     sessionChecksEnabled: false,
     silentRefreshRedirectUri: `${origin}/silent-refresh.html`,
-
-    // 👇 If you use multiple tenant subdomains
-    useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
-    requireHttps: false
+    useSilentRefresh: true,
+    requireHttps: environment.production
   };
 
   return authCodeFlowConfig;
