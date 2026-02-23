@@ -17,7 +17,6 @@ export class AppSetupService {
     private httpClient: HttpClient;
     private themeManager: ThemeManagerService;
 
-    public showPreSetupPopup: { (): void } | undefined;
     public showGlobalFilterPopup: { (): void } | undefined;
 
     public showBellPopup: { (): void } | undefined;

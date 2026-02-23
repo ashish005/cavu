@@ -1,5 +1,5 @@
 import {Injectable, Injector} from "@angular/core";
-import { CoreResourceService } from "../../../app/global/services";
+import { CoreResourceService } from "../../../../app/global/services";
 import {ConfigLookup, ConfigLookupSerializer} from "../domains/lookup.serializer";
 
 @Injectable()

@@ -29,7 +29,6 @@ export class AppComponent implements OnInit {
     this.isDoneLoading$ = this.authService.isDoneLoading$;
     this.canActivateProtectedRoutes$ = this.authService.canActivateProtectedRoutes$;
 
-    this.appSetupService.showPreSetupPopup = () => this.setupFactory.showPreSetupPopup();
     this.appSetupService.showBellPopup = () => this.setupFactory.showBellPopup();
     this.appSetupService.createSupportTicket = () => this.setupFactory.createSupportTicket();
     this.appSetupService.showSurveyPopup = () => this.setupFactory.showSurveyPopup();

@@ -1,12 +1,10 @@
 import {Injectable, Injector} from "@angular/core";
 import {SharedService, AlertService} from "@app-global";
-import {CoreSetupFactory} from "./org-seeder";
 import {FeedbackSupportFactory} from "./global";
 @Injectable({ providedIn: 'root' })
 export class SetupFactory {
   constructor(private sharedService: SharedService,
-              private alertService: AlertService,
-              private coreSetupFactory: CoreSetupFactory, private supportFactory: FeedbackSupportFactory) { }
+              private alertService: AlertService, private supportFactory: FeedbackSupportFactory) { }
 
     /*showGlobalFilterPopup(inputData, popupheader){
         const popupOptions = {
@@ -49,19 +47,6 @@ export class SetupFactory {
         };
         this.sharedService.showCustomPopup(ReLoginComponent, popupOptions, { isModal: true }).then(onSuccess, onFailure);
     }*/
-
-    showPreSetupPopup() {
-        const refreshPage = () => setTimeout(() => { location.href = location.href; }, 100);
-        const onSuccess = (resp)=> {
-            this.coreSetupFactory.destroy();
-            refreshPage();
-        };
-        const onFailure = (resp)=> {
-            this.coreSetupFactory.destroy();
-            refreshPage();
-        };
-        this.coreSetupFactory.showPreSetupPopup().then(onSuccess, onFailure);
-    }
 
     createSupportTicket=() => this.supportFactory.createSupportTicket();
     showBellPopup=() => this.supportFactory.showBellPopup();

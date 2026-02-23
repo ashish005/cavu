@@ -59,7 +59,6 @@ export class OrgHeaderComponent implements OnInit {
 
   routeToUrl=(path)=> this.router.navigate([path], {relativeTo: this.activatedRoute});
 
-  showPreSetupPopup=() => this.appSetupService.showPreSetupPopup();
   showBellPopup = () => this.appSetupService.showBellPopup();
   createSupportTicket = () => this.appSetupService.createSupportTicket();
   showSurveyPopup = () => this.appSetupService.showSurveyPopup();

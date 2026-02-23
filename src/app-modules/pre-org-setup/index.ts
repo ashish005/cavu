@@ -1,0 +1,1 @@
+export {OrgCoreSetupModule} from "./org-seeder";

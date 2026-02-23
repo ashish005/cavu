@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {AppSetupService} from "../../../app/global/services";
+import {AppSetupService} from "@app-global";
 
 @Component({
     standalone: false,

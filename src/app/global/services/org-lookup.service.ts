@@ -1,7 +1,7 @@
 import {inject, Injectable, Injector} from '@angular/core';
 import {CoreEndpointBase} from "./endpoint-base.service";
 import {OrgLookup} from "./models/org-lookup.serializer";
-import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
+import {ActivatedRouteSnapshot, Resolve, Router} from "@angular/router";
 
 @Injectable({ providedIn: 'root' })
 export class OrgLookupService extends CoreEndpointBase implements Resolve<any>{
@@ -19,9 +19,11 @@ export class OrgLookupService extends CoreEndpointBase implements Resolve<any>{
             loadApp.subscribe({
               next: (response: any) => {
                 const { isSuccess, data, message } = response;
-                this.orgLookup = data ? new OrgLookup(data): null;
-                // alertService.showSuccess(message);
                 this.loaderService.hide();
+                if(data) {
+                    this.orgLookup = new OrgLookup(data);
+                }
+                // alertService.showSuccess(message);
                 resolve(true);
               },
               error: (err) => {

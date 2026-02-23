@@ -1,7 +1,17 @@
-import {RouterModule, ROUTES} from "@angular/router";
-import {NgModule} from "@angular/core";
+import {
+  ActivatedRouteSnapshot,
+  CanLoad,
+  Route,
+  Router,
+  RouterModule,
+  RouterStateSnapshot,
+  ROUTES,
+  UrlSegment,
+  UrlTree
+} from "@angular/router";
+import {Injectable, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {AppSetupService, OrgLookupService, GlobalModule} from "@app-global";
+import {AppSetupService, OrgLookupService, GlobalModule, PreSetupLayout} from "@app-global";
 
 enum ORG_SECTOR {
   SETUP_ORG = "setup_organizations",
@@ -21,6 +31,7 @@ enum ORG_USER_TYPE {
   STUDENT_PARENT = "parent",
   DRIVER = "driver",
 };
+
 export const setupRoutesFactory = (setupService: AppSetupService) => {
   const { license, sectorMasterType }= setupService.appSetup;
   //const userMasterType = coreService.currentUser?.userMasterType;
@@ -39,12 +50,23 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
     ];
   }
 
+  const hasValidSetup = setupService.appSetup.hasValidOrgSetup();
+  debugger
+  if (!hasValidSetup) {
+    return [
+      {
+        path: '', component: PreSetupLayout,
+        loadChildren: () => import('app-modules/pre-org-setup').then(m => m.OrgCoreSetupModule)
+      }
+    ];
+  }
+
     return [
         {
-            path: '', resolve: {items: OrgLookupService}, //component: CoreLayout, //canLoad: [ModuleGuard],
+            path: '', resolve: {items: OrgLookupService}, //component: CoreLayout,
             children: [
                 {
-                    path: '', //canLoad: [OrgSetupModuleGuard],
+                    path: '',
                     loadChildren: () => {
                       switch (sectorMasterType) {
                         case ORG_SECTOR.EDUCATION:
@@ -81,89 +103,16 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                       }
                       return [];
                     }
-                },
-                //...ADMIN_SETUP_ROUES
-                /*{
-                    path: 'setup',
-                    component: SetupLayout,
-                    canActivate:[PortalAuthGuard], canLoad: [ModuleGuard],
-                    children: [
-                        {
-                            path: 'notification', canLoad: [PortalAuthGuard],
-                            loadChildren: () => import('app-common/notification/index').then(m => m.NotificationModule),
-                            data: { icon:"fa fa-envelope-open", code: "ACCESS_NOTIFY_MGT", title: 'Access Setup', header:'Access Setup', name: "Notification", key: 'layout.notification'}
-                        },
-                        {
-                            path: 'tax-management', canLoad: [PortalAuthGuard],
-                            loadChildren: () => import('app-common/tax-management/index').then(m => m.TaxManagementModule),
-                            data: {code: "ACCESS_TAX_MGT", title: 'Tax', header: 'Manage Tax'}
-                        },
-                        {
-                            path: 'setup-trxn',
-                            loadChildren: () => import('app-common/setup-transaction/index').then(m => m.SetupTransactionModule),
-                            data: {title: 'Bank', header: 'Bank', name: "Banking", key: 'layout.banking'}//code: "ACCESS_VT_MGT",
-                        },
-                        { path: 'module-access-setup',
-                            loadChildren: () => import('app-common/access-setup/contact-access/index').then(m => m.ContactAccessSetupModule),
-                            data: { userType: ORG_USER_TYPE.EMPLOYEE }
-                        },
-                        {
-                            path: 'role-permission-setup',
-                            loadChildren: () => import('app-common/access-setup/module-permission/index').then(m => m.ManageUserModule),
-                            data: { key:'list', icon:"fa fa-money", name: "Money", title: 'Team', header:'Team' }//code: "ACCESS_USR_LOGIN"
-                        },
-                        {
-                            path: 'org-team',
-                            loadChildren: () => import('app-common/team-setup/index').then(m => m.TeamSetupModule),
-                            data: { icon:"fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header:'Team' }//code: "TEAM",
-                        },
-                        {
-                            path: 'integration',
-                            loadChildren: () => import('app-common/integration/index').then(m => m.IntegrationModule),
-                            data: {title: 'Integration', header: 'Integration'}//code: '',
-                        },
-                        {
-                            path: 'quiz',
-                            loadChildren: () => import('app-common/quiz/index').then(r => r.QuizModule),
-                            data: {title: 'Quiz', header: 'Quiz'}
-                        },
-                        {
-                            path: 'subscription',
-                            loadChildren: () => import('app-common/org-subscription/index').then(m => m.OrgSubscriptionModule),
-                            data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' }
-                        },
-                        {
-                            path: 'transaction-setup',
-                            loadChildren: () => import('app-common/setup-transaction/index').then(m => m.SetupTransactionModule),
-                            data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
-                        },
-                        {
-                            path: 'bank-trxn', canLoad:[ModuleGuard],
-                            loadChildren: () => import('app-common/setup-transaction/transaction').then(m => m.BankTransactionModule),
-                            data: {title: 'Trxn', header:'Bank Trxn', name: "Bank Trxn", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
-                        },
-                        {
-                            path: 'org-setup',
-                            loadChildren: () => import('app-common/org-setup/index').then(m => m.OrgSetupModule),
-                            data: {code: "ACCESS_ORG_MGR", title: 'Organization', header: 'Organization'}
-                        },
-                        {
-                            path: 'payroll', canLoad:[ModuleGuard],
-                            loadChildren: () => import('app-common/salary').then(m => m.SalaryModule),
-                            data: {title: 'Trxn', header:'Payroll', name: "Payroll", key: 'Payroll' }//code: "ACCESS_VT_MGT",
-                        }
-                    ]
-                }*/
+                }
             ]
         }
     ];
 };
 
 @NgModule({
-  //declarations: [ SetupLayout, ProcessLayout, ComplianceLayout, LogLayout ],
   imports: [RouterModule, CommonModule, GlobalModule],
     providers: [
-        { provide: ROUTES, useFactory: setupRoutesFactory, multi: true, deps: [ AppSetupService ] }
+      { provide: ROUTES, useFactory: setupRoutesFactory, multi: true, deps: [ AppSetupService ] }
     ]
 })
 export class PortalModule { }

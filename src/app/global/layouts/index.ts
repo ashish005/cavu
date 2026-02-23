@@ -1,7 +1,13 @@
 import {Component} from "@angular/core";
+import {RouterModule} from "@angular/router";
 import {SetupLayout} from "./setup.layout";
+import {PreSetupLayout} from "./pre-setup.layout";
 
-@Component({ template: `<router-outlet></router-outlet>`, standalone: false })
+@Component({
+    template: `<router-outlet></router-outlet>`,
+    standalone: true,
+    imports: [RouterModule]
+})
 export class AdminLogLayout {
     public navList: Array<any> = [
         {
@@ -16,6 +22,8 @@ export class AdminLogLayout {
 }
 
 export {SetupLayout} from "./setup.layout";
+export {PreSetupLayout} from "./pre-setup.layout";
+
 export const ADMIN_LAYOUTS = [
-    AdminLogLayout, SetupLayout
+    PreSetupLayout, SetupLayout
 ];

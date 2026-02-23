@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {OrgSettingService} from "../services/org-setting.service";
-import {AppSetupService} from "../../../app/global/services";
-import {AppSetup} from "../../../app/global/services/models";
+import {AppSetupService} from "../../../../app/global/services";
+import {AppSetup} from "../../../../app/global/services/models";
 @Component({
     standalone: false,
     selector: 'sync-feeder',

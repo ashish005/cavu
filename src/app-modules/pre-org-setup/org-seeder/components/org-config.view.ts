@@ -4,8 +4,8 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {pairwise, startWith} from "rxjs";
 import {OrgSettingService} from "../services/org-setting.service";
 import {ConfigLookup} from "../domains/lookup.serializer";
-import {AppSetupService} from "../../../app/global/services";
-import {AppSetup} from "../../../app/global/services/models";
+import {AppSetupService} from "../../../../app/global/services";
+import {AppSetup} from "../../../../app/global/services/models";
 class OrgConfigInfoForm {
     customForm: FormGroup;
     submitted: boolean = false;

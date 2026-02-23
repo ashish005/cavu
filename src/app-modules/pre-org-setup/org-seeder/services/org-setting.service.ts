@@ -1,6 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import {Observable, throwError, catchError, map, tap, flatMap} from "rxjs";
-import {OrgResourceService} from "../../../app/global/services";
+import {OrgResourceService} from "../../../../app/global/services";
 import {OrgSetting, OrgSettingSerializer} from "../domains/org-setting.serializer";
 
 @Injectable()
