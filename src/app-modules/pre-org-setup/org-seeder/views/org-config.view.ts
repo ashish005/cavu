@@ -143,6 +143,7 @@ export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
             const data: any = form.getRawValue();
             Object.assign(this.coreService.appSetup.orgConfig, data);
             this.submitted = false;
+            location.href = "/app";
         };
         const error = (resp: any)=> { this.submitted = false; };
         const data: any = form.getRawValue();

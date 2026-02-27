@@ -6,6 +6,7 @@ import {ThemeManagerService} from "../modules/theme-setting/services/theme-manag
 import {DBkeys} from "./models/db-keys";
 import {OrgTheme, UserConfiguration} from "../modules/theme-setting/domains/theme-setup.serializer";
 import {FuncHelper} from "../helpers/func-helper";
+
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService {
     constructor(
@@ -13,6 +14,10 @@ export class ConfigurationService {
         private translationService: TranslationService,
         private themeManager: ThemeManagerService) {
         this.loadLocalChanges();
+    }
+
+    syncAndApplyConfigs(appSetup) {
+        this.themeManager.applySetting(appSetup?.theme);
     }
 
     set language(value: string) {

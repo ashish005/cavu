@@ -33,9 +33,7 @@ export class AuthService {
   //   return this.oauthService.getAccessToken();
   // }
   //
-  refresh() {
-    return this.oauthService.refreshToken();
-  }
+  refresh() { return this.oauthService.refreshToken(); }
   private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
@@ -228,6 +226,7 @@ export class AuthService {
   public get logoutUrl() { return this.oauthService.logoutUrl; }
 
   get userId(): string { return (this.identityClaims as any)['sub'] || '-'; }
+  get orgId(): string { return (this.identityClaims as any)['orgId'] || ''; }
   get email(): string { return (this.identityClaims as any)['email'] || '-'; }
   get mobile(): string { return (this.identityClaims as any)['mobile'] || '-'; }
   get username(): string { return (this.identityClaims as any)['preferred_username'] || '--'; }

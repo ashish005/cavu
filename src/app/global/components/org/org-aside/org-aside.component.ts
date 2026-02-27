@@ -1,13 +1,10 @@
 import {
     Component,
-    EventEmitter,
-    Input, OnInit,
-    Output
+    Input
 } from '@angular/core';
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {AuthService} from "@app-third-party";
 import {CommonModule} from "@angular/common";
-import {ThemeManagerService} from "../../../modules/theme-setting/services/theme-manager.service";
 
 @Component({
   selector: 'org-aside',
@@ -25,8 +22,7 @@ export class OrgAsideComponent {
   //activeFragment: any;
   constructor(public router: Router,
               public activatedRoute: ActivatedRoute,
-              public authService: AuthService,
-              public themeManager: ThemeManagerService){
+              public authService: AuthService){
     //this.activeFragment = this.route.fragment.pipe(share());
   }
 
