@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {RouterModule} from "@angular/router";
-import {SetupLayout} from "./setup.layout";
+import {CoreLayout, SetupLayout} from "./setup.layout";
 import {PreSetupLayout} from "./pre-setup.layout";
 
 @Component({
@@ -21,9 +21,9 @@ export class AdminLogLayout {
     ];
 }
 
-export {SetupLayout} from "./setup.layout";
+export { CoreLayout, SetupLayout} from "./setup.layout";
 export {PreSetupLayout} from "./pre-setup.layout";
 
 export const ADMIN_LAYOUTS = [
-    PreSetupLayout, SetupLayout
+    PreSetupLayout, SetupLayout, CoreLayout
 ];

@@ -4,8 +4,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {pairwise, startWith} from "rxjs";
 import {OrgSettingService} from "../services/org-setting.service";
 import {ConfigLookup} from "../domains/lookup.serializer";
-import {AppSetupService} from "../../../../app/global/services";
-import {AppSetup} from "../../../../app/global/services/models";
+import {AppSetup, AppSetupService} from "@app-global";
 class OrgConfigInfoForm {
     customForm: FormGroup;
     submitted: boolean = false;
@@ -63,8 +62,6 @@ class OrgConfigInfoForm {
 
             fyStartDay: [null],
             fyStartMonth: [null],
-            fyCloseDay: [null],
-            fyCloseMonth: [null],
 
             dateFormat: [null],
             dateSeparator: [null],
@@ -104,7 +101,8 @@ class OrgConfigInfoForm {
     providers: [OrgSettingService]
 })
 export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
-    @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
     orgSetup: AppSetup;
     orgLookup: ConfigLookup;
     constructor(public override fb: FormBuilder, public apiResolver: OrgSetupAPIResolver,
@@ -141,11 +139,15 @@ export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
     onSubmit(form: FormGroup) {
         if (form.invalid) { return; } // stop here if form is invalid
         this.submitted = true;
-        const success = (resp: any)=> { this.submitted = false; };
+        const success = (resp: any)=> {
+            const data: any = form.getRawValue();
+            Object.assign(this.coreService.appSetup.orgConfig, data);
+            this.submitted = false;
+        };
         const error = (resp: any)=> { this.submitted = false; };
         const data: any = form.getRawValue();
         this.service.updateUnitConfigSetup(data?.id, data).subscribe(success, error);
-        this.service.orgSettingEndpoint(data?.id, data).toPromise().then(success, error);
+        //this.service.orgSettingEndpoint(data?.id, data).toPromise().then(success, error);
     }
 
     // onSubmit(formData) {

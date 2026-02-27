@@ -6,6 +6,190 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style type="text/css">
+    /* Absolute Center Spinner */
+    .loading {
+      position: fixed;
+      z-index: 999;
+      height: 60px;
+      width: 60px;
+      overflow: show;
+      margin: auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+
+    /* Transparent Overlay */
+    .loading:before {
+      content: '';
+      display: block;
+      background-color: rgba(0, 0, 0, 0);
+      border: 5px solid rgba(0, 183, 229, 0.9);
+      opacity: .9;
+      border-right: 5px solid rgba(0, 0, 0, 0);
+      border-left: 5px solid rgba(0, 0, 0, 0);
+      border-radius: 50px;
+      box-shadow: 0 0 35px #2187e7;
+      width: 50px;
+      height: 50px;
+      margin: -30px auto auto auto;
+      -moz-animation: spinPulse 1s infinite ease-in-out;
+      -webkit-animation: spinPulse 1s infinite linear;
+    }
+
+    /* :not(:required) hides these rules from IE9 and below */
+    .loading:not(:required) {
+      /* hide "loading..." text */
+      color: transparent;
+      text-shadow: none;
+      background-color: transparent;
+      border: 0;
+    }
+
+    .loading:not(:required):after {
+      content: '';
+      display: block;
+      font-size: 10px;
+
+      background-color: rgba(0, 0, 0, 0);
+      border: 5px solid rgba(0, 183, 229, 0.9);
+      opacity: .9;
+      border-left: 5px solid rgba(0, 0, 0, 0);
+      border-right: 5px solid rgba(0, 0, 0, 0);
+      border-radius: 50px;
+      box-shadow: 0 0 15px #2187e7;
+      width: 30px;
+      height: 30px;
+      margin: -60px 15px;
+      position: relative;
+      -moz-animation: spinoffPulse 1s infinite linear;
+      -webkit-animation: spinoffPulse 1s infinite linear;
+    }
+
+    @-moz-keyframes spinPulse {
+      0% {
+        -moz-transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px #2187e7;
+      }
+
+      50% {
+        -moz-transform: rotate(145deg);
+        opacity: 1;
+      }
+
+      100% {
+        -moz-transform: rotate(-320deg);
+        opacity: 0;
+      }
+    }
+
+    @-moz-keyframes spinoffPulse {
+      0% {
+        -moz-transform: rotate(0deg);
+      }
+
+      100% {
+        -moz-transform: rotate(360deg);
+      }
+    }
+
+    @-webkit-keyframes spinPulse {
+      0% {
+        -webkit-transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px #2187e7;
+      }
+
+      50% {
+        -webkit-transform: rotate(145deg);
+        opacity: 1;
+      }
+
+      100% {
+        -webkit-transform: rotate(-320deg);
+        opacity: 0;
+      }
+    }
+
+    @-webkit-keyframes spinoffPulse {
+      0% {
+        -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    form.submitted input.ng-invalid, input.ng-dirty.ng-invalid {
+      border: 1px solid red;
+    }
+
+    .dnd-drag-start {
+      -moz-transform: scale(0.8);
+      -webkit-transform: scale(0.8);
+      transform: scale(0.8);
+      opacity: 0.7;
+      border: 2px dashed #000 !important;
+    }
+
+    .dnd-drag-enter {
+      opacity: 0.7;
+      border: 2px dashed red !important;
+    }
+
+    .dnd-drag-over {
+      border: 2px dashed #000 !important;
+    }
+
+    .dnd-sortable-drag {
+      -moz-transform: scale(0.9);
+      -webkit-transform: scale(0.9);
+      transform: scale(0.9);
+      opacity: 0.7;
+      border: 1px dashed #000 !important;
+    }
+
+    .popover{ max-width: max-content !important; }
+
+    [data-letters]:before {
+      content:attr(data-letters);
+      display:inline-block;
+      font-size:1em;
+      width:2.5em;
+      height:2.5em;
+      line-height:2.5em;
+      text-align:center;
+      border-radius:50%;
+      vertical-align:middle;
+    }
+    .c_100 { width: 100px !important; }
+
+    /*org-header.app-header {
+        height: 1.5rem;
+    }
+
+    org-header~.app {
+        !*height: calc(100% - 1.5rem) !important;*!
+        padding-top: 1.5rem
+    }
+    org-header~.app .app-aside {
+        min-height: calc(100vh - 3.5rem)
+    }
+    .fixed-aside org-header~.app .app-aside>* {
+        max-height: calc(100% - 1.5rem) !important;
+    }
+    .fixed-content org-header~.app .app-aside>*,.is-fullscreen org-header~.app .app-aside>* {
+        max-height: calc(100% - 1.5rem)
+    }
+
+    .fixed-aside .org-header~.app .app-aside>* {
+        max-height: calc(100% - 1.5rem)
+    }*/
+  </style>
   <style>
     .ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-placeholder, .ng-select.ng-select-disabled .ng-select-container .ng-value-container .ng-value {
       position: absolute !important;

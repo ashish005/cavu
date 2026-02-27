@@ -227,7 +227,7 @@ class Org {
         this.businessMasterType = businessMasterType;
         this.tenantPoint = tenantPoint;
 
-        this.branches = (branches || []).map(r => new OrgBranch(r));
+        this.branches = (branches || []).map((r: any) => new OrgBranch(r));
         this.orgConfig = new OrgConfigOptions(orgConfig || {});
         this.software = new OrgSoftware(software || {});
     }
@@ -236,6 +236,7 @@ class Org {
     public get dateFormat(){ return this.orgConfig.dateFormat; }
 
     public get hasValidConfig() { return this.orgConfig.hasValidConfig(); }
+    public getCurrentBranch(branchId) { return this.branches.find(r => r.id == branchId); }
 }
 
 class OrgBranch {
@@ -258,9 +259,9 @@ class OrgBranch {
     public name: string;
     public orgUnitId: string;
 
-    public isMasterSeedApplied: boolean;
-    public isDemoSeedApplied: boolean;
-    public syncInitiated: boolean;
+    public isMasterSeedApplied: boolean = false;
+    public isDemoSeedApplied: boolean = false;
+    public syncInitiated: boolean = false;
 
     constructor(model: any = {}){
         this.id = model.id;
@@ -366,15 +367,15 @@ class OrgTheme {
 export class AppSetup extends Org {
   public theme: OrgTheme;
   public options: OrgOptions;
-  public license: OrgLicense;
-  public masterBranch: OrgBranch;
+  public license: OrgLicense | null;
+  //public masterBranch: OrgBranch | undefined;
   constructor(model: any = <any>{}){
     super(model);
     const { theme, options, license } = model;
     this.theme = new OrgTheme(theme);
     this.options = new OrgOptions(options || {});
     this.license = license? new OrgLicense(license): null;
-    this.masterBranch = this.getDefaultHeadBranch();
+    //this.masterBranch = this.getDefaultHeadBranch();
   }
 
     // public get isRealEstate() { return this.sectorMasterType == ORG_SECTOR.REAL_ESTATE }
@@ -382,9 +383,11 @@ export class AppSetup extends Org {
     // public get isHealthCare() { return this.sectorMasterType == ORG_SECTOR.HEALTH_CARE }
     // public get isHospitality() { return this.sectorMasterType == ORG_SECTOR.HOSPITALLITY }
 
-  getDefaultHeadBranch=() => (this.branches || []).find(r => r.isHeadBranch);
-  getActiveBranchById=(branchId) => (this.branches || []).find(r => r.id == branchId);
-  hasValidOrgSetup=()=>(this.countryId && this.masterBranch.isMasterSeedApplied && this.orgConfig.hasValidConfig);
+  getDefaultHeadBranch=() => (this.branches || []).find((r: OrgBranch) => r.isHeadBranch);
+  getActiveBranchById=(branchId: any) => (this.branches || []).find((r: OrgBranch) => r.id == branchId);
+  hasValidOrgSetup=()=>(Boolean(this.countryId) && this.orgConfig?.hasValidConfig());
+
+  hasOrgBranchSeededSetup=(branch)=>(Boolean(branch.isMasterSeedApplied) && this.orgConfig?.hasValidConfig());
 }
 export class AppSetupSerializer {
   fromJson(json: any): AppSetup { return new AppSetup(json); }

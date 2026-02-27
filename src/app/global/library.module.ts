@@ -1,9 +1,7 @@
-import {ErrorHandler, inject, ModuleWithProviders, NgModule} from "@angular/core";
+import {ErrorHandler, NgModule} from "@angular/core";
 import {
     DefaultUrlSerializer,
-    RouterLink, RouterLinkActive,
     RouterModule,
-    ROUTES,
     TitleStrategy,
     UrlSerializer,
     UrlTree
@@ -72,9 +70,6 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         //ScrollingModule,
         // AngularEditorModule,
         ToastaModule,
-        //ModalModule,
-        //TooltipModule,
-        // PopoverModule,
       GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_MODULES
     ],
     providers: [
@@ -94,7 +89,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         NgSelectModule,
         NgbModule, NgbPopoverModule, NgbTooltipModule, COMMON_MODULE, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         // AngularEditorModule,
-        // ToastaModule,
+        ToastaModule,
       GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS,
       DEPENDENT_MODULES
     ]

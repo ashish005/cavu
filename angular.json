@@ -37,7 +37,10 @@
               "./node_modules/@ng-select/ng-select/themes/material.theme.css",
               "src/assets/css/themes.scss"
             ],
-            "scripts": ["src/assets/js/app.min.js"],
+            "scripts": [
+              "src/assets/js/app.min.js",
+              "src/assets/js/alertify.js"
+            ],
             "browser": "src/main.ts"
           },
           "configurations": {

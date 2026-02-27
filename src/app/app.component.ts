@@ -1,120 +1,138 @@
-import {Component, OnInit} from '@angular/core';
-import {filter, Observable} from "rxjs";
-import {AuthService} from "./third-party/identity/auth.service";
-import {Router} from "@angular/router";
-import {AppSetupService} from "@app-global";
+import {ChangeDetectorRef, Component, Injector, OnInit} from '@angular/core';
+import {AlertCommand, AlertDialog, AlertService, AppSetupService, DialogType, MessageSeverity} from "@app-global";
+import {ToastaConfig, ToastaService, ToastData, ToastOptions} from "ngx-toasta";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {SetupFactory} from "@app-lib";
+
+declare var alertify: any;
+class ToastaSpecific
+{
+    protected modalService: NgbModal;
+
+    stickyToasties: number[] = [];
+    private toastaService: ToastaService;
+    private toastaConfig: ToastaConfig;
+    protected alertService: AlertService;
+
+    constructor(public injector: Injector) {
+        this.modalService= injector.get(NgbModal);
+
+        this.toastaService= injector.get(ToastaService);
+        this.toastaConfig= injector.get(ToastaConfig);
+        this.alertService= injector.get(AlertService);
+
+        this.toastaConfig.theme = 'bootstrap';
+        this.toastaConfig.position = 'bottom-right';
+        this.toastaConfig.limit = 2;
+        this.toastaConfig.showClose = true;
+        this.toastaConfig.showDuration = true;
+
+        this.alertService.getDialogEvent().subscribe(alert => this.showDialog(alert));
+        this.alertService.getMessageEvent().subscribe(message => this.showToast(message));
+    }
+
+    showDialog(dialog: AlertDialog) {
+        alertify.set({
+            labels: {
+                ok: dialog.okLabel || "Ok",
+                cancel: dialog.cancelLabel || "Cancel"
+            }
+        });
+
+        switch (dialog.type) {
+            case DialogType.alert:
+                alertify.alert(dialog.message);
+                break;
+            case DialogType.confirm:
+                alertify
+                    .confirm(dialog.message, (ok) => {
+                        if (ok) {
+                            dialog.okCallback();
+                        } else {
+                            if (dialog.cancelCallback) {
+                                dialog.cancelCallback();
+                            }
+                        }
+                    });
+                break;
+            case DialogType.prompt:
+                alertify
+                    .prompt(dialog.message, (ok, val) => {
+                        if (ok) {
+                            dialog.okCallback(val);
+                        } else {
+                            if (dialog.cancelCallback) {
+                                dialog.cancelCallback();
+                            }
+                        }
+                    }, dialog.defaultValue);
+                break;
+        }
+    }
+
+    showToast(alert: AlertCommand) {
+        debugger
+        if (alert.operation == 'clear') {
+            for (const id of this.stickyToasties.slice(0)) {
+                this.toastaService.clear(id);
+            }
+            return;
+        }
+
+        const toastOptions: ToastOptions = {
+            title: alert.message.summary,
+            msg: alert.message.detail,
+        };
+
+
+        if (alert.operation == 'add_sticky') {
+            toastOptions.timeout = 0;
+
+            toastOptions.onAdd = (toast: ToastData) => {
+                this.stickyToasties.push(toast.id);
+            };
+
+            toastOptions.onRemove = (toast: ToastData) => {
+                const index = this.stickyToasties.indexOf(toast.id, 0);
+
+                if (index > -1) {
+                    this.stickyToasties.splice(index, 1);
+                }
+
+                if (alert.onRemove) {
+                    alert.onRemove();
+                }
+
+                toast.onAdd = null;
+                toast.onRemove = null;
+            };
+        } else {
+            toastOptions.timeout = 4000;
+        }
+
+        switch (alert.message.severity) {
+            case MessageSeverity.default: this.toastaService.default(toastOptions); break;
+            case MessageSeverity.info: this.toastaService.info(toastOptions); break;
+            case MessageSeverity.success: this.toastaService.success(toastOptions); break;
+            case MessageSeverity.error: this.toastaService.error(toastOptions); break;
+            case MessageSeverity.warn: this.toastaService.warning(toastOptions); break;
+            case MessageSeverity.wait: this.toastaService.wait(toastOptions); break;
+        }
+    }
+}
+
 @Component({
-    selector: 'body',
-    templateUrl: './app.component.html',
+    selector: 'app-body',
+    template: `<router-outlet></router-outlet><ngx-toasta></ngx-toasta>`,
     standalone: false
 })
-export class AppComponent implements OnInit {
+export class AppComponent extends ToastaSpecific {
   title = 'Enrator';
-  isAuthenticated$: Observable<boolean>;
-  isDoneLoading$: Observable<boolean>;
-  canActivateProtectedRoutes$: Observable<boolean>;
+  constructor(public override injector: Injector, private setupService: AppSetupService, private setupFactory: SetupFactory) {
+    super(injector);
 
-  public readonly defaultHomeUrl: string = '/app';
-  public readonly loginUrl: string = '/login-callback';
-  public loginRedirectUrl: string | null;
-  public logoutRedirectUrl: string | null = '/';
-
-  isAuthenticated = false;
-  constructor(private authService: AuthService,
-              private appSetupService: AppSetupService,
-              private setupFactory: SetupFactory,
-              private router: Router) {
-    this.isAuthenticated$ = this.authService.isAuthenticated$;
-    this.isDoneLoading$ = this.authService.isDoneLoading$;
-    this.canActivateProtectedRoutes$ = this.authService.canActivateProtectedRoutes$;
-
-    this.appSetupService.showBellPopup = () => this.setupFactory.showBellPopup();
-    this.appSetupService.createSupportTicket = () => this.setupFactory.createSupportTicket();
-    this.appSetupService.showSurveyPopup = () => this.setupFactory.showSurveyPopup();
-  }
-
-  ngOnInit(){
-    this.isAuthenticated$.subscribe(r => {
-      if(this.isAuthenticated != r){
-        this.isAuthenticated = r;
-        if(!r){
-          this.redirectLogoutUser();
-        } else {
-          this.redirectLoginUser(r);
-        }
-      }
-    });
-  }
-
-  login() { this.authService.login(); }
-  logout() { this.authService.logout(); }
-  refresh() { this.authService.refresh(); }
-  reload() { window.location.reload(); }
-  clearStorage() { localStorage.clear(); }
-
-  logoutExternally() {
-    window.open(this.authService.logoutUrl);
-  }
-
-  get hasValidToken() { return this.authService.hasValidToken(); }
-  get accessToken() { return this.authService.accessToken; }
-  get refreshToken() { return this.authService.refreshToken; }
-  get identityClaims() { return this.authService.identityClaims; }
-  get idToken() { return this.authService.idToken; }
-
-  redirectLoginUser(isAuthenticated: boolean) {
-    let redirect = this.loginUrl;
-    if(isAuthenticated){
-      redirect = this.loginRedirectUrl ? this.loginRedirectUrl: this.defaultHomeUrl;
-    }
-    this.loginRedirectUrl = redirect;
-
-    const urlParamsAndFragment = this.splitInTwo(redirect, '#');
-    const urlAndParams = this.splitInTwo(urlParamsAndFragment.firstPart, '?');
-
-    const navigationExtras: any = {
-      fragment: urlParamsAndFragment.secondPart,
-      queryParams: urlAndParams.secondPart ? this.getQueryParamsFromString(urlAndParams.secondPart) : null,
-      queryParamsHandling: 'merge'
-    };
-    this.router.navigate([urlAndParams.firstPart], navigationExtras);
-  }
-
-  redirectLogoutUser() {
-    const redirect = this.logoutRedirectUrl;
-    //this.configurations.resetUiSettings();
-    this.router.navigate([redirect]);
-  }
-
-  private getQueryParamsFromString(paramString: string) {
-      const params: { [key: string]: string | undefined } = {};
-
-      for (const param of paramString?.split('&')) {
-          const keyValue = this.splitInTwo(param, '=');
-          params[keyValue.firstPart] = keyValue.secondPart;
-      }
-
-      return params;
-  }
-
-  private splitInTwo(text: string, separator: string, splitFromEnd = false): { firstPart: string, secondPart: string | undefined } {
-      let separatorIndex = -1;
-
-      if (separator !== '') {
-          if (!splitFromEnd)
-              separatorIndex = text.indexOf(separator);
-          else
-              separatorIndex = text.lastIndexOf(separator);
-      }
-
-      if (separatorIndex === -1) {
-          return { firstPart: text, secondPart: undefined };
-      }
-
-      const part1 = text.substring(0, separatorIndex).trim();
-      const part2 = text.substring(separatorIndex + 1).trim();
-
-      return { firstPart: part1, secondPart: part2 };
+    this.setupService.showBellPopup = () => this.setupFactory.showBellPopup();
+    this.setupService.createSupportTicket = () => this.setupFactory.createSupportTicket();
+    this.setupService.showSurveyPopup = () => this.setupFactory.showSurveyPopup();
   }
 }

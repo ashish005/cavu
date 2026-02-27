@@ -11,7 +11,7 @@ import {
 } from "@angular/router";
 import {Injectable, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {AppSetupService, OrgLookupService, GlobalModule, PreSetupLayout} from "@app-global";
+import {AppSetupService, OrgLookupService, GlobalModule, PreSetupLayout, CoreLayout} from "@app-global";
 
 enum ORG_SECTOR {
   SETUP_ORG = "setup_organizations",
@@ -51,7 +51,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
   }
 
   const hasValidSetup = setupService.appSetup.hasValidOrgSetup();
-  debugger
+
   if (!hasValidSetup) {
     return [
       {
@@ -63,7 +63,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
 
     return [
         {
-            path: '', resolve: {items: OrgLookupService}, //component: CoreLayout,
+            path: '', resolve: {items: OrgLookupService}, component: CoreLayout,
             children: [
                 {
                     path: '',

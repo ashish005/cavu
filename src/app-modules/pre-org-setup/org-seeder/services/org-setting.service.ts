@@ -1,10 +1,10 @@
 import {Injectable, Injector} from "@angular/core";
 import {Observable, throwError, catchError, map, tap, flatMap} from "rxjs";
-import {OrgResourceService} from "../../../../app/global/services";
+import {CoreResourceService} from "@app-global";
 import {OrgSetting, OrgSettingSerializer} from "../domains/org-setting.serializer";
 
 @Injectable()
-export class OrgSettingService extends OrgResourceService<OrgSetting> {
+export class OrgSettingService extends CoreResourceService<OrgSetting> {
     constructor(public override injector: Injector) {
         super(injector, 'orgSetting', new OrgSettingSerializer());
     }
@@ -57,7 +57,7 @@ export class OrgSettingService extends OrgResourceService<OrgSetting> {
     //     return this.httpClient.post(`${this.baseSectorAPIUrl}orgConfig/lookup/default`, data, this.requestHeaders);
     // }
 
-    seederOrgBranchAsync = (orgBranchId) => this.applySeed(orgBranchId, 'master');
+    /*seederOrgBranchAsync = (orgBranchId) => this.applySeed(orgBranchId, 'master');
     seederOrgBranchDemo = (orgBranchId) => this.applySeed(orgBranchId, 'demo');
 
     private applySeed = (orgBranchId, moduleMasterType): Observable<any> => {
@@ -95,10 +95,14 @@ export class OrgSettingService extends OrgResourceService<OrgSetting> {
   public syncUserRolesEndpoint=(orgBranchId)=>
   {
       const { id : orgId} = super.orgSetup;
-      return this.httpClient.get(this.baseAPIUrl+`/orgSetupLookup/org-roles-to-sync`, this.requestHeaders).toPromise()
+      return this.httpClient.get(this.baseAPIUrl+`/orgSetupLookup/org-roles-to-sync`, this.requestHeaders)
+          .pipe(
+              //flatMap((res) => success()),
+              catchError(error => this.handleError(error, () => this.syncUserRolesEndpoint(orgBranchId)))
+          ).toPromise()
       .then((r: { data })=>
       {
         return this.httpClient.post(this.baseSectorAPIUrl+`/seed/${orgId}/syncUserRole`, r.data, this.requestHeaders).toPromise();
       });
-  }
+  }*/
 }

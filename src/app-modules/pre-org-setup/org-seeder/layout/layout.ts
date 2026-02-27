@@ -1,24 +1,28 @@
-import {Component} from "@angular/core";
+import {Component, TemplateRef, ViewChild} from "@angular/core";
 import {AppSetupService} from "@app-global";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
     standalone: false,
-    templateUrl: './templates/org.html'
+    templateUrl: "./templates/org.html"
 })
 export class OrgLayout {
-    submitted: boolean;
-    constructor(public setupService: AppSetupService){
+    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
+    submitted: boolean = false;
+    constructor(public setupService: AppSetupService, private router: Router, private route: ActivatedRoute) {
     }
 
-    get orgSetupSuccessfully(){ return this.setupService.appSetup.branches;}
 
-    onFinalizeSetup() {
-        const { id, masterBranch } = this.setupService.appSetup;
 
-        /*const setupArr = [];
-        setupArr.push(this.setupService.syncUserRolesEndpoint(id, masterBranch.id));
-        forkJoin(setupArr).subscribe((resp: any)=>{
-            setTimeout(() => { location.href = location.href; }, 100);
-        }, (err: any)=>{});*/
+    goStep(step: "config" | "sync" | "final") {
+        const setup = this.setupService.appSetup;
+        if (step === "sync" && !(setup && setup.orgConfig && setup.orgConfig.hasValidConfig())) {
+            return;
+        }
+        if (step === "final" && !(setup && setup.hasValidOrgSetup && setup.hasValidOrgSetup())) {
+            return;
+        }
+        this.router.navigate([step], {relativeTo: this.route});
     }
 }
