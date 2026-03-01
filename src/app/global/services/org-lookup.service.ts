@@ -2,6 +2,7 @@ import {inject, Injectable, Injector} from '@angular/core';
 import {CoreEndpointBase} from "./endpoint-base.service";
 import {OrgLookup} from "./models/org-lookup.serializer";
 import {ActivatedRouteSnapshot, Resolve, Router} from "@angular/router";
+import {catchError, from, Observable, tap} from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class OrgLookupService extends CoreEndpointBase implements Resolve<any>{
@@ -11,13 +12,16 @@ export class OrgLookupService extends CoreEndpointBase implements Resolve<any>{
     public getVoucherTypeDictionary = () => this.orgLookup?.voucherTypeDictionary;
     constructor(protected override injector: Injector) { super(injector); }
 
-    private fetchOrgLookup = () => {
-        this.loaderService.show();
+    private fetchOrgLookup() {
+        /*this.loaderService.show();
         const promise = new Promise<boolean>((resolve, reject) => {
-            const endpointUrl = `${this.baseSectorAPIUrl}/orgLookup/${this.apiVersion}`;
-            const loadApp = this.httpClient.get(endpointUrl, this.requestHeaders);
-            loadApp.subscribe({
-              next: (response: any) => {
+            const catchErr = (err)=> {
+                // Handle the error, e.g., with an alert service
+                // alertService.showError('Failed to load app data');
+                this.loaderService.hide();
+                reject(err);
+            }
+            const success = (response)=> {
                 const { isSuccess, data, message } = response;
                 this.loaderService.hide();
                 if(data) {
@@ -25,16 +29,26 @@ export class OrgLookupService extends CoreEndpointBase implements Resolve<any>{
                 }
                 // alertService.showSuccess(message);
                 resolve(true);
-              },
-              error: (err) => {
-                // Handle the error, e.g., with an alert service
-                // alertService.showError('Failed to load app data');
-                this.loaderService.hide();
-                reject(err);
-              }
-            });
+            };
+            const endpointUrl = `${this.baseSectorAPIUrl}/orgLookup/${this.apiVersion}`;
+            const loadApp = this.httpClient.get(endpointUrl, this.requestHeaders);
+            loadApp.pipe(
+                tap(
+                    catchError(error=> this.handleError(error, () => this.fetchOrgLookup()))
+                )
+            );
+            loadApp.subscribe({ next: success, error: catchErr });
           });
-        return promise;
+        return promise;*/
+
+        const success = (results) => { this.orgLookup = new OrgLookup(results.data); };
+        const failure = (err: any) => {
+            return this.handleError(err, () => from(this.fetchOrgLookup()));
+        };
+
+        const endpointUrl = `${this.baseSectorAPIUrl}/orgLookup/${this.apiVersion}`;
+        const setup = this.httpClient.get(endpointUrl, this.requestHeaders);
+        return this.performRouteResolver({}, setup, success, failure);
     }
 
     resolve = (route: ActivatedRouteSnapshot) => this.fetchOrgLookup();

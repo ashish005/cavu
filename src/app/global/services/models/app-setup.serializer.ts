@@ -1,5 +1,3 @@
-import { DateHelper } from "../../helpers/date-helper";
-
 class OrgSoftware {
     name: string;
     description: string;
@@ -123,6 +121,7 @@ export class OrgConfigOptions {
     fyCloseMonth: number;
 
     timeZone: string;
+    isConfigured: boolean;
     constructor(model: any = {}){
         const {
             id,
@@ -131,7 +130,8 @@ export class OrgConfigOptions {
             languageId, languageName, cultureCode,
             logoDocumentId,
             startWeekDay, dateFormat, dateSeparator,
-            ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth, fyCloseDay, fyCloseMonth, timeZone
+            ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth, fyCloseDay, fyCloseMonth, timeZone,
+            isConfigured
         } = model;
         this.id = id;
 
@@ -165,16 +165,10 @@ export class OrgConfigOptions {
         this.fyCloseDay = fyCloseDay || 31;
         this.fyCloseMonth = fyCloseMonth || 12;
         this.timeZone = timeZone;
+        this.isConfigured = isConfigured;
     }
 
-    public hasValidConfig =(): boolean=> Boolean((this.currencyCode && this.cultureCode && this.timeZone));
-
-    // public get assumedStartDate() { return DateHelper.toDateControlFormat(new Date()); }
-    // public get assumedEndDate() {
-    //     var d = new Date();
-    //     var utcDate = new Date(d.getFullYear(), this.fyCloseMonth-1, this.fyCloseDay);
-    //     return DateHelper.toDateControlFormat(utcDate);
-    // }
+    public hasValidConfig =(): boolean=> this.isConfigured && Boolean((this.currencyCode && this.cultureCode && this.timeZone));
 }
 
 class Org {

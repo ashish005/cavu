@@ -67,6 +67,7 @@ export class CoreEndpointBase {
         resolve(data);
       })
       .catch((err) => {
+          debugger
         if (failure) failure(err);
         this.loaderService.hide();
         reject(err);
@@ -193,6 +194,7 @@ export class CoreEndpointBase {
         );
       }
 
+      debugger
       // Handle refresh token invalid
       if (error?.error === 'invalid_grant' || error?.error_description?.includes('invalid_grant')) {
         console.warn('⚠️ Refresh token invalid. Logging out...');
