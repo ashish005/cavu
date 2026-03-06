@@ -1,0 +1,67 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+    <div class="row row-sm">
+      <div class="col-sm-12">
+        <div class="float-label float-right" style="position: absolute; width: 90px; right: 0; top: 0;">
+          <label class="md-check"><input type="checkbox" checked="checked" formControlName="isPrimary"
+                                         [ngClass]="{ 'is-invalid': submitted && f['isPrimary'].errors }"> <i
+            class="blue"></i> Is Primary</label>
+        </div>
+        <div class="row row-sm">
+          <!--<div class="col-sm-1">
+            <select-dropdown [items]="apiResolver?.masterType?.title" title="Title" (cb)="updateTitle($event)" [selected]="formTitle.value"></select-dropdown>
+          </div>-->
+          <div class="col-sm-3">
+            <div class="md-form-group float-label">
+              <input class="md-input" formControlName="fName" [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+              <label>First Name</label>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="md-form-group float-label">
+              <input class="md-input" formControlName="lName" [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+              <label>Last Name</label>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="text" formControlName="phone"
+                     [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+              <label>Mobile No</label>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="email" formControlName="email"
+                     [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+              <label>Primary E-mail</label>
+            </div>
+          </div>
+
+          <!--<div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.qualification" title="Qualification"
+                             (cb)="updateQualificationId($event)" [control]="formQualificationId"></select-dropdown>
+          </div>
+          <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.profession" title="Profession"
+                             (cb)="updateProfessionId($event)" [control]="formProfessionId"></select-dropdown>
+          </div>
+          <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.department" title="Department"
+                             (cb)="updateDepartmentId($event)" [control]="formDepartmentId"></select-dropdown>
+          </div>
+          <div class="col-sm-3">
+            <select-dropdown [items]="apiResolver?.masterType?.income" title="Income" (cb)="updateIncomeId($event)"
+                             [control]="formIncomeId"></select-dropdown>
+          </div>-->
+        </div>
+      </div>
+    </div>
+    <ng-template #footerTemplate>
+      <button type="button" class="btn btn-sm btn-outline primary b-a float-right"
+              [disabled]="!customForm.valid || submitted" (click)="updateForm(customForm)">
+        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : actionType }}
+      </button>
+    </ng-template>
+  </form>
+</div>

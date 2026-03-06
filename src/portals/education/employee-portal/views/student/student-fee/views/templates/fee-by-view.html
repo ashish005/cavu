@@ -1,0 +1,18 @@
+<div class="d-flex flex scroll-y">
+  <div class="d-flex flex-column flex">
+    <div class="scroll-y">
+      <div class="animate fadeIn">
+        <org-grid [data]="gridData"
+                  [options]="gridOptions"
+                  [isLoading] = "isLoading"
+                  (cb)="actionCb($event)"
+                  (update)="updateGrid($event)"
+                  (cbRemove)="actionRemoveCb($event)"></org-grid>
+      </div>
+    </div>
+    <div class="mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                           [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+    </div>
+  </div>
+</div>

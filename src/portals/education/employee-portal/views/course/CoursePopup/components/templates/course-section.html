@@ -1,0 +1,29 @@
+<form class="content-main d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex-column flex py-3" formArrayName="sections">
+        <div id="courseSections" class="row">
+            <!-- <span *ngIf="!feePlanList?.length"> No Fee Plan Available for this Search </span>-->
+            <ng-template ngFor let-row [ngForOf]="sectionsForm.controls" let-i="index">
+                <div class="col-12 col-sm-6  col-lg-6">
+                    <div class="panel box no-border mb-2" [formGroupName]="i">
+                        <div class="p-2 p-y-sm">
+                            <span class="float-right text-sm">
+                              <span class="md-check pr-4">
+                                <span class="text-sm">Code<b>{{row.value.code}}</b></span>
+                              </span>
+                            </span>
+                            <a data-toggle="collapse" data-parent="#courseSections" [attr.data-target]="'#fps_'+i">
+                                <a class="float-left pr-2"><i class="text-xs fa fa-chevron-right"></i></a>
+                                <span class="btn btn-xs"> {{row.value.name}}</span>
+                                <!--<span *ngIf="!feePlan?.feeTypeWise?.length" class="text-danger text-xs"> No Breakup available for this Fee Plan </span>-->
+                            </a>
+                        </div>
+                        <div id="fps_{{i}}" class="show">
+                            <!--[ngClass]="{ 'show': formFeePlan?.value===feePlan.id, 'collapse': formFeePlan?.value !== feePlan.id}">-->
+                            <course-subject-ce [customForm]="row"></course-subject-ce>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,1 @@
+export {FeePaymentPluginFactory, FeePaymentPluginModule} from "./fee-payment";

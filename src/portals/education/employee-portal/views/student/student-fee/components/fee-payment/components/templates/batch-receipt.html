@@ -1,0 +1,17 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="scrollable hover px-3">
+      <org-grid [data]="gridData"
+                [isLoading]="isLoading"
+                [options]="gridOptions"
+                (cb)="actionCb($event)"
+                (update)="updateGrid($event)"
+                (cbRemove)="actionRemoveCb($event)"></org-grid>
+    </div>
+    <div class="p-3 white lt b-t mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                           [hasTopBorder]="hasTopBorder" padding="p-0" (cb)="moveToPage($event)">
+      </org-grid-pagination>
+    </div>
+  </div>
+</div>

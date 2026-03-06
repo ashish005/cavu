@@ -1,0 +1,14 @@
+<div class="container d-flex flex" *ngIf="tabs.COURSE == activeTab">
+    <course-ce [id]="id" [data]="data"></course-ce>
+</div>
+<div class="container d-flex flex" *ngIf="tabs.COURSE_SUBJECT == activeTab">
+    <course-section-ce [courseId]="id" [data]="data"></course-section-ce>
+</div>
+<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-pills nav-sm nav-rounded">
+            <li class="nav-item" (click)="openTab(tabs.COURSE)"><a class="nav-link" [class.active]="tabs.COURSE == activeTab">Courses</a></li>
+            <li class="nav-item" (click)="openTab(tabs.COURSE_SUBJECT)"><a class="nav-link" [class.active]="tabs.COURSE_SUBJECT == activeTab">Subjects</a></li>
+        </ul>
+    </div>
+</ng-template>

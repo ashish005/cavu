@@ -1,0 +1,72 @@
+<form class="d-flex flex" [formGroup]="customFrom">
+    <div class="d-flex flex-column flex p-3">
+        <div class="row row-sm">
+            <div class="col-sm-8">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <select-dropdown [items]="apiResolver.masterType?.studyMode" title="Study Mode"
+                                 (cb)="updateStudyMode($event)" [control]="formStudyModeType"></select-dropdown>
+            </div>
+            <div class="col-sm-6">
+                <div formArrayName="classSections">
+                    <div *ngFor="let item of formClassSection.controls; let i = index;">
+                        <div class="form-row" [formGroupName]="i">
+                            <button type="button" class="btn btn-sm btn-icon float-left p-2 m-2" (click)="deleteRow(i)"><i class="fa fa-minus"></i></button>
+                                <div class="md-form-group float-label col-sm-5">
+                                    <input class="md-input" type="text" formControlName="name">
+                                    <label>Class Section Name</label>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-icon float-left p-2 m-2" (click)="addNewRow(null)"><i class="fa fa-plus"></i></button>
+            </div>
+            <div class="col-sm-6">
+                <user-type-ahead controlTitle="Class Teacher"
+                                 userType="employee" (cb)="updateReportedToId($event)"
+                                 [controlId]="formClassTeacherId?.value"
+                                 [controlValue]="formClassTeacherName?.value"></user-type-ahead>
+            </div>
+        </div>
+    </div>
+    <!--<div class="d-flex flex-column w-xxl">
+        <div class="navbar box-shadow">
+        </div>
+        <div class="scrollable hover">
+            <div class="list-group list-group-gap">
+                <ng-template ngFor let-course [ngForOf]="courses" let-i="index">
+                    <div class="list-group-item box">
+                        <a class="item-title _500" [class]="'pl-'+order">{{course.name}}</a>
+                        <ng-template ngFor let-section [ngForOf]="course.sections" let-i="index">
+                            <div class="list-item py-1">
+                                <div class="list-body">
+                                    <label class="md-check">
+                                        <input type="radio" [name]="courseSectionId" formControlName="courseSectionId" [value]="section.id">
+                                        <i class="theme"></i> {{section.name}}
+                                    </label>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>-->
+    <ng-template #footerTemplate>
+        <div class="col-sm-12 text-right">
+            <button type="submit" class="btn btn-sm primary m-2" [disabled]="!customFrom.valid || submitted"
+                    (click)="onSubmit(customFrom)">
+                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                {{ submitted ? 'Submitting...' : actionType }}
+            </button>
+        </div>
+    </ng-template>
+</form>

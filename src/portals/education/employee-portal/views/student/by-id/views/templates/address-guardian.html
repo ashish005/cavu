@@ -1,0 +1,90 @@
+<div class="box">
+  <div class="box-body">
+    <form [formGroup]="customForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="theme p-2 p-y-sm">
+            <h6>Communication</h6>
+          </div>
+          <div class="box p-2" formArrayName="communications">
+            <ng-template ngFor let-comm [ngForOf]="communicationFormArray?.controls" let-i="index">
+              <div class="p-2 p-y-sm" [formGroup]="comm">
+                <span class="float-right text-xs">
+                  <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" (click)="communicationCb(comm)"
+                     title="edit"><i class="fa fa-edit"></i></a>
+                </span>
+                <a>{{ comm?.get('showName').value }}
+                  <small class="font-xs text-warning" *ngIf="!comm?.value?.id">No Record Found</small>
+                </a>
+              </div>
+              <!--<small *ngIf="address?.value?.id">: {{ comm?.value?.name }}</small>-->
+            </ng-template>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="theme p-2 p-y-sm">
+            <h6>Address</h6>
+          </div>
+          <div formArrayName="addresses">
+            <ng-template ngFor let-address [ngForOf]="addressFormArray?.controls" let-i="index">
+              <div class="panel box no-border mb-2" [formGroup]="address">
+                <div class="p-2 p-y-sm">
+                      <span class="float-right text-xs">
+                        <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" (click)="addressCb(address)"
+                           title="edit"><i class="fa fa-edit"></i></a>
+                      </span>
+                  <a>{{ address?.get('showName').value }}
+                    <small class="font-xs text-warning" *ngIf="!address?.value?.id">No Record Found</small>
+                  </a>
+                </div>
+                <div class="box-body" *ngIf="address?.value?.id">
+                  <!--<div class="float-left mr-2"><span class="text-md w-32 avatar rounded warning">A</span></div>-->
+                  <p>{{ address?.value | json}}</p>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <div class="mb-2">
+            <div class="theme p-2 p-y-sm">
+              <!--<div type="button" class="float-right" (click)="addGuardian()"><i class="fa fa-plus"></i> Add</div>-->
+              <h6>Guardian</h6>
+            </div>
+            <div formArrayName="relation">
+              <ng-template ngFor let-rel [ngForOf]="relationFormArray?.controls" let-i="index">
+                <div class="panel box no-border mb-2" [formGroup]="rel">
+                  <div class="p-2 p-y-sm">
+                    <span class="float-right text-xs">
+                      <a class="btn btn-xs btn-icon m-0" href="javascript:void(0)" (click)="guradianCb(rel)"
+                         title="edit"><i class="fa fa-edit"></i></a>
+                    </span>
+                    <a>{{ rel?.get('showName').value }}
+                      <small class="font-xs text-warning" *ngIf="!rel?.value?.id">No Record Found</small>
+                    </a>
+                  </div>
+                  <div class="box-body py-0 pb-2" *ngIf="rel?.value?.id">
+                    <div class="row">
+                      <div class="col-4">
+                        <small class="text-muted">Name</small>
+                        <div class="_500">{{ rel?.value?.fName }} {{ rel?.value?.lName }}</div>
+                      </div>
+                      <div class="col-4">
+                        <small class="text-muted">E Mail</small>
+                        <div class="_500">{{ rel?.value?.email }}</div>
+                      </div>
+                      <div class="col-4">
+                        <small class="text-muted">Phone</small>
+                        <div class="_500"> {{ rel?.value?.phone }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

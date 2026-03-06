@@ -1,0 +1,18 @@
+<ng-template #popupOptionsTemplate>
+
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="navbar flex-nowrap white lt box-shadow">
+            <a data-toggle="modal" data-target="#task-list" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+            </a>
+            <div class="flex">
+                <ng-template *ngTemplateOutlet="calendarYear?.headerTemplate"></ng-template>
+            </div>
+        </div>
+        <div class="scrollable hover">
+            <calendar-year #calendarYear></calendar-year>
+        </div>
+    </div>
+</div>

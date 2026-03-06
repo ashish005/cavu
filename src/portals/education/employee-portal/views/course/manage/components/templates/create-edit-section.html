@@ -1,0 +1,17 @@
+<form [formGroup]="customForm">
+  <div *ngFor="let item of sections.controls; let i = index;" [formGroupName]="i">
+    <div class="form-row">
+      <div class="md-form-group float-label col-sm-5 p-2">
+        <input class="md-input" type="text" formControlName="name">
+        <label> Name</label>
+      </div>
+      <div class="md-form-group float-label col-sm-5 p-2">
+        <input class="md-input" type="text" formControlName="code">
+        <label>Code</label>
+      </div>
+      <button type="button" class="btn btn-sm btn-icon float-right p-2 m-2" (click)="showSubjects(item)">
+        <i class="fa fa-list-alt"></i>
+      </button>
+    </div>
+  </div>
+</form>

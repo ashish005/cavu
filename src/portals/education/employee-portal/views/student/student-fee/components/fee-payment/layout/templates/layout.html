@@ -1,0 +1,87 @@
+<div class="container d-flex flex" role="main" *ngIf="tabs.payment == viewType">
+    <div class="d-flex flex-column w-auto-sm">
+        <div class="navbar box-shadow">
+            <div class="input-group flex">
+                <!--<input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search" required="">
+                <span class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button></span>-->
+            </div>
+        </div>
+        <div class="scrollable hover">
+            <nav class="nav-border right b-theme" data-nav="">
+                <ul class="list-group list-group-gap">
+                    <ng-template ngFor let-row [ngForOf]="monthlyVoucherList" let-i="index">
+                        <li class="list-group-item box" (click)="selectedMonthVoucherByDueDate(row)"
+                            [class.active]="(row.index == activeVoucher?.index)">
+                            <div class="float-right">
+                                <span><i class="fa fa-chevron-right"></i></span>
+                            </div>
+                            <div class="list-body">
+                                <a class="item-title _500"> {{row.name}} </a>
+                                <div class="item-except text-sm">
+                                    <a class="d-inline-block float-left text-muted">
+                                        <small class="text-xs">Pay: {{row?.balance | orgCurrency }}</small>
+                                    </a>
+                                    <a class="d-inline-block float-right">
+                                        <span class="badge success" *ngIf="row.adjusted">Adjusted</span>
+                                        <span class="badge text-success" *ngIf="row.isSettled">Settled</span>
+                                        <span class="badge success" *ngIf="row.advance">>Advance: {{row?.advance | orgCurrency }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ng-template>
+                </ul>
+            </nav>
+            <div class="no-result hide">
+                <div class="p-4 text-center">No Results</div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <form class="d-flex flex" [formGroup]="customForm">
+                <div class="d-flex flex-column flex">
+                    <div class="navbar flex-nowrap white lt box-shadow">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                        </a>
+                        <span class="text-md text-ellipsis flex">Invoice</span>
+                    </div>
+                    <div class="scrollable hover">
+                        <div class="d-flex flex-column flex p-3" formArrayName="saleVoucher">
+                            <monthly-invoice-form
+                                    *ngFor="let voucher of formSaleVoucher.controls; let i = index; trackBy: trackByIndex"
+                                    [customForm]="voucher"
+                                    [i]="i"
+                                    [lookup]="lookupService.masterType"
+                                    (cb)="syncVoucher($event)">
+                            </monthly-invoice-form>
+                        </div>
+                    </div>
+                    <div class="px-2 white lt b-t mt-auto">
+                        <!--<monthly-sale-voucher (cb)="onFeePayment($event)" [customForm]="formPayment" [invalid]="customForm.invalid" [submitted]="submitted"></monthly-sale-voucher>-->
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="d-flex flex-column w-xxl p-2">
+            <payment-form [customForm]="customForm" [lookup]="lookupService.masterType" (onPayment)="onPaymentSuccess($event)"></payment-form>
+        </div>
+    </div>
+</div>
+<div class="container d-flex flex" role="main" *ngIf="tabs.reciept == viewType">
+    <batch-receipt *ngIf="!isLoading" [accountId]="studentAccountId"></batch-receipt>
+</div>
+<loader [isLoading]="isLoading"></loader>
+<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-pills nav-sm nav-rounded">
+            <li class="nav-item" (click)="openTab(tabs.payment)">
+                <a class="nav-link" [class.active]="tabs.payment == viewType">payment</a>
+            </li>
+            <li class="nav-item" (click)="openTab(tabs.reciept)">
+                <a class="nav-link" [class.active]="tabs.reciept == viewType">reciept</a>
+            </li>
+        </ul>
+    </div>
+</ng-template>

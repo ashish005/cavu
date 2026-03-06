@@ -1,0 +1,36 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap box-shadow">
+      <div class="navbar-text flex p-0">
+        <h6 class="mb-0"> Org Class </h6>
+        <small class="float-left">Management</small>
+        <span class="b-a text-xs px-2 _500 mx-2" *ngIf="studyModeType?.id"> {{studyModeType?.name}} </span>
+      </div>
+      <button id="sort"
+              class="btn btn-sm white ml-1 sort"
+              data-sort="item-title" data-toggle="tooltip" title=""
+              data-original-title="Sort"><i class="fa fa-sort"></i>
+      </button>
+    </div>
+    <div class="scrollable hover">
+      <org-grid [data]="gridData"
+                [isLoading]="isLoading"
+                [options]="gridOptions"
+                (cb)="actionCb($event)"
+                (update)="actionCb($event)">
+      </org-grid>
+    </div>
+    <div class="mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                           [page]="coreState?.page" (cb)="moveToPage($event)">
+      </org-grid-pagination>
+    </div>
+  </div>
+</div>
+<ng-template #actionTemplate>
+  <a class="nav-link mt-2" (click)="createClass()">
+          <span class="btn btn-sm btn-block b-a b-theme text-theme btn-rounded theme">
+            <i class="fa fa-plus float-left"></i> New Class
+          </span>
+  </a>
+</ng-template>

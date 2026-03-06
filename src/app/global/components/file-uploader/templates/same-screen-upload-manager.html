@@ -1,0 +1,241 @@
+<div class="app-content h-100">
+    <div class="content-header">
+        <div class="navbar flex-nowrap">
+            <div class="flex">
+                <div id="result"></div>
+                <div class="dropzone white b-a b-3x b-dashed b-primary p-a rounded text-center dz-clickable mx-4"
+                     (click)="showUploader()">
+                    <div class="dz-message p-1" appDnd (filesChangeEmiter)="onFilesChange($event)"
+                         (filesInvalidEmiter)="onFileInvalids($event)"
+                         allowed_extensions="['zip','jpg','png','jpeg','rar','JPG']">
+                        <h6 class="_500">Drop files here or click to upload.</h6>
+                        <span class="text-muted d-block"></span>
+                    </div>
+                </div>
+                <input type="file" #file uploader="uploader"
+                       style="visibility: hidden;padding: 0px;margin: 0px;display: contents;" multiple
+                       (change)="onSelectChange($event)"/>
+            </div>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex" [class.hide]="!showUploadScreen">
+            <div class="d-flex flex" id="content-body">
+                <div class="d-flex flex-column flex">
+                    <div class="scrollable hover h-100">
+                        <div class="p-3">
+                            <div class="upload-form ns-img">
+                                <img #image src="" alt="your image" class="preview-img"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-1 white lt b-t mt-auto">
+                        <div class="bg b-b" style="width: 100%; bottom: 0;">
+                            <div class="row">
+                                <div class="col-sm-12 order-sm-1">
+                                    <div class="_500 text-xs float-right"> {{ uploadItem?.file?.name }}</div>
+                                    <small ng-show="uploader.isHTML5" nowrap class="p-1" style="background: antiquewhite;">
+                                        {{ uploadItem?.file?.size/1024/1024 | number }} MB
+                                    </small>
+                                    <div class="text-center">
+                                        <span *ngIf="uploadItem?.isSuccess"><i class="fa fa-check"></i></span>
+                                        <span *ngIf="uploadItem?.isCancel"><i class="fa fa-ban"></i></span>
+                                        <span *ngIf="uploadItem?.isError"><i class="fa fa-remove"></i></span>
+                                    </div>
+                                    <div class="progress" style="margin-bottom: 0;">
+                                        <div class="progress-bar" role="progressbar"
+                                             [ngStyle]="{ 'width': uploadItem?.progress + '%' }"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ims-slider" *ngIf="uploader?.queue?.length>0">
+                            <!--<div class="slider-inner">
+                              <ul style="overflow: hidden; padding-top: 50%; height: 0px;">
+                                <li class="ns-show" style="left: 0px; z-index: 1;">
+                                  <div class="ns-img">
+                                    <div *ngIf="activeFile" upload-preview [src]="activeFile"></div>
+                                    <div *ngIf="!activeFile"></div>
+                                  </div>
+                                </li>
+                              </ul>
+                              <div class="fs-icon" title="Expand/Close"></div>
+                              <div id="ims-slider-prev" class="">
+                                <div>1 ∕ 24</div>
+                              </div>
+                              <div id="ims-slider-next" class="">
+                                <div>1 ∕ 24</div>
+                              </div>
+                              <div id="ims-slider-pause-play"></div>
+                            </div>-->
+                            <div id="thumbnail-slider">
+                                <div class="inner">
+                                    <ul style="touch-action: pan-y; transition-property: transform; transition-timing-function: cubic-bezier(0.2, 0.88, 0.5, 1); transition-duration: 0ms;">
+                                        <li style="height: 50px; width: 50px; margin-bottom: 8px; overflow: hidden;"
+                                            *ngFor="let item of uploader?.queue">
+                                            <a class="thumb" thumb-preview [src]="item" (mouseover)="updateActiveImg(item)"
+                                               style="cursor: pointer"></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="thumbnail-slider-prev"></div>
+                                <div id="thumbnail-slider-next"></div>
+                                <div id="thumbnail-slider-pause-play"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form class="d-flex flex-column w-xxl" [formGroup]="uploadCustomForm"
+                  (submit)="uploadDocument(uploadCustomForm)">
+                <!--<div class="navbar box-shadow">
+                    <div class="input-group flex"><input type="text"
+                                                         class="form-control px-0 no-bg no-border no-shadow search"
+                                                         placeholder="Search" required=""> <span
+                            class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                            class="fa fa-search text-muted"></i></button></span></div>
+                </div>-->
+                <div class="p-2 px-3 text-muted text-sm">Document Type</div>
+                <div class="scrollable hover">
+                    <div class="list inset">
+                        <ng-template ngFor let-docType [ngForOf]="lookups?.docTypes" let-j="index">
+                            <div class="list-item" [class.active]="docType.id==formDocTypeId.value">
+                                <div>
+                                    <label class="checkbox-inline md-check">
+                                        <input type="radio" name="docTypeId" formControlName="docTypeId"
+                                               [value]="docType.id"><i class="indigo"></i>
+                                    </label>
+                                </div>
+                                <div class="list-body">
+                                    <a class="item-title _500" data-pjax-state="">{{docType.name}}</a>
+                                    <div class="text-sm text-muted h-1x">{{docType.categoryName}}</div>
+                                </div>
+                                <!--<div>
+                                    <div class="text-center">
+                                        <a class="d-inline-block px-1 text-center">
+                                                  <span class="text-xs d-block">
+                                                    <label class="checkbox-inline md-check">
+                                                        <input type="radio" name="imageTypeId" formControlName="imageTypeId"
+                                                               value="1"><i class="indigo"></i>
+                                                    </label>
+                                                  </span>
+                                            <small class="text-xs">Front Image</small>
+                                        </a>
+                                        <a class="d-inline-block px-1 text-center b-l">
+                                                  <span class="text-xs d-block">
+                                                    <label class="checkbox-inline md-check">
+                                                        <input type="radio" name="imageTypeId" formControlName="imageTypeId"
+                                                               value="2"><i class="indigo"></i>
+                                                    </label>
+                                                  </span>
+                                            <small class="text-xs">Back Image</small>
+                                        </a>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="m-2 mt-auto text-center">
+                    <button class="btn btn-sm btn-block text-xs theme btn-outline" type="submit" title="Upload"
+                            [disabled]="!uploadCustomForm.valid || submitted"
+                            [ngClass]="{'btn-outline b-theme text-theme': (uploadCustomForm.valid)}">
+                        <i class="fa fa-upload"></i>
+                        <span *ngIf="uploadItem?.isSuccess"> Uploading... </span>
+                        <span *ngIf="!uploadItem?.isReady && !uploadItem?.isSuccess"> Upload  </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="d-flex flex flex-column" *ngIf="!showUploadScreen">
+            <ng-template *ngTemplateOutlet="documentsGrid"></ng-template>
+        </div>
+    </div>
+</div>
+<ng-template #documentsGrid>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Doc Type</th>
+                    <th>Category</th>
+                    <th>Count</th>
+                    <th>Size</th>
+                    <th>Verification</th>
+                    <th>Status</th>
+                    <th width="120px">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of documents">
+                    <td class="p-1">
+                        <!--<div *ngFor="let d of item?.docs">
+                            <img class="thumb float-left mr-2" [src]="d?.fileUrl" style="height: 50px;width: 50px;">
+                        </div>-->
+                        <div class="user-group user-group--bordered">
+                            <ng-template ngFor let-d [ngForOf]="item?.docs" let-j="index">
+                                <div class="user user--rounded">
+                                    <img [src]="d?.fileUrl" class="circle b-a" style="height: 30px;width: 30px;">
+                                </div>
+                            </ng-template>
+                        </div>
+                        <!--<div class="thumb float-left" thumb-preview [src]="item" style="height: 50px;width: 50px;" (mouseover)="updateActiveImg(item)"></div>
+                        <div class="thumb ml-2 float-left" thumb-preview [src]="item" style="height: 50px;width: 50px;" (mouseover)="updateActiveImg(item)"></div>-->
+                    </td>
+                    <td>
+                        {{ item?.documentTypeName }}
+                        <small *ngIf="item.isMandatory" class="badge badge-pill danger up text-xs">Mandatory</small>
+                    </td>
+                    <td> {{ item?.documentCategoryName }}</td>
+                    <td> {{item?.count}}</td>
+                    <td nowrap> {{item?.size/1024/1024 | number}} MB</td>
+                    <td>
+                        <span *ngIf="item.isVerificationRequired">Pending...</span>
+                        <span *ngIf="item.isVerificationRequired">{{item.verificationBy}}</span>
+                    </td>
+                    <td>
+                        {{item?.status}}
+<!--                        <span *ngIf="item?.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>-->
+<!--                        <span *ngIf="item?.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>-->
+<!--                        <span *ngIf="item?.isError"><i class="glyphicon glyphicon-remove"></i></span>-->
+                    </td>
+                    <td nowrap>
+                        <div class="text-sm text-muted">
+                            <ul class="nav nav-sm float-right">
+                                <li class="nav-item b-r">
+                                        <span class="btn btn-xs btn-outline" title="Download"><i
+                                                class="fa fa-download"></i></span>
+                                </li>
+                                <li class="nav-item">
+                                        <span class="btn btn-xs btn-outline" title="Edit"><i
+                                                class="fa fa-edit"></i></span>
+                                </li>
+                                <li class="nav-item b-l">
+                                    <span class="btn btn-xs btn-outline" title="Remove"><i
+                                            class="fa fa-remove"></i></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div>
+              <div class="pb-4">
+                Queue progress:
+                <div class="progress" style="">
+                  <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': progress + '%' }"></div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-success btn-s">
+                <span class="glyphicon glyphicon-upload"></span> Upload all
+              </button>
+              <button type="button" class="btn btn-warning btn-s">
+                <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+              </button>
+            </div>-->
+        </div>
+    </div>
+</ng-template>

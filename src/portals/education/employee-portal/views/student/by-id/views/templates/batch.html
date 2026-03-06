@@ -1,0 +1,24 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+      <org-grid [data]="gridData"
+                [options]="gridOptions"
+                [isLoading] = "isLoading"
+                (cb)="actionCb($event)"
+                (update)="updateGrid($event)"
+                (cbRemove)="actionRemoveCb($event)"></org-grid>
+      <div class="no-result" *ngIf="!isLoading && !gridData?.length">
+        <div class="p-4 text-center">No Result Found. </div>
+      </div>
+    </div>
+    <div class="mt-auto">
+      <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                           (cb)="moveToPage($event)"></org-grid-pagination>
+    </div>
+  </div>
+</div>
+<ng-template #actionTemplate>
+  <a class="nav-link mx-2" (click)="createNew()">
+    <span class="btn btn-sm btn-block b-a b-theme text-theme btn-rounded theme"><i class="fa fa-plus pr-2"></i>New Batch</span>
+  </a>
+</ng-template>

@@ -1,0 +1,504 @@
+:host { display: contents;}
+
+::ng-deep .progress {
+  height: .2rem !important;
+}
+::ng-deep .upload-form.ns-img {
+  img{
+    width: 100%;
+  }
+}
+.preview-img {
+  position: relative;
+  float: left;
+  width:  100%;
+  min-height: 300px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Visit http://www.menucool.com/responsive-slider for instructions */
+
+#ims-slider {
+  width:100%;
+  padding-top:10px;
+  padding-bottom:10px;
+
+  margin:0 auto;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+#ims-slider.fullscreen {
+  background:black;
+}
+
+#ims-slider.fullscreen #ims-slider-prev {
+  left: -50px;
+}
+#ims-slider.fullscreen #ims-slider-next {
+  right: -50px;
+}
+
+
+#ims-slider .fs-icon {
+  position: absolute;
+  top:0px;
+  right:0px;
+  width:45px;
+  height:45px;
+  background: rgba(0,0,0,0.1) no-repeat 0 0;
+  //background: rgba(0,0,0,0.1) url(fullscreen.png) no-repeat 0 0;
+  z-index:2;
+  opacity:0;
+  -webkit-transition:opacity 0.8s;
+  transition:opacity 0.8s;
+}
+
+#ims-slider:hover .fs-icon {
+  opacity: 1;
+}
+
+#ims-slider.fullscreen .fs-icon {
+  background-position: center -45px;
+  opacity:1;
+}
+
+#ims-slider .slider-inner {
+  //max-width:700px;
+  margin:0 auto;/*center-aligned*/
+  font-size:0px;
+  position:relative;
+  box-sizing:border-box;
+}
+
+#ims-slider.fullscreen .slider-inner {
+  max-width:900px;
+  max-height:80%;
+}
+
+#ims-slider ul {
+  /*overflow:hidden;*/
+  position:relative;
+  list-style:none;
+  padding:0;
+  box-sizing:border-box;
+}
+
+#ims-slider li {
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  position: absolute;
+  font-size:12px;
+  list-style:none;
+  margin:0;
+  padding:0;
+  opacity:0;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+#ims-slider li.ns-show {
+  opacity:1;
+}
+
+
+
+/* --------- slider image ------- */
+#ims-slider .ns-img {
+  background-color: rgba(216, 216, 216, 0.08);
+  background-size:contain;/*Note: If transitionType is zoom, it will be overridden to cover.*/
+
+  border-radius:3px;
+
+  cursor:default;
+  display:block;
+  position: absolute;
+  width:100%;
+  height:100%;
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+
+
+/* ---------Arrow buttons ------- */
+/* The arrow button id should be: slider id + ("-prev", "-next", and "-pause-play") */
+#ims-slider-pause-play { display:none;}
+
+#ims-slider-prev, #ims-slider-next
+{
+  position: absolute;
+  display:inline-block;
+  width:42px;
+  height:56px;
+  line-height:56px;
+  top: 50%;
+  margin-top:-28px;
+  background-color:rgba(0,0,0,0.4);
+  background-color:#ccc\9;/*IE8 hack*/
+  backface-visibility:hidden;
+  color:white;
+  overflow:hidden;
+  white-space:nowrap;
+  -webkit-user-select: none;
+  user-select:none;
+  border-radius:2px;
+  z-index:10;
+  opacity:0.3;
+  font-family:sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  -webkit-transition:all 0.7s;
+  transition:all 0.7s;
+}
+
+.slider-inner:hover #ims-slider-prev, .slider-inner:hover #ims-slider-next {
+  opacity:1;
+}
+
+
+#ims-slider-prev {
+  left: 0;
+}
+#ims-slider-next {
+  right: 0;
+}
+
+/* arrows */
+#ims-slider-prev::before, #ims-slider-next::before {
+  position: absolute;
+  top: 17px;
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+}
+
+#ims-slider-prev::before {
+  -ms-transform:rotate(-45deg);/*IE 9*/
+  -webkit-transform:rotate(-45deg);
+  transform: rotate(-45deg);
+  backface-visibility:hidden;
+  right:4px;
+}
+
+#ims-slider-next::before {
+  -ms-transform:rotate(135deg);/*IE 9*/
+  -webkit-transform:rotate(135deg);
+  transform: rotate(135deg);
+  backface-visibility:hidden;
+  left:4px;
+}
+
+
+/*pagination num within the arrow buttons*/
+#ims-slider-prev div, #ims-slider-next div {display:none;}
+
+
+/*------ pager(nav bullets) ------*/
+/* The pager id should be: slider id + "-pager" */
+#ims-slider-pager { display:none;}
+
+
+#ims-slider-pager, #ims-slider-prev, #ims-slider-next, #ims-slider-pause-play
+{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+/*Responsive settings*/
+@media only screen and (max-width:800px){
+
+  #ims-slider-prev, #ims-slider-next {
+    display:none;
+  }
+  #ims-slider .fs-icon {
+    display:none;
+  }
+}
+
+
+/* http://www.menucool.com */
+
+#thumbnail-slider {
+  -webkit-transform: scale(0.7);
+  transform:scale(0.7);
+  transition:transform 0.25s;
+  opacity:0.8;
+
+  margin:4px auto; /*center-aligned*/
+  width:100%;
+  max-width:780px;
+  padding:0px 40px;/*Gives room for arrow buttons*/
+  box-sizing:border-box;
+  position:relative;
+  -webkit-user-select: none;
+  user-select:none;
+}
+
+#thumbnail-slider:hover {
+  -webkit-transform: scale(1);
+  transform:scale(1);
+  opacity:1;
+}
+
+#ims-slider.fullscreen #thumbnail-slider {
+  width:90%;
+  max-width:1120px;
+}
+
+#thumbnail-slider div.inner {
+  /*the followings should not be changed */
+  position:relative;
+  overflow:hidden;
+  padding:2px 0;
+  margin:0;
+}
+
+
+#thumbnail-slider div.inner ul {
+
+  /*the followings should not be changed */
+  //white-space:nowrap;
+  position:relative;
+  left:0; top:0;
+  list-style:none;
+  font-size:0;
+  padding:0;
+  margin:0;
+  float:left!important;
+  width:auto!important;
+  height:auto!important;
+}
+
+#thumbnail-slider ul li {
+  opacity:1;
+  overflow:visible;
+  display:inline-block!important; /*IE7 hack*/
+  border:2px solid #222;
+  margin:0 4px;/* Spacing between thumbs*/
+  box-sizing:content-box;
+
+  text-align:center;
+  vertical-align:middle;
+  padding:0;
+  position:relative;
+  list-style:none;
+  backface-visibility:hidden;
+
+  transition:all 0.2s;
+  -webkit-transform:scale(1);
+  transform:scale(1);
+}
+
+#thumbnail-slider ul li.active {
+  border-color:white;
+}
+
+#thumbnail-slider li:hover {
+  border-color:rgba(255,255,255,0.7);
+}
+
+
+#thumbnail-slider .thumb {
+  width:100%;
+  height: 100%;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center center;
+  display:block;
+  position:absolute;
+  font-size:0;
+}
+
+
+/* --------- Captions ------- */
+#thumbnail-slider li > span {
+  position:absolute;
+  color:rgba(255,255,255,0.7);
+  font-size:22px;
+  bottom:2px;
+}
+
+
+/* --------- navigation controls ------- */
+/* The nav id should be: slider id + ("-prev", "-next", and "-pause-play") */
+
+#thumbnail-slider-pause-play {display:none;} /*.pause*/
+
+#thumbnail-slider-prev, #thumbnail-slider-next
+{
+  position: absolute;
+  background-color:none;
+  width:40px;
+  height:50px;
+  line-height:50px;
+  top: 50%;
+  margin:0;
+  margin-top:-25px;
+  color:white;
+  z-index:10;
+  cursor:pointer;
+  opacity:1;
+  background-color:#ccc;/*IE7 hack*/
+}
+
+#thumbnail-slider-prev {
+  left:0px; right:auto;
+}
+
+#thumbnail-slider-next {
+  left:auto; right:0px;
+}
+#thumbnail-slider-next.disabled, #thumbnail-slider-prev.disabled {
+  opacity:0.3;
+  cursor:default;
+}
+
+/* arrows */
+#thumbnail-slider-prev::before, #thumbnail-slider-next::before {
+  position: absolute;
+  top: 15px;
+  content: "";
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-left: 3px solid #DDD;
+  border-top: 3px solid #DDD;
+}
+
+#thumbnail-slider-prev::before {
+  left:14px;
+  -ms-transform:rotate(-45deg);/*IE9*/
+  -webkit-transform:rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+#thumbnail-slider-next::before {
+  right:14px;
+  -ms-transform:rotate(135deg);/*IE9*/
+  -webkit-transform:rotate(135deg);
+  transform: rotate(135deg);
+}
+
+/*Responsive settings*/
+@media only screen and (max-width:736px){
+
+  #thumbnail-slider {
+    padding:0;
+  }
+
+  #thumbnail-slider-prev, #thumbnail-slider-next {
+    display:none;
+  }
+}
+/*
+
+.nav {
+  position: absolute;
+  z-index: 2;
+  margin-top: -20px;
+  display: inline-flex;
+  padding: 3px 20% 0px 20%;
+}
+.nav ul {
+  zoom: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #333;
+}
+.nav ul:before,
+.nav ul:after {
+  content: "";
+  display: table;
+}
+.nav ul:after {
+  clear: both;
+}
+.nav ul > li {
+  float: left;
+  position: relative;
+}
+.nav a {
+  display: block;
+  padding: 10px 20px;
+  line-height: 1.2em;
+  color: #fff;
+  border-left: 1px solid #595959;
+}
+.nav a:hover {
+  text-decoration: none;
+  background: #595959;
+}
+.nav li ul {
+  background: #273754;
+}
+.nav li ul li {
+  width: 200px;
+}
+.nav li ul a {
+  border: none;
+}
+.nav li ul a:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.nav5 ul > li:hover ul {
+  max-height: 1000px;
+  -webkit-transform: perspective(400) rotate3d(0, 0, 0, 0);
+}
+.nav5 li ul {
+  position: absolute;
+  left: 0;
+  top: 36px;
+  z-index: 1;
+  max-height: 0;
+  overflow: hidden;
+  -webkit-transform: perspective(400) rotate3d(1, 0, 0, -90deg);
+  -webkit-transform-origin: 50% 0;
+  -webkit-transition: 350ms;
+  -moz-transition: 350ms;
+  -o-transition: 350ms;
+  transition: 350ms;
+}
+.user-group:after,.user:after {
+  content: "";
+  display: table;
+  clear: both
+}
+.user-group .user {
+  float: left;
+  margin-left: -5px
+}
+
+.user-group .user--lg {
+  margin-left: -15px
+}
+
+.user-group .user--xlg {
+  margin-left: -25px
+}
+
+.user-group .user--huge {
+  margin-left: -45px
+}
+
+.user-group .user:first-child {
+  margin-left: 0
+}
+
+.user-group--bordered .user img {
+  box-shadow: 0 0 0 2px #FFF
+}
+
+.table .user--lg {
+  height: 40px
+}*/

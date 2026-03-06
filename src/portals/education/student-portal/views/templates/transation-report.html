@@ -1,0 +1,52 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="padding">
+      <div class="row no-gutters box">
+        <div class="col-sm-4">
+          <div class="padding">
+            <h6>Sales Statistical Overview</h6>
+            <p class="text-muted my-3">Sale information on advertising, exhibitions, market research, online media,
+              customer desires, PR and much more</p>
+            <p>
+              <i class="fa fa-arrow-circle-o-up text-success mr-1"></i>
+              <span class="text-success">15%</span> more than last week
+            </p>
+            <a class="btn btn-sm btn-rounded success theme">Update</a>
+            <a class="btn btn-sm btn-rounded white">See detail</a>
+          </div>
+        </div>
+        <div class="col-sm-8 light lt">
+          <div class="scrollable hover h-100">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)">
+            </org-grid>
+          </div>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-8">
+          <div class="white lt mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+          </div>
+        </div>
+      </div>
+      <!--<div class="row">
+        <div class="col-sm-6">
+          <div class="box">
+            <div class="box-header"><h3>Receipts</h3></div>
+            <receipt-voucher [accountId]="accountId"></receipt-voucher>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="box">
+            <div class="box-header"><h3>Account Book</h3></div>
+            <account-book [accountId]="accountId" viewType='plain'></account-book>
+          </div>
+        </div>
+      </div>-->
+    </div>
+  </div>
+</div>
+

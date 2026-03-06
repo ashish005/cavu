@@ -1,0 +1,94 @@
+<form class="content-main d-flex flex" [formGroup]="customForm" (submit)="onFeePayment()">
+    <div class="d-flex flex">
+        <div class="d-flex flex-column flex">
+            <div class="box">
+                <div class="box-header">
+                    <h6 class="m-0">Billing Summary</h6>
+                </div>
+            </div>
+            <!--<form [formGroup]="formPayment" (submit)="onFeePayment()" class="pl-2 pr-2 pt-2">
+                    <ul class="nav nav-xs flex-row no-border">
+                        <li class="nav-item w-auto">
+                            <div class="md-form-group float-label">
+                                <input class="md-input" type="text" formControlName="payAmount">
+                                <label>Amount</label>
+                            </div>
+                        </li>
+                        <li class="nav-item w-75">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="md-form-group">
+                                        <select-dropdown [items]="lookup?.paymentModes"
+                                                         title="Payment Mode"
+                                                         (cb)="updatePaymentMapperId($event)"
+                                                         [control]="formPaymentGatewayMapperId"></select-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="md-form-group">
+                                        <div class="md-input">
+                                            <slider-dropdown [data]="lookup?.paymentMode" (cb)="updatePaymentModeId($event)"
+                                                             [options]="options"
+                                                             [parentId]="formPaymentModeId?.value"
+                                                             [childId]="formPaymentGatewayId?.value"></slider-dropdown>
+                                        </div>
+                                        <label>Payment Mode</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="md-form-group"
+                                         [class.hide]="!paymentModeInfo?.isReferenceNoRequired">
+                                        <input class="md-input" formControlName="refTransactionNo">
+                                        &lt;!&ndash;[ngClass]="{ 'is-invalid': submitted && f.referenceTransactionNo.errors }">&ndash;&gt;
+                                        <label>Ref. No </label>
+                                    </div>
+                                </div>
+                                <div class="col float-right">
+                                    <div class="p-3 white lt mt-auto">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline primary b-a float-right center"
+                                                [disabled]="invalid || submitted">
+                                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>{{
+                                            submitted ? 'Submitting...' : 'Pay' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </form>-->
+            <form class="scrollable hover" [formGroup]="formPayment" (submit)="onFeePayment()">
+                <div class="form-group row">
+                    <div class="col-sm-4"><label class="col-form-label text-muted">Price</label></div>
+                    <div class="col-sm-8"><input class="md-input" type="text" formControlName="payAmount"></div>
+                </div>
+                <fieldset class="form-group">
+                    <legend class="col-form-legend text-muted">Payment Group</legend>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <ng-template ngFor let-paymentMode [ngForOf]="lookup?.paymentModes" let-i="index">
+                                <div class="form-check">
+                                    <label class="form-check-label"><input class="form-check-input" type="radio"
+                                                                           name="gatewayMapperId"
+                                                                           formControlName="gatewayMapperId"
+                                                                           [value]="paymentMode.id">
+                                        {{paymentMode.name}}</label>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group row" [class.hide]="!paymentModeInfo?.isReferenceNoRequired">
+                    <div class="col-sm-4"><label class="col-form-label">Ref. Trxn No</label></div>
+                    <div class="col-sm-8"><input class="md-input" formControlName="refTransactionNo"></div>
+                </div>
+            </form>
+            <div class="p-3 mt-auto">
+                <button type="submit" class="btn btn-sm btn-outline primary b-a float-right center" [disabled]="customForm.invalid || submitted">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>{{ submitted ? 'Submitting...' : 'Pay' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

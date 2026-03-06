@@ -36,6 +36,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {NgxGraphModule} from "@swimlane/ngx-graph";
 import {ADMIN_LAYOUTS} from "./layouts";
+import {FileUploadManagerModule} from "./components/file-uploader";
 
 const COMMON_MODULE = [
     CdkTableModule, CdkTreeModule, DragDropModule,
@@ -64,7 +65,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
     imports: [
         CommonModule, RouterModule,
         FormsModule, ReactiveFormsModule,
-        TranslateModule, COMMON_MODULE,
+        TranslateModule, COMMON_MODULE, FileUploadManagerModule,
         // NgSelectModule,
         NgbModule, NgbPopoverModule, NgbTooltipModule, //NgbCarouselModule, NgbModalModule, NgChartsModule,
         //ScrollingModule,
@@ -91,7 +92,7 @@ function getBaseUrl() { return document.getElementsByTagName('base')[0].href; }
         // AngularEditorModule,
         ToastaModule,
       GLOBAL_COMPONENTS, GLOBAL_DIRECTIVES, GLOBAL_PIPES, DEPENDENT_COMPONENTS,
-      DEPENDENT_MODULES
+      DEPENDENT_MODULES, FileUploadManagerModule
     ]
 })
 export class GlobalModule {}

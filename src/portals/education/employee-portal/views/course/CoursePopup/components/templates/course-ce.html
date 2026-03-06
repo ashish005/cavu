@@ -1,0 +1,208 @@
+<!--<loader [isLoading]="isLoading"></loader>-->
+<form class="content-main d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex">
+        <div class="d-flex flex" id="content-body">
+            <div class="d-flex flex-column flex">
+                <div class="navbar flex-nowrap white lt box-shadow">
+                    <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none" data-pjax-state="">
+                        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                    </a>
+                    <span class="text-md text-ellipsis flex"></span>
+                </div>
+                <div class="content-main d-flex flex">
+                    <div class="d-flex flex">
+                        <div class="d-flex flex p-3">
+                            <div class="d-flex flex-column flex">
+                                <div class="scrollable hover">
+                                    <div class="row row-sm">
+                                        <div class="col-sm-6">
+                                            <div class="md-form-group float-label">
+                                                <input class="md-input" type="text" formControlName="name">
+                                                <label>Course Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="md-form-group float-label">
+                                                <input class="md-input" type="text" formControlName="abbreviation">
+                                                <label>Course Abbreviation</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+<!--                                            <multiselect-dropdown-->
+<!--                                                    [items]="lookup?.studyMode"-->
+<!--                                                    titleInfo="Study Mode"-->
+<!--                                                    bindLabel="name"-->
+<!--                                                    bindValue="id"-->
+<!--                                                    (cb)="updateStudyMode($event)"-->
+<!--                                                    [selected]="formStudyModes?.value"></multiselect-dropdown>-->
+                                            <span class="red"> {{errorMsg}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="row row-sm">
+                                        <div class="col-4">
+                                            <div class="md-form-group float-label p-0">
+                                                <label class="text-xs text-muted m-0">Study Level</label>
+                                                <select class="md-input" formControlName="studyLevelId">
+                                                    <option *ngFor="let studyLevel of lookup?.studyLevel;" [ngValue]="studyLevel.id">
+                                                        {{studyLevel.name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="md-form-group float-label p-0">
+                                                <label class="text-xs text-muted m-0">Stream</label>
+                                                <select class="md-input" formControlName="studyStreamId">
+                                                    <option *ngFor="let studyStream of lookup?.studyStreamList;"
+                                                            [ngValue]="studyStream.id">
+                                                        {{studyStream.name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="md-form-group float-label p-0">
+                                                <label class="text-xs text-muted m-0">Program</label>
+                                                <select class="md-input" formControlName="studyProgramId">
+                                                    <option *ngFor="let studyProgram of lookup?.filteredStudyProgram;"
+                                                            [ngValue]="studyProgram.id">
+                                                        {{studyProgram.name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row row-sm">
+                                        <div class="col-sm-4">
+                                            <div class="md-form-group float-label pb-0">
+                                                <label class="text-xs text-muted m-0">Study Degree</label>
+                                                <select class="md-input" formControlName="studyDegreeId">
+                                                    <option *ngFor="let entity of lookup?.studyDegreeList;" [ngValue]="entity.id">
+                                                        {{entity.name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="md-form-group float-label pb-0">
+                                                <label class="text-xs text-muted m-0">Eligibility</label>
+                                                <select class="md-input" title="Eligibility" formControlName="eligibility">
+                                                    <option *ngFor="let entity of lookup?.eligibilityList;" [ngValue]="entity.id">
+                                                        {{entity.name}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column w-xxl">
+                            <div class="navbar">
+                                <div class="md-form-group float-label text-xs p-0">
+                                    <small class="text-muted p-0">Duration</small>
+                                    <div class="md-form-group p-0">
+                                        <input class="md-input" style="width: 40px" type="number" formControlName="duration"
+                                               (change)="onDurationChanges()">
+                                        <select class="md-input" formControlName="durationType" style="width: 70px">
+                                            <option *ngFor="let entity of lookup?.staticMasterType?.duration;"
+                                                    [ngValue]="entity.id"> {{entity.name}}
+                                            </option>
+                                        </select>
+                                        <select class="md-input" *ngIf="isYearlyCourse" formControlName="durationTerm"
+                                                (change)="studyDurationTermChange()" style="width: 100px">
+                                            <option *ngFor="let entity of lookup?.durationTermList;" [ngValue]="entity.id">
+                                                {{entity.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-muted p-1 px-2">Academic Term</div>
+                            <div class="scrollable hover h-100 px-2 white">
+                                <table class="table small-table text-xs px-1 table-borderless">
+                                    <thead>
+                                    <tr>
+                                        <th><span class="pl-2">Name</span></th>
+                                        <th style="width: 80px;"><span class="px-1">Code</span></th>
+                                        <th style="width: 30px;"><span class="float-right pr-2"></span></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody formArrayName="sections">
+                                    <ng-template ngFor let-row [ngForOf]="sectionsForm.controls" let-i="index">
+                                        <tr [formGroupName]="i">
+                                            <td><input class="md-input" type="text" formControlName="name"></td>
+                                            <td><input class="md-input" type="text" formControlName="code"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-xs btn-icon mx-1"
+                                                        (click)="showSubjects(row)"><i class="fa fa-list-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="white lt b-t mt-auto">
+                    <div class="flex-column white text-center">
+                        <button class="btn btn-sm primary m-2"
+                                [disabled]="!customForm.valid || submitted" (click)="submitCourseForm(customForm)">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                            {{ submitted ? 'Submitting...' : actionType + ' Course' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--
+<form class="app-content box-shadow-0" [formGroup]="customForm">
+    <div class="content-header p-2">
+
+    </div>
+    <div class="content-main d-flex flex">
+        <div class="d-flex flex">
+            <div class="fade aside aside-sm">
+                <div class="d-flex flex-column w-xxl white modal-dialog">
+                    <div class="navbar">
+                        Academic Term
+                    </div>
+                    <div class="scrollable hover">
+
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex" id="content-body">
+                <div class="d-flex flex-column flex" id="chat-list">
+                    <div class="navbar flex-nowrap white lt box-shadow">
+                        <span class="text-md text-ellipsis flex">Subjects</span>
+                        <ul class="nav nav-xs flex-row no-border">
+                            <li class="nav-item">
+                                <div class="nav-link">
+                                    <select class="md-input" formControlName="durationTerm"
+                                            (change)="studyDurationTermChange()" style="width: 100px">
+                                        <option *ngFor="let entity of sectionsForm.controls;" [ngValue]="entity.id">
+                                            {{entity.value.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="white lt b-t mt-auto">
+                        <div class="flex-column white text-center">
+                            <button class="btn btn-sm primary m-2"
+                                    [disabled]="!customForm.valid || submitted" (click)="submitCourseForm(customForm)">
+                                <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                                {{ submitted ? 'Submitting...' : actionType + ' Course' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>-->

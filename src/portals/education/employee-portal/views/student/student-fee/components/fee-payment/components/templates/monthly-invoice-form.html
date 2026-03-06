@@ -1,0 +1,95 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex" [formGroup]="customForm">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="md-form-group float-label">
+                    <input class="md-input" *ngIf="formInvoiceNo?.value" type="text" formControlName="voucherNo">
+                    <div class="md-input" *ngIf="!formInvoiceNo?.value">Not Generated Yet</div>
+                    <label>Invoice No</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="md-form-group float-label">
+                    <input class="md-input" type="date" formControlName="voucherDate">
+                    <label>Invoice Date</label>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header p-2">
+                <p class="item-title mb-0">Course {{ customForm.value.course }} {{ customForm.value.courseSection }}</p>
+                <small>Amount scheduled against Fee Type</small>
+            </div>
+            <table class="table small-table text-xs mb-0">
+                <thead>
+                <tr>
+                    <th><span class="pl-2">Fee Type</span></th>
+                    <th><span class="pl-2">Due Date</span></th>
+                    <th><span class="float-right pr-2">Amount</span></th>
+                    <th><span class="float-right pr-2">Paid</span></th>
+                    <th width="150px"><span class="float-right pr-2">Payable</span></th>
+                </tr>
+                </thead>
+                <tbody formArrayName="saleVoucherDetail">
+                    <ng-template ngFor let-row [ngForOf]="formSaleVoucherDetail.controls | sortBy:'asc': 'sortOrder'" let-k="index">
+                        <tr [formGroup]="row">
+                            <td><span class="pl-2">{{row.value.feeHead}}</span>
+                                <small>{{row.value.frequency}}</small>
+                            </td>
+                            <td>{{row.value.dueDate | dateFormat }}</td>
+                            <td>
+                                <div class="text-sm-right">
+                                    <a class="d-inline-block px-1 text-right">
+                                        <small class="text-xs text-muted">{{row.value.totalFee | orgCurrency }}</small>
+                                    </a>
+                                </div>
+                            </td>
+                            <!--<td>
+                                <div class="text-sm-right">
+                                    <a class="d-inline-block px-1 text-right">
+                                        <small class="text-xs text-muted">{{row.value.totalFee | orgCurrency }}</small>
+                                    </a>
+                                    &lt;!&ndash;<a class="d-inline-block px-1 b-l text-right">
+                                        Tax
+                                    </a>&ndash;&gt;
+                                </div>
+                                <div class="text-sm-right">
+                                    <a class="d-inline-block px-1 text-right">
+                                        <small class="text-muted pr-2">Paid</small> <small class="text-muted">{{row.value.paid | orgCurrency }}</small>
+                                    </a>
+                                    <a class="d-inline-block px-1 b-l text-right">
+                                        <small class="text-muted pr-2">Balance</small> <small class="text-muted">{{row.value.balance | orgCurrency }}</small>
+                                    </a>
+                                </div>
+                            </td>-->
+                            <td class="text-right">{{row.value.paid | orgCurrency }}</td>
+                            <td>
+                                <input formControlName="netAmount" class="form-control p-1 text-right"
+                                       (change)="voucherPayableUpdate($event.target.value)"
+                                       [ngClass]="{ 'is-invalid': row.get('netAmount').errors }">
+                                <div *ngIf="row.get('netAmount').errors?.max">Max {{row.get('netAmount').errors.max.max }}
+                                    allowed!
+                                </div>
+                                <div *ngIf="row.get('netAmount').errors?.min">Min {{row.get('netAmount').errors.min.min }}
+                                    allowed!
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+                <tbody formArrayName="sundryDetail">
+                    <ng-template ngFor let-sundry [ngForOf]="formSundryDetail.controls | sortBy:'asc': 'sortOrder'" let-k="index">
+                        <tr sundry-detail [customForm]="customForm" [sundryForm]="sundry" [lookup]="lookup" (cb)="voucherPayableUpdate($event)"></tr>
+                    </ng-template>
+                </tbody>
+                <!--<tfoot>
+                    <tr>
+                      <td><b class="pl-2">Total</b></td>
+                      <td colspan="3"></td>
+                      <td><b class="float-right pr-2">{{ formSaleVoucherPayable.value | orgCurrency}}</b></td>
+                    </tr>
+                </tfoot>-->
+            </table>
+        </div>
+    </form>
+</div>

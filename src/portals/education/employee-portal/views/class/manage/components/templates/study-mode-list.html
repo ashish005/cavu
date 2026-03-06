@@ -1,0 +1,28 @@
+<div class="flex">
+  <div class="flex-column">
+    <div class="list-group no-radius no-borders">
+      <div class="px-3 py-2 b-b b-t text-primary">Study Modes</div>
+      <a class="list-group-item p-x-md" *ngFor="let item of studyModeList">
+        <i class="fa fa-circle text-success text-xs mr-2"></i>
+        <span>{{item.name }}</span>
+        <div class="float-right">
+          <a class="checkbox"><label class="md-switch"><input type="checkbox" [checked]="item.status"><i class="blue"></i></label></a>
+          <a class="float-right"><i class="fa" [class.fa-lock]="item.isLocked" [class.fa-trash]="!item.isLocked"></i></a>
+        </div>
+      </a>
+     </div>
+    <div class="list-group no-radius no-borders">
+      <div class="px-3 py-2 b-b b-t text-primary">Study Board</div>
+      <a class="list-group-item p-x-md" *ngFor="let item of studyBoardList">
+        <i class="fa fa-circle text-success text-xs mr-2"></i>
+        <span>{{item.name }}</span>
+        <div class="float-right">
+          <a class="checkbox"><label class="md-switch"><input type="checkbox" [checked]="item.status"><i class="blue"></i></label></a>
+          <a class="float-right"><i class="fa" [class.fa-lock]="item.isLocked" [class.fa-trash]="!item.isLocked"></i></a>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+

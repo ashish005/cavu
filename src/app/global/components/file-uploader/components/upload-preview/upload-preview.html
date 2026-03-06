@@ -1,0 +1,19 @@
+<div class="p-1">
+  <img #image src="" alt="your image" class="preview-img"/>
+</div>
+<div class="bg b-b" style="width: 100%; bottom: 0;">
+  <div class="row">
+    <div class="col-sm-12 order-sm-1">
+      <!--<div class="text-ellipsis"> {{ uploadItem?.file?.name }}</div>-->
+      <small ng-show="uploader.isHTML5" nowrap class="p-1" style="background: antiquewhite;">{{ uploadItem?.file?.size/1024/1024 | number }} MB</small>
+      <div class="text-center">
+        <span *ngIf="uploadItem?.isSuccess"><i class="fa fa-check"></i></span>
+        <span *ngIf="uploadItem?.isCancel"><i class="fa fa-ban"></i></span>
+        <span *ngIf="uploadItem?.isError"><i class="fa fa-remove"></i></span>
+      </div>
+      <div class="progress" style="margin-bottom: 0;">
+        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploadItem?.progress + '%' }"></div>
+      </div>
+    </div>
+  </div>
+</div>

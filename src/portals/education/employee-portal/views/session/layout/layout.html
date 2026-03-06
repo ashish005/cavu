@@ -1,0 +1,47 @@
+<div class="content-main d-flex flex" id="content-main">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" id="content-aside">
+            <div class="d-flex flex-column w-xxl b-r white modal-dialog">
+                <a class="nav-link mt-2" data-toggle="modal" data-target="#modal-new" (click)="addSession()">
+                    <span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New Session</span>
+                </a>
+                <div class="p-2 px-3 text-muted text-sm">Sessions</div>
+                <div class="scrollable hover">
+                    <div class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                            <div class="list-item px-1" [class.active]="row.id == activeSessionId">
+                                <div class="m-0">
+                                    <a class="btn btn-xs btn-icon px-2" (click)="updateSession(row)"><i class="fa fa-edit"></i></a>
+                                </div>
+                                <div class="list-body">
+                                    <div>
+                                        <a class="item-title _500" data-pjax-state="">{{ row.name}}</a>
+                                        <span class="float-right">{{ row.status }}</span>
+                                    </div>
+                                    <div class="item-except text-xs">
+                                        {{row.totalBatch}} batches:
+                                        <small class="text-primary">{{ row.startDate | dateFormat }}</small> till
+                                        <small class="text-primary">{{ row.endDate | dateFormat}}</small>
+                                        <button class="btn btn-xs text-xs theme b-theme float-right" (click)="addBatch(row)"><i class="fa fa-fw fa-plus"></i> Batch</button>
+                                    </div>
+                                </div>
+                                <div class="m-0">
+                                    <a class="btn btn-xs btn-icon" (click)="onSessionSelect(row)"><i class="fa fa-chevron-right"></i></a>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex" id="content-body">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>

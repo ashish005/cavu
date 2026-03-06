@@ -1,0 +1,49 @@
+<div id="content" class="app-content box-shadow-0" role="main">
+    <div class="content-main d-flex flex" id="content-main">
+        <div class="d-flex flex js-Pjax-add animate fadeInRight" data-plugin="user"
+             data-pjax-classes=" js-Pjax-add animate fadeInRight">
+            <div class="d-flex flex" id="content-body">
+                <div class="d-flex flex-column flex" id="user-list">
+                    <div class="navbar no-radius box-shadow pos-rlt">
+                        <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                            <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                        </a>
+                        <a class="no-shadow">
+                            <h6 class="mb-0"><i class="fa fa-fw fa-money"></i> {{title}}</h6>
+                            <small class="float-left pl-4">Management</small>
+                        </a>
+                        <ul class="nav nav-xs flex-row no-border">
+                            <li class="nav-item b-a mr-2">
+                                <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
+                                <button class="btn btn-sm btn-outline text-theme b-theme" type="button"><a class="active"><i
+                                        class="fa fa-check text-success d-none"></i></a>Only Due
+                                </button>
+                            </li>
+                            <li class="nav-item b-a mr-2">
+                                <a class="btn btn-xs btn-icon float-right"><i class="fa fa-close"></i></a>
+                                <button class="btn btn-sm btn-outline text-theme b-theme" type="button"><a class="active"><i
+                                        class="fa fa-check text-success d-none"></i></a>Only Paid
+                                </button>
+                            </li>
+                            <li class="nav-item mr-2">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline text-theme b-theme dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                        <span *ngIf="activeReportView">Report View - {{activeReportView?.name}} </span>
+                                    </button>
+                                    <ul class="dropdown-menu" x-placement="bottom-start">
+                                        <li class="dropdown-item" *ngFor="let reportView of reportViewTypes; let i = index;"
+                                            (click)="updateReportViewType(reportView)">
+                                            {{reportView.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="d-flex flex">
+  <div class="fade aside aside-sm">
+    <div class="d-flex flex-column w-xl b-r white modal-dialog">
+      <div class="navbar box-shadow">
+        <div class="input-group flex">
+          <input type="text" class="form-control px-0 no-bg no-border no-shadow search" placeholder="Search"
+                 required="">
+          <span class="input-group-btn">
+            <button class="btn no-bg no-border no-shadow" type="button"><i class="fa fa-search text-muted"></i></button>
+          </span>
+        </div>
+      </div>
+      <div class="scrollable hover">
+        <a class="nav-link"><span class="btn btn-sm btn-block btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span></a>
+        <nav class="nav-border right b-theme" data-nav="">
+          <ul class="list inset">
+            <ng-template ngFor let-row [ngForOf]="apiResolver.masterType?.studyLevel" let-i="index">
+              <li class="list-item" (click)="showStudyLevelDetails(row)">
+                <div class="list-body">
+                  <a class="item-title _500" data-pjax-state="">{{row?.name}}</a>
+                  <div class="item-tag tag hide"></div>
+                </div>
+              </li>
+            </ng-template>
+          </ul>
+        </nav>
+        <div class="no-result hide">
+          <div class="p-4 text-center">No Results</div>
+        </div>
+      </div>
+      <div class="p-3 mt-auto"><span class="text-sm text-muted"></span>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-column flex">
+    <div class="nav-active-border b-warning bottom">
+      <div class="nav nav-md">
+        <ng-template ngFor let-row [ngForOf]="apiResolver.masterType?.studyDegree" let-i="index">
+          <a class="nav-link">{{row?.name}} </a>
+        </ng-template>
+      </div>
+    </div>
+    <div class="d-flex flex-column flex">
+      <div class="row">
+        <div class="col">
+          <div class="box">
+            <div class="box-header"><h3>studyStream</h3></div>
+            <div class="box-divider"></div>
+            <div class="scrollable hover">
+              <ul class="list no-border">
+                <ng-template ngFor let-row [ngForOf]="apiResolver.masterType?.studyStream" let-i="index">
+                  <li class="list-item">
+                    <div class="list-body">
+                      <div>{{row?.name}}</div>
+                    </div>
+                  </li>
+                </ng-template>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="box">
+            <div class="box-header"><h3>studyProgram</h3></div>
+            <div class="box-divider"></div>
+            <div class="scrollable hover">
+              <ul class="list no-border">
+                <ng-template ngFor let-row [ngForOf]="apiResolver.masterType?.studyProgram" let-i="index">
+                  <li class="list-item">
+                    <div class="list-body">
+                      <div>{{row?.name}}</div>
+                    </div>
+                  </li>
+                </ng-template>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

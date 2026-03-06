@@ -70,8 +70,12 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                     loadChildren: () => {
                       switch (sectorMasterType) {
                         case ORG_SECTOR.EDUCATION:
-                          switch (userMasterType) {
-                            case ORG_USER_TYPE.EMPLOYEE: return import('portals/education/employee-portal/index').then(m => m.EduEmployeePortal);
+                          if (userMasterType === ORG_USER_TYPE.EMPLOYEE) {
+                            return import('portals/education/employee-portal/index').then(m => m.EduEmployeePortal);
+                          } else if (userMasterType === ORG_USER_TYPE.STUDENT_PARENT) {
+                            return import('portals/education/parent-portal/index').then(m => m.EduParentPortal);
+                          } else if (userMasterType === ORG_USER_TYPE.CLIENT) {
+                            return import('portals/education/student-portal/index').then(m => m.EduStudentPortal);
                           }
                           break;
                         case ORG_SECTOR.REAL_ESTATE:

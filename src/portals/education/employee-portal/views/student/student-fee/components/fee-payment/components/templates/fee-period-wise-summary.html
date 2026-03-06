@@ -1,0 +1,56 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="p-3">
+      <a class="btn btn-sm b-theme theme float-right d-print-none mb-3" onclick="window.print();">Print</a>
+      <table class="table small-table text-xs mb-0">
+        <thead>
+        <tr>
+          <th><span>Month-Year</span></th>
+          <th><span class="pl-2">Fee Type</span></th>
+          <th><span class="pl-2">Due Date</span></th>
+          <th><span class="pl-2">Status</span></th>
+          <th><span class="float-right">Paid</span></th>
+          <th><span class="float-right">Due</span></th>
+          <th><span class="float-right">Balance</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-template ngFor let-row [ngForOf]="payVoucherList" let-i="index">
+          <ng-template ngFor let-voucherDetail [ngForOf]="row?.voucherDetails" let-j="index">
+            <tr>
+              <td [style.border]="(j!=0)?'none':''"><span class="pl-2" *ngIf="j==0">{{row.name}}</span></td>
+              <td><span class="pl-2">{{ voucherDetail.feeHead }}</span></td>
+              <td><span class="pr-2">{{ voucherDetail.dueDate | dateFormat  }}</span></td>
+              <td><span class="float-right">{{ voucherDetail.summary.feeStatus }}</span></td>
+              <td><span class="float-right">{{ voucherDetail.summary.paid | orgCurrency }}</span></td>
+              <td><span class="float-right">{{ voucherDetail.summary.dueFee | orgCurrency }}</span></td>
+              <td><span class="float-right">{{ voucherDetail.summary.balance | orgCurrency }}</span></td>
+            </tr>
+          </ng-template>
+          <tr>
+            <td [style.border]="'none'"></td>
+            <td colspan="3"><b class="pl-2">Total</b></td>
+            <td><b class="float-right">{{ row.getTotalPaid() | orgCurrency }}</b></td>
+            <td><b class="float-right">{{ row.getTotalDueFee() | orgCurrency }}</b></td>
+            <td><b class="float-right">{{ row.getTotalBalance() | orgCurrency }}</b></td>
+          </tr>
+          <!--<ng-template ngFor let-sundryDetail [ngForOf]="row?.sundryDetail" let-k="index">
+            <tr>
+              <td [style.border]="'none'"></td>
+              <td colspan="6">{{sundryDetail.name}}</td>
+            </tr>
+          </ng-template>
+          <tr>
+            <td colspan="4"><b class="pl-2">Total</b></td>
+            <td><b class="float-right">{{ row?.feePlanInfo?.getTotalAmount() | orgCurrency }}</b></td>
+            <td><b class="float-right">{{ row?.feePlanInfo?.getTotalTaxAmount() | orgCurrency }}</b></td>
+            <td><b class="pr-2 float-right">{{ row?.feePlanInfo?.getNetPay() | orgCurrency }}</b></td>
+          </tr>-->
+        </ng-template>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

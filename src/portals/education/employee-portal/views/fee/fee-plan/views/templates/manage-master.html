@@ -1,0 +1,40 @@
+<ng-template #actionTemplate>
+    <li class="nav-item mx-1">
+        <button class="btn btn-sm btn-block btn-rounded theme" (click)="createNew()"><i class="fa fa-fw fa-plus"></i>
+            Create {{pageTitle}}
+        </button>
+    </li>
+</ng-template>
+<ng-template #pageTitleTemplate>
+    <a class="no-shadow">
+        <h6 class="mb-0"> {{pageTitle }}</h6>
+        <small class="float-left">Management</small>
+    </a>
+</ng-template>
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <!--<div class="navbar flex-nowrap box-shadow">
+            <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none">
+                <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+            </a>
+            <ng-template *ngTemplateOutlet="pageTitleTemplate"></ng-template>
+            <ul class="nav nav-xs flex-row no-border">
+                <li class="nav-item">
+                    <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+                </li>
+            </ul>
+        </div>-->
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData"
+                      [options]="gridOptions"
+                      [isLoading]="isLoading"
+                      (cb)="actionCb($event)"
+                      (update)="updateGrid($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)">
+            </org-grid-pagination>
+        </div>
+    </div>
+</div>

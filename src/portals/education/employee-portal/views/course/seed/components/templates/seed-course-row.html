@@ -1,0 +1,34 @@
+<div class="list-item">
+  <div class="list-body text-xs">
+    <div class="float-left pr-2">
+      <drop-down [list]="apiResolver?.masterType?.studyDegree" [options]="studyDegreeOptions"
+                 [id]="data?.studyDegreeId" [data]="data"></drop-down>
+    </div>
+    <div class="float-left pr-2">
+      <span class="text-danger" *ngIf="data?.studyOther">No Program</span>
+      <drop-down [list]="apiResolver?.masterType?.studyProgram" [options]="programOptions"
+                 [id]="data?.studyProgramId" [data]="data"></drop-down>
+    </div>
+    <div class="float-left pr-2">
+      <drop-down [list]="apiResolver?.masterType?.staticMasterType?.duration"
+                 [options]="durationOptions" [id]="data?.durationType" [data]="data"></drop-down>
+    </div>
+    <div class="float-left pr-2">
+      <drop-down [list]="yearList" [options]="durationYearOptions" [id]="data?.durationYear"
+                 [data]="data"></drop-down>
+    </div>
+    <div class="float-left pr-2">
+      <drop-down [list]="apiResolver?.masterType?.staticMasterType?.durationTerms"
+                 [options]="durationTermOptions" [id]="data?.durationTerm" [data]="data"></drop-down>
+    </div>
+    <div class="float-left pr-2">
+      <drop-down [list]="apiResolver?.masterType?.staticMasterType?.qualification"
+                 [options]="eligibilityOptions" [id]="data?.eligibility" [data]="data"></drop-down>
+    </div>
+    <div class="float-right text-right">
+      <a class="_500">{{data?.name }} <a class="text-primary" [href]="data?.links"
+                                      target="_blank">link</a></a>
+      <small class="d-block text-muted">{{data?.abbreviation }}</small>
+    </div>
+  </div>
+</div>

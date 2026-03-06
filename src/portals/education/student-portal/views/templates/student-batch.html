@@ -1,0 +1,179 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="navbar flex-nowrap">
+      <div class="w-25">
+        <h6>Course & Fee</h6>
+      </div>
+      <div class="w-75"></div>
+      <button class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" data-original-title="Sort"><i class="fa fa-sort"></i></button>
+    </div>
+    <div class="pl-3 pr-3">
+      <div id="batchCourseFee" class="list animate fadeIn">
+        <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+          <div class="panel box mb-2">
+            <div class="list-group-item no-border ">
+              <a class="float-left"><i class="text-xs fa fa-chevron-right"></i></a>
+              <div class="float-right text-center text-sm-right">
+                <a class="d-inline-block px-3 text-primary text-center" (click)="showReceiptVoucher(row)">
+                  <span *ngIf="!row?.accountId"><span  class="text-danger">Missing Account</span> to generate </span> Receipt
+                </a>
+                <a class="d-inline-block px-3 text-primary b-l b-r text-center"  (click)="showAccountBook(row)"> Account Book </a>
+                <a class="d-inline-block px-3 text-primary text-center"  data-toggle="collapse" data-parent="#batchCourseFee" [attr.data-target]="'#ucf_'+i">Fee Plan detail</a>
+              </div>
+              <div class="clear px-3">
+                <a class="_500 d-block">{{row?.course}} {{row?.courseSection}}</a>
+                <div class="item-except text-sm h-1x">
+                  <a (click)="showFeeInvoices(row)" class="text-primary pr-4">Fee Invoices</a>
+                  <span class="text-muted ">{{row?.orgClass}} {{row?.classSection}}</span>
+                </div>
+                <div class="py-3 row">
+                  <div class="col">
+                    <div class="row">
+                      <div class="col">
+                        <small class="text-muted">Form No</small>
+                        <div class="_500">{{row?.applicationFormNo}}</div>
+                      </div>
+                      <div class="col">
+                        <small class="text-muted">Roll No</small>
+                        <div class="_500">{{row?.rollNo}}</div>
+                      </div>
+                      <div class="col">
+                        <small class="text-muted">Enrollment Date</small>
+                        <div class="_500">{{row?.enrollmentDate | dateFormat}}</div>
+                      </div>
+                      <div class="col">
+                        <p class="mb-0">
+                          <small class="text-muted">Due</small>
+                          <span class="_500 pl-1">{{row?.challanSummary?.dueFee}}</span>
+                        </p>
+                        <span class="text-muted">Due Date: {{row?.dueDate | dateFormat}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class=" text-center text-sm-right">
+                      <a class="d-inline-block px-3 text-center">
+                                <span
+                                  class="text-md d-block">{{row?.challanSummary?.totalFee}}</span>
+                        <small class="text-xs text-muted">Total</small>
+                      </a>
+                      <a class="d-inline-block px-3 b-l b-r text-center">
+                        <span class="text-md d-block">{{row?.challanSummary?.paid}}</span>
+                        <small class="text-xs text-muted">Paid</small>
+                      </a>
+                      <a class="d-inline-block px-3 b-r text-center">
+                        <span class="text-md d-block">{{row?.challanSummary?.advance}}</span>
+                        <small class="text-xs text-muted">Advance</small>
+                      </a>
+                      <a class="d-inline-block px-3 text-center">
+                        <span class="text-md d-block">{{row?.challanSummary?.balance}}</span>
+                        <small class="text-xs text-muted">Balance</small>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="ucf_{{i}}" class="collapse ml-3 mr-3 pt-2 b-t">
+              <div class="item-title mb-2">{{row?.feePlan}}</div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="box">
+                    <div class="box-header p-2">
+                      <p class="item-title mb-0">Fee Head Wise</p>
+                      <small>Amount scheduled against Fee Type</small>
+                    </div>
+                    <table class="table small-table text-xs mb-0">
+                      <thead>
+                      <tr>
+                        <th><span class="pl-2">Fee Type</span></th>
+                        <th><span class="float-right">Amount</span></th>
+                        <th><span class="float-right">Tax Amount</span></th>
+                        <th><span class="pr-2 float-right">Total</span></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <ng-template ngFor let-feeSchedule [ngForOf]="row?.feePlanInfo?.feeTypeWise"
+                                   let-j="index">
+                        <tr>
+                          <td><span class="pl-2">{{ feeSchedule?.feeType }}</span></td>
+                          <td><span class="float-right">{{ feeSchedule?.amount }}</span></td>
+                          <td><span class="float-right">{{ feeSchedule?.taxAmount }}</span></td>
+                          <td><span
+                            class="pr-2 float-right">{{ feeSchedule?.amount + feeSchedule?.taxAmount }}</span>
+                          </td>
+                        </tr>
+                      </ng-template>
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><b class="float-right">{{ row?.feePlanInfo?.getTotalAmount() }}</b></td>
+                        <td><b class="float-right">{{ row?.feePlanInfo?.getTotalTaxAmount() }}</b></td>
+                        <td><b class="pr-2 float-right">{{ row?.feePlanInfo?.getNetPay() }}</b></td>
+                      </tr>
+                      </tfoot>
+                    </table>
+                    <div class="box-body light lt no-result" *ngIf="!row?.feePlanInfo?.feeTypeWise?.length">
+                      <div class="p-2 text-center">No Results</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="box">
+                    <div class="box-header p-2">
+                      <p class="item-title mb-0">Fee Schedule Wise</p>
+                      <small>MonthWise Scheduled Fee Details</small>
+                    </div>
+                    <table class="table small-table text-xs mb-0">
+                      <thead>
+                      <tr>
+                        <th><span class="pl-2">Month</span></th>
+                        <th><span class="pr-2 float-right">Total Fee</span></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <ng-template ngFor let-monthYearItem [ngForOf]="row?.feePlanInfo?.monthYearWise"
+                                   let-k="index">
+                        <tr>
+                          <td><span class="pl-2">{{monthYearItem?.name}}</span></td>
+                          <td><span class="pr-2 float-right">{{monthYearItem?.totalFee}}</span></td>
+                        </tr>
+                      </ng-template>
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                        <td><b class="pl-2">Total</b></td>
+                        <td><b class="float-right pr-2">{{ row?.feePlanInfo?.getSessionTotal() }}</b></td>
+                      </tr>
+                      </tfoot>
+                    </table>
+                    <div class="box-body light lt no-result" *ngIf="!row?.feePlanInfo?.monthYearWise?.length">
+                      <div class="p-2 text-center">No Results</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="no-result hide">
+        <div class="p-4 text-center">No Results</div>
+      </div>
+    </div>
+    <div class="p-3 b-t mt-auto">
+      <div class="d-flex align-items-center">
+        <div class="flex d-flex flex-row"><a href="#" class="btn btn-xs white no-border pager-prev hide"
+                                             data-pjax-state=""><i class="fa fa-angle-left"></i></a>
+          <div class="pagination pagination-xs">
+            <li class="active"><a class="page" href="javascript:function Z(){Z=&quot;&quot;}Z()">1</a></li>
+            <li><a class="page" href="javascript:function Z(){Z=&quot;&quot;}Z()">2</a></li>
+          </div>
+          <a href="#" class="btn btn-xs white no-border pager-next hide" data-pjax-state=""><i
+            class="fa fa-angle-right"></i></a></div>
+        <div><span class="text-muted">Total:</span> <span id="count">15</span></div>
+      </div>
+    </div>
+  </div>
+</div>

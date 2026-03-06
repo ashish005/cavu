@@ -1,0 +1,20 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex" [formGroup]="customForm">
+    <div class="row row-sm">
+      <div class="col-sm-12">
+        <div class="md-form-group float-label">
+          <input class="md-input" type="text" formControlName="name">
+          <label> {{customForm.get('showName').value }}</label>
+        </div>
+      </div>
+    </div>
+    <ng-template #footerTemplate>
+      <button type="button" class="btn btn-sm btn-outline primary b-a float-right"
+              [disabled]="!customForm.valid || submitted"
+              (click)="submitCommunicationInfo(customForm)">
+        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+        {{ submitted ? 'Submitting...' : actionType }}
+      </button>
+    </ng-template>
+  </form>
+</div>

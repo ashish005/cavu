@@ -1,0 +1,75 @@
+<form class="row" [formGroup]="customForm">
+  <div class="col-8">
+    <div class="box">
+      <div class="box-divider"></div>
+      <div class="box-body">
+        <div class="row row-sm">
+          <div class="col-sm-4">
+            <div class="md-form-group float-label">
+              <input class="md-input" formControlName="registrationNo"
+                     [ngClass]="{ 'is-invalid': submitted && f['registrationNo'].errors }">
+              <label>Registration No</label>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="date" formControlName="registrationDate"
+                     [ngClass]="{ 'is-invalid': submitted && f['registrationDate'].errors }">
+              <label>Registration Date</label>
+            </div>
+          </div>
+        </div>
+        <div class="row row-sm">
+          <div class="col-sm-4">
+            <div class="md-form-group float-label">
+              <input class="md-input" formControlName="fName" [ngClass]="{ 'is-invalid': submitted && f['fName'].errors }">
+              <label>First Name</label>
+            </div>
+          </div>
+          <div class="col-sm-5">
+            <div class="md-form-group float-label">
+              <input class="md-input" formControlName="lName" [ngClass]="{ 'is-invalid': submitted && f['lName'].errors }">
+              <label>Last Name</label>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="md-form-group">
+              <input class="md-input" type="date" formControlName="dob"
+                     [ngClass]="{ 'is-invalid': submitted && f['dob'].errors }">
+              <label>Date Of Birth</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="box">
+      <div class="box-body">
+        <div class="row row-sm">
+          <div class="col-sm-12">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="email" formControlName="email"
+                     [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+              <label>Primary E-mail</label>
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="text" formControlName="phone"
+                     [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }">
+              <label>Mobile No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #actionTemplate>
+    <button type="button" class="btn btn-sm btn-outline primary b-a float-right"
+            [disabled]="!customForm?.valid || submitted">
+      <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+      {{ submitted ? 'Submitting...' : (userId) ? 'Update' : 'Create' }}
+    </button>
+  </ng-template>
+</form>

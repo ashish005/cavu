@@ -1,0 +1,29 @@
+<form [formGroup]="customForm" (submit)="updateForm(subjects)">
+  <div class="row form-row" *ngFor="let item of subjects.controls; let i = index;" [formGroupName]="i">
+    <div class="col-sm-1">
+      <button type="button" class="btn btn-xs btn p-2 m-2" (click)="removeItem(i)"><i class="fa fa-minus"></i></button>
+    </div>
+    <div class="col-sm-7">
+      <div class="md-form-group float-label p-2">
+        <input class="md-input" type="text" formControlName="name">
+        <label> Name</label>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="md-form-group float-label p-2">
+        <input class="md-input" type="text" formControlName="code">
+        <label>Code</label>
+      </div>
+    </div>
+  </div>
+  <div class="row p-2">
+    <div class="col-4">
+      <button type="button" class="btn btn-xs btn-outline b-a" (click)="addItem()"><i class="fa fa-plus"></i></button>
+    </div>
+    <div class="col-8">
+      <!--<button type="submit" class="btn btn-sm primary m-2 float-right" [disabled]="submitted">
+        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{submitted ? 'Submitting...' : 'Update Subjects'}}
+      </button>-->
+    </div>
+  </div>
+</form>

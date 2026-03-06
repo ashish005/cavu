@@ -1,0 +1,46 @@
+<div>
+  <div id="result"></div>
+  <div class="dropzone white b-a b-3x b-dashed b-primary p-a rounded text-center dz-clickable" (click)="showUploader()">
+    <div class="dz-message my-4" appDnd (filesChangeEmiter)="onFilesChange($event)" (filesInvalidEmiter)="onFileInvalids($event)" allowed_extensions="['zip','jpg','png','jpeg','rar','JPG']">
+      <h4 >Drop files here or click to upload.</h4>
+      <span class="text-muted d-block"></span>
+    </div>
+  </div>
+  <input type="file" #file uploader="uploader" style="visibility: hidden;" multiple (change)="onSelectChange($event)"/>
+  <div id="ims-slider" *ngIf="uploader?.queue?.length>0">
+    <!--<div class="slider-inner">
+      <ul style="overflow: hidden; padding-top: 50%; height: 0px;">
+        <li class="ns-show" style="left: 0px; z-index: 1;">
+          <div class="ns-img">
+            <div *ngIf="activeFile" upload-preview [src]="activeFile"></div>
+            <div *ngIf="!activeFile"></div>
+          </div>
+        </li>
+      </ul>
+      <div class="fs-icon" title="Expand/Close"></div>
+      <div id="ims-slider-prev" class="">
+        <div>1 ∕ 24</div>
+      </div>
+      <div id="ims-slider-next" class="">
+        <div>1 ∕ 24</div>
+      </div>
+      <div id="ims-slider-pause-play"></div>
+    </div>-->
+    <div id="thumbnail-slider">
+      <div class="inner">
+        <ul style="touch-action: pan-y; transition-property: transform; transition-timing-function: cubic-bezier(0.2, 0.88, 0.5, 1); transition-duration: 0ms;">
+          <li style="display: inline-block; height: 50px; width: 100px; margin-bottom: 8px; overflow: hidden;"
+              *ngFor="let item of uploader?.queue">
+            <div class="thumb" thumb-preview [src]="item" (mouseover)="updateActiveImg(item)" style="cursor: pointer"></div>
+          </li>
+        </ul>
+      </div>
+      <div id="thumbnail-slider-prev"></div>
+      <div id="thumbnail-slider-next"></div>
+      <div id="thumbnail-slider-pause-play"></div>
+    </div>
+  </div>
+  <div class="mt-auto" *ngIf="uploader?.queue?.length>0">
+    <a class="btn btn-sm btn-outline btn-block b-a upload-modal-popup" (click)="uploadAs()">Upload as</a>
+  </div>
+</div>

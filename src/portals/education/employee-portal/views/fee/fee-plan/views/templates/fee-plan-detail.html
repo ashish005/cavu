@@ -1,0 +1,248 @@
+<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-sm">
+            <li class="nav-item" (click)="openTab(tabs.summary)"><a class="nav-link"
+                                                                    [class.active]="tabs.summary == activeTab">Fee Plan
+                Summary</a></li>
+            <!--<li class="nav-item" (click)="openTab(tabs.schedules)"><a class="nav-link"
+                                                                      [class.active]="tabs.schedules == activeTab">Fee
+                Structure Schedules</a></li>-->
+            <!--<li class="nav-item" (click)="openTab(tabs.calendar)"><a class="nav-link"
+                                                                     [class.active]="tabs.calendar == activeTab">Calendar</a>
+            </li>-->
+        </ul>
+    </div>
+</ng-template>
+<div class="d-flex flex" *ngIf="tabs.summary == activeTab">
+    <div class="d-flex flex-column flex">
+        <div class="row pt-3 pl-3 pr-3">
+            <div class="col-sm-6">
+                <div class="box">
+                    <div class="box-header p-2">
+                        <p class="item-title mb-0">Fee Head Wise</p>
+                        <small>Amount scheduled against Fee Type</small>
+                    </div>
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th><span class="pl-2">Fee Type</span></th>
+                            <th><span class="float-right pr-2">Amount</span></th>
+                            <th><span class="float-right pr-2">Tax</span></th>
+                            <th><span class="float-right pr-2">Total</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-row [ngForOf]="item?.feeStructureList | sortBy:'asc': 'sortOrder'"
+                                     let-k="index">
+                            <tr>
+                                <td>
+                                    <span class="pl-2">{{row.feeTypeName}}</span>
+                                    <a class="float-right text-primary btn btn-xs text-xs _400"
+                                       [ngbPopover]="content" placement="auto" container="body"
+                                       (mouseenter)="p.open()" #p="ngbPopover" (mouseleave)="p.close()">
+                                        <i class="fa fa-calendar"></i>
+                                    </a>
+                                    <span class="badge primary float-right my-1">{{row.depositDurationTypeName}}</span>
+                                    <ng-template #content>
+                                        <div class="w w-xxl">
+                                            <div class="flex pb-2">
+                                                <h6 class="text-sm mb-0 _600">Scheduled Fee Information</h6>
+                                                <small class="text-muted">Breakup details</small>
+                                            </div>
+                                            <table class="table small-table text-xs">
+                                                <thead>
+                                                <tr>
+                                                    <th>Scheduled Date</th>
+                                                    <th><span class="float-right">Amount</span></th>
+                                                    <th><span class="float-right">Tax</span></th>
+                                                    <th><span class="float-right">Total</span></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <ng-template ngFor let-scheduledInfo [ngForOf]="row?.scheduledInfo"
+                                                             let-j="index">
+                                                    <tr>
+                                                        <td><span>{{ scheduledInfo.schDate }}</span></td>
+                                                        <td><span class="float-right">{{ scheduledInfo.amount | orgCurrency }}</span>
+                                                        </td>
+                                                        <td><span class="float-right">{{ scheduledInfo.taxAmount | orgCurrency }}</span>
+                                                        </td>
+                                                        <td><span class="float-right">{{ scheduledInfo.amount + scheduledInfo.taxAmount | orgCurrency }}</span>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-template>
+                                </td>
+                                <td><span class="float-right pr-2">{{row.totalAmount | orgCurrency }}</span></td>
+                                <td><span class="float-right pr-2">{{row.totalTaxAmount | orgCurrency }}</span></td>
+                                <td>
+                                    <span class="float-right pr-2">{{ row.totalAmount + row.totalTaxAmount | orgCurrency }}</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td><b class="pl-2">Total</b></td>
+                            <td><b class="float-right pr-2">{{ item?.getTotalAmount() | orgCurrency }}</b></td>
+                            <td><b class="float-right pr-2">{{ item?.getTotalTaxAmount() | orgCurrency }}</b></td>
+                            <td><b class="float-right pr-2">{{ item?.getTotalAmount() + item?.getTotalTaxAmount() |
+                                orgCurrency}}</b></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                    <div class="box-body light lt no-result" *ngIf="!item?.monthYearWise?.length">
+                        <div class="p-2 text-center">No Results</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="box">
+                    <div class="box-header p-2">
+                        <p class="item-title mb-0">Fee Schedule Wise</p>
+                        <small>MonthWise Scheduled Fee Details</small>
+                    </div>
+                    <table class="table small-table text-xs mb-0">
+                        <thead>
+                        <tr>
+                            <th><span class="pl-2">Month</span></th>
+                            <th><span class="pl-2">Amount</span></th>
+                            <th><span class="pl-2">Tax</span></th>
+                            <th><span class="pr-2 float-right">Total Fee</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-monthYearItem [ngForOf]="item?.monthYearWise" let-k="index">
+                            <tr>
+                                <td>
+                                    <span class="pl-2">{{monthYearItem?.name}}</span>
+                                    <a class="float-right text-primary btn btn-xs text-xs _400"
+                                       [ngbPopover]="content" placement="auto" container="body"
+                                       (mouseenter)="q.open()" #q="ngbPopover" (mouseleave)="q.close()">
+                                        Fee Types
+                                    </a>
+                                    <ng-template #content>
+                                        <div class="w w-xxl">
+                                            <div class="flex pb-2">
+                                                <h6 class="text-sm mb-0 _600">Fee Head Wise</h6>
+                                                <small class="text-muted">Breakup details</small>
+                                            </div>
+                                            <table class="table small-table text-xs">
+                                                <thead>
+                                                <tr>
+                                                    <th>Scheduled Date</th>
+                                                    <th><span class="float-right">Amount</span></th>
+                                                    <th><span class="float-right">Tax</span></th>
+                                                    <th><span class="float-right">Total</span></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <ng-template ngFor let-feeType [ngForOf]="monthYearItem?.feeTypes"
+                                                             let-j="index">
+                                                    <tr>
+                                                        <td><span>{{ feeType.feeTypeName }}</span></td>
+                                                        <td><span class="float-right">{{ feeType.amount }}</span></td>
+                                                        <td><span class="float-right">{{ feeType.taxAmount }}</span>
+                                                        </td>
+                                                        <td><span class="float-right">{{ feeType.amount + feeType.taxAmount }}</span>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-template>
+                                </td>
+                                <td><span class="pl-2">{{monthYearItem?.totalAmount | orgCurrency}}</span></td>
+                                <td><span class="pl-2">{{monthYearItem?.totalTax | orgCurrency}}</span></td>
+                                <td><span class="pr-2 float-right">{{monthYearItem?.totalFee | orgCurrency }}</span>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3"><b class="pl-2">Total</b></td>
+                            <td><b class="float-right pr-2">{{ item?.getSessionTotal() | orgCurrency }}</b></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                    <div class="box-body light lt no-result" *ngIf="!item?.monthYearWise?.length">
+                        <div class="p-2 text-center">No Results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<div class="container d-flex flex" *ngIf="tabs.calendar == activeTab">
+    <fee-plan-scheduled-activity [feePlanId]="feePlanId"></fee-plan-scheduled-activity>
+</div>
+<div class="d-flex flex" [class.hide]="!(tabs.schedules == activeTab)">
+    <div class="d-flex flex">
+        <div class="fade aside aside-sm" id="task-list">
+            <div class="d-flex flex-column w-xxl modal-dialog">
+                <div class="p-2 px-3 text-muted text-sm">Fee Structures</div>
+                <div class="scrollable hover">
+                    <nav class="nav-border right b-theme" data-nav="">
+                        <ul class="list inset">
+                            <ng-template ngFor let-row [ngForOf]="item?.feeStructureList | sortBy:'asc': 'sortOrder'"
+                                         let-i="index">
+                                <li class="list-item" [class.active]="activeFeeStructure?.id == row.id">
+                                    <div class="list-body">
+                                        <a class="item-title _500">
+                                            {{ row?.feeTypeName }}
+                                        </a>
+                                        &lt;!&ndash;<span *ngIf="item.isValidForSession" [class.hide]="item.isValidForSession"
+                                              class="text-xs text-danger">
+                                          <i class="fa fa-hand-stop-o px-1"></i> Session Date Range Exceeded
+                                        </span>&ndash;&gt;
+                                        <div class="item-except text-sm text-muted h-1x">
+                                            {{ row?.defaultTaskName }}{{ row?.orgTaskScheduleDesc }}{{
+                                            row?.depositDurationTypeName }}
+                                        </div>
+                                    </div>
+                                    <div><a class="btn btn-xs btn-icon" (click)="scheduleClick(row)"><i
+                                            class="fa fa-chevron-right"></i></a></div>
+                                </li>
+                            </ng-template>
+                        </ul>
+                    </nav>
+                    <div class="no-result hide">
+                        <div class="p-4 text-center">No Results</div>
+                    </div>
+                </div>
+                &lt;!&ndash;<div class="p-3 mt-auto"><span class="text-sm text-muted">Schedules</span></div>&ndash;&gt;
+            </div>
+        </div>
+        <div class="d-flex flex" [class.hide]="!activeFeeStructure">
+            &lt;!&ndash;<div class="navbar flex-nowrap white lt box-shadow">
+                <a data-toggle="modal" data-target="#task-list" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span>
+                </a>
+                <span class="text-md text-ellipsis flex">New Scheduler</span>
+                <span class="text-md text-ellipsis flex">{{activeFeeStructure | json}} <small
+                        class="text-xs">hi</small></span>
+                <div>
+                    <ng-template *ngTemplateOutlet="schedulerEl.testSchedularActionTemplate"></ng-template>
+                </div>
+            </div>&ndash;&gt;
+            <scheduler-info [id]="activeFeeStructure?.orgTaskScheduleId"
+                            #schedulerEl
+                            [isManual]="isManual"
+                            [isFeeTask]="isFeeTask"
+                            [addManually]="addManually"
+                            (onOk)="onSchedulerOkAction($event)"
+                            (onCancel)="onSchedulerCancelAction($event)"></scheduler-info>
+        </div>
+        <div class="d-flex flex" [class.hide]="activeFeeStructure">
+            <div class="no-result p-4 text-center">
+                <div class="p-4 text-center">Please select a Fee Type</div>
+            </div>
+        </div>
+    </div>
+</div>-->

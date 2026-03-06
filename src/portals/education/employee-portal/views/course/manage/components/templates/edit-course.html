@@ -1,0 +1,94 @@
+<div class="d-flex flex">
+  <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+    <div class="row row-sm">
+      <div class="col-sm-8">
+        <div class="md-form-group float-label">
+          <input class="md-input" type="text" formControlName="name">
+          <label>Course Name</label>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="md-form-group float-label">
+          <input class="md-input" type="text" formControlName="abbreviation">
+          <label>Course Abbreviation</label>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.studyLevel " title="Study Level"
+                         (cb)="updateStudyLevel($event)" [control]="formStudyLevel"></select-dropdown>
+
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.filteredStudyProgram" title="Study Program" [disabled]="formStudyProgram.disabled"
+                         (cb)="updateStudyProgram($event)" [control]="formStudyProgram"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.studyDegreeList" title="Study Degree" [disabled]="formStudyDegree.disabled"
+                         (cb)="updateStudyDegree($event)" [control]="formStudyDegree"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.studyStreamList" title="Study Stream" [disabled]="formStudyStream.disabled"
+                         (cb)="updateStudyStream($event)" [control]="formStudyStream"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <select-dropdown [items]="apiResolver?.masterType?.eligibilityList" title="Eligibility" [disabled]="formEligibility.disabled"
+                         (cb)="updateStudyQualification($event)"
+                         [control]="formEligibility"></select-dropdown>
+      </div>
+      <div class="col-sm-3">
+        <div class="input-group">
+          <div class="input-group-prepend w-25">
+            <div class="md-form-group float-label">
+              <input class="md-input" type="number" formControlName="duration" (change)="onDurationChanges()">
+              <label>Duration</label>
+            </div>
+          </div>
+          <div  class="w-75">
+            <select-dropdown [items]="apiResolver?.masterType?.staticMasterType?.duration"
+                             title="Duration Type"
+                             (cb)="updateStudyDuration($event)" [control]="formStudyDuration"></select-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <!--<multiselect-dropdown
+          [items]="apiResolver?.masterType?.studyMode"
+          titleInfo="Study Mode"
+          bindLabel="name"
+          bindValue="id"
+          (cb)="updateStudyMode($event)"
+          [selected]="formStudyModes?.value"></multiselect-dropdown>-->
+        <span class="red"> {{errorMsg}}</span>
+      </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-md-6">
+        <div class="p-2"> Academic term</div>
+        <div class="p-2">
+          <create-edit-section [customForm]="customForm" (cb)="showSubjects($event)"></create-edit-section>
+        </div>
+      </div>
+      <div class="col-md-6 light lt">
+        <div class="p-2" *ngIf="activeSection"> Subjects for {{activeSection?.value?.name}}</div>
+        <div class="scroll-y" *ngIf="activeSection">
+          <create-edit-subject [customForm]="activeSection" [submitted]="submitted"
+                               (cb)="updateSubjects($event)"></create-edit-subject>
+        </div>
+        <div *ngIf="!activeSection">
+          <div class="padding">
+            <span class="text-center text-muted">Please select a Year to get Subject details here...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #footerTemplate>
+      {{ customForm.value | json }}
+      <div class="text-right">
+        <button class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted" (click)="updateCourse(customForm)">
+          <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+          {{ submitted ? 'Submitting...' : actionType + ' Course' }}
+        </button>
+      </div>
+    </ng-template>
+  </form>
+</div>

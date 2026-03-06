@@ -1,0 +1,64 @@
+<form class="row" [formGroup]="customForm">
+  <div class="col">
+    <div class="box">
+      <div class="box-header">
+        <h6>Communication</h6>
+      </div>
+      <div class="box-divider"></div>
+      <div formArrayName="communications">
+        <ng-template ngFor let-comm [ngForOf]="communicationFormArray?.controls" let-i="index">
+          <div class="p-2 p-y-sm" [formGroup]="comm">
+            <div class="md-form-group float-label pb-0">
+              <div class="md-input no-border">
+                <small class="font-xs text-warning" *ngIf="!comm?.value?.id">No Record Found</small>
+              </div>
+              <label>{{ comm?.get('showName').value }}</label>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="box">
+      <div class="box-header">
+        <h6>Address</h6>
+      </div>
+      <div class="box-divider"></div>
+      <div formArrayName="addresses">
+        <ng-template ngFor let-address [ngForOf]="addressFormArray?.controls" let-i="index">
+          <div class="p-2 p-y-sm" [formGroup]="address">
+            <div class="md-form-group float-label pb-0">
+              <div class="md-input no-border">
+                <small class="font-xs text-warning" *ngIf="!address?.value?.id">No Record Found</small>
+                <!--{{ address?.value | json}}-->
+              </div>
+              <label>{{ address?.get('showName').value }}</label>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="box">
+      <div class="box-header">
+        <h6>Guardian</h6>
+      </div>
+      <div class="box-divider"></div>
+      <div formArrayName="relation">
+        <ng-template ngFor let-rel [ngForOf]="relationFormArray?.controls" let-i="index">
+          <div class="p-2 p-y-sm" [formGroup]="rel">
+            <div class="md-form-group float-label pb-0">
+              <div class="md-input no-border">
+                <small class="font-xs text-warning" *ngIf="!rel?.value?.id">No Record Found</small>
+                <!--{{ rel?.value | json}}-->
+              </div>
+              <label>{{ rel?.get('showName').value }}</label>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</form>

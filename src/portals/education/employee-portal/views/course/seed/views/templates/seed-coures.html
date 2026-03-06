@@ -1,0 +1,77 @@
+<div id="content" class="app-content box-shadow-0" role="main">
+  <div class="content-main d-flex flex">
+    <div class="fade aside aside-sm" id="content-aside">
+      <div class="modal-dialog d-flex flex-column w-md light lt b-r white">
+        <div class="navbar box-shadow">
+          <span class="text-md">Manage Course</span>
+        </div>
+        <div class="scrollable hover">
+          <div class="list inset text-xs">
+            <div class="p-2 px-3 text-muted text-sm">Messages</div>
+            <ng-template ngFor let-stream [ngForOf]="masterCourses" let-i="index">
+              <div class="list-item">
+                <div class="list-body">
+                  <a class="item-title _500">{{stream?.name}}</a>
+                  <div class="item-except text-sm h-1x">
+                    <a class="float-right text-xs btn btn-xs border-primary" (click)="navigateToKey(stream)">Fetch course</a></div>
+                  <div class="item-tag tag hide"></div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+          <div class="no-result hide">
+            <div class="p-4 text-center">No Results</div>
+          </div>
+        </div>
+        <div class="p-3 mt-auto">
+          <!--<div class="input-group">
+            <input type="text" class="form-control form-control-sm" id="newField" placeholder="New label" required="">
+            <span class="input-group-append"><button class="btn btn-default btn-sm no-shadow" type="button" id="newBtn"><i class="fa fa-plus text-muted"></i></button></span>
+          </div>-->
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex">
+      <div class="d-flex flex">
+        <div class="d-flex flex-column flex white">
+          <div class="navbar flex-nowrap box-shadow">
+            <ul class="nav nav-xs flex-row no-border">
+              <li class="nav-item mr-2">
+                <a class="text-success">{{activeStream?.key}}</a>
+              </li>
+            </ul>
+            <div class="nav-active-border b-warning bottom">
+              <div class="nav nav-md">
+                <ng-template ngFor let-studyDegree [ngForOf]="apiResolver?.masterType?.studyDegree | sortBy:'asc': 'sortOrder'" let-i="index">
+                  <a class="nav-link pt-2" (click)="showByDegreeType(studyDegree)" [ngClass]="{'active': (activeStream.activeKey == studyDegree?.id)}">{{studyDegree?.name }} </a>
+                </ng-template>
+              </div>
+            </div>
+            <ul class="nav nav-xs flex-row no-border">
+              <li class="nav-item mr-2">
+                <button id="sort" class="btn btn-sm white ml-1 sort" data-sort="item-title" data-toggle="tooltip" title="" data-original-title="Sort"><i class="fa fa-sort"></i></button>
+              </li>
+              <li class="nav-item" [class.text-danger]="(!streamData?.studyStreamId)">
+                <div class="text-center">
+                  <drop-down [list]="apiResolver?.masterType?.studyStream" [options]="streamOptions" [id]="streamData?.studyStreamId" [data]="streamData"></drop-down>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="btn btn-sm border-primary mx-2" (click)="saveCourses(activeStream)"> {{ (activeStream?.isUploading)? 'Uploading ': 'Save ' +activeStream?.name  }}</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <div class="list-container list-group" autosize>
+              <ng-template ngFor let-row [ngForOf]="activeCourses" let-i="index">
+                <div class="list-group-item p-0">
+                  <seed-course-row [data]="row"></seed-course-row>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

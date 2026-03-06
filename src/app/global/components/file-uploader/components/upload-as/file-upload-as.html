@@ -1,0 +1,96 @@
+<div class="content-main d-flex flex">
+    <div class="d-flex flex">
+        <div class="d-flex flex">
+            <div class="d-flex flex-column flex" id="chat-list">
+                <div class="navbar flex-nowrap white lt box-shadow">
+                    <span class="text-md text-ellipsis flex">{{ uploadItem?.file?.name }}</span>
+                </div>
+                <div class="scrollable hover">
+                    <div class="p-3">
+                        <div class="upload-form ns-img">
+                            <!--<div upload-preview [src]="activeFile"></div>-->
+                            <img #image src="" alt="your image" class="preview-img"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-3 p-3 white lt b-t mt-auto">
+                    <div class="bg b-b" style="width: 100%; bottom: 0;">
+                        <div class="row">
+                            <div class="col-sm-12 order-sm-1">
+                                <!--<div class="text-ellipsis"> {{ uploadItem?.file?.name }}</div>-->
+                                <small ng-show="uploader.isHTML5" nowrap class="p-1" style="background: antiquewhite;">
+                                    {{ uploadItem?.file?.size/1024/1024 | number }} MB
+                                </small>
+                                <div class="text-center">
+                                    <span *ngIf="uploadItem?.isSuccess"><i class="fa fa-check"></i></span>
+                                    <span *ngIf="uploadItem?.isCancel"><i class="fa fa-ban"></i></span>
+                                    <span *ngIf="uploadItem?.isError"><i class="fa fa-remove"></i></span>
+                                </div>
+                                <div class="progress" style="margin-bottom: 0;">
+                                    <div class="progress-bar" role="progressbar"
+                                         [ngStyle]="{ 'width': uploadItem?.progress + '%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="d-flex flex-column w-xxl white" [formGroup]="uploadCustomForm"
+              (submit)="uploadDocument(uploadCustomForm)">
+            <div class="navbar box-shadow">
+                <div class="input-group flex"><input type="text"
+                                                     class="form-control px-0 no-bg no-border no-shadow search"
+                                                     placeholder="Search" required=""> <span
+                        class="input-group-btn"><button class="btn no-bg no-border no-shadow" type="button"><i
+                        class="fa fa-search text-muted"></i></button></span></div>
+            </div>
+            <div class="p-2 px-3 text-muted text-sm">Document Type</div>
+            <div class="scrollable hover">
+                <div class="list inset">
+                    <ng-template ngFor let-docType [ngForOf]="lookups?.docTypes" let-j="index">
+                        <div class="list-item" [class.active]="docType.id==formDocTypeId.value">
+                            <div>
+                                <label class="checkbox-inline md-check">
+                                    <input type="radio" name="docTypeId" formControlName="docTypeId" [value]="docType.id"><i class="indigo"></i>
+                                </label>
+                            </div>
+                            <div class="list-body">
+                                <a class="item-title _500" data-pjax-state="">{{docType.name}}</a>
+                                <div class="text-sm text-muted h-1x">{{docType.categoryName}}</div>
+                            </div>
+                            <!--<div>
+                                <div class="text-center">
+                                    <a class="d-inline-block px-1 text-center">
+                                          <span class="text-xs d-block">
+                                            <label class="checkbox-inline md-check">
+                                                <input type="radio" name="imageTypeId" formControlName="imageTypeId" value="1"><i class="indigo"></i>
+                                            </label>
+                                          </span>
+                                        <small class="text-xs">Front Image</small>
+                                    </a>
+                                    <a class="d-inline-block px-1 text-center b-l">
+                                          <span class="text-xs d-block">
+                                            <label class="checkbox-inline md-check">
+                                                <input type="radio" name="imageTypeId" formControlName="imageTypeId" value="2"><i class="indigo"></i>
+                                            </label>
+                                          </span>
+                                        <small class="text-xs">Back Image</small>
+                                    </a>
+                                </div>
+                            </div>-->
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="p-3 mt-auto">
+                <button class="btn btn-sm text-xs" type="submit" title="Upload"
+                        [disabled]="!uploadCustomForm.valid || submitted" [ngClass]="{'btn-outline b-primary text-primary': (uploadCustomForm.valid)}">
+                    <i class="fa fa-upload"></i>
+                    <span *ngIf="uploadItem?.isSuccess"> Uploading... </span>
+                    <span *ngIf="!uploadItem?.isReady && !uploadItem?.isSuccess"> Upload  </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

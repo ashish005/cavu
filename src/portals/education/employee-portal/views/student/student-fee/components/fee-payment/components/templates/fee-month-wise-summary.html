@@ -1,0 +1,31 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="p-3">
+      <a class="btn btn-sm b-theme theme float-right d-print-none mb-3" onclick="window.print();">Print</a>
+      <table class="table small-table text-xs mb-0">
+        <thead>
+        <tr>
+          <th><span>Month-Year</span></th>
+          <th><span class="pl-2">Payable</span></th>
+          <th><span class="float-right">Paid</span></th>
+          <th><span class="float-right">Due</span></th>
+          <th><span class="pr-2 float-right">Advance</span></th>
+          <th><span class="pr-2 float-right">Balance</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-template ngFor let-row [ngForOf]="payVoucherList" let-i="index">
+          <tr>
+            <td><span>{{row.name}}</span></td>
+            <td><span class="float-right">{{ row.paidTillDate | orgCurrency }}</span></td>
+            <td><span class="float-right">{{ row.paid | orgCurrency }}</span></td>
+            <td><span class="float-right">{{ row.dueFee | orgCurrency }}</span></td>
+            <td><span class="float-right">{{ row.advance | orgCurrency }}</span></td>
+            <td><span class="float-right">{{ row.balance | orgCurrency }}</span></td>
+          </tr>
+        </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

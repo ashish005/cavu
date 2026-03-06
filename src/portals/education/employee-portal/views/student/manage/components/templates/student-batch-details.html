@@ -1,0 +1,143 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover" id="batchStructures">
+            <div class="list animate fadeIn">
+                <ng-template ngFor let-batch [ngForOf]="gridData" let-i="index">
+                    <div class="panel box no-border m-2">
+                        <div class="list-item">
+                            <div class="list-body">
+                                <a data-toggle="collapse" data-parent="#batchStructures" [attr.data-target]="'#ucf_'+i" class="item-title _500" data-pjax-state="">
+                                    {{batch.orgBatchName}}
+                                </a>
+                            </div>
+                            <div class="float-right">
+                                <span *ngIf="batch.isFeeSynced"><i class="fa fa-thumbs-up text-success"></i></span>
+                                <a *ngIf="!batch.isFeeSynced" class="btn btn-xs text-xs text-danger" (click)="syncFeePlanWithChallan(batch)"> Fix It</a>
+                            </div>
+                        </div>
+                        <div id="ucf_{{i}}" class="box m-0 collapse">
+                            <div class="box-body pb-0">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <small class="text-muted">Form No</small>
+                                        <div class="_500">{{batch?.applicationFormNo}}</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">Roll No</small>
+                                        <div class="_500">{{batch?.rollNo}}</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">Enrollment Date</small>
+                                        <div class="_500">{{batch?.enrollmentDate }}</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted">Class & Section</small>
+                                        <div class="_500">{{batch?.orgClass}} {{batch?.classSection}}</div>
+                                    </div>
+                                    <div class="col-6"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col text-center float-left"><span class="_600 d-block">{{batch?.challanSummary?.totalFee}}</span> <small class="text-muted">Total</small></div>
+                                    <div class="col text-center float-left"><span class="_600 d-block">{{batch?.challanSummary?.dueFee}}</span> <small class="text-muted">Due</small></div>
+                                    <div class="col text-center float-left"><span class="_600 d-block">{{batch?.dueDate }}</span> <small class="text-muted">Due Date</small></div>
+                                    <div class="col text-center float-left"><span class="_600 d-block">{{batch?.challanSummary?.advance}}</span> <small class="text-muted">Advance</small></div>
+                                    <div class="col text-center float-left"><span class="_600 d-block">{{batch?.challanSummary?.balance}}</span> <small class="text-muted">Balance</small></div>
+                                </div>
+                            </div>
+                            <div class="box-body p-0">
+                                <div class="item-title mb-2">{{batch.feePlan}}</div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="box">
+                                            <div class="box-header p-2">
+                                                <p class="item-title mb-0">Fee Head Wise</p>
+                                                <small>Amount scheduled against Fee Type</small>
+                                            </div>
+                                            <table class="table small-table text-xxs mb-0">
+                                                <thead>
+                                                <tr>
+                                                    <th><span class="pl-2">Fee Type</span></th>
+                                                    <th><span class="float-right">Amount</span></th>
+                                                    <th><span class="float-right">Tax</span></th>
+                                                    <th><span class="float-right">Concession</span></th>
+                                                    <th><span class="float-right">Total</span></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <ng-template ngFor let-feeSchedule [ngForOf]="batch.feeTypeWiseSummary | sortBy:'asc': 'sortOrder'" let-j="index">
+                                                    <tr>
+                                                        <td><span class="pl-2">{{ feeSchedule.name }}</span></td>
+                                                        <td><span class="float-right">{{ feeSchedule.amount | orgCurrency }}</span></td>
+                                                        <td><span class="float-right">{{ feeSchedule.taxAmount | orgCurrency }}</span> </td>
+                                                        <td><span class="float-right">{{ feeSchedule.concession | orgCurrency }}</span> </td>
+                                                        <td><span class="float-right">{{ feeSchedule.total | orgCurrency }}</span></td>
+                                                    </tr>
+                                                </ng-template>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td><b>Total</b></td>
+                                                        <td><span class="float-right">{{ batch.feeTypeSummary.amount | orgCurrency }}</span></td>
+                                                        <td><span class="float-right">{{ batch.feeTypeSummary.taxAmount | orgCurrency }}</span></td>
+                                                        <td><span class="float-right">{{ batch.feeTypeSummary.concession | orgCurrency }}</span></td>
+                                                        <td><span class="float-right"><b>{{ batch.feeTypeSummary.total | orgCurrency }}</b></span></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="box">
+                                            <div class="box-header p-2">
+                                                <p class="item-title mb-0">Fee Schedule Wise</p>
+                                                <small>MonthWise Scheduled Fee Details</small>
+                                            </div>
+                                            <table class="table small-table text-xxs mb-0">
+                                                <thead>
+                                                <tr>
+                                                    <th><span class="pl-2">Month</span></th>
+                                                    <th>Status</th>
+                                                    <th><span class="float-right">Total Fee</span></th>
+                                                    <th><span class="float-right">Paid</span></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <ng-template ngFor let-monthYearItem
+                                                             [ngForOf]="batch.challanStructure"
+                                                             let-k="index">
+                                                    <tr>
+                                                        <td><span class="pl-2">{{monthYearItem?.name}}</span></td>
+                                                        <td><span class="pl-2">{{monthYearItem.feeStatus}}</span></td>
+                                                        <td><span class="float-right">{{monthYearItem?.totalFee | orgCurrency}}</span></td>
+                                                        <td><span class="float-right">{{monthYearItem?.paid | orgCurrency}}</span></td>
+                                                    </tr>
+                                                </ng-template>
+                                                </tbody>
+                                                <!--<tfoot>
+                                                <tr>
+                                                    <td colspan="2"><b class="pl-2">Total</b></td>
+                                                    <td><b class="float-right pr-2"></b></td>
+                                                    <td><b class="float-right pr-2"></b></td>
+                                                </tr>
+                                                </tfoot>-->
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="no-result" *ngIf="!gridData?.length">
+                <div class="p-4 text-center">No Result Found.</div>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                                 (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>

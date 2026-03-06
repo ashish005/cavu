@@ -1,0 +1,10 @@
+<ng-container [formGroup]="sundryForm">
+  <td colspan="2" class="pt-0 pb-0">
+    <select-dropdown [disabled]="formId?.value" [items]="lookup?.sundryTypes" (cb)="updateSundryTypeChange($event)" [control]="formSundryTypeId"> </select-dropdown>
+  </td>
+  <td colspan="2"></td>
+  <td>
+    <strong *ngIf="formId?.value" class="form-control no-border">{{sundryForm.value.amount}}</strong>
+    <input *ngIf="!formId?.value" class="form-control p-1 text-right" type="number" formControlName="amount" (change)="onSundryAmountChange()">
+  </td>
+</ng-container>

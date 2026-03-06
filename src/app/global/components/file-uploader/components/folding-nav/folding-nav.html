@@ -1,0 +1,18 @@
+<nav class="nav nav5">
+  <ul>
+    <li *ngFor="let item of data; let i= index;">
+      <a>{{ item?.name }}</a>
+      <ul *ngIf="item?.documentTypes">
+        <li *ngFor="let docTypes of item?.documentTypes; let i= index;">
+          <a>
+            {{docTypes?.name }}
+            <button class="btn btn-xs btn-outline b-primary text-primary float-right" style="margin-top: -4px;" type="button"
+                    title="Upload" (click)="upload(docTypes)">
+              <i class="fa fa-upload"></i>
+            </button>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>

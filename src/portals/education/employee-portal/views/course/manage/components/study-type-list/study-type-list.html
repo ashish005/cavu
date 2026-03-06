@@ -1,0 +1,24 @@
+<div class="d-flex flex-column w-100 h-100">
+  <div class="b-b text-center text-sm-right">
+    <div class="nav-active-border b-warning bottom box mb-0">
+      <div class="nav nav-md">
+        <a class="nav-link text-center" [class.active]="type == 'level'" (click)="changeByType('level')">Level</a>
+        <a class="nav-link text-center" [class.active]="type == 'program'" (click)="changeByType('program')">Program</a>
+        <a class="nav-link text-center" [class.active]="type == 'degree'" (click)="changeByType('degree')">Degree</a>
+        <a class="nav-link text-center" [class.active]="type == 'stream'" (click)="changeByType('stream')">Stream</a>
+      </div>
+    </div>
+  </div>
+  <!--<div class="box mb-0">
+    <ng-template *ngTemplateOutlet="grid.gridHeaderTemplate"></ng-template>
+  </div>-->
+  <div class="scroll-y">
+    <org-grid #grid [data]="gridData"
+              [options]="gridOptions"
+              [isLoading]="isLoading"
+              (cb)="actionCb($event)"
+              (update)="updateGrid($event)"></org-grid>
+  </div>
+<!--  <ng-template *ngTemplateOutlet="grid.footerTemplate"></ng-template>-->
+</div>
+
