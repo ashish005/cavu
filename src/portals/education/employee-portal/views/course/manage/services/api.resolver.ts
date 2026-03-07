@@ -16,7 +16,7 @@ export class CourseModuleAPIResolver extends OrgResourceService<CourseLookup> im
         super(injector, 'lookup/course-master-type', new CourseLookupSerializer());
     }
 
-    get isRootUser(){ return this.isRootUser; }
+    get isRootUser(){ return false; }
     //get countryId(){ return this.orgCountryId; }
 
   resolve(route: ActivatedRouteSnapshot) {

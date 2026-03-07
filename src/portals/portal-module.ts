@@ -61,6 +61,15 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
     ];
   }
 
+  if(!license){
+    return [
+      {
+        path: '', component: PreSetupLayout,
+        loadChildren: () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule)
+      }
+    ];
+  }
+
     return [
         {
             path: '', resolve: {items: OrgLookupService}, component: CoreLayout,

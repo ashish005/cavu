@@ -43,7 +43,6 @@ export class ProcessTreeComponent implements OnChanges, AfterViewInit {
     private focusedIndex = 0;
 
     // ngOnInit() {
-    //     debugger
     //     this.rebuildTree();
     // }
 

@@ -71,7 +71,6 @@ class ToastaSpecific
     }
 
     showToast(alert: AlertCommand) {
-        debugger
         if (alert.operation == 'clear') {
             for (const id of this.stickyToasties.slice(0)) {
                 this.toastaService.clear(id);

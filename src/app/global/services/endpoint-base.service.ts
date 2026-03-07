@@ -67,7 +67,6 @@ export class CoreEndpointBase {
         resolve(data);
       })
       .catch((err) => {
-          debugger
         if (failure) failure(err);
         this.loaderService.hide();
         reject(err);
@@ -194,9 +193,20 @@ export class CoreEndpointBase {
         );
       }
 
-      debugger
+
       // Handle refresh token invalid
-      if (error?.error === 'invalid_grant' || error?.error_description?.includes('invalid_grant')) {
+      const errorActions = {
+          'invalid_grant': 'logout',
+          'tenant_header_claim_mismatch': 'logout'
+      };
+
+        const resolveAction = (msg) => {
+            return errorActions[msg] ?? 'ignore';
+        }
+
+        const action = resolveAction(error?.error?.error);
+        console.log(action); // logout
+      if ( action === 'logout' || error?.error_description?.includes('invalid_grant')) {
         console.warn('⚠️ Refresh token invalid. Logging out...');
         this.authService.logout();
         return throwError(() => new Error('Session expired.'));
@@ -263,7 +273,7 @@ export class CoreEndpointBase {
     // }
 
     // protected handleError(error: ServerError | any, continuation: () => Observable<any>) {
-    //   debugger
+
     //   if (error.status == 401) {
     //         if (this.isRefreshingLogin) { return this.pauseTask(continuation); }
 
