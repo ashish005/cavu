@@ -17,7 +17,9 @@
         </a>
         <div class="navbar-text nav-title flex"></div>
         <ul class="navbar-nav mt-2 mt-lg-0 mx-0 mx-lg-2 text-hover-primary nav-active-border">
-            <li class="nav-item"><button class="btn btn-success mr-1" (click)='login()'>login</button></li>
+            @if (appSetup && appSetup?.sectorMasterType !== 'COMPANY') {
+                <li class="nav-item"><button class="btn btn-success mr-1" (click)='login()'>login</button></li>
+            }
           @if (appSetup?.sectorMasterType === 'COMPANY') {
             <li class="nav-item" ><a [routerLink]="['/pricing']" routerLinkActive="active" class="nav-link">Pricing Plan</a></li>
             <li class="nav-item"><a [routerLink]="['/trial']" routerLinkActive="active" class="nav-link"> Trial</a></li>

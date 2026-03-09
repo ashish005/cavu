@@ -5,7 +5,7 @@ import {AppSetupService} from "@app-global";
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private ignoredUrls: string[] = [
-    '/appSetup/pre'
+    '/appSetup/pre', '/trialLookup/', '/software/plans/'
   ];
   constructor(private appSetupService: AppSetupService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler) {

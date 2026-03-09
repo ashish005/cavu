@@ -42,18 +42,18 @@ export class Layout implements OnInit {
     {
       isFLatChildren: true, key: 'mainLayout.heading.main',
       children: [
-        {routeTo: ['dashboard'], icon: "fa fa-dashboard", key: 'mainLayout.dashboard'},
-        {routeTo: ['student/fee'], icon: "fa fa-dashboard", key: 'mainLayout.edu.fee'},
-        {routeTo: ['course'], icon: "fa fa-dashboard", key: 'mainLayout.edu.course'},
-        {routeTo: ['class'], icon: "fa fa-dashboard", key: 'mainLayout.edu.class'},
-        {routeTo: ['fee-plan'], icon: "fa fa-group", code: "EMP", key: 'mainLayout.edu.plan'}
+        {routeTo: ['dashboard'], icon: "fa fa-dashboard", key: 'Dashboard'},
+        {routeTo: ['student/fee'], icon: "fa fa-dashboard", key: 'Fee'},
+        {routeTo: ['course'], icon: "fa fa-dashboard", key: 'Course'},
+        {routeTo: ['class'], icon: "fa fa-dashboard", key: 'Class'},
+        {routeTo: ['fee-plan'], icon: "fa fa-group", code: "EMP", key: 'Plan'}
       ]
     },
     {
       isFLatChildren: false, key: 'mainLayout.heading.contact',
       children: [
-        {routeTo: ['org-emp'], icon: "fa fa-group", code: "EMP", key: 'mainLayout.user.employee'},
-        {routeTo: ['student'], icon: "fa fa-group", code: "EMP", key: 'mainLayout.user.student'}
+        {routeTo: ['org-emp'], icon: "fa fa-group", code: "EMP", key: 'Employee'},
+        {routeTo: ['student'], icon: "fa fa-group", code: "EMP", key: 'Student'}
       ]
     },
     ...EMPLOYEE_COMMON_ROUES
