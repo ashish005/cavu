@@ -1,0 +1,230 @@
+/* new header */
+
+.new-header h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #2b3e4d
+}
+
+.new-header p {
+  color: #83838d;
+  margin: 5px 0
+}
+
+.new-header img {
+  position: relative;
+  top: 100px
+}
+
+.new-header a {
+  font-weight: 400;
+  color: #d65a3b
+}
+
+.new-header ul {
+  display: inline
+}
+
+.new-header .buttons {
+  margin-top: 30px;
+  margin-right: 25px
+}
+
+.new-header li {
+  line-height: 27px;
+  color: #777783;
+  font-size: 15px
+}
+
+.new-header li:before {
+  content: "\\f00c";
+  font-family: FontAwesome;
+  margin-right: 10px;
+  color: #fff;
+  font-size: 13px;
+  color: #d65a3b
+}
+
+.new-header a.btn.dark {
+  background-color: #252e3f;
+  margin-left: 15px;
+  color: #fff
+}
+
+.new-header a.btn.dark:hover {
+  background-color: #fff;
+  color: #252e3f
+}
+
+/* home boxes */
+
+.home-boxes {
+  padding: 30px 0 50px 0;
+  /*background-color: #fff;*/
+  border-bottom: 0 solid #e9e9e9;
+}
+.home-boxes .gray-bg {
+  background-color: #f9f9f9;
+}
+
+.home-boxes .text-container::before,
+.home-boxes .text-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.home-boxes .text-container::before {
+  /*border-width: 35px;
+  border-right-color: #f5633e;
+  border-top-color: #f5633e;
+  z-index: 3;
+  position: absolute;
+  right: 15px;
+  border-bottom-width: 50px;
+  border-left-width: 50px;
+  border-radius: 8px;*/
+}
+
+.home-boxes .text-container::after {
+  content: 'ON \A SALE';
+  top: 6px;
+  right: 12px;
+  z-index: 4;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: pre;
+  font-size: 13px;
+  letter-spacing: 1px;
+  line-height: 15px;
+  text-align: center;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.home-boxes .before-box p {
+  font-size: 12px;
+}
+
+.home-boxes .text-container {
+  text-align: center;
+  background-color: #fff;
+  border-bottom: 0px solid #f5633e;
+  padding: 20px 15px 15px;
+  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.05);
+  transition: 200ms ease-in-out;
+  border-radius: 15px;
+  margin-bottom: 30px;
+}
+
+.home-boxes .text-container:hover {
+  -webkit-box-shadow: 0px 0px 30px -8px rgba(0, 0, 0, 0.78);
+  -moz-box-shadow: 0px 0px 30px -8px rgba(0, 0, 0, 0.78);
+  box-shadow: 0px 0px 30px -8px rgba(0, 0, 0, 0.78);
+}
+
+.home-boxes .default-title {
+  padding: 0px 0 30px 0;
+}
+
+.home-boxes .text-container p {
+  color: #999;
+  letter-spacing: 0.5px;
+  line-height: 25px;
+}
+
+.home-boxes .text-container h3 {
+  font-size: 25px;
+  height: 100px;
+}
+
+.home-boxes .btn {
+  font-size: 16px !important;
+  margin: 0 auto;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  background-color: transparent;
+  color: #888;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.home-boxes .btn:hover {
+  background-color: #f5633e !important;
+  color: #fff !important;
+  border: 1px solid transparent;
+}
+
+.home-boxes .fa {
+  color: #f5633e;
+}
+
+/* home boxes */
+
+.section2 {
+  padding: 30px 0 20px
+}
+
+.section2 .title-new {
+  margin-bottom: 40px
+}
+
+.section2 .box {
+  background-color: #fff;
+  border: 1px solid #e9e9e9;
+  border-top: 5px solid #f5633e;
+  padding: 0 15px 15px 25px;
+  position: relative;
+  text-align: center;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px
+}
+
+.section2 .box:before,.section2 .box:after {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width: 300px;
+  background: #777;
+  box-shadow: 0 15px 15px #777;
+  transform: rotate(-3deg)
+}
+
+.section2 .box:after {
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto
+}
+
+.section2 .fa {
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  padding: 17px;
+  font-size: 25px;
+  text-shadow: 1px 1px 20px rgba(255,255,255,.5);
+  margin-bottom: 15px;
+  background-color: #f5633e;
+  box-shadow: 0 5px 17px -7px #000000bf;
+  border-radius: 0 0 13px 13px
+}
+
+.section2 .row {
+  margin-bottom: 40px
+}
+
+.section2 .box p {
+  color: #999
+}
+
+.section2 h4 {
+  color: #2b3e4d
+}

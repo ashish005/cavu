@@ -1,16 +1,239 @@
-<div class="app">
-    <div id="content" class="app-content box-shadow-1 box-radius-1 py-5" role="main">
-        <div class="content-main d-flex flex" id="content-main">
-            <div id="wrapper" class="container">
-                <div class="row no-gutters">
-                    <div class="col-sm-12">
-                        <div class="auth_detail" style="color: #004f7e; opacity: 0.7;">
-                            <h3 class="text-monospace"> {{ app?.software?.name ?? 'No Org registered!' }} </h3>
-                            <p class="p-3">{{app?.software?.description}} </p>
-                        </div>
+<div class="container">
+    <!-- home-header -->
+    <div class="new-header">
+        <div class="row padding">
+            <div class="col-lg-7 col-sm-8">
+                <div class="text-content">
+                    <div class="typing-title">
+                        <h3>A robust <span class="text-success"> Finance & Accounting</span> platform with real intelligence</h3>
+                        <h3 style="min-height: 33px;">
+                            <a typing class="typewrite" [options]="typingOptions"></a>
+                        </h3>
                     </div>
+                    <div class="p-3">
+                        <button class="btn btn-outline b-success text-success _700 text-md" [routerLink]="'/trial'"> Try now! <i class="fa fa-arrow-right ml-2"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 col-sm-4 py-3">
+                <!--<div class="text-content auth_detail padding" style="color: #004f7e; opacity: 0.7;">
+                    <h3 class="text-monospace"> {{ app?.software?.name ?? 'No Org registered!' }} </h3>
+                    <p class="p-3">{{app?.software?.description}} </p>
+                </div>-->
+            </div>
+        </div>
+    </div>
+    <!-- home-header -->
+    <!-- start of section -->
+    <div class="new-services">
+        <div class="container row">
+            <div class="col-sm-6 border-l">
+                <i class="fa fa-3x fa-rocket pull-left"></i>
+                <div class="text">
+                    <h3>IT Consulting Services</h3>
+                    <p>Software Consulting and Development Services to Streamline Business Processes & Enable You to Focus on
+                        Business Growth</p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <i class="fa fa-3x fa-cloud pull-left"></i>
+                <div class="text">
+                    <h3>Digital Solution Provider</h3>
+                    <p>Understand Your Business Requirements And Provide Solution</p>
                 </div>
             </div>
         </div>
     </div>
+    <!-- end of section -->
+    <!-- start of section -->
+    <section class="section2">
+        <div class="container">
+            <div class="justify-content-center mb-3">
+                <div class="text-center title-new">
+                    <h2>How can we help your organization ?</h2>
+                    <p>Our solution will help you to analyse your financial insights</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Organization & Workflow</h6>
+                        <p class="text-sm">Easily manage Process and assign tasks</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Multiple Org Branches support</h6>
+                        <p class="text-sm">Easily manage your Subsidiary</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Accounting & Taxes</h6>
+                        <p class="text-sm">Simplified solution to manage org Finances</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Invoicing & Quotations</h6>
+                        <p class="text-sm">Create and manage invoicing</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Vendor & Expenses</h6>
+                        <p class="text-sm">Manage your Vendor & services and keep track of expenses</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Scheduler & Tasks</h6>
+                        <p class="text-sm">Perform time specific operations</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-lg-4">
+                    <i class="fa fa-3x fa-check-circle pull-left"></i>
+                    <div class="text">
+                        <h6>Notifications</h6>
+                        <p class="text-sm">Keep track of your communication </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end of section -->
+
+    <!-- section 2 -->
+    <section class="section2">
+        <div class="container">
+            <div class="justify-content-center mb-3">
+                <div class="text-center title-new">
+                    <h2>We value your business profile</h2>
+                    <p>We are enhancing our services to provide secure and reliable system</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="box">
+                        <i class="fa fa-3x fa-check-circle"></i>
+                        <h4>IT Solutions</h4>
+                        <p> Responsive store design & development, mobile apps, plugins & module development with full
+                            maintenance </p>
+                    </div>
+                </div>
+                <div class="col-sm-4 ">
+                    <div class="box">
+                        <i class="fa fa-3x fa-check-circle"></i>
+                        <h4>Dedicated Team & Support</h4>
+                        <p>100% accountability and risk-free development with Full-Time Equivalent (FTE) engagement
+                            Model</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 ">
+                    <div class="box">
+                        <i class="fa fa-3x fa-check-circle"></i>
+                        <h4>Cloud Solutions</h4>
+                        <p>Upgrade traditional business to cloud-based applications. SaaS & PaaS costs less and can get in
+                            action quickly</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 ">
+                    <div class="box">
+                        <i class="fa fa-3x fa-check-circle"></i>
+                        <h4>BigData & Hadoop Data Analytics</h4>
+                        <p>Flexible architecture for large scale computation, data processing, summarization, query and
+                            analysis</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 ">
+                    <div class="box">
+                        <i class="fa fa-3x fa-check-circle"></i>
+                        <h4>Custom & Tailor-Made Solutions</h4>
+                        <p>Applications designed around specific goals after thorough research and insight to enhance
+                            workflow.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section 2 end -->
+
+    <!-- section start here -->
+    <section class="home-boxes">
+        <div class="container">
+            <div class="mb-3">
+                <div class="text-center title-new">
+                    <h2>We Serve Multiple Industries, Globally</h2>
+                    <p>We assist our customers in any phase of software development- from startups to mid-sized business and
+                        large enterprises with a focus on optimization and expansion no matter the industry they operate
+                        in.</p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4> Travel & Tourism </h4>
+                        <br>
+                        <!--<a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4>Real Estate</h4>
+                        <br>
+                        <!-- <a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4>Retail & eCommerce</h4>
+                        <br>
+                        <!-- <a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4>Healthcare</h4>
+                        <br>
+                        <!--<a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4>Education Sector</h4>
+                        <br>
+                        <!--<a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-container">
+                        <i class="fa fa-check-circle fa-4x pull-left" aria-hidden="true"></i>
+                        <h4>Financial Services</h4>
+                        <br>
+                        <!--<a href="#" class="button btn btn-lg btn-outline">Read More</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end of section -->
 </div>
