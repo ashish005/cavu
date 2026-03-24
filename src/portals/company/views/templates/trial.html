@@ -1,205 +1,200 @@
-<div class="flex">
-    <div class="flex align-self-center" *ngIf="!successResp?.isSuccess">
-        <div class="row py-2">
-            <div class="col-sm-6 order-sm-2 text-center">
-                <div class="d-flex flex-column flex">
-                    <div class="_700 d-block mt-2">
-                        <span class="text-lg"></span>
-                    </div>
-                    <span class="_300 text-md">Tell us about your business</span>
-                </div>
-            </div>
-            <div class="col-sm-6 order-sm-1">
-                <div class="clearfix">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar w-56 success"><span class="fa fa-globe text-lg"></span></span>
-                        <div class="mx-3"><span class="text-lg _700">Organization Registration</span>
+<div class="py-5">
+    <div class="container" *ngIf="!successResp?.isSuccess">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="text-center mb-5">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="mb-3">
+                            <span class="avatar w-56 bg-success text-white rounded-circle d-flex align-items-center justify-content-center">
+                                <span class="fa fa-globe fa-2x"></span>
+                            </span>
+                        </div>
+                        <div>
+                            <h1 class="display-5 fw-bold">Organization Registration</h1>
+                            <p class="lead text-muted">Tell us about your business</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <form class="box flex align-self-center b-t b-t-primary b-t-4x" [formGroup]="customForm" *ngIf="!successResp?.isSuccess">
-        <form class="mx-3 m-0" [formGroup]="customForm">
-            <div class="d-flex flex">
-                <div class="d-flex flex-column flex lt">
-                    <div class="row row-sm white my-4 text-center">
-                        <div class="col-sm-12 col-lg-6">
-                            <div>
-                                <div class="py-2"><span class="text-sm title _600 d-block">Business Information</span></div>
-                                <div class="row row-sm">
-                                    <div class="col-12">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="name" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"/>
-                                            <label>Business Name</label>
-                                        </div>
+    <form class="card border-0 shadow-sm" [formGroup]="customForm" *ngIf="!successResp?.isSuccess">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <div class="col-lg-6 col-md-12">
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Business Information</h5>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" formControlName="name" class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" id="businessName" placeholder="Business Name">
+                                    <label for="businessName">Business Name</label>
+                                    <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                                        Business name is required
                                     </div>
-                                    <div class="col-4">
-                                      <select class="md-input text-xs" formControlName="countryId">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id"> {{entity.name}}</option>
-                                      </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="countryId" id="country">
+                                        <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
+                                    </select>
+                                    <label for="country">Country</label>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-floating">
+                                    <input type="text" formControlName="address" class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['address'].errors }" id="address" placeholder="Location">
+                                    <label for="address">Location</label>
+                                    <div *ngIf="submitted && f['address'].errors" class="invalid-feedback">
+                                        Address is required
                                     </div>
-                                    <div class="col-8">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="address" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['address'].errors }"/>
-                                            <label>Location</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 pb-2">
-                                      <select class="md-input text-xs" formControlName="operatedById">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id"> {{entity.name}}</option>
-                                      </select>
-                                    </div>
-                                    <div class="col-sm-12 col-lg-8">
-                                      <select class="md-input text-xs" formControlName="softwareId">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id"> {{entity.name}}</option>
-                                      </select>
-                                    </div>
-                                    <div class="col-sm-12 col-lg-4">
-                                      <select class="md-input text-xs" formControlName="orgBusinessTypeId">
-                                        <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id"> {{entity.name}}</option>
-                                      </select>
-                                    </div>
-                                    <!--<div class="col-12">
-                                        <select class="md-input text-xs" formControlName="refSourceId">
-                                          <option *ngFor="let entity of referrals;" [ngValue]="entity.id"> {{entity.name}}</option>
-                                        </select>
-                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="operatedById" id="operatedBy">
+                                        <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
+                                    </select>
+                                    <label for="operatedBy">Operated By</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="softwareId" id="software">
+                                        <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
+                                    </select>
+                                    <label for="software">Software</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="orgBusinessTypeId" id="businessType">
+                                        <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
+                                    </select>
+                                    <label for="businessType">Business Type</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-lg-6">
-                            <div>
-                                <div class="py-2"><span class="text-sm title _600 d-block">Contact Information</span></div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="contactPersonName"
-                                                   class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }"/>
-                                            <label>Name</label>
-                                            <div *ngIf="submitted && f['contactPersonName'].errors"
-                                                 class="invalid-feedback">
-                                                <div *ngIf="f['contactPersonName'].errors?.['required']">Name is
-                                                    required
-                                                </div>
-                                            </div>
-                                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Contact Information</h5>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" formControlName="contactPersonName"
+                                           class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }" id="contactName" placeholder="Name">
+                                    <label for="contactName">Contact Person Name</label>
+                                    <div *ngIf="submitted && f['contactPersonName'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['contactPersonName'].errors?.['required']">Name is required</div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="contactPersonEmail"
-                                                   class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }"/>
-                                            <label>Email</label>
-                                            <div *ngIf="submitted && f['contactPersonEmail'].errors"
-                                                 class="invalid-feedback">
-                                                <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is
-                                                    required
-                                                </div>
-                                                <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be
-                                                    a valid
-                                                    email address
-                                                </div>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" formControlName="contactPersonEmail"
+                                           class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }" id="contactEmail" placeholder="Email">
+                                    <label for="contactEmail">Email Address</label>
+                                    <div *ngIf="submitted && f['contactPersonEmail'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
+                                        <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be a valid email address</div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="contactPersonMobile"
-                                                   class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }"/>
-                                            <label>Mobile</label>
-                                            <div *ngIf="submitted && f['contactPersonMobile'].errors"
-                                                 class="invalid-feedback">
-                                                <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is
-                                                    required
-                                                </div>
-                                                <div *ngIf="f['contactPersonMobile'].errors?.['required']">Phone must
-                                                    be a
-                                                    valid mobile no
-                                                </div>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="tel" formControlName="contactPersonMobile"
+                                           class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }" id="contactMobile" placeholder="Mobile">
+                                    <label for="contactMobile">Mobile Number</label>
+                                    <div *ngIf="submitted && f['contactPersonMobile'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is required</div>
+                                        <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Phone must be a valid mobile no</div>
                                     </div>
-                                    <div class="col-12">
-                                        <div class="md-form-group float-label">
-                                            <input type="text" formControlName="userName" class="md-input"
-                                                   [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }"/>
-                                            <label>
-                                                Login User Name
-                                                <div *ngIf="submitted && f['userName'].errors"
-                                                     class="invalid-feedback">
-                                                    <div *ngIf="f['userName'].errors?.['required']">UserName is required
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                        <p>
-                                            <small class="text-muted text-sm px-4">
-                                                All further communication or notifications will be shared on provided
-                                                details.
-                                            </small>
-                                        </p>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" formControlName="userName" class="form-control"
+                                           [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }" id="username" placeholder="Username">
+                                    <label for="username">Login Username</label>
+                                    <div *ngIf="submitted && f['userName'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['userName'].errors?.['required']">Username is required</div>
                                     </div>
+                                </div>
+                                <div class="alert alert-info mt-3">
+                                    <small class="text-muted">
+                                        <i class="fa fa-info-circle me-2"></i>
+                                        All further communication or notifications will be shared on provided details.
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row row-sm py-3">
-                <div class="col-sm-12 text-center">
-                    <button class="btn btn-sm btn-outline primary b-a" (click)="onSubmit(customForm)"
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <button class="btn btn-success btn-lg px-5 py-3" (click)="onSubmit(customForm)"
                             [disabled]="!customForm.valid || submitted">
-                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
                         {{ submitted ? 'Request Initiated...' : 'Register your Trial' }}
                     </button>
                 </div>
-                <div class="col-sm-12 text-center" *ngIf="submitted">
-                    Creating your business will take time. Please have patience...
-                </div>
-            </div>
-        </form>
-    </form>
-    <div *ngIf="successResp?.isSuccess" class="flex align-self-center">
-        <div class="box r-3x b-t b-t-primary b-t-4x m-3">
-            <div class="row no-gutters box">
-                <div class="col-sm-8">
-                    <div class="py-4 clearfix">
-                        <div class="text-center mb-5">
-                            <h4 class="_500 text-success">Registration Successful!</h4>
-                            <small class="my-4 text-muted">Please save your domain, user name and temporary password.
-                                One time visible only...
-                            </small>
-                        </div>
-                        <div class="px-3">
-                            <div class="form-group">
-                                <label class="_500 text-sm">Your Domain</label>
-                                <div class="form-control">{{ successResp.data.url }}</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="_500 text-sm">User Name</label>
-                                <div class="form-control">{{ customForm.value.userName }}</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="_500 text-sm">Password</label>
-                                <div class="form-control">Password&#64;123</div>
-                                <small class="form-text text-muted">Your temporary password. Please change it after
-                                    login.
-                                </small>
-                            </div>
-                        </div>
+                <div class="col-12 text-center mt-3" *ngIf="submitted">
+                    <div class="alert alert-warning">
+                        <i class="fa fa-clock-o me-2"></i>
+                        Creating your business will take time. Please have patience...
                     </div>
                 </div>
-                <div class="col-sm-4 m-auto">
-                    <div class="text-center">
-                        <a [attr.href]="successResp.data.url"
-                           class="btn btn-outline b-success text-success _700 text-md" tabindex="0"> Start now! <i
-                                class="fa fa-arrow-right ml-2"></i></a>
+            </div>
+        </div>
+    </form>
+    <div class="container" *ngIf="successResp?.isSuccess">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <div class="mb-3">
+                                <i class="fa fa-check-circle fa-4x text-success"></i>
+                            </div>
+                            <h3 class="fw-bold text-success">Registration Successful!</h3>
+                            <p class="text-muted mt-3">Please save your domain, user name and temporary password. One time visible only...</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" readonly :value="successResp.data.url" id="domain">
+                                    <label for="domain">Your Domain</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" readonly :value="customForm.value.userName" id="username">
+                                    <label for="username">User Name</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" readonly value="Password@123" id="password">
+                                    <label for="password">Password</label>
+                                    <small class="form-text text-muted">Your temporary password. Please change it after login.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a [attr.href]="successResp.data.url"
+                               class="btn btn-success btn-lg px-5 py-3" tabindex="0">
+                                Start now! <i class="fa fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

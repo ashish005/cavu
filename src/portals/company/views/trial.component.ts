@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import { TrialBusinessAPIResolver, TrialBusinessService} from "../services";
-import {CommonModule} from "@angular/common";
 import {pairwise, startWith} from "rxjs";
 
 @Component({
   templateUrl: './templates/trial.html',
-  standalone: true,
-  imports: [ CommonModule, FormsModule, ReactiveFormsModule ]
+  standalone: false
 })
 export class TrialBusinessView implements OnInit {
     customForm: FormGroup;

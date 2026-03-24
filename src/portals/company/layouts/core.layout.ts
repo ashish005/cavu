@@ -1,13 +1,11 @@
 import {Component} from '@angular/core';
-import {RouterModule} from "@angular/router";
 import {AuthService} from "@app-third-party";
 import { AppSetupService, AppSetup } from "@app-global";
 
 @Component({
     templateUrl: './core.layout.html',
-    styleUrls: ['./core.scss'],
-    standalone: true,
-    imports: [RouterModule]
+    //styleUrls: ['./core.scss'],
+    standalone: false
 })
 export class CoreLayout {
   public appSetup: AppSetup;

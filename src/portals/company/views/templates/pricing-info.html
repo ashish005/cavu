@@ -1,78 +1,74 @@
-<div class="flex">
-    <div class="flex align-self-center">
-        <div class="row py-2">
-            <div class="col-sm-6 order-sm-2 text-center">
-                <div class="d-flex flex-column flex">
-                    <div class="_700 d-block mt-2">
-                        <span class="text-lg"> Elite Plan</span>
-                    </div>
-                    <span class="_300 text-md">Our Recommendation</span>
-                </div>
-            </div>
-            <div class="col-sm-6 order-sm-1">
-                <div class="clearfix">
-                    <div class="d-flex align-items-center">
-                        <span class="avatar w-56 success"><span class="fa fa-money text-lg"></span></span>
-                        <div class="mx-3"><span class="text-lg _700">Pricing Simplified
-                        <span class="text-muted text-sm">for your business</span></span>
+<div class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="text-center mb-5">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="mb-3">
+                            <span class="avatar w-56 bg-success text-white rounded-circle d-flex align-items-center justify-content-center">
+                                <span class="fa fa-money fa-2x"></span>
+                            </span>
+                        </div>
+                        <div>
+                            <h1 class="display-5 fw-bold">Pricing Simplified</h1>
+                            <p class="lead text-muted">for your business</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="nav-active-border b-info padding py-0">
-        <ul class="nav">
+    <div class="container">
+        <div class="nav nav-tabs border-info mb-4" role="tablist">
             <ng-template ngFor let-software [ngForOf]="apiResolver.masterType.softwares" let-i="index">
-                <li class="nav-item">
-                    <a class="nav-link" [class.active]="activeSoftware?.code == software.code"
-                       (click)="showBySoftware(software)">{{software.code}}</a>
-                </li>
+                <button class="nav-link" [class.active]="activeSoftware?.code == software.code"
+                        (click)="showBySoftware(software)" type="button">
+                    {{software.code}}
+                </button>
             </ng-template>
-        </ul>
+        </div>
     </div>
-    <div class="d-flex flex light lt">
-        <div class="d-flex flex-column flex p-2">
-            <div class="box">
-                <div class="box-header text-center">
-                    <h2>Plan Comparison Chart</h2>
-                </div>
-                <table class="table small-table text-xs mb-0">
-                    <thead>
-                    <tr>
-                        <th><span class="pl-2"></span></th>
-                        <ng-template ngFor let-licenseType
-                                     [ngForOf]="software.licenseTypes" let-i="index">
-                            <th class="col-2">
-                                <div class="box-body text-center light lt">
-                                    <h6 class="text-u-c">{{licenseType.name}}</h6>
-                                    <!--<h3 class="py-1">
-                                        <sup>$</sup> <span class="text-2x">39</span> <span class="text-xs">/ mo</span>
-                                    </h3>-->
-                                </div>
-                            </th>
-                        </ng-template>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <ng-template ngFor let-row [ngForOf]="software.licensingFeatures"
-                                 let-i="index">
-                        <tr>
-                            <td><span class="pl-2 _500 text-sm">{{ row.name }}</span></td>
-                            <ng-template ngFor let-feature
-                                         [ngForOf]="row?.softwareLicenseFeatures"
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white text-center">
+                <h2 class="fw-bold mb-0">Plan Comparison Chart</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th><span class="fw-bold">Features</span></th>
+                                <ng-template ngFor let-licenseType
+                                             [ngForOf]="software.licenseTypes" let-i="index">
+                                    <th class="text-center">
+                                        <div class="fw-bold">
+                                            <h6 class="text-uppercase mb-0">{{licenseType.name}}</h6>
+                                        </div>
+                                    </th>
+                                </ng-template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-template ngFor let-row [ngForOf]="software.licensingFeatures"
                                          let-i="index">
-                                <td>
-                                    <span>{{ feature.value }}</span>
-                                    <!--<span class="text-muted">Under Review</span>-->
-                                </td>
+                                <tr>
+                                    <td><span class="fw-bold text-sm">{{ row.name }}</span></td>
+                                    <ng-template ngFor let-feature
+                                                 [ngForOf]="row?.softwareLicenseFeatures"
+                                                 let-i="index">
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark">{{ feature.value }}</span>
+                                        </td>
+                                    </ng-template>
+                                </tr>
                             </ng-template>
-                        </tr>
-                    </ng-template>
-                    </tbody>
-                </table>
-                <div class="box-body light lt no-result" *ngIf="!software.licensingFeatures?.length">
-                    <div class="p-2 text-center">Plan is Under Review</div>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info text-center" *ngIf="!software.licensingFeatures?.length">
+                    <i class="fa fa-info-circle me-2"></i>
+                    Plan is Under Review
                 </div>
             </div>
         </div>

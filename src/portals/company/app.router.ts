@@ -8,9 +8,13 @@ import {AuthService} from "@app-third-party";
 import {map, take} from "rxjs";
 import {HomeView} from "./views/home.view";
 import {AppSetupService} from "@app-global";
+import {AboutView} from "./views/about.view";
+import {VisionView} from "./views/vision.view";
+import {WhyweView} from "./views/whywe.view";
+import {ContactView} from "./views/contact.view";
 
 export const APP_COMPONENT = [
-  CoreLayout, PricingInfoView, TrialBusinessView
+  HomeView, AboutView, VisionView, WhyweView, ContactView, PricingInfoView, TrialBusinessView
 ];
 
 export const appLoggedInGuard: CanActivateFn = (route, state) => {
@@ -39,6 +43,10 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'home', pathMatch: 'full'},
             {path: 'home', component: HomeView},
+            {path: 'about', component: AboutView},
+            {path: 'vision', component: VisionView},
+            {path: 'whywe', component: WhyweView},
+            {path: 'contact', component: ContactView},
             {path: 'pricing', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: PricingInfoView},
             {path: 'trial', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: TrialBusinessView}
         ]

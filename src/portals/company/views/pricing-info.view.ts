@@ -3,13 +3,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SoftwarePrice} from "../domains/org-product-price.serializer";
 import {TrialBusinessAPIResolver} from "../services";
 import {PricingService} from "../services/business.service";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {CommonModule} from "@angular/common";
 
 @Component({
   templateUrl: './templates/pricing-info.html',
-  standalone: true,
-  imports: [ CommonModule, FormsModule, ReactiveFormsModule ]
+  standalone: false
 })
 export class PricingInfoView implements OnInit {
     software: SoftwarePrice = new SoftwarePrice();
