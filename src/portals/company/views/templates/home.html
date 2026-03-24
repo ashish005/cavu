@@ -1,110 +1,105 @@
-<section class="hero-section text-white py-5 position-relative overflow-hidden">
-        <div class="container">
-            <div class="row align-items-center min-vh-100">
-                <div class="col-lg-6 col-md-12">
-                    <div class="hero-content">
-                        <div class="badge bg-white bg-opacity-20 text-white mb-4 d-inline-block px-4 py-3 rounded-pill">
-                            <i class="fa fa-rocket me-2"></i>Industry Leading Platform
-                        </div>
-                        <h1 class="hero-title animate-fade-in display-2 fw-bold mb-4">Transform Your Business with <span class="text-gradient">Smart Digital Solutions</span></h1>
-                        <p class="hero-subtitle animate-slide-up lead mb-5">A robust Finance & Accounting platform with real intelligence that empowers your organization to scale, optimize, and succeed in the digital age.</p>
-                        <div class="hero-actions d-flex gap-3 flex-wrap animate-slide-up">
-                            <button class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill shadow-lg hover:shadow-xl transition-all" [routerLink]="['/trial']">
-                                <i class="fa fa-rocket me-2"></i>Start Free Trial
-                            </button>
-                            <button class="btn btn-outline-light btn-lg px-5 py-3 fw-bold rounded-pill" [routerLink]="['/contact']">
-                                <i class="fa fa-phone me-2"></i>Schedule a Demo
-                            </button>
-                        </div>
-                        
-                        <!-- Enhanced Trust Indicators -->
-                        <div class="hero-features mt-5 animate-slide-up">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="feature-icon me-3 bg-white bg-opacity-20 rounded-circle p-2">
-                                            <i class="fa fa-check text-white"></i>
-                                        </div>
-                                        <span class="text-white fw-medium">Easy Setup</span>
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6 col-md-12">
+                <div class="hero-content">
+                    <div class="badge">
+                        <i class="fa fa-rocket me-2"></i>Industry Leading Platform
+                    </div>
+                    <h1 class="hero-title">Transform Your Business with <span class="text-gradient">Smart Digital Solutions</span></h1>
+                    <p class="hero-subtitle">A robust Finance & Accounting platform with real intelligence that empowers your organization to scale, optimize, and succeed in the digital age.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-warning" [routerLink]="['/trial']">
+                            <i class="fa fa-rocket me-2"></i>Start Free Trial
+                        </button>
+                        <button class="btn btn-outline-light" [routerLink]="['/contact']">
+                            <i class="fa fa-phone me-2"></i>Schedule a Demo
+                        </button>
+                    </div>
+                    
+                    <!-- Enhanced Trust Indicators -->
+                    <div class="hero-features">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="feature-icon">
+                                        <i class="fa fa-check"></i>
                                     </div>
+                                    <span>Easy Setup</span>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="feature-icon me-3 bg-white bg-opacity-20 rounded-circle p-2">
-                                            <i class="fa fa-shield text-white"></i>
-                                        </div>
-                                        <span class="text-white fw-medium">Secure Platform</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="feature-icon">
+                                        <i class="fa fa-shield"></i>
                                     </div>
+                                    <span>Secure Platform</span>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex align-items-center">
-                                        <div class="feature-icon me-3 bg-white bg-opacity-20 rounded-circle p-2">
-                                            <i class="fa fa-headset text-white"></i>
-                                        </div>
-                                        <span class="text-white fw-medium">24/7 Support</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="feature-icon">
+                                        <i class="fa fa-headset"></i>
                                     </div>
+                                    <span>24/7 Support</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12">
-                    <div class="hero-image text-center animate-fade-in">
-                        <div class="dashboard-preview">
-                            <!-- Cool Elegant Dashboard Image -->
-                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&crop=center&auto=format&q=90" 
-                                 alt="Business Dashboard Sketch" 
-                                 class="img-fluid rounded-4 mb-4 shadow-2xl">
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="hero-image text-center">
+                    <div class="dashboard-preview">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&crop=center&auto=format&q=90" 
+                         alt="Business Dashboard Sketch" 
+                         class="img-fluid">
                         
                         <!-- Enhanced Floating Cards Overlay -->
-                        <div class="position-absolute top-0 end-0 m-4">
-                            <div class="floating-card bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-3 shadow-2xl animate-float">
-                                <div class="h4 mb-0 fw-bold">+45%</div>
-                                <small class="text-uppercase">Growth Rate</small>
-                            </div>
+                        <div class="floating-card top-0 end-0">
+                            <div class="h4">+45%</div>
+                            <small class="text-uppercase">Growth Rate</small>
                         </div>
-                        <div class="position-absolute bottom-0 start-0 m-4">
-                            <div class="floating-card bg-gradient-to-r from-green-400 to-blue-500 text-white p-4 rounded-3 shadow-2xl animate-float-delay">
-                                <div class="h4 mb-0 fw-bold">$2.5M</div>
-                                <small class="text-uppercase">Revenue</small>
-                            </div>
+                        <div class="floating-card bottom-0 start-0">
+                            <div class="h4">$2.5M</div>
+                            <small class="text-uppercase">Revenue</small>
                         </div>
-                        
-                        <!-- Elegant Mock Dashboard Elements -->
-                        <div class="mock-dashboard mt-4">
-                            <div class="row g-3">
-                                <div class="col-4">
-                                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-3 p-4 text-center shadow-lg">
-                                        <div class="h4 mb-0 fw-bold">2.5M</div>
-                                        <small class="font-medium">Revenue</small>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-3 p-4 text-center shadow-lg">
-                                        <div class="h4 mb-0 fw-bold">500+</div>
-                                        <small class="font-medium">Clients</small>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-3 p-4 text-center shadow-lg">
-                                        <div class="h4 mb-0 fw-bold">99.9%</div>
-                                        <small class="font-medium">Uptime</small>
-                                    </div>
+                    </div>
+                    
+                    <!-- Elegant Mock Dashboard Elements -->
+                    <div class="mock-dashboard">
+                        <div class="row">
+                            <div class="col-4">
+                                <div>
+                                    <div class="h4">2.5M</div>
+                                    <small>Revenue</small>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-4">
+                                <div>
+                                    <div class="h4">500+</div>
+                                    <small>Clients</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div>
+                                    <div class="h4">99.9%</div>
+                                    <small>Uptime</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
 <!-- Services Section with Images -->
 <section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <div class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill d-inline-block mb-3">
+            <div class="badge">
                 <i class="fa fa-cube me-2"></i>Our Services
             </div>
             <h2 class="display-4 fw-bold mb-3 text-gradient">Comprehensive Business Solutions</h2>
@@ -112,21 +107,20 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-6 col-md-12">
-                <div class="feature-card h-100 p-4 bg-white bg-opacity-10 backdrop-filter-blur-lg rounded-4 shadow-lg hover:shadow-2xl transition-all" style="backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="feature-card h-100">
                     <div class="row align-items-center">
                         <div class="col-md-4">
                             <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop&crop=center&auto=format&q=90" 
                                  alt="IT Consulting Sketch" 
-                                 class="img-fluid rounded-4 mb-4 mb-md-0 shadow-2xl"
-                                 style="filter: contrast(1.2) saturate(0.9) brightness(1.1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);">
+                                 class="img-fluid">
                         </div>
                         <div class="col-md-8">
-                            <div class="feature-icon mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-circle p-4 d-inline-block shadow-xl">
+                            <div class="feature-icon mb-4">
                                 <i class="fa fa-rocket fa-3x"></i>
                             </div>
-                            <h3 class="feature-title text-white fw-bold mb-4 display-6">IT Consulting Services</h3>
-                            <p class="feature-description text-white opacity-90 mb-5 lead">Expert Software Consulting and Development Services to streamline your business processes and enable focus on growth.</p>
-                            <a [routerLink]="['/about']" class="btn btn-warning btn-lg px-5 py-3 rounded-pill shadow-xl hover:shadow-2xl transition-all">
+                            <h3 class="feature-title">IT Consulting Services</h3>
+                            <p class="feature-description">Expert Software Consulting and Development Services to streamline your business processes and enable focus on growth.</p>
+                            <a [routerLink]="['/about']" class="btn btn-warning">
                                 Learn More <i class="fa fa-arrow-right ms-2"></i>
                             </a>
                         </div>
@@ -134,21 +128,20 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
-                <div class="feature-card h-100 p-4 bg-white bg-opacity-10 backdrop-filter-blur-lg rounded-4 shadow-lg hover:shadow-2xl transition-all" style="backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="feature-card h-100">
                     <div class="row align-items-center">
                         <div class="col-md-4">
                             <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&crop=center&auto=format&q=90" 
                                  alt="Digital Solutions Sketch" 
-                                 class="img-fluid rounded-4 mb-4 mb-md-0 shadow-2xl"
-                                 style="filter: contrast(1.2) saturate(0.9) brightness(1.1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);">
+                                 class="img-fluid">
                         </div>
                         <div class="col-md-8">
-                            <div class="feature-icon mb-4 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-circle p-4 d-inline-block shadow-xl">
+                            <div class="feature-icon mb-4">
                                 <i class="fa fa-cloud fa-3x"></i>
                             </div>
-                            <h3 class="feature-title text-white fw-bold mb-4 display-6">Digital Solution Provider</h3>
-                            <p class="feature-description text-white opacity-90 mb-5 lead">Custom solutions tailored to your business requirements with cutting-edge technology and innovation.</p>
-                            <a [routerLink]="['/about']" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-xl hover:shadow-2xl transition-all">
+                            <h3 class="feature-title">Digital Solution Provider</h3>
+                            <p class="feature-description">Custom solutions tailored to your business requirements with cutting-edge technology and innovation.</p>
+                            <a [routerLink]="['/about']" class="btn btn-success">
                                 Learn More <i class="fa fa-arrow-right ms-2"></i>
                             </a>
                         </div>
@@ -168,10 +161,10 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop&crop=center&auto=format&q=80" 
                          alt="Organization & Workflow Sketch" 
-                         class="img-fluid rounded-2 mb-3" style="height: 180px; object-fit: cover; filter: contrast(1.1) saturate(0.8);">
+                         class="img-fluid">
                     <div class="feature-icon mx-auto mb-3">
                         <i class="fa fa-sitemap fa-2x"></i>
                     </div>
@@ -180,11 +173,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1554224151-4633ec0166e5?w=400&h=250&fit=crop&crop=center&auto=format&q=80" 
                          alt="Multiple Org Branches Sketch" 
-                         class="img-fluid rounded-2 mb-3" style="height: 180px; object-fit: cover; filter: contrast(1.1) saturate(0.8);">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-success);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-success">
                         <i class="fa fa-building fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Multiple Org Branches</h6>
@@ -192,11 +185,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center&auto=format&q=80" 
                          alt="Financial Analytics Sketch" 
-                         class="img-fluid rounded-2 mb-3" style="height: 180px; object-fit: cover; filter: contrast(1.1) saturate(0.8);">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-warning);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-warning">
                         <i class="fa fa-chart-line fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Financial Analytics</h6>
@@ -252,11 +245,11 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center" 
                          alt="Accounting & Taxes" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-accent);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-accent">
                         <i class="fa fa-calculator fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Accounting & Taxes</h6>
@@ -264,11 +257,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1554224151-4633ec0166e5?w=400&h=250&fit=crop&crop=center" 
                          alt="Invoicing & Quotations" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-warning);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-warning">
                         <i class="fa fa-file-invoice fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Invoicing & Quotations</h6>
@@ -276,11 +269,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop&crop=center" 
                          alt="Vendor & Expenses" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-danger);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-danger">
                         <i class="fa fa-users fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Vendor & Expenses</h6>
@@ -288,11 +281,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop&crop=center" 
                          alt="Scheduler & Tasks" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-secondary);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3">
                         <i class="fa fa-clock fa-2x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Scheduler & Tasks</h6>
@@ -312,10 +305,10 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1461749280684-dcc7288c966a?w=400&h=250&fit=crop&crop=center" 
                          alt="IT Solutions" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
+                         class="img-fluid">
                     <div class="feature-icon mx-auto mb-3">
                         <i class="fa fa-laptop-code fa-2x"></i>
                     </div>
@@ -324,11 +317,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop&crop=center" 
                          alt="Dedicated Team & Support" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-success);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-success">
                         <i class="fa fa-users fa-2x"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Dedicated Team & Support</h4>
@@ -336,11 +329,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=250&fit=crop&crop=center" 
                          alt="Cloud Solutions" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-accent);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-accent">
                         <i class="fa fa-cloud fa-2x"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Cloud Solutions</h4>
@@ -350,11 +343,11 @@
         </div>
         <div class="row g-4 mt-4">
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1558494949-ef010cbcc31c?w=400&h=250&fit=crop&crop=center" 
                          alt="BigData & Analytics" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-warning);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-warning">
                         <i class="fa fa-database fa-2x"></i>
                     </div>
                     <h4 class="fw-bold mb-3">BigData & Analytics</h4>
@@ -362,11 +355,11 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card text-center h-100 p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="feature-card text-center h-100">
                     <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=250&fit=crop&crop=center" 
                          alt="Custom Solutions" 
-                         class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
-                    <div class="feature-icon mx-auto mb-3" style="background: var(--company-danger);">
+                         class="img-fluid">
+                    <div class="feature-icon mx-auto mb-3 icon-danger">
                         <i class="fa fa-cogs fa-2x"></i>
                     </div>
                     <h4 class="fw-bold mb-3">Custom Solutions</h4>
@@ -386,7 +379,7 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="testimonial-card">
                     <div class="testimonial-content mb-3">
                         <i class="fas fa-quote-left text-primary mb-2"></i>
                         "EnRator has transformed how we manage our finances. The platform is intuitive and powerful."
@@ -394,7 +387,7 @@
                     <div class="testimonial-author d-flex align-items-center">
                         <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=center" 
                              alt="John Doe" 
-                             class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                             class="rounded-circle me-3">
                         <div>
                             <div class="fw-bold">John Doe</div>
                             <div class="text-muted small">CEO, TechCorp</div>
@@ -403,7 +396,7 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="testimonial-card">
                     <div class="testimonial-content mb-3">
                         <i class="fas fa-quote-left text-primary mb-2"></i>
                         "The best investment we made for our business. Incredible support and amazing features."
@@ -411,7 +404,7 @@
                     <div class="testimonial-author d-flex align-items-center">
                         <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=center" 
                              alt="Sarah Miller" 
-                             class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                             class="rounded-circle me-3">
                         <div>
                             <div class="fw-bold">Sarah Miller</div>
                             <div class="text-muted small">CFO, StartupXYZ</div>
@@ -420,15 +413,15 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                <div class="testimonial-card">
                     <div class="testimonial-content mb-3">
                         <i class="fas fa-quote-left text-primary mb-2"></i>
                         "Professional, reliable, and exactly what we needed for our growing business."
                     </div>
                     <div class="testimonial-author d-flex align-items-center">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=center" 
+                        <img src="https://images.unsplash.com/photo-1472099645785-2616b612b786?w=60&h=60&fit=crop&crop=center" 
                              alt="Mike Johnson" 
-                             class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                             class="rounded-circle me-3">
                         <div>
                             <div class="fw-bold">Mike Johnson</div>
                             <div class="text-muted small">Director, GlobalTrade</div>
@@ -441,7 +434,7 @@
 </section>
 
 <!-- CTA Section -->
-<section class="section-padding text-white position-relative overflow-hidden cta-section">
+<section class="cta-section bg-primary text-white py-5">
     <div class="container">
         <div class="text-center">
             <h2 class="display-5 fw-bold mb-4">Ready to Transform Your Business?</h2>
