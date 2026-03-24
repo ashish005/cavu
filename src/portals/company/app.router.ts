@@ -1,6 +1,6 @@
 import {CanActivateFn, Router, Routes} from '@angular/router';
 import {PricingInfoView} from "./views/pricing-info.view";
-import {TrialBusinessView} from "./views/trial.component";
+import {TrialBusinessView} from "./views/trial.view";
 import {TrialBusinessAPIResolver} from "./services";
 import {CoreLayout} from "./layouts/core.layout";
 import {inject} from "@angular/core";

@@ -1,26 +1,31 @@
 <div class="about-page">
     <!-- Hero Section -->
-    <section class="hero-section text-white py-5">
+    <section class="hero-section text-white py-5 position-relative overflow-hidden">
         <div class="container">
             <div class="row align-items-center min-vh-100">
                 <div class="col-lg-6 col-md-12">
                     <div class="hero-content">
-                        <div class="badge bg-white bg-opacity-20 text-white mb-3 d-inline-block px-3 py-2">
+                        <div class="badge bg-white bg-opacity-20 text-white mb-4 d-inline-block px-4 py-3 rounded-pill">
                             <i class="fa fa-building me-2"></i>About EnRator
                         </div>
-                        <h1 class="hero-title animate-fade-in">Who We Are?</h1>
-                        <p class="hero-subtitle animate-slide-up">EnRator is your premier IT managed services provider, implementing cutting-edge solutions that drive business growth in today's technology-centric world.</p>
+                        <h1 class="hero-title animate-fade-in display-2 fw-bold mb-4">Who We Are?</h1>
+                        <p class="hero-subtitle animate-slide-up lead mb-5">EnRator is your premier IT managed services provider, implementing cutting-edge solutions that drive business growth in today's technology-centric world.</p>
+                        <div class="hero-actions d-flex gap-3 flex-wrap animate-slide-up">
+                            <button class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill shadow-lg hover:shadow-xl transition-all" [routerLink]="['/contact']">
+                                <i class="fa fa-envelope me-2"></i>Contact Us
+                            </button>
+                            <button class="btn btn-outline-light btn-lg px-5 py-3 fw-bold rounded-pill" [routerLink]="['/trial']">
+                                <i class="fa fa-rocket me-2"></i>Start Free Trial
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="hero-visual animate-float">
-                        <div class="feature-card text-center">
-                            <div class="feature-icon mx-auto">
-                                <i class="fa fa-rocket fa-3x"></i>
-                            </div>
-                            <h4 class="feature-title">Digital Excellence</h4>
-                            <p class="feature-description">Leading innovation in IT solutions</p>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop&crop=center&auto=format&q=80" 
+                             alt="Digital Excellence Sketch" 
+                             class="img-fluid rounded-4 shadow-lg"
+                             style="filter: contrast(1.2) saturate(0.7);">
                     </div>
                 </div>
             </div>
@@ -31,153 +36,212 @@
     <section class="section-padding">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold text-gradient">EnRator</h2>
+                <div class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill d-inline-block mb-3">
+                    <i class="fa fa-info-circle me-2"></i>Company Overview
+                </div>
+                <h2 class="display-4 fw-bold mb-3 text-gradient">EnRator</h2>
                 <p class="lead text-muted">Digital Consulting & Engineering Excellence</p>
             </div>
             
-            <div class="feature-card">
-                <div class="p-5">
-                    <p class="lead mb-4">EnRator is a premier Digital Consulting & Engineering firm delivering end-to-end solutions to Enterprises, Digital Agencies, and innovative Startups.</p>
-                    
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-start">
-                                <div class="feature-icon me-3">
-                                    <i class="fa fa-handshake"></i>
-                                </div>
-                                <div>
-                                    <h5 class="feature-title">Client-Centric Approach</h5>
-                                    <p class="feature-description">Dedicated to supporting small and medium-sized businesses through trust and transparent communication.</p>
-                                </div>
-                            </div>
+            <div class="row g-4 mb-5">
+                <div class="col-lg-6">
+                    <div class="feature-card p-5 bg-white rounded-4 shadow-sm hover:shadow-lg transition-all border-0">
+                        <img src="https://images.unsplash.com/photo-1554224151-4633ec0166e5?w=600&h=300&fit=crop&crop=center&auto=format&q=80" 
+                             alt="Client-Centric Approach Sketch" 
+                             class="img-fluid rounded-3 mb-4"
+                             style="filter: contrast(1.1) saturate(0.8);">
+                        <div class="feature-icon mb-3 bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block">
+                            <i class="fa fa-users fa-2x text-primary"></i>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="d-flex align-items-start">
-                                <div class="feature-icon me-3" style="background: var(--company-success);">
-                                    <i class="fa fa-chart-line"></i>
+                        <h3 class="feature-title fw-bold mb-3">Client-Centric Approach</h3>
+                        <p class="feature-description text-muted">Dedicated to supporting small and medium-sized businesses through trust and transparent communication.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card p-5 bg-white rounded-4 shadow-sm hover:shadow-lg transition-all border-0">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=300&fit=crop&crop=center&auto=format&q=80" 
+                             alt="Innovation Focus Sketch" 
+                             class="img-fluid rounded-3 mb-4"
+                             style="filter: contrast(1.1) saturate(0.8);">
+                        <div class="feature-icon mb-3 bg-success bg-opacity-10 rounded-circle p-3 d-inline-block">
+                            <i class="fa fa-lightbulb fa-2x text-success"></i>
+                        </div>
+                        <h3 class="feature-title fw-bold mb-3">Innovation Focus</h3>
+                        <p class="feature-description text-muted">Leveraging cutting-edge technology to deliver solutions that transform and elevate your business operations.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-card bg-light rounded-4 p-5 border-0">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="pe-lg-5">
+                            <div class="feature-icon mb-4 bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block">
+                                <i class="fa fa-bullseye fa-2x text-primary"></i>
+                            </div>
+                            <h3 class="display-5 fw-bold mb-4">Our Mission & Vision</h3>
+                            <p class="lead text-muted mb-4">To be a preferred, globally recognised and profitable integrated Digital Agency and Solution provider while adhering to our core values.</p>
+                            
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3 bg-success bg-opacity-10 rounded-circle p-2">
+                                            <i class="fa fa-check text-success"></i>
+                                        </div>
+                                        <span class="fw-medium">Excellence</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h5 class="feature-title">Proven Excellence</h5>
-                                    <p class="feature-description">15+ years of industry experience with 96%+ positive client satisfaction ratings.</p>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3 bg-warning bg-opacity-10 rounded-circle p-2">
+                                            <i class="fa fa-star text-warning"></i>
+                                        </div>
+                                        <span class="fw-medium">Innovation</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3 bg-info bg-opacity-10 rounded-circle p-2">
+                                            <i class="fa fa-heart text-info"></i>
+                                        </div>
+                                        <span class="fw-medium">Passion</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3 bg-primary bg-opacity-10 rounded-circle p-2">
+                                            <i class="fa fa-shield text-primary"></i>
+                                        </div>
+                                        <span class="fw-medium">Integrity</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <p class="mt-4">The powerful combination of a loyal client base and steady growth enables us to attract and retain the region's top talents, ensuring prosperity across diverse markets.</p>
+                    <div class="col-lg-6">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop&crop=center&auto=format&q=80" 
+                             alt="Company Overview Sketch" 
+                             class="img-fluid rounded-3 shadow-lg"
+                             style="filter: contrast(1.2) saturate(0.7);">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Key Success Factors -->
+    <!-- Team Section -->
     <section class="section-padding bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold text-gradient">Keys to Our Success</h2>
-                <p class="lead text-muted">Core principles that drive our excellence</p>
+                <h2 class="display-5 fw-bold text-gradient">Our Leadership Team</h2>
+                <p class="lead text-muted">Meet the experts driving our innovation and success</p>
             </div>
             
             <div class="row g-4">
                 <div class="col-lg-3 col-md-6">
-                    <div class="feature-card text-center h-100">
-                        <div class="feature-icon mx-auto">
-                            <i class="fa fa-comments fa-2x"></i>
+                    <div class="team-card text-center bg-white rounded-3 p-4 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=center" 
+                             alt="Team Member" 
+                             class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        <h5 class="fw-bold">John Smith</h5>
+                        <p class="text-muted small mb-2">CEO & Founder</p>
+                        <p class="small">Visionary leader with 20+ years in tech innovation</p>
+                        <div class="social-links justify-content-center mt-3">
+                            <a href="#" class="text-muted me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
                         </div>
-                        <h4 class="feature-title">Communication</h4>
-                        <p class="feature-description">Clear, transparent dialogue with clients and team members.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="feature-card text-center h-100">
-                        <div class="feature-icon mx-auto" style="background: var(--company-accent);">
-                            <i class="fa fa-search fa-2x"></i>
+                    <div class="team-card text-center bg-white rounded-3 p-4 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=center" 
+                             alt="Team Member" 
+                             class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        <h5 class="fw-bold">Sarah Johnson</h5>
+                        <p class="text-muted small mb-2">CTO</p>
+                        <p class="small">Technical architect driving innovation</p>
+                        <div class="social-links justify-content-center mt-3">
+                            <a href="#" class="text-muted me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
                         </div>
-                        <h4 class="feature-title">Attention to Detail</h4>
-                        <p class="feature-description">Meticulous approach to every project and client requirement.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="feature-card text-center h-100">
-                        <div class="feature-icon mx-auto" style="background: var(--company-warning);">
-                            <i class="fa fa-shield-alt fa-2x"></i>
+                    <div class="team-card text-center bg-white rounded-3 p-4 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=center" 
+                             alt="Team Member" 
+                             class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        <h5 class="fw-bold">Michael Chen</h5>
+                        <p class="text-muted small mb-2">Head of Operations</p>
+                        <p class="small">Streamlining processes for maximum efficiency</p>
+                        <div class="social-links justify-content-center mt-3">
+                            <a href="#" class="text-muted me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
                         </div>
-                        <h4 class="feature-title">Accountability</h4>
-                        <p class="feature-description">Taking ownership and responsibility for every deliverable.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="feature-card text-center h-100">
-                        <div class="feature-icon mx-auto" style="background: var(--company-success);">
-                            <i class="fa fa-cogs fa-2x"></i>
+                    <div class="team-card text-center bg-white rounded-3 p-4 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=center" 
+                             alt="Team Member" 
+                             class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        <h5 class="fw-bold">Emily Davis</h5>
+                        <p class="text-muted small mb-2">Head of Design</p>
+                        <p class="small">Creating beautiful user experiences</p>
+                        <div class="social-links justify-content-center mt-3">
+                            <a href="#" class="text-muted me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
                         </div>
-                        <h4 class="feature-title">IT Best Practices</h4>
-                        <p class="feature-description">Industry-leading standards and methodologies in all solutions.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Team Strength -->
+    <!-- Company Values -->
     <section class="section-padding">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold text-gradient">Our Team: Our Greatest Asset</h2>
-                <p class="lead text-muted">Skilled professionals driving innovation and excellence</p>
+                <h2 class="display-5 fw-bold text-gradient">Our Core Values</h2>
+                <p class="lead text-muted">The principles that guide everything we do</p>
             </div>
             
-            <div class="feature-card">
-                <div class="p-5">
-                    <p class="lead mb-4">EnRator employs a team of highly-skilled and credentialed engineers specializing in IT project management and implementation.</p>
-                    
-                    <div class="row g-4">
-                        <div class="col-lg-4">
-                            <div class="text-center">
-                                <div class="feature-icon mx-auto" style="background: var(--company-primary);">
-                                    <i class="fa fa-graduation-cap fa-2x"></i>
-                                </div>
-                                <h5 class="feature-title">Expert Credentials</h5>
-                                <p class="feature-description">Industry-certified professionals with proven expertise</p>
-                            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card text-center p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&fit=crop&crop=center" 
+                             alt="Integrity" 
+                             class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="fa fa-shield-alt fa-2x"></i>
                         </div>
-                        <div class="col-lg-4">
-                            <div class="text-center">
-                                <div class="feature-icon mx-auto" style="background: var(--company-success);">
-                                    <i class="fa fa-users fa-2x"></i>
-                                </div>
-                                <h5 class="feature-title">Diverse Skill Sets</h5>
-                                <p class="feature-description">Broad range of capabilities for comprehensive solutions</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="text-center">
-                                <div class="feature-icon mx-auto" style="background: var(--company-accent);">
-                                    <i class="fa fa-lightbulb fa-2x"></i>
-                                </div>
-                                <h5 class="feature-title">Innovation Focus</h5>
-                                <p class="feature-description">Continuous learning and adaptation to emerging technologies</p>
-                            </div>
-                        </div>
+                        <h5 class="fw-bold mb-3">Integrity</h5>
+                        <p class="text-muted">We operate with transparency and honesty in all our relationships</p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section bg-primary text-white py-5">
-        <div class="container">
-            <div class="text-center">
-                <h2 class="display-5 fw-bold mb-4">Ready to Partner With Us?</h2>
-                <p class="lead mb-4">Experience the EnRator difference for your business</p>
-                <div class="cta-buttons d-flex gap-3 justify-content-center flex-wrap">
-                    <button class="btn btn-warning btn-lg px-5 py-3 fw-bold" [routerLink]="['/contact']">
-                        <i class="fa fa-envelope me-2"></i>Contact Us
-                    </button>
-                    <button class="btn btn-outline-light btn-lg px-5 py-3 fw-bold" [routerLink]="['/trial']">
-                        <i class="fa fa-rocket me-2"></i>Start Free Trial
-                    </button>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card text-center p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=250&fit=crop&crop=center" 
+                             alt="Innovation" 
+                             class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
+                        <div class="feature-icon mx-auto mb-3" style="background: var(--company-success);">
+                            <i class="fa fa-lightbulb fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Innovation</h5>
+                        <p class="text-muted">We continuously push boundaries and explore new possibilities</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card text-center p-4 bg-white rounded-3 shadow-sm hover:shadow-lg transition-all">
+                        <img src="https://images.unsplash.com/photo-1559028012-c72e03bfb8c6?w=400&h=250&fit=crop&crop=center" 
+                             alt="Excellence" 
+                             class="img-fluid rounded-2 mb-3" style="height: 150px; object-fit: cover;">
+                        <div class="feature-icon mx-auto mb-3" style="background: var(--company-warning);">
+                            <i class="fa fa-star fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Excellence</h5>
+                        <p class="text-muted">We strive for the highest quality in everything we deliver</p>
+                    </div>
                 </div>
             </div>
         </div>
