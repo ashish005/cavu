@@ -39,7 +39,8 @@
             ],
             "scripts": [
               "src/assets/js/app.min.js",
-              "src/assets/js/alertify.js"
+              "src/assets/js/alertify.js",
+              "src/assets/js/company-theme.js"
             ],
             "browser": "src/main.ts"
           },

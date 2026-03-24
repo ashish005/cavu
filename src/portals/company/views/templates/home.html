@@ -1,12 +1,14 @@
-<section class="hero-section bg-gradient-primary text-white py-5">
+<section class="hero-section text-white py-5">
     <div class="container">
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-6 col-md-12">
                 <div class="hero-content">
-                    <div class="badge bg-white text-primary mb-3 d-inline-block">🚀 Industry Leading Platform</div>
-                    <h1 class="display-3 fw-bold mb-4 animate-fade-in">Transform Your Business with <span class="text-warning">Smart Digital Solutions</span></h1>
-                    <p class="lead mb-4 animate-slide-up">A robust Finance & Accounting platform with real intelligence that empowers your organization to scale, optimize, and succeed in the digital age.</p>
-                    <div class="hero-buttons d-flex gap-3 flex-wrap">
+                    <div class="badge bg-white bg-opacity-20 text-white mb-3 d-inline-block px-3 py-2">
+                        <i class="fa fa-rocket me-2"></i>Industry Leading Platform
+                    </div>
+                    <h1 class="hero-title animate-fade-in">Transform Your Business with <span class="text-warning">Smart Digital Solutions</span></h1>
+                    <p class="hero-subtitle animate-slide-up">A robust Finance & Accounting platform with real intelligence that empowers your organization to scale, optimize, and succeed in the digital age.</p>
+                    <div class="hero-actions d-flex gap-3 flex-wrap">
                         <button class="btn btn-warning btn-lg px-5 py-3 fw-bold animate-bounce" [routerLink]="['/trial']">
                             <i class="fa fa-rocket me-2"></i>Start Free Trial
                         </button>
@@ -80,37 +82,38 @@
         </div>
     </div>
 </section>
-    <!-- home-header -->
-<section class="services-section py-5 bg-light">
+
+<!-- Services Section -->
+<section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Comprehensive Business Solutions</h2>
+            <h2 class="display-5 fw-bold mb-3 text-gradient">Comprehensive Business Solutions</h2>
             <p class="lead text-muted">Everything you need to manage and grow your business in one powerful platform</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-6 col-md-12">
-                <div class="service-card h-100 bg-white rounded-3 shadow-sm p-4 hover-lift">
+                <div class="feature-card h-100">
                     <div class="d-flex align-items-start">
-                        <div class="service-icon bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
+                        <div class="feature-icon">
                             <i class="fa fa-rocket fa-2x"></i>
                         </div>
-                        <div class="service-content flex-grow-1">
-                            <h3 class="h4 fw-bold mb-3">IT Consulting Services</h3>
-                            <p class="text-muted">Expert Software Consulting and Development Services to streamline your business processes and enable focus on growth.</p>
+                        <div class="flex-grow-1">
+                            <h3 class="feature-title">IT Consulting Services</h3>
+                            <p class="feature-description">Expert Software Consulting and Development Services to streamline your business processes and enable focus on growth.</p>
                             <a [routerLink]="['/about']" class="btn btn-link text-primary fw-bold">Learn More <i class="fa fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
-                <div class="service-card h-100 bg-white rounded-3 shadow-sm p-4 hover-lift">
+                <div class="feature-card h-100">
                     <div class="d-flex align-items-start">
-                        <div class="service-icon bg-success bg-opacity-10 text-success rounded-circle p-3 me-3">
+                        <div class="feature-icon" style="background: var(--company-success);">
                             <i class="fa fa-cloud fa-2x"></i>
                         </div>
-                        <div class="service-content flex-grow-1">
-                            <h3 class="h4 fw-bold mb-3">Digital Solution Provider</h3>
-                            <p class="text-muted">Custom solutions tailored to your business requirements with cutting-edge technology and innovation.</p>
+                        <div class="flex-grow-1">
+                            <h3 class="feature-title">Digital Solution Provider</h3>
+                            <p class="feature-description">Custom solutions tailored to your business requirements with cutting-edge technology and innovation.</p>
                             <a [routerLink]="['/contact']" class="btn btn-link text-success fw-bold">Get Started <i class="fa fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -119,17 +122,18 @@
         </div>
     </div>
 </section>
-    <!-- end of section -->
-<section class="features-section py-5">
+
+<!-- Features Section -->
+<section class="section-padding">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Powerful Features for Modern Business</h2>
+            <h2 class="display-5 fw-bold mb-3 text-gradient">Powerful Features for Modern Business</h2>
             <p class="lead text-muted">Our solution helps you analyze financial insights and streamline operations</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto">
                         <i class="fa fa-sitemap fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Organization & Workflow</h6>
@@ -137,8 +141,8 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-success);">
                         <i class="fa fa-building fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Multiple Org Branches</h6>
@@ -146,8 +150,8 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-info bg-opacity-10 text-info rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-accent);">
                         <i class="fa fa-calculator fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Accounting & Taxes</h6>
@@ -155,8 +159,8 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-warning);">
                         <i class="fa fa-file-invoice fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Invoicing & Quotations</h6>
@@ -164,8 +168,8 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-danger bg-opacity-10 text-danger rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-danger);">
                         <i class="fa fa-users fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Vendor & Expenses</h6>
@@ -173,162 +177,164 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-secondary bg-opacity-10 text-secondary rounded-circle p-4 mx-auto mb-3">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-secondary);">
                         <i class="fa fa-clock fa-3x"></i>
                     </div>
                     <h6 class="fw-bold mb-3">Scheduler & Tasks</h6>
                     <p class="text-muted small">Perform time-specific operations with smart scheduling</p>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="feature-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-bell fa-3x"></i>
-                    </div>
-                    <h6 class="fw-bold mb-3">Smart Notifications</h6>
-                    <p class="text-muted small">Stay informed with real-time communication tracking</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support Available</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Years Experience</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-    <!-- end of section -->
 
-<section class="solutions-section py-5 bg-light">
+<!-- Solutions Section -->
+<section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Enterprise-Grade Solutions</h2>
+            <h2 class="display-5 fw-bold mb-3 text-gradient">Enterprise-Grade Solutions</h2>
             <p class="lead text-muted">We are enhancing our services to provide secure and reliable systems</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="solution-card bg-white rounded-3 shadow-sm p-4 h-100 hover-lift">
-                    <div class="text-center">
-                        <div class="solution-icon bg-primary bg-opacity-10 text-primary rounded-circle p-4 mx-auto mb-3">
-                            <i class="fa fa-laptop-code fa-3x"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">IT Solutions</h4>
-                        <p class="text-muted">Responsive design, mobile apps, plugins & full maintenance support</p>
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="fa fa-laptop-code fa-3x"></i>
                     </div>
+                    <h4 class="fw-bold mb-3">IT Solutions</h4>
+                    <p class="text-muted">Responsive design, mobile apps, plugins & full maintenance support</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="solution-card bg-white rounded-3 shadow-sm p-4 h-100 hover-lift">
-                    <div class="text-center">
-                        <div class="solution-icon bg-success bg-opacity-10 text-success rounded-circle p-4 mx-auto mb-3">
-                            <i class="fa fa-users fa-3x"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Dedicated Team & Support</h4>
-                        <p class="text-muted">100% accountability with Full-Time Equivalent engagement model</p>
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-success);">
+                        <i class="fa fa-users fa-3x"></i>
                     </div>
+                    <h4 class="fw-bold mb-3">Dedicated Team & Support</h4>
+                    <p class="text-muted">100% accountability with Full-Time Equivalent engagement model</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="solution-card bg-white rounded-3 shadow-sm p-4 h-100 hover-lift">
-                    <div class="text-center">
-                        <div class="solution-icon bg-info bg-opacity-10 text-info rounded-circle p-4 mx-auto mb-3">
-                            <i class="fa fa-cloud fa-3x"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Cloud Solutions</h4>
-                        <p class="text-muted">SaaS & PaaS solutions that get you to market quickly</p>
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-accent);">
+                        <i class="fa fa-cloud fa-3x"></i>
                     </div>
+                    <h4 class="fw-bold mb-3">Cloud Solutions</h4>
+                    <p class="text-muted">SaaS & PaaS solutions that get you to market quickly</p>
                 </div>
             </div>
         </div>
         <div class="row g-4 mt-4">
             <div class="col-lg-4 col-md-6">
-                <div class="solution-card bg-white rounded-3 shadow-sm p-4 h-100 hover-lift">
-                    <div class="text-center">
-                        <div class="solution-icon bg-warning bg-opacity-10 text-warning rounded-circle p-4 mx-auto mb-3">
-                            <i class="fa fa-database fa-3x"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">BigData & Analytics</h4>
-                        <p class="text-muted">Flexible architecture for large-scale data processing</p>
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-warning);">
+                        <i class="fa fa-database fa-3x"></i>
                     </div>
+                    <h4 class="fw-bold mb-3">BigData & Analytics</h4>
+                    <p class="text-muted">Flexible architecture for large-scale data processing</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="solution-card bg-white rounded-3 shadow-sm p-4 h-100 hover-lift">
-                    <div class="text-center">
-                        <div class="solution-icon bg-danger bg-opacity-10 text-danger rounded-circle p-4 mx-auto mb-3">
-                            <i class="fa fa-cogs fa-3x"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Custom Solutions</h4>
-                        <p class="text-muted">Applications designed around your specific goals</p>
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mx-auto" style="background: var(--company-danger);">
+                        <i class="fa fa-cogs fa-3x"></i>
                     </div>
+                    <h4 class="fw-bold mb-3">Custom Solutions</h4>
+                    <p class="text-muted">Applications designed around your specific goals</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
-    <!-- section 2 end -->
 
-<section class="industries-section py-5">
+<!-- Testimonials Section -->
+<section class="section-padding">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Serving Multiple Industries Globally</h2>
-            <p class="lead text-muted">We assist customers from startups to enterprises across diverse sectors</p>
+            <h2 class="display-5 fw-bold mb-3 text-gradient">What Our Clients Say</h2>
+            <p class="lead text-muted">Trusted by industry leaders worldwide</p>
         </div>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-primary bg-opacity-10 text-primary rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-plane fa-3x"></i>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "EnRator has transformed how we manage our finances. The platform is intuitive and powerful."
                     </div>
-                    <h4 class="fw-bold mb-3">Travel & Tourism</h4>
-                    <p class="text-muted small">Digital transformation for travel industry</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JD</div>
+                        <div>
+                            <div class="testimonial-name">John Doe</div>
+                            <div class="text-muted small">CEO, TechCorp</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-success bg-opacity-10 text-success rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-home fa-3x"></i>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "The best investment we made for our business. Incredible support and amazing features."
                     </div>
-                    <h4 class="fw-bold mb-3">Real Estate</h4>
-                    <p class="text-muted small">Property management solutions</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div>
+                            <div class="testimonial-name">Sarah Miller</div>
+                            <div class="text-muted small">CFO, StartupXYZ</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-info bg-opacity-10 text-info rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-shopping-cart fa-3x"></i>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Professional, reliable, and exactly what we needed for our growing business."
                     </div>
-                    <h4 class="fw-bold mb-3">Retail & eCommerce</h4>
-                    <p class="text-muted small">Online retail management platforms</p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-warning bg-opacity-10 text-warning rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-heartbeat fa-3x"></i>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MJ</div>
+                        <div>
+                            <div class="testimonial-name">Mike Johnson</div>
+                            <div class="text-muted small">Director, GlobalTrade</div>
+                        </div>
                     </div>
-                    <h4 class="fw-bold mb-3">Healthcare</h4>
-                    <p class="text-muted small">Healthcare management systems</p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-danger bg-opacity-10 text-danger rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-graduation-cap fa-3x"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Education Sector</h4>
-                    <p class="text-muted small">Educational institution platforms</p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="industry-card bg-white rounded-3 shadow-sm p-4 text-center h-100 hover-lift">
-                    <div class="industry-icon bg-secondary bg-opacity-10 text-secondary rounded-circle p-4 mx-auto mb-3">
-                        <i class="fa fa-chart-line fa-3x"></i>
-                    </div>
-                    <h4 class="fw-bold mb-3">Financial Services</h4>
-                    <p class="text-muted small">Banking and finance solutions</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- CTA Section -->
 <section class="cta-section bg-primary text-white py-5">
     <div class="container">
         <div class="text-center">

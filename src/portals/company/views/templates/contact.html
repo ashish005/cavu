@@ -1,54 +1,253 @@
-<div class="">
-    <!-- header -->
-    <div class="web-header contact">
+<div class="contact-page">
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-5">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center min-vh-100">
                 <div class="col-lg-6 col-md-12">
-                    <div class="box-container fadesimple">
-                        <h1 class="display-5 fw-bold mb-4">Get In Touch</h1>
-                        <p class="lead">We'd love to hear from you. Reach out to us for any inquiries or support.</p>
+                    <div class="hero-content">
+                        <div class="badge bg-white bg-opacity-20 text-white mb-3 d-inline-block px-3 py-2">
+                            <i class="fa fa-envelope me-2"></i>Contact Us
+                        </div>
+                        <h1 class="hero-title animate-fade-in">Get In Touch</h1>
+                        <p class="hero-subtitle animate-slide-up">We'd love to hear from you. Reach out to us for any inquiries or support.</p>
                     </div>
                 </div>
-                <div class="col-lg-6"></div>
+                <div class="col-lg-6">
+                    <div class="hero-visual animate-float">
+                        <div class="feature-card text-center">
+                            <div class="feature-icon mx-auto">
+                                <i class="fa fa-comments fa-3x"></i>
+                            </div>
+                            <h4 class="feature-title">We're Here to Help</h4>
+                            <p class="feature-description">Our team is ready to assist you with any questions or support needs.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- end of header -->
-    <!-- contact -->
-    <div id="contact-us" class="py-5">
+    </section>
+
+    <!-- Contact Information Section -->
+    <section class="section-padding bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Drop us an email and will get in touch!</h2>
-                <p class="lead mb-4">If you'd like to get in touch with our team, you can reach out by email. Just send
-                    your message to:</p>
-                <div class="card border-0 shadow-sm d-inline-block">
-                    <div class="card-body p-4">
-                        <h3 class="text-primary fw-bold">info@enrator.com</h3>
+                <h2 class="display-5 fw-bold mb-3 text-gradient">Reach Out Anytime</h2>
+                <p class="lead text-muted">Multiple ways to get in touch with our team</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-primary);">
+                            <i class="fa fa-envelope fa-3x"></i>
+                        </div>
+                        <h4 class="feature-title">Email Us</h4>
+                        <p class="feature-description">Send us a message anytime</p>
+                        <a href="mailto:info@enrator.com" class="btn btn-link text-primary fw-bold">info@enrator.com <i class="fa fa-arrow-right ms-1"></i></a>
                     </div>
                 </div>
-                <p class="lead mt-4">Let us know how we can help, and someone will follow up with you shortly.</p>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-success);">
+                            <i class="fa fa-phone fa-3x"></i>
+                        </div>
+                        <h4 class="feature-title">Call Us</h4>
+                        <p class="feature-description">Mon-Fri: 9AM-6PM EST</p>
+                        <a href="tel:+1-855-435-8226" class="btn btn-link text-success fw-bold">+1-855-435-8226 <i class="fa fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-accent);">
+                            <i class="fa fa-map-marker-alt fa-3x"></i>
+                        </div>
+                        <h4 class="feature-title">Visit Us</h4>
+                        <p class="feature-description">Global presence with local support</p>
+                        <a href="#" class="btn btn-link text-info fw-bold">Find Office <i class="fa fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- contact us -->
-
-    <!-- contact-us / end -->
-
-    <!-- section start -->
-    <!--<div class="team-support">
-      <div class="container">
-        <div class="col-sm-5 text">
-          <div class="default-title">
-            <h3>Call our award-winning <span>support team</span></h3>
-            <br>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tenetur consectetur.</p>
-          </div>
-          <h3 class="number"> +1-855-435-8226</h3>
-          <br>
-          <a href="#" class="button btn btn-lg btn-2 red">Get Started Now</a>
+    <!-- Contact Form Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="contact-form">
+                        <h3 class="display-6 fw-bold mb-4 text-gradient">Send Us a Message</h3>
+                        <p class="text-muted mb-4">Fill out the form below and we'll get back to you as soon as possible.</p>
+                        
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" class="form-input" placeholder="John" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" class="form-input" placeholder="Doe" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" class="form-input" placeholder="john.doe@example.com" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" placeholder="+1 (555) 123-4567">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Subject *</label>
+                                <select class="form-input">
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="sales">Sales Question</option>
+                                    <option value="partnership">Partnership Opportunity</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Message *</label>
+                                <textarea class="form-textarea" placeholder="Tell us how we can help you..." rows="5" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="privacyCheck" required>
+                                    <label class="form-check-label" for="privacyCheck">
+                                        I agree to the <a href="#" class="text-primary">Privacy Policy</a> and <a href="#" class="text-primary">Terms of Service</a>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-bold">
+                                <i class="fa fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="ps-lg-5">
+                        <h3 class="display-6 fw-bold mb-4 text-gradient">Why Contact Us?</h3>
+                        <p class="text-muted mb-4">We're committed to providing exceptional service and support to help your business thrive.</p>
+                        
+                        <div class="feature-card mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="feature-icon me-3" style="background: var(--company-success);">
+                                    <i class="fa fa-clock"></i>
+                                </div>
+                                <div>
+                                    <h5 class="feature-title">Quick Response Time</h5>
+                                    <p class="feature-description">We typically respond within 24 hours during business days.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="feature-icon me-3" style="background: var(--company-primary);">
+                                    <i class="fa fa-headset"></i>
+                                </div>
+                                <div>
+                                    <h5 class="feature-title">Expert Support Team</h5>
+                                    <p class="feature-description">Knowledgeable professionals ready to help with your specific needs.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="feature-icon me-3" style="background: var(--company-accent);">
+                                    <i class="fa fa-globe"></i>
+                                </div>
+                                <div>
+                                    <h5 class="feature-title">Global Presence</h5>
+                                    <p class="feature-description">Serving clients worldwide with localized support and understanding.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <div class="d-flex align-items-start">
+                                <div class="feature-icon me-3" style="background: var(--company-warning);">
+                                    <i class="fa fa-shield-alt"></i>
+                                </div>
+                                <div>
+                                    <h5 class="feature-title">Secure & Confidential</h5>
+                                    <p class="feature-description">Your information is protected with industry-standard security measures.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>-->
-    <!-- end of section -->
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3 text-gradient">Frequently Asked Questions</h2>
+                <p class="lead text-muted">Quick answers to common questions</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="feature-card mb-3">
+                        <h5 class="feature-title">What industries do you serve?</h5>
+                        <p class="feature-description">We work with clients across various industries including technology, healthcare, finance, retail, and more.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card mb-3">
+                        <h5 class="feature-title">Do you offer custom solutions?</h5>
+                        <p class="feature-description">Yes, we specialize in creating tailored solutions to meet your specific business requirements.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card mb-3">
+                        <h5 class="feature-title">What is your response time?</h5>
+                        <p class="feature-description">We typically respond within 24 hours during business days. For urgent matters, please call us.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card mb-3">
+                        <h5 class="feature-title">Do you provide ongoing support?</h5>
+                        <p class="feature-description">Yes, we offer comprehensive support packages to ensure your continued success.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section bg-primary text-white py-5">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+                <p class="lead mb-4">Join hundreds of satisfied customers who have transformed their business with our solutions</p>
+                <div class="cta-buttons d-flex gap-3 justify-content-center flex-wrap">
+                    <button class="btn btn-warning btn-lg px-5 py-3 fw-bold" [routerLink]="['/trial']">
+                        <i class="fa fa-rocket me-2"></i>Start Free Trial
+                    </button>
+                    <button class="btn btn-outline-light btn-lg px-5 py-3 fw-bold" [routerLink]="['/pricing']">
+                        <i class="fa fa-tags me-2"></i>View Pricing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>

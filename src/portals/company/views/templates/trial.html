@@ -1,203 +1,295 @@
-<div class="py-5">
-    <div class="container" *ngIf="!successResp?.isSuccess">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="text-center mb-5">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="mb-3">
-                            <span class="avatar w-56 bg-success text-white rounded-circle d-flex align-items-center justify-content-center">
-                                <span class="fa fa-globe fa-2x"></span>
-                            </span>
+<div class="trial-page">
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-5">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-content">
+                        <div class="badge bg-white bg-opacity-20 text-white mb-3 d-inline-block px-3 py-2">
+                            <i class="fa fa-rocket me-2"></i>Free Trial
                         </div>
-                        <div>
-                            <h1 class="display-5 fw-bold">Organization Registration</h1>
-                            <p class="lead text-muted">Tell us about your business</p>
+                        <h1 class="hero-title animate-fade-in">Start Your 14-Day Free Trial</h1>
+                        <p class="hero-subtitle animate-slide-up">Experience the full power of EnRator with no credit card required. Get started in minutes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form -->
+    <section class="section-padding" *ngIf="!successResp?.isSuccess">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="text-center mb-5">
+                        <h2 class="display-5 fw-bold text-gradient">Organization Registration</h2>
+                        <p class="lead text-muted">Tell us about your business to get started</p>
+                    </div>
+                    
+                    <form class="contact-form" [formGroup]="customForm">
+                        <div class="row g-4">
+                            <!-- Business Information -->
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3">
+                                            <i class="fa fa-building"></i>
+                                        </div>
+                                        <h5 class="feature-title mb-0">Business Information</h5>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Business Name *</label>
+                                                <input type="text" formControlName="name" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" placeholder="Enter your business name">
+                                                <div *ngIf="submitted && f['name'].errors" class="text-danger small mt-1">
+                                                    Business name is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Country</label>
+                                                <select class="form-input" formControlName="countryId">
+                                                    <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label class="form-label">Location *</label>
+                                                <input type="text" formControlName="address" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['address'].errors }" placeholder="Business address">
+                                                <div *ngIf="submitted && f['address'].errors" class="text-danger small mt-1">
+                                                    Address is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Operated By</label>
+                                                <select class="form-input" formControlName="operatedById">
+                                                    <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-8">
+                                            <div class="form-group">
+                                                <label class="form-label">Software</label>
+                                                <select class="form-input" formControlName="softwareId">
+                                                    <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Business Type</label>
+                                                <select class="form-input" formControlName="orgBusinessTypeId">
+                                                    <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Contact Information -->
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3" style="background: var(--company-success);">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <h5 class="feature-title mb-0">Contact Information</h5>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Contact Person Name *</label>
+                                                <input type="text" formControlName="contactPersonName" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }" placeholder="Full name">
+                                                <div *ngIf="submitted && f['contactPersonName'].errors" class="text-danger small mt-1">
+                                                    <div *ngIf="f['contactPersonName'].errors?.['required']">Name is required</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Email Address *</label>
+                                                <input type="email" formControlName="contactPersonEmail" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }" placeholder="work@email.com">
+                                                <div *ngIf="submitted && f['contactPersonEmail'].errors" class="text-danger small mt-1">
+                                                    <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
+                                                    <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be valid</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Mobile Number *</label>
+                                                <input type="tel" formControlName="contactPersonMobile" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }" placeholder="+1 (555) 123-4567">
+                                                <div *ngIf="submitted && f['contactPersonMobile'].errors" class="text-danger small mt-1">
+                                                    <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is required</div>
+                                                    <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Phone must be valid</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Login Username *</label>
+                                                <input type="text" formControlName="userName" class="form-input"
+                                                       [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }" placeholder="Choose username">
+                                                <div *ngIf="submitted && f['userName'].errors" class="text-danger small mt-1">
+                                                    <div *ngIf="f['userName'].errors?.['required']">Username is required</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="alert alert-info mt-3">
+                                                <i class="fa fa-info-circle me-2"></i>
+                                                <small>All further communications will be sent to these details.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="row mt-5">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-primary btn-lg px-5 py-3" (click)="onSubmit(customForm)"
+                                        [disabled]="!customForm.valid || submitted">
+                                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
+                                    {{ submitted ? 'Creating Your Account...' : 'Start Free Trial' }}
+                                </button>
+                            </div>
+                            
+                            <div class="col-12 text-center mt-3" *ngIf="submitted">
+                                <div class="alert alert-warning">
+                                    <i class="fa fa-clock-o me-2"></i>
+                                    Setting up your business may take a few moments. Please be patient...
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Section -->
+    <section class="section-padding" *ngIf="successResp?.isSuccess">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="feature-card">
+                        <div class="p-5">
+                            <div class="text-center mb-5">
+                                <div class="feature-icon mx-auto" style="background: var(--company-success); width: 80px; height: 80px;">
+                                    <i class="fa fa-check fa-3x"></i>
+                                </div>
+                                <h3 class="display-6 fw-bold text-success mt-4">Registration Successful!</h3>
+                                <p class="lead text-muted mt-3">Please save your credentials below. This information will only be shown once.</p>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Your Domain</label>
+                                        <input type="text" class="form-input" readonly [value]="successResp.data.url">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-input" readonly [value]="customForm.value.userName">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Temporary Password</label>
+                                        <input type="text" class="form-input" readonly value="Password@123">
+                                        <small class="text-muted">Please change this after first login</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-5">
+                                <a [attr.href]="successResp.data.url"
+                                   class="btn btn-success btn-lg px-5 py-3">
+                                    Access Your Account <i class="fa fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <form class="card border-0 shadow-sm" [formGroup]="customForm" *ngIf="!successResp?.isSuccess">
-        <div class="card-body p-4">
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section-padding bg-light" *ngIf="!successResp?.isSuccess">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-gradient">Why Choose EnRator?</h2>
+                <p class="lead text-muted">Everything you need to succeed, included in your trial</p>
+            </div>
+            
             <div class="row g-4">
-                <div class="col-lg-6 col-md-12">
-                    <div class="mb-4">
-                        <h5 class="fw-bold mb-3">Business Information</h5>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" formControlName="name" class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" id="businessName" placeholder="Business Name">
-                                    <label for="businessName">Business Name</label>
-                                    <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
-                                        Business name is required
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-floating">
-                                    <select class="form-select" formControlName="countryId" id="country">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
-                                    </select>
-                                    <label for="country">Country</label>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-floating">
-                                    <input type="text" formControlName="address" class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['address'].errors }" id="address" placeholder="Location">
-                                    <label for="address">Location</label>
-                                    <div *ngIf="submitted && f['address'].errors" class="invalid-feedback">
-                                        Address is required
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <select class="form-select" formControlName="operatedById" id="operatedBy">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
-                                    </select>
-                                    <label for="operatedBy">Operated By</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-8 col-md-12">
-                                <div class="form-floating">
-                                    <select class="form-select" formControlName="softwareId" id="software">
-                                        <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
-                                    </select>
-                                    <label for="software">Software</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-12">
-                                <div class="form-floating">
-                                    <select class="form-select" formControlName="orgBusinessTypeId" id="businessType">
-                                        <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
-                                    </select>
-                                    <label for="businessType">Business Type</label>
-                                </div>
-                            </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto">
+                            <i class="fa fa-credit-card fa-2x"></i>
                         </div>
+                        <h5 class="feature-title">No Credit Card</h5>
+                        <p class="feature-description">Start your trial without any payment information</p>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12">
-                    <div class="mb-4">
-                        <h5 class="fw-bold mb-3">Contact Information</h5>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" formControlName="contactPersonName"
-                                           class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }" id="contactName" placeholder="Name">
-                                    <label for="contactName">Contact Person Name</label>
-                                    <div *ngIf="submitted && f['contactPersonName'].errors" class="invalid-feedback">
-                                        <div *ngIf="f['contactPersonName'].errors?.['required']">Name is required</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="email" formControlName="contactPersonEmail"
-                                           class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }" id="contactEmail" placeholder="Email">
-                                    <label for="contactEmail">Email Address</label>
-                                    <div *ngIf="submitted && f['contactPersonEmail'].errors" class="invalid-feedback">
-                                        <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
-                                        <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be a valid email address</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="tel" formControlName="contactPersonMobile"
-                                           class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }" id="contactMobile" placeholder="Mobile">
-                                    <label for="contactMobile">Mobile Number</label>
-                                    <div *ngIf="submitted && f['contactPersonMobile'].errors" class="invalid-feedback">
-                                        <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is required</div>
-                                        <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Phone must be a valid mobile no</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" formControlName="userName" class="form-control"
-                                           [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }" id="username" placeholder="Username">
-                                    <label for="username">Login Username</label>
-                                    <div *ngIf="submitted && f['userName'].errors" class="invalid-feedback">
-                                        <div *ngIf="f['userName'].errors?.['required']">Username is required</div>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info mt-3">
-                                    <small class="text-muted">
-                                        <i class="fa fa-info-circle me-2"></i>
-                                        All further communication or notifications will be shared on provided details.
-                                    </small>
-                                </div>
-                            </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-success);">
+                            <i class="fa fa-clock fa-2x"></i>
                         </div>
+                        <h5 class="feature-title">14 Days Free</h5>
+                        <p class="feature-description">Full access to all features for two weeks</p>
                     </div>
                 </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <button class="btn btn-success btn-lg px-5 py-3" (click)="onSubmit(customForm)"
-                            [disabled]="!customForm.valid || submitted">
-                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
-                        {{ submitted ? 'Request Initiated...' : 'Register your Trial' }}
-                    </button>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-accent);">
+                            <i class="fa fa-headset fa-2x"></i>
+                        </div>
+                        <h5 class="feature-title">Free Support</h5>
+                        <p class="feature-description">Get help during your trial period</p>
+                    </div>
                 </div>
-                <div class="col-12 text-center mt-3" *ngIf="submitted">
-                    <div class="alert alert-warning">
-                        <i class="fa fa-clock-o me-2"></i>
-                        Creating your business will take time. Please have patience...
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-warning);">
+                            <i class="fa fa-ban fa-2x"></i>
+                        </div>
+                        <h5 class="feature-title">No Commitment</h5>
+                        <p class="feature-description">Cancel anytime, no strings attached</p>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
-    <div class="container" *ngIf="successResp?.isSuccess">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="card border-0 shadow-lg">
-                    <div class="card-body p-5">
-                        <div class="text-center mb-5">
-                            <div class="mb-3">
-                                <i class="fa fa-check-circle fa-4x text-success"></i>
-                            </div>
-                            <h3 class="fw-bold text-success">Registration Successful!</h3>
-                            <p class="text-muted mt-3">Please save your domain, user name and temporary password. One time visible only...</p>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" readonly :value="successResp.data.url" id="domain">
-                                    <label for="domain">Your Domain</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" readonly :value="customForm.value.userName" id="username">
-                                    <label for="username">User Name</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" readonly value="Password@123" id="password">
-                                    <label for="password">Password</label>
-                                    <small class="form-text text-muted">Your temporary password. Please change it after login.</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <a [attr.href]="successResp.data.url"
-                               class="btn btn-success btn-lg px-5 py-3" tabindex="0">
-                                Start now! <i class="fa fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>

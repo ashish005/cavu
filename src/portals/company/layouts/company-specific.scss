@@ -1,0 +1,1716 @@
+/* Company Portal Specific Styles - Utilizing Global Theme Variables */
+
+/* Base selector - Only affects elements within company portal */
+app-body.company-portal,
+app-body:has(.company-layout),
+app-body:has(router-outlet ~ .app-footer),
+app-body:has(app-header .navbar-brand .brand-text),
+app-body:has(.vision-page),
+app-body:has(.contact-page),
+app-body:has(.pricing-page),
+app-body:has(.about-page),
+app-body:has(.trial-page),
+app-body:has(.whywe-page),
+app-body:has(.pricing-info-page) {
+  
+  /* Apply global theme variables - Professional Color Palette */
+  --company-primary: var(--company-primary-600);
+  --company-primary-dark: var(--company-primary-800);
+  --company-primary-light: var(--company-primary-500);
+  --company-secondary: var(--company-secondary-500);
+  --company-accent: var(--company-accent-600);
+  --company-accent-light: var(--company-accent-500);
+  --company-success: var(--company-success-600);
+  --company-success-light: var(--company-success-500);
+  --company-warning: var(--company-warning-600);
+  --company-warning-light: var(--company-warning-500);
+  --company-danger: var(--company-danger-600);
+  --company-danger-light: var(--company-danger-500);
+  --company-light: var(--company-secondary-50);
+  --company-light-alt: var(--company-secondary-100);
+  --company-light-gray: var(--company-secondary-200);
+  --company-dark: var(--company-secondary-900);
+  --company-dark-alt: var(--company-secondary-800);
+  --company-border: var(--company-secondary-200);
+  
+  /* Utilize global gradients - Professional & Elegant */
+  --company-gradient-primary: var(--company-gradient-primary);
+  --company-gradient-hero: var(--company-gradient-hero);
+  --company-gradient-light: var(--company-gradient-light);
+  --company-gradient-accent: var(--company-gradient-accent);
+  --company-gradient-success: linear-gradient(135deg, var(--company-success-500) 0%, var(--company-success-600) 100%);
+  --company-gradient-warning: linear-gradient(135deg, var(--company-warning-500) 0%, var(--company-warning-600) 100%);
+  --company-gradient-danger: linear-gradient(135deg, var(--company-danger-500) 0%, var(--company-danger-600) 100%);
+  
+  /* Utilize global shadows - Modern Depth */
+  --company-shadow-sm: var(--company-shadow-sm);
+  --company-shadow-md: var(--company-shadow-md);
+  --company-shadow-lg: var(--company-shadow-lg);
+  --company-shadow-xl: var(--company-shadow-xl);
+  --company-shadow-2xl: var(--company-shadow-2xl);
+  --company-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* Utilize global typography - Modern & Clean */
+  --company-font-primary: var(--company-font-primary);
+  --company-font-secondary: var(--company-font-secondary);
+  --company-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  
+  /* Font Weights - Professional Scale */
+  --company-font-thin: 100;
+  --company-font-light: 300;
+  --company-font-normal: 400;
+  --company-font-medium: 500;
+  --company-font-semibold: 600;
+  --company-font-bold: 700;
+  --company-font-extrabold: 800;
+  --company-font-black: 900;
+  
+  /* Font Sizes - Professional Scale */
+  --company-text-xs: 0.75rem;
+  --company-text-sm: 0.875rem;
+  --company-text-base: 1rem;
+  --company-text-lg: 1.125rem;
+  --company-text-xl: 1.25rem;
+  --company-text-2xl: 1.5rem;
+  --company-text-3xl: 1.875rem;
+  --company-text-4xl: 2.25rem;
+  --company-text-5xl: 3rem;
+  --company-text-6xl: 3.75rem;
+  --company-text-7xl: 4.5rem;
+  
+  /* Utilize global spacing - Professional Scale */
+  --company-space-0: 0;
+  --company-space-1: var(--company-spacing-xs);
+  --company-space-2: var(--company-spacing-sm);
+  --company-space-3: 0.75rem;
+  --company-space-4: var(--company-spacing-md);
+  --company-space-5: 1.25rem;
+  --company-space-6: var(--company-spacing-lg);
+  --company-space-8: var(--company-spacing-xl);
+  --company-space-10: 2.5rem;
+  --company-space-12: var(--company-spacing-2xl);
+  --company-space-16: var(--company-spacing-3xl);
+  --company-space-20: 5rem;
+  --company-space-24: 6rem;
+  --company-space-32: 8rem;
+  
+  /* Utilize global border radius - Professional */
+  --company-radius-none: 0;
+  --company-radius-sm: var(--company-radius-sm);
+  --company-radius-md: var(--company-radius-md);
+  --company-radius-lg: var(--company-radius-lg);
+  --company-radius-xl: var(--company-radius-xl);
+  --company-radius-2xl: var(--company-radius-2xl);
+  --company-radius-3xl: 1.5rem;
+  --company-radius-full: var(--company-radius-full);
+  
+  /* Utilize global transitions - Professional */
+  --company-transition-none: none;
+  --company-transition-fast: var(--company-transition-fast);
+  --company-transition-normal: var(--company-transition-normal);
+  --company-transition-slow: var(--company-transition-slow);
+  
+  /* Z-Index Scale */
+  --company-z-dropdown: 1000;
+  --company-z-sticky: 1030;
+  --company-z-fixed: 1030;
+  --company-z-modal-backdrop: 1040;
+  --company-z-modal: 1050;
+  --company-z-popover: 1060;
+  --company-z-tooltip: 1070;
+  
+  /* Apply professional base styling to all company pages */
+  font-family: var(--company-font-primary) !important;
+  font-size: var(--company-text-base) !important;
+  line-height: 1.6 !important;
+  color: var(--company-dark) !important;
+  background-color: var(--company-light) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* Unified Typography for All Company Pages - Professional & Modern */
+app-body.company-portal h1,
+app-body:has(.company-layout) h1,
+app-body:has(app-header .navbar-brand .brand-text) h1,
+app-body:has(.vision-page) h1,
+app-body:has(.contact-page) h1,
+app-body:has(.pricing-page) h1,
+app-body:has(.about-page) h1,
+app-body:has(.trial-page) h1,
+app-body:has(.whywe-page) h1,
+app-body:has(.pricing-info-page) h1 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-6xl) !important;
+  font-weight: var(--company-font-bold) !important;
+  color: var(--company-dark) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: var(--company-space-8) !important;
+  text-transform: none !important;
+}
+
+app-body.company-portal h2,
+app-body:has(.company-layout) h2,
+app-body:has(app-header .navbar-brand .brand-text) h2,
+app-body:has(.vision-page) h2,
+app-body:has(.contact-page) h2,
+app-body:has(.pricing-page) h2,
+app-body:has(.about-page) h2,
+app-body:has(.trial-page) h2,
+app-body:has(.whywe-page) h2,
+app-body:has(.pricing-info-page) h2 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-4xl) !important;
+  font-weight: var(--company-font-semibold) !important;
+  color: var(--company-dark) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: var(--company-space-6) !important;
+  text-transform: none !important;
+}
+
+app-body.company-portal h3,
+app-body:has(.company-layout) h3,
+app-body:has(app-header .navbar-brand .brand-text) h3,
+app-body:has(.vision-page) h3,
+app-body:has(.contact-page) h3,
+app-body:has(.pricing-page) h3,
+app-body:has(.about-page) h3,
+app-body:has(.trial-page) h3,
+app-body:has(.whywe-page) h3,
+app-body:has(.pricing-info-page) h3 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-2xl) !important;
+  font-weight: var(--company-font-semibold) !important;
+  color: var(--company-dark) !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: var(--company-space-5) !important;
+  text-transform: none !important;
+}
+
+app-body.company-portal h4,
+app-body:has(.company-layout) h4,
+app-body:has(app-header .navbar-brand .brand-text) h4,
+app-body:has(.vision-page) h4,
+app-body:has(.contact-page) h4,
+app-body:has(.pricing-page) h4,
+app-body:has(.about-page) h4,
+app-body:has(.trial-page) h4,
+app-body:has(.whywe-page) h4,
+app-body:has(.pricing-info-page) h4 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-xl) !important;
+  font-weight: var(--company-font-semibold) !important;
+  color: var(--company-dark) !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.005em !important;
+  margin-bottom: var(--company-space-4) !important;
+  text-transform: none !important;
+}
+
+app-body.company-portal h5,
+app-body:has(.company-layout) h5,
+app-body:has(app-header .navbar-brand .brand-text) h5,
+app-body:has(.vision-page) h5,
+app-body:has(.contact-page) h5,
+app-body:has(.pricing-page) h5,
+app-body:has(.about-page) h5,
+app-body:has(.trial-page) h5,
+app-body:has(.whywe-page) h5,
+app-body:has(.pricing-info-page) h5 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-lg) !important;
+  font-weight: var(--company-font-medium) !important;
+  color: var(--company-dark) !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  margin-bottom: var(--company-space-3) !important;
+  text-transform: none !important;
+}
+
+app-body.company-portal h6,
+app-body:has(.company-layout) h6,
+app-body:has(app-header .navbar-brand .brand-text) h6,
+app-body:has(.vision-page) h6,
+app-body:has(.contact-page) h6,
+app-body:has(.pricing-page) h6,
+app-body:has(.about-page) h6,
+app-body:has(.trial-page) h6,
+app-body:has(.whywe-page) h6,
+app-body:has(.pricing-info-page) h6 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-base) !important;
+  font-weight: var(--company-font-semibold) !important;
+  color: var(--company-secondary) !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0.025em !important;
+  margin-bottom: var(--company-space-2) !important;
+  text-transform: uppercase !important;
+}
+
+app-body.company-portal p,
+app-body:has(.company-layout) p,
+app-body:has(app-header .navbar-brand .brand-text) p,
+app-body:has(.vision-page) p,
+app-body:has(.contact-page) p,
+app-body:has(.pricing-page) p,
+app-body:has(.about-page) p,
+app-body:has(.trial-page) p,
+app-body:has(.whywe-page) p,
+app-body:has(.pricing-info-page) p {
+  font-family: var(--company-font-primary) !important;
+  font-size: var(--company-text-base) !important;
+  font-weight: var(--company-font-normal) !important;
+  color: var(--company-secondary) !important;
+  line-height: 1.7 !important;
+  margin-bottom: var(--company-space-5) !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* Professional Section Padding for All Company Pages */
+app-body.company-portal .section-padding,
+app-body:has(.company-layout) .section-padding,
+app-body:has(app-header .navbar-brand .brand-text) .section-padding,
+app-body:has(.vision-page) .section-padding,
+app-body:has(.contact-page) .section-padding,
+app-body:has(.pricing-page) .section-padding,
+app-body:has(.about-page) .section-padding,
+app-body:has(.trial-page) .section-padding,
+app-body:has(.whywe-page) .section-padding,
+app-body:has(.pricing-info-page) .section-padding {
+  padding: var(--company-space-20) 0 !important;
+}
+
+/* Professional Container for All Company Pages */
+app-body.company-portal .container,
+app-body:has(.company-layout) .container,
+app-body:has(app-header .navbar-brand .brand-text) .container,
+app-body:has(.vision-page) .container,
+app-body:has(.contact-page) .container,
+app-body:has(.pricing-page) .container,
+app-body:has(.about-page) .container,
+app-body:has(.trial-page) .container,
+app-body:has(.whywe-page) .container,
+app-body:has(.pricing-info-page) .container {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 var(--company-space-6) !important;
+}
+
+/* Professional Text Gradient for All Company Pages */
+app-body.company-portal .text-gradient,
+app-body:has(.company-layout) .text-gradient,
+app-body:has(app-header .navbar-brand .brand-text) .text-gradient,
+app-body:has(.vision-page) .text-gradient,
+app-body:has(.contact-page) .text-gradient,
+app-body:has(.pricing-page) .text-gradient,
+app-body:has(.about-page) .text-gradient,
+app-body:has(.trial-page) .text-gradient,
+app-body:has(.whywe-page) .text-gradient,
+app-body:has(.pricing-info-page) .text-gradient {
+  background: var(--company-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: var(--company-font-bold) !important;
+}
+
+/* Professional Lead Text for All Company Pages */
+app-body.company-portal .lead,
+app-body:has(.company-layout) .lead,
+app-body:has(app-header .navbar-brand .brand-text) .lead,
+app-body:has(.vision-page) .lead,
+app-body:has(.contact-page) .lead,
+app-body:has(.pricing-page) .lead,
+app-body:has(.about-page) .lead,
+app-body:has(.trial-page) .lead,
+app-body:has(.whywe-page) .lead,
+app-body:has(.pricing-info-page) .lead {
+  font-family: var(--company-font-primary) !important;
+  font-size: var(--company-text-xl) !important;
+  font-weight: var(--company-font-light) !important;
+  color: var(--company-secondary) !important;
+  line-height: 1.6 !important;
+  margin-bottom: var(--company-space-8) !important;
+}
+
+/* Professional Text Muted for All Company Pages */
+app-body.company-portal .text-muted,
+app-body:has(.company-layout) .text-muted,
+app-body:has(app-header .navbar-brand .brand-text) .text-muted,
+app-body:has(.vision-page) .text-muted,
+app-body:has(.contact-page) .text-muted,
+app-body:has(.pricing-page) .text-muted,
+app-body:has(.about-page) .text-muted,
+app-body:has(.trial-page) .text-muted,
+app-body:has(.whywe-page) .text-muted,
+app-body:has(.pricing-info-page) .text-muted {
+  color: var(--company-secondary) !important;
+  font-weight: var(--company-font-normal) !important;
+  opacity: 0.8 !important;
+}
+
+/* Professional Text White for All Company Pages */
+app-body.company-portal .text-white,
+app-body:has(.company-layout) .text-white,
+app-body:has(app-header .navbar-brand .brand-text) .text-white,
+app-body:has(.vision-page) .text-white,
+app-body:has(.contact-page) .text-white,
+app-body:has(.pricing-page) .text-white,
+app-body:has(.about-page) .text-white,
+app-body:has(.trial-page) .text-white,
+app-body:has(.whywe-page) .text-white,
+app-body:has(.pricing-info-page) .text-white {
+  color: white !important;
+  font-weight: var(--company-font-medium) !important;
+}
+
+/* Professional Text Center for All Company Pages */
+app-body.company-portal .text-center,
+app-body:has(.company-layout) .text-center,
+app-body:has(app-header .navbar-brand .brand-text) .text-center,
+app-body:has(.vision-page) .text-center,
+app-body:has(.contact-page) .text-center,
+app-body:has(.pricing-page) .text-center,
+app-body:has(.about-page) .text-center,
+app-body:has(.trial-page) .text-center,
+app-body:has(.whywe-page) .text-center,
+app-body:has(.pricing-info-page) .text-center {
+  text-align: center !important;
+}
+
+/* Professional Display Classes for All Company Pages */
+app-body.company-portal .display-5,
+app-body:has(.company-layout) .display-5,
+app-body:has(app-header .navbar-brand .brand-text) .display-5,
+app-body:has(.vision-page) .display-5,
+app-body:has(.contact-page) .display-5,
+app-body:has(.pricing-page) .display-5,
+app-body:has(.about-page) .display-5,
+app-body:has(.trial-page) .display-5,
+app-body:has(.whywe-page) .display-5,
+app-body:has(.pricing-info-page) .display-5 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-5xl) !important;
+  font-weight: var(--company-font-bold) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.02em !important;
+}
+
+app-body.company-portal .display-6,
+app-body:has(.company-layout) .display-6,
+app-body:has(app-header .navbar-brand .brand-text) .display-6,
+app-body:has(.vision-page) .display-6,
+app-body:has(.contact-page) .display-6,
+app-body:has(.pricing-page) .display-6,
+app-body:has(.about-page) .display-6,
+app-body:has(.trial-page) .display-6,
+app-body:has(.whywe-page) .display-6,
+app-body:has(.pricing-info-page) .display-6 {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-4xl) !important;
+  font-weight: var(--company-font-semibold) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Professional Font Weight Classes for All Company Pages */
+app-body.company-portal .fw-bold,
+app-body:has(.company-layout) .fw-bold,
+app-body:has(app-header .navbar-brand .brand-text) .fw-bold,
+app-body:has(.vision-page) .fw-bold,
+app-body:has(.contact-page) .fw-bold,
+app-body:has(.pricing-page) .fw-bold,
+app-body:has(.about-page) .fw-bold,
+app-body:has(.trial-page) .fw-bold,
+app-body:has(.whywe-page) .fw-bold,
+app-body:has(.pricing-info-page) .fw-bold {
+  font-weight: var(--company-font-bold) !important;
+}
+
+app-body.company-portal .fw-semibold,
+app-body:has(.company-layout) .fw-semibold,
+app-body:has(app-header .navbar-brand .brand-text) .fw-semibold,
+app-body:has(.vision-page) .fw-semibold,
+app-body:has(.contact-page) .fw-semibold,
+app-body:has(.pricing-page) .fw-semibold,
+app-body:has(.about-page) .fw-semibold,
+app-body:has(.trial-page) .fw-semibold,
+app-body:has(.whywe-page) .fw-semibold,
+app-body:has(.pricing-info-page) .fw-semibold {
+  font-weight: var(--company-font-semibold) !important;
+}
+
+/* Professional Background Classes for All Company Pages */
+app-body.company-portal .bg-light,
+app-body:has(.company-layout) .bg-light,
+app-body:has(app-header .navbar-brand .brand-text) .bg-light,
+app-body:has(.vision-page) .bg-light,
+app-body:has(.contact-page) .bg-light,
+app-body:has(.pricing-page) .bg-light,
+app-body:has(.about-page) .bg-light,
+app-body:has(.trial-page) .bg-light,
+app-body:has(.whywe-page) .bg-light,
+app-body:has(.pricing-info-page) .bg-light {
+  background-color: var(--company-light) !important;
+}
+
+app-body.company-portal .bg-primary,
+app-body:has(.company-layout) .bg-primary,
+app-body:has(app-header .navbar-brand .brand-text) .bg-primary,
+app-body:has(.vision-page) .bg-primary,
+app-body:has(.contact-page) .bg-primary,
+app-body:has(.pricing-page) .bg-primary,
+app-body:has(.about-page) .bg-primary,
+app-body:has(.trial-page) .bg-primary,
+app-body:has(.whywe-page) .bg-primary,
+app-body:has(.pricing-info-page) .bg-primary {
+  background: var(--company-gradient-primary) !important;
+}
+
+/* Company Layout Wrapper - Utilizing Global Theme Classes */
+app-body.company-portal .company-layout,
+app-body:has(.company-layout) .company-layout,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout,
+app-body:has(.vision-page) .company-layout,
+app-body:has(.contact-page) .company-layout,
+app-body:has(.pricing-page) .company-layout,
+app-body:has(.about-page) .company-layout,
+app-body:has(.trial-page) .company-layout,
+app-body:has(.whywe-page) .company-layout,
+app-body:has(.pricing-info-page) .company-layout {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: var(--company-font-primary) !important;
+  background-color: var(--company-light) !important;
+  color: var(--company-dark) !important;
+}
+
+/* Company Header - Utilizing Global Theme Classes */
+app-body.company-portal .company-layout .app-header,
+app-body:has(.company-layout) .company-layout .app-header,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-header,
+app-body:has(.vision-page) .company-layout .app-header,
+app-body:has(.contact-page) .company-layout .app-header,
+app-body:has(.pricing-page) .company-layout .app-header,
+app-body:has(.about-page) .company-layout .app-header,
+app-body:has(.trial-page) .company-layout .app-header,
+app-body:has(.whywe-page) .company-layout .app-header,
+app-body:has(.pricing-info-page) .company-layout .app-header {
+  /* Apply global company-header styles */
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--company-secondary-200) !important;
+  box-shadow: var(--company-shadow-md) !important;
+  transition: all var(--company-transition-normal) !important;
+  font-family: var(--company-font-primary) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: var(--company-z-sticky) !important;
+}
+
+app-body.company-portal .company-layout .app-header.scrolled,
+app-body:has(.company-layout) .company-layout .app-header.scrolled,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-header.scrolled,
+app-body:has(.vision-page) .company-layout .app-header.scrolled,
+app-body:has(.contact-page) .company-layout .app-header.scrolled,
+app-body:has(.pricing-page) .company-layout .app-header.scrolled,
+app-body:has(.about-page) .company-layout .app-header.scrolled,
+app-body:has(.trial-page) .company-layout .app-header.scrolled,
+app-body:has(.whywe-page) .company-layout .app-header.scrolled,
+app-body:has(.pricing-info-page) .company-layout .app-header.scrolled {
+  background: rgba(255, 255, 255, 1) !important;
+  box-shadow: var(--company-shadow-lg) !important;
+  border-bottom: 1px solid var(--company-secondary-200) !important;
+}
+
+/* Company Brand - Utilizing Global Theme Classes */
+app-body.company-portal .company-layout .brand-text,
+app-body:has(.company-layout) .company-layout .brand-text,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .brand-text,
+app-body:has(.vision-page) .company-layout .brand-text,
+app-body:has(.contact-page) .company-layout .brand-text,
+app-body:has(.pricing-page) .company-layout .brand-text,
+app-body:has(.about-page) .company-layout .brand-text,
+app-body:has(.trial-page) .company-layout .brand-text,
+app-body:has(.whywe-page) .company-layout .brand-text,
+app-body:has(.pricing-info-page) .company-layout .brand-text {
+  /* Apply global company-brand-text styles */
+  font-family: var(--company-font-secondary) !important;
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  background: var(--company-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  letter-spacing: -0.02em !important;
+  transition: all var(--company-transition-normal) !important;
+}
+
+/* Company Navigation - Utilizing Global Theme Classes */
+app-body.company-portal .company-layout .navbar-nav .nav-link,
+app-body:has(.company-layout) .company-layout .navbar-nav .nav-link,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .navbar-nav .nav-link,
+app-body:has(.vision-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.contact-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.pricing-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.about-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.trial-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.whywe-page) .company-layout .navbar-nav .nav-link,
+app-body:has(.pricing-info-page) .company-layout .navbar-nav .nav-link {
+  /* Apply global company-nav styles */
+  font-family: var(--company-font-primary) !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  padding: var(--company-spacing-sm) var(--company-spacing-lg) !important;
+  border-radius: var(--company-radius-lg) !important;
+  transition: all var(--company-transition-fast) !important;
+  position: relative !important;
+  margin: 0 var(--company-spacing-xs) !important;
+  color: var(--company-secondary-700) !important;
+  letter-spacing: 0.025em !important;
+}
+
+app-body.company-portal .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.company-layout) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.vision-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.contact-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.pricing-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.about-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.trial-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.whywe-page) .company-layout .navbar-nav .nav-link:hover,
+app-body:has(.pricing-info-page) .company-layout .navbar-nav .nav-link:hover {
+  background: var(--company-light) !important;
+  color: var(--company-primary) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-sm) !important;
+}
+
+app-body.company-portal .company-layout .navbar-nav .nav-link.active,
+app-body:has(.company-layout) .company-layout .navbar-nav .nav-link.active,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.vision-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.contact-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.pricing-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.about-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.trial-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.whywe-page) .company-layout .navbar-nav .nav-link.active,
+app-body:has(.pricing-info-page) .company-layout .navbar-nav .nav-link.active {
+  background: var(--company-gradient-primary) !important;
+  color: white !important;
+  box-shadow: var(--company-shadow-md) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Company CTA Buttons - Utilizing Global Theme */
+app-body.company-portal .company-layout .btn-cta-primary,
+app-body:has(.company-layout) .company-layout .btn-cta-primary,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .btn-cta-primary,
+app-body:has(.vision-page) .company-layout .btn-cta-primary,
+app-body:has(.contact-page) .company-layout .btn-cta-primary,
+app-body:has(.pricing-page) .company-layout .btn-cta-primary,
+app-body:has(.about-page) .company-layout .btn-cta-primary,
+app-body:has(.trial-page) .company-layout .btn-cta-primary,
+app-body:has(.whywe-page) .company-layout .btn-cta-primary,
+app-body:has(.pricing-info-page) .company-layout .btn-cta-primary {
+  background: var(--company-gradient-primary) !important;
+  color: white !important;
+  border: none !important;
+  padding: var(--company-spacing-sm) var(--company-spacing-xl) !important;
+  font-weight: var(--company-font-semibold) !important;
+  font-size: var(--company-text-base) !important;
+  border-radius: var(--company-radius-full) !important;
+  transition: all var(--company-transition-normal) !important;
+  box-shadow: var(--company-shadow-md) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  font-family: var(--company-font-primary) !important;
+  letter-spacing: 0.025em !important;
+}
+
+app-body.company-portal .company-layout .btn-cta-primary:hover,
+app-body:has(.company-layout) .company-layout .btn-cta-primary:hover,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .btn-cta-primary:hover,
+app-body:has(.vision-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.contact-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.pricing-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.about-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.trial-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.whywe-page) .company-layout .btn-cta-primary:hover,
+app-body:has(.pricing-info-page) .company-layout .btn-cta-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+  color: white !important;
+  background: var(--company-gradient-primary) !important;
+}
+
+/* Company Main Content - Utilizing Global Theme */
+app-body.company-portal .company-layout .app-content,
+app-body:has(.company-layout) .company-layout .app-content,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-content,
+app-body:has(.vision-page) .company-layout .app-content,
+app-body:has(.contact-page) .company-layout .app-content,
+app-body:has(.pricing-page) .company-layout .app-content,
+app-body:has(.about-page) .company-layout .app-content,
+app-body:has(.trial-page) .company-layout .app-content,
+app-body:has(.whywe-page) .company-layout .app-content,
+app-body:has(.pricing-info-page) .company-layout .app-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: var(--company-light) !important;
+}
+
+app-body.company-portal .company-layout .content-main,
+app-body:has(.company-layout) .company-layout .content-main,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .content-main,
+app-body:has(.vision-page) .company-layout .content-main,
+app-body:has(.contact-page) .company-layout .content-main,
+app-body:has(.pricing-page) .company-layout .content-main,
+app-body:has(.about-page) .company-layout .content-main,
+app-body:has(.trial-page) .company-layout .content-main,
+app-body:has(.whywe-page) .company-layout .content-main,
+app-body:has(.pricing-info-page) .company-layout .content-main {
+  flex: 1 !important;
+  background-color: var(--company-light) !important;
+}
+
+/* Company Footer - Utilizing Global Theme */
+app-body.company-portal .company-layout .app-footer,
+app-body:has(.company-layout) .company-layout .app-footer,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-footer,
+app-body:has(.vision-page) .company-layout .app-footer,
+app-body:has(.contact-page) .company-layout .app-footer,
+app-body:has(.pricing-page) .company-layout .app-footer,
+app-body:has(.about-page) .company-layout .app-footer,
+app-body:has(.trial-page) .company-layout .app-footer,
+app-body:has(.whywe-page) .company-layout .app-footer,
+app-body:has(.pricing-info-page) .company-layout .app-footer {
+  background: var(--company-gradient-hero) !important;
+  color: white !important;
+  padding: var(--company-spacing-3xl) 0 var(--company-spacing-xl) !important;
+  font-family: var(--company-font-primary) !important;
+  margin-top: auto !important;
+}
+
+app-body.company-portal .company-layout .app-footer .footer-brand,
+app-body:has(.company-layout) .company-layout .app-footer .footer-brand,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-footer .footer-brand,
+app-body:has(.vision-page) .company-layout .app-footer .footer-brand,
+app-body:has(.contact-page) .company-layout .app-footer .footer-brand,
+app-body:has(.pricing-page) .company-layout .app-footer .footer-brand,
+app-body:has(.about-page) .company-layout .app-footer .footer-brand,
+app-body:has(.trial-page) .company-layout .app-footer .footer-brand,
+app-body:has(.whywe-page) .company-layout .app-footer .footer-brand,
+app-body:has(.pricing-info-page) .company-layout .app-footer .footer-brand {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-2xl) !important;
+  font-weight: var(--company-font-bold) !important;
+  color: white !important;
+  margin-bottom: var(--company-spacing-md) !important;
+}
+
+app-body.company-portal .company-layout .app-footer .footer-links a,
+app-body:has(.company-layout) .company-layout .app-footer .footer-links a,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-footer .footer-links a,
+app-body:has(.vision-page) .company-layout .app-footer .footer-links a,
+app-body:has(.contact-page) .company-layout .app-footer .footer-links a,
+app-body:has(.pricing-page) .company-layout .app-footer .footer-links a,
+app-body:has(.about-page) .company-layout .app-footer .footer-links a,
+app-body:has(.trial-page) .company-layout .app-footer .footer-links a,
+app-body:has(.whywe-page) .company-layout .app-footer .footer-links a,
+app-body:has(.pricing-info-page) .company-layout .app-footer .footer-links a {
+  color: var(--company-light) !important;
+  text-decoration: none !important;
+  transition: all var(--company-transition-fast) !important;
+  font-size: var(--company-text-sm) !important;
+}
+
+app-body.company-portal .company-layout .app-footer .footer-links a:hover,
+app-body:has(.company-layout) .company-layout .app-footer .footer-links a:hover,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.vision-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.contact-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.pricing-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.about-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.trial-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.whywe-page) .company-layout .app-footer .footer-links a:hover,
+app-body:has(.pricing-info-page) .company-layout .app-footer .footer-links a:hover {
+  color: var(--company-accent-light) !important;
+  transform: translateX(2px) !important;
+}
+
+/* Company Footer Social Links - Utilizing Global Theme */
+app-body.company-portal .company-layout .social-links a,
+app-body:has(.company-layout) .company-layout .social-links a,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .social-links a,
+app-body:has(.vision-page) .company-layout .social-links a,
+app-body:has(.contact-page) .company-layout .social-links a,
+app-body:has(.pricing-page) .company-layout .social-links a,
+app-body:has(.about-page) .company-layout .social-links a,
+app-body:has(.trial-page) .company-layout .social-links a,
+app-body:has(.whywe-page) .company-layout .social-links a,
+app-body:has(.pricing-info-page) .company-layout .social-links a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: var(--company-radius-full) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  transition: all var(--company-transition-normal) !important;
+  font-size: var(--company-text-base) !important;
+}
+
+app-body.company-portal .company-layout .social-links a:hover,
+app-body:has(.company-layout) .company-layout .social-links a:hover,
+app-body:has(app-header .navbar-brand .brand-text) .company-layout .social-links a:hover,
+app-body:has(.vision-page) .company-layout .social-links a:hover,
+app-body:has(.contact-page) .company-layout .social-links a:hover,
+app-body:has(.pricing-page) .company-layout .social-links a:hover,
+app-body:has(.about-page) .company-layout .social-links a:hover,
+app-body:has(.trial-page) .company-layout .social-links a:hover,
+app-body:has(.whywe-page) .company-layout .social-links a:hover,
+app-body:has(.pricing-info-page) .company-layout .social-links a:hover {
+  background: var(--company-accent) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-md) !important;
+}
+
+/* Company Hero Section - Highly Specific */
+app-body.company-portal .hero-section,
+app-body:has(.company-layout) .hero-section,
+app-body:has(app-header .navbar-brand .brand-text) .hero-section,
+app-body:has(.vision-page) .hero-section,
+app-body:has(.contact-page) .hero-section,
+app-body:has(.pricing-page) .hero-section {
+  background: var(--company-gradient-hero) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 100vh !important;
+  font-family: var(--company-font-primary);
+}
+
+app-body.company-portal .hero-section::before,
+app-body:has(.company-layout) .hero-section::before,
+app-body:has(app-header .navbar-brand .brand-text) .hero-section::before,
+app-body:has(.vision-page) .hero-section::before,
+app-body:has(.contact-page) .hero-section::before,
+app-body:has(.pricing-page) .hero-section::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') !important;
+  opacity: 0.3 !important;
+}
+
+app-body.company-portal .hero-title,
+app-body:has(.company-layout) .hero-title,
+app-body:has(app-header .navbar-brand .brand-text) .hero-title,
+app-body:has(.vision-page) .hero-title,
+app-body:has(.contact-page) .hero-title,
+app-body:has(.pricing-page) .hero-title {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-5xl) !important;
+  font-weight: var(--company-font-extrabold) !important;
+  color: white !important;
+  margin-bottom: var(--company-space-6) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.05em;
+}
+
+app-body.company-portal .hero-subtitle,
+app-body:has(.company-layout) .hero-subtitle,
+app-body:has(app-header .navbar-brand .brand-text) .hero-subtitle,
+app-body:has(.vision-page) .hero-subtitle,
+app-body:has(.contact-page) .hero-subtitle,
+app-body:has(.pricing-page) .hero-subtitle {
+  font-size: var(--company-text-xl) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  margin-bottom: var(--company-space-8) !important;
+  line-height: 1.6 !important;
+  font-weight: var(--company-font-normal);
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .hero-content,
+app-body:has(.company-layout) .hero-content,
+app-body:has(app-header .navbar-brand .brand-text) .hero-content,
+app-body:has(.vision-page) .hero-content,
+app-body:has(.contact-page) .hero-content,
+app-body:has(.pricing-page) .hero-content {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Company Feature Cards - Highly Specific */
+app-body.company-portal .feature-card,
+app-body:has(.company-layout) .feature-card,
+app-body:has(app-header .navbar-brand .brand-text) .feature-card,
+app-body:has(.vision-page) .feature-card,
+app-body:has(.contact-page) .feature-card,
+app-body:has(.pricing-page) .feature-card {
+  background: white !important;
+  border: 1px solid var(--company-light-alt) !important;
+  border-radius: var(--company-radius-2xl) !important;
+  padding: var(--company-space-8) !important;
+  box-shadow: var(--company-shadow-sm) !important;
+  transition: all var(--company-transition-normal) !important;
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  font-family: var(--company-font-primary);
+}
+
+app-body.company-portal .feature-card::before,
+app-body:has(.company-layout) .feature-card::before,
+app-body:has(app-header .navbar-brand .brand-text) .feature-card::before,
+app-body:has(.vision-page) .feature-card::before,
+app-body:has(.contact-page) .feature-card::before,
+app-body:has(.pricing-page) .feature-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: var(--company-gradient-primary) !important;
+  transform: scaleX(0) !important;
+  transition: transform var(--company-transition-normal) !important;
+}
+
+app-body.company-portal .feature-card:hover,
+app-body:has(.company-layout) .feature-card:hover,
+app-body:has(app-header .navbar-brand .brand-text) .feature-card:hover,
+app-body:has(.vision-page) .feature-card:hover,
+app-body:has(.contact-page) .feature-card:hover,
+app-body:has(.pricing-page) .feature-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+  border-color: var(--company-primary-light) !important;
+}
+
+app-body.company-portal .feature-card:hover::before,
+app-body:has(.company-layout) .feature-card:hover::before,
+app-body:has(app-header .navbar-brand .brand-text) .feature-card:hover::before,
+app-body:has(.vision-page) .feature-card:hover::before,
+app-body:has(.contact-page) .feature-card:hover::before,
+app-body:has(.pricing-page) .feature-card:hover::before {
+  transform: scaleX(1) !important;
+}
+
+app-body.company-portal .feature-icon,
+app-body:has(.company-layout) .feature-icon,
+app-body:has(app-header .navbar-brand .brand-text) .feature-icon,
+app-body:has(.vision-page) .feature-icon,
+app-body:has(.contact-page) .feature-icon,
+app-body:has(.pricing-page) .feature-icon {
+  width: 64px !important;
+  height: 64px !important;
+  background: var(--company-gradient-primary) !important;
+  border-radius: var(--company-radius-xl) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  font-size: var(--company-text-xl) !important;
+  margin-bottom: var(--company-space-6) !important;
+  box-shadow: var(--company-shadow-md);
+}
+
+app-body.company-portal .feature-title,
+app-body:has(.company-layout) .feature-title,
+app-body:has(app-header .navbar-brand .brand-text) .feature-title,
+app-body:has(.vision-page) .feature-title,
+app-body:has(.contact-page) .feature-title,
+app-body:has(.pricing-page) .feature-title {
+  font-family: var(--company-font-secondary) !important;
+  font-size: var(--company-text-xl) !important;
+  font-weight: var(--company-font-bold) !important;
+  color: var(--company-dark) !important;
+  margin-bottom: var(--company-space-4) !important;
+  letter-spacing: -0.025em;
+}
+
+app-body.company-portal .feature-description,
+app-body:has(.company-layout) .feature-description,
+app-body:has(app-header .navbar-brand .brand-text) .feature-description,
+app-body:has(.vision-page) .feature-description,
+app-body:has(.contact-page) .feature-description,
+app-body:has(.pricing-page) .feature-description {
+  color: var(--company-secondary) !important;
+  line-height: 1.6 !important;
+  margin-bottom: var(--company-space-6) !important;
+  font-size: var(--company-text-base);
+  font-weight: var(--company-font-normal);
+}
+
+/* Company Stats Section - Highly Specific */
+app-body.company-portal .stats-section,
+app-body:has(.company-layout) .stats-section,
+app-body:has(app-header .navbar-brand .brand-text) .stats-section,
+app-body:has(.vision-page) .stats-section,
+app-body:has(.contact-page) .stats-section,
+app-body:has(.pricing-page) .stats-section {
+  background: var(--company-gradient-primary) !important;
+  padding: 4rem 0 !important;
+  position: relative !important;
+}
+
+app-body.company-portal .stats-section::before,
+app-body:has(.company-layout) .stats-section::before,
+app-body:has(app-header .navbar-brand .brand-text) .stats-section::before,
+app-body:has(.vision-page) .stats-section::before,
+app-body:has(.contact-page) .stats-section::before,
+app-body:has(.pricing-page) .stats-section::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>') !important;
+  opacity: 0.3 !important;
+}
+
+app-body.company-portal .stat-item,
+app-body:has(.company-layout) .stat-item,
+app-body:has(app-header .navbar-brand .brand-text) .stat-item,
+app-body:has(.vision-page) .stat-item,
+app-body:has(.contact-page) .stat-item,
+app-body:has(.pricing-page) .stat-item {
+  text-align: center !important;
+  color: white !important;
+}
+
+app-body.company-portal .stat-number,
+app-body:has(.company-layout) .stat-number,
+app-body:has(app-header .navbar-brand .brand-text) .stat-number,
+app-body:has(.vision-page) .stat-number,
+app-body:has(.contact-page) .stat-number,
+app-body:has(.pricing-page) .stat-number {
+  font-family: var(--company-font-secondary) !important;
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+app-body.company-portal .stat-label,
+app-body:has(.company-layout) .stat-label,
+app-body:has(app-header .navbar-brand .brand-text) .stat-label,
+app-body:has(.vision-page) .stat-label,
+app-body:has(.contact-page) .stat-label,
+app-body:has(.pricing-page) .stat-label {
+  font-size: 1.125rem !important;
+  opacity: 0.9 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Company Testimonials - Highly Specific */
+app-body.company-portal .testimonial-card,
+app-body:has(.company-layout) .testimonial-card,
+app-body:has(app-header .navbar-brand .brand-text) .testimonial-card,
+app-body:has(.vision-page) .testimonial-card,
+app-body:has(.contact-page) .testimonial-card,
+app-body:has(.pricing-page) .testimonial-card {
+  background: white !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  box-shadow: var(--company-shadow-md) !important;
+  position: relative !important;
+  height: 100% !important;
+}
+
+app-body.company-portal .testimonial-card::before,
+app-body:has(.company-layout) .testimonial-card::before,
+app-body:has(app-header .navbar-brand .brand-text) .testimonial-card::before,
+app-body:has(.vision-page) .testimonial-card::before,
+app-body:has(.contact-page) .testimonial-card::before,
+app-body:has(.pricing-page) .testimonial-card::before {
+  content: '"' !important;
+  position: absolute !important;
+  top: 1.5rem !important;
+  left: 1.5rem !important;
+  font-size: 4rem !important;
+  color: #dbeafe !important;
+  font-family: serif !important;
+  line-height: 1 !important;
+}
+
+app-body.company-portal .testimonial-content,
+app-body:has(.company-layout) .testimonial-content,
+app-body:has(app-header .navbar-brand .brand-text) .testimonial-content,
+app-body:has(.vision-page) .testimonial-content,
+app-body:has(.contact-page) .testimonial-content,
+app-body:has(.pricing-page) .testimonial-content {
+  font-style: italic !important;
+  color: #334155 !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.6 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+app-body.company-portal .testimonial-author,
+app-body:has(.company-layout) .testimonial-author,
+app-body:has(app-header .navbar-brand .brand-text) .testimonial-author,
+app-body:has(.vision-page) .testimonial-author,
+app-body:has(.contact-page) .testimonial-author,
+app-body:has(.pricing-page) .testimonial-author {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+app-body.company-portal .testimonial-avatar,
+app-body:has(.company-layout) .testimonial-avatar,
+app-body:has(app-header .navbar-brand .brand-text) .testimonial-avatar,
+app-body:has(.vision-page) .testimonial-avatar,
+app-body:has(.contact-page) .testimonial-avatar,
+app-body:has(.pricing-page) .testimonial-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  background: var(--company-gradient-primary) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+}
+
+/* Company Pricing - Highly Specific */
+app-body.company-portal .pricing-card,
+app-body:has(.company-layout) .pricing-card,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-card,
+app-body:has(.vision-page) .pricing-card,
+app-body:has(.contact-page) .pricing-card,
+app-body:has(.pricing-page) .pricing-card {
+  background: white !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  text-align: center !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  height: 100% !important;
+}
+
+app-body.company-portal .pricing-card.featured,
+app-body:has(.company-layout) .pricing-card.featured,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-card.featured,
+app-body:has(.vision-page) .pricing-card.featured,
+app-body:has(.contact-page) .pricing-card.featured,
+app-body:has(.pricing-page) .pricing-card.featured {
+  border-color: var(--company-primary) !important;
+  transform: scale(1.05) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+}
+
+app-body.company-portal .pricing-card.featured::before,
+app-body:has(.company-layout) .pricing-card.featured::before,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-card.featured::before,
+app-body:has(.vision-page) .pricing-card.featured::before,
+app-body:has(.contact-page) .pricing-card.featured::before,
+app-body:has(.pricing-page) .pricing-card.featured::before {
+  content: 'MOST POPULAR' !important;
+  position: absolute !important;
+  top: -12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: var(--company-gradient-primary) !important;
+  color: white !important;
+  padding: 0.25rem 1rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+}
+
+app-body.company-portal .pricing-card:hover,
+app-body:has(.company-layout) .pricing-card:hover,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-card:hover,
+app-body:has(.vision-page) .pricing-card:hover,
+app-body:has(.contact-page) .pricing-card:hover,
+app-body:has(.pricing-page) .pricing-card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+}
+
+app-body.company-portal .pricing-card.featured:hover,
+app-body:has(.company-layout) .pricing-card.featured:hover,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-card.featured:hover,
+app-body:has(.vision-page) .pricing-card.featured:hover,
+app-body:has(.contact-page) .pricing-card.featured:hover,
+app-body:has(.pricing-page) .pricing-card.featured:hover {
+  transform: scale(1.05) translateY(-8px) !important;
+}
+
+app-body.company-portal .pricing-name,
+app-body:has(.company-layout) .pricing-name,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-name,
+app-body:has(.vision-page) .pricing-name,
+app-body:has(.contact-page) .pricing-name,
+app-body:has(.pricing-page) .pricing-name {
+  font-family: var(--company-font-secondary) !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin-bottom: 1rem !important;
+}
+
+app-body.company-portal .pricing-price,
+app-body:has(.company-layout) .pricing-price,
+app-body:has(app-header .navbar-brand .brand-text) .pricing-price,
+app-body:has(.vision-page) .pricing-price,
+app-body:has(.contact-page) .pricing-price,
+app-body:has(.pricing-page) .pricing-price {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  color: var(--company-primary) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Company Contact Form - Highly Specific */
+app-body.company-portal .contact-form,
+app-body:has(.company-layout) .contact-form,
+app-body:has(app-header .navbar-brand .brand-text) .contact-form,
+app-body:has(.vision-page) .contact-form,
+app-body:has(.contact-page) .contact-form,
+app-body:has(.pricing-page) .contact-form {
+  background: white !important;
+  border-radius: var(--company-radius-2xl) !important;
+  padding: var(--company-space-8) !important;
+  box-shadow: var(--company-shadow-lg) !important;
+  font-family: var(--company-font-primary);
+}
+
+app-body.company-portal .form-group,
+app-body:has(.company-layout) .form-group,
+app-body:has(app-header .navbar-brand .brand-text) .form-group,
+app-body:has(.vision-page) .form-group,
+app-body:has(.contact-page) .form-group,
+app-body:has(.pricing-page) .form-group {
+  margin-bottom: var(--company-space-6) !important;
+}
+
+app-body.company-portal .form-label,
+app-body:has(.company-layout) .form-label,
+app-body:has(app-header .navbar-brand .brand-text) .form-label,
+app-body:has(.vision-page) .form-label,
+app-body:has(.contact-page) .form-label,
+app-body:has(.pricing-page) .form-label {
+  display: block !important;
+  font-weight: var(--company-font-semibold) !important;
+  color: var(--company-dark) !important;
+  margin-bottom: var(--company-space-2) !important;
+  font-size: var(--company-text-sm);
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .form-input,
+app-body.company-portal .form-textarea,
+app-body:has(.company-layout) .form-input,
+app-body:has(.company-layout) .form-textarea,
+app-body:has(app-header .navbar-brand .brand-text) .form-input,
+app-body:has(app-header .navbar-brand .brand-text) .form-textarea,
+app-body:has(.vision-page) .form-input,
+app-body:has(.vision-page) .form-textarea,
+app-body:has(.contact-page) .form-input,
+app-body:has(.contact-page) .form-textarea,
+app-body:has(.pricing-page) .form-input,
+app-body:has(.pricing-page) .form-textarea {
+  width: 100% !important;
+  padding: var(--company-space-4) !important;
+  border: 2px solid var(--company-light-alt) !important;
+  border-radius: var(--company-radius-lg) !important;
+  font-size: var(--company-text-base) !important;
+  transition: all var(--company-transition-normal) !important;
+  background: white !important;
+  font-family: var(--company-font-primary);
+  font-weight: var(--company-font-normal);
+}
+
+app-body.company-portal .form-input:focus,
+app-body.company-portal .form-textarea:focus,
+app-body:has(.company-layout) .form-input:focus,
+app-body:has(.company-layout) .form-textarea:focus,
+app-body:has(app-header .navbar-brand .brand-text) .form-input:focus,
+app-body:has(app-header .navbar-brand .brand-text) .form-textarea:focus,
+app-body:has(.vision-page) .form-input:focus,
+app-body:has(.vision-page) .form-textarea:focus,
+app-body:has(.contact-page) .form-input:focus,
+app-body:has(.contact-page) .form-textarea:focus,
+app-body:has(.pricing-page) .form-input:focus,
+app-body:has(.pricing-page) .form-textarea:focus {
+  outline: none !important;
+  border-color: var(--company-primary) !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+app-body.company-portal .form-textarea,
+app-body:has(.company-layout) .form-textarea,
+app-body:has(app-header .navbar-brand .brand-text) .form-textarea,
+app-body:has(.vision-page) .form-textarea,
+app-body:has(.contact-page) .form-textarea,
+app-body:has(.pricing-page) .form-textarea {
+  resize: vertical !important;
+  min-height: 120px !important;
+}
+
+/* Company Buttons - Enhanced */
+app-body.company-portal .btn-primary,
+app-body:has(.company-layout) .btn-primary,
+app-body:has(app-header .navbar-brand .brand-text) .btn-primary,
+app-body:has(.vision-page) .btn-primary,
+app-body:has(.contact-page) .btn-primary,
+app-body:has(.pricing-page) .btn-primary {
+  background: var(--company-gradient-primary) !important;
+  color: white !important;
+  border: none !important;
+  padding: var(--company-space-3) var(--company-space-6) !important;
+  font-weight: var(--company-font-semibold) !important;
+  font-size: var(--company-text-base) !important;
+  border-radius: var(--company-radius-lg) !important;
+  transition: all var(--company-transition-normal) !important;
+  box-shadow: var(--company-shadow-md) !important;
+  font-family: var(--company-font-primary) !important;
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .btn-primary:hover,
+app-body:has(.company-layout) .btn-primary:hover,
+app-body:has(app-header .navbar-brand .brand-text) .btn-primary:hover,
+app-body:has(.vision-page) .btn-primary:hover,
+app-body:has(.contact-page) .btn-primary:hover,
+app-body:has(.pricing-page) .btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+  color: white !important;
+  background: var(--company-gradient-primary) !important;
+}
+
+app-body.company-portal .btn-success,
+app-body:has(.company-layout) .btn-success,
+app-body:has(app-header .navbar-brand .brand-text) .btn-success,
+app-body:has(.vision-page) .btn-success,
+app-body:has(.contact-page) .btn-success,
+app-body:has(.pricing-page) .btn-success {
+  background: var(--company-gradient-success) !important;
+  color: white !important;
+  border: none !important;
+  padding: var(--company-space-3) var(--company-space-6) !important;
+  font-weight: var(--company-font-semibold) !important;
+  font-size: var(--company-text-base) !important;
+  border-radius: var(--company-radius-lg) !important;
+  transition: all var(--company-transition-normal) !important;
+  box-shadow: var(--company-shadow-md) !important;
+  font-family: var(--company-font-primary) !important;
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .btn-success:hover,
+app-body:has(.company-layout) .btn-success:hover,
+app-body:has(app-header .navbar-brand .brand-text) .btn-success:hover,
+app-body:has(.vision-page) .btn-success:hover,
+app-body:has(.contact-page) .btn-success:hover,
+app-body:has(.pricing-page) .btn-success:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+  color: white !important;
+  background: var(--company-gradient-success) !important;
+}
+
+app-body.company-portal .btn-warning,
+app-body:has(.company-layout) .btn-warning,
+app-body:has(app-header .navbar-brand .brand-text) .btn-warning,
+app-body:has(.vision-page) .btn-warning,
+app-body:has(.contact-page) .btn-warning,
+app-body:has(.pricing-page) .btn-warning {
+  background: var(--company-gradient-warning) !important;
+  color: white !important;
+  border: none !important;
+  padding: var(--company-space-3) var(--company-space-6) !important;
+  font-weight: var(--company-font-semibold) !important;
+  font-size: var(--company-text-base) !important;
+  border-radius: var(--company-radius-lg) !important;
+  transition: all var(--company-transition-normal) !important;
+  box-shadow: var(--company-shadow-md) !important;
+  font-family: var(--company-font-primary) !important;
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .btn-warning:hover,
+app-body:has(.company-layout) .btn-warning:hover,
+app-body:has(app-header .navbar-brand .brand-text) .btn-warning:hover,
+app-body:has(.vision-page) .btn-warning:hover,
+app-body:has(.contact-page) .btn-warning:hover,
+app-body:has(.pricing-page) .btn-warning:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+  color: white !important;
+  background: var(--company-gradient-warning) !important;
+}
+
+app-body.company-portal .btn-outline-light,
+app-body:has(.company-layout) .btn-outline-light,
+app-body:has(app-header .navbar-brand .brand-text) .btn-outline-light,
+app-body:has(.vision-page) .btn-outline-light,
+app-body:has(.contact-page) .btn-outline-light,
+app-body:has(.pricing-page) .btn-outline-light {
+  background: transparent !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+  padding: var(--company-space-3) var(--company-space-6) !important;
+  font-weight: var(--company-font-semibold) !important;
+  font-size: var(--company-text-base) !important;
+  border-radius: var(--company-radius-lg) !important;
+  transition: all var(--company-transition-normal) !important;
+  font-family: var(--company-font-primary) !important;
+  letter-spacing: 0.025em;
+}
+
+app-body.company-portal .btn-outline-light:hover,
+app-body:has(.company-layout) .btn-outline-light:hover,
+app-body:has(app-header .navbar-brand .brand-text) .btn-outline-light:hover,
+app-body:has(.vision-page) .btn-outline-light:hover,
+app-body:has(.contact-page) .btn-outline-light:hover,
+app-body:has(.pricing-page) .btn-outline-light:hover {
+  background: white !important;
+  color: var(--company-primary) !important;
+  border-color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--company-shadow-xl) !important;
+}
+
+/* Company Footer - Highly Specific */
+app-body.company-portal .app-footer,
+app-body:has(.company-layout) .app-footer,
+app-body:has(app-header .navbar-brand .brand-text) .app-footer,
+app-body:has(.vision-page) .app-footer,
+app-body:has(.contact-page) .app-footer,
+app-body:has(.pricing-page) .app-footer {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: white !important;
+  padding: 4rem 0 2rem !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+app-body.company-portal .app-footer::before,
+app-body:has(.company-layout) .app-footer::before,
+app-body:has(app-header .navbar-brand .brand-text) .app-footer::before,
+app-body:has(.vision-page) .app-footer::before,
+app-body:has(.contact-page) .app-footer::before,
+app-body:has(.pricing-page) .app-footer::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, var(--company-primary), transparent) !important;
+  opacity: 0.3 !important;
+}
+
+app-body.company-portal .footer-brand,
+app-body:has(.company-layout) .footer-brand,
+app-body:has(app-header .navbar-brand .brand-text) .footer-brand,
+app-body:has(.vision-page) .footer-brand,
+app-body:has(.contact-page) .footer-brand,
+app-body:has(.pricing-page) .footer-brand {
+  font-family: var(--company-font-secondary) !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+app-body.company-portal .footer-links,
+app-body:has(.company-layout) .footer-links,
+app-body:has(app-header .navbar-brand .brand-text) .footer-links,
+app-body:has(.vision-page) .footer-links,
+app-body:has(.contact-page) .footer-links,
+app-body:has(.pricing-page) .footer-links {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+app-body.company-portal .footer-links li,
+app-body:has(.company-layout) .footer-links li,
+app-body:has(app-header .navbar-brand .brand-text) .footer-links li,
+app-body:has(.vision-page) .footer-links li,
+app-body:has(.contact-page) .footer-links li,
+app-body:has(.pricing-page) .footer-links li {
+  margin-bottom: 0.5rem !important;
+}
+
+app-body.company-portal .footer-links a,
+app-body:has(.company-layout) .footer-links a,
+app-body:has(app-header .navbar-brand .brand-text) .footer-links a,
+app-body:has(.vision-page) .footer-links a,
+app-body:has(.contact-page) .footer-links a,
+app-body:has(.pricing-page) .footer-links a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+app-body.company-portal .footer-links a:hover,
+app-body:has(.company-layout) .footer-links a:hover,
+app-body:has(app-header .navbar-brand .brand-text) .footer-links a:hover,
+app-body:has(.vision-page) .footer-links a:hover,
+app-body:has(.contact-page) .footer-links a:hover,
+app-body:has(.pricing-page) .footer-links a:hover {
+  color: white !important;
+  transform: translateX(4px) !important;
+}
+
+app-body.company-portal .social-links,
+app-body:has(.company-layout) .social-links,
+app-body:has(app-header .navbar-brand .brand-text) .social-links,
+app-body:has(.vision-page) .social-links,
+app-body:has(.contact-page) .social-links,
+app-body:has(.pricing-page) .social-links {
+  display: flex !important;
+  gap: 1rem !important;
+}
+
+app-body.company-portal .social-links a,
+app-body:has(.company-layout) .social-links a,
+app-body:has(app-header .navbar-brand .brand-text) .social-links a,
+app-body:has(.vision-page) .social-links a,
+app-body:has(.contact-page) .social-links a,
+app-body:has(.pricing-page) .social-links a {
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50% !important;
+  color: white !important;
+  transition: all 0.3s ease !important;
+}
+
+app-body.company-portal .social-links a:hover,
+app-body:has(.company-layout) .social-links a:hover,
+app-body:has(app-header .navbar-brand .brand-text) .social-links a:hover,
+app-body:has(.vision-page) .social-links a:hover,
+app-body:has(.contact-page) .social-links a:hover,
+app-body:has(.pricing-page) .social-links a:hover {
+  background: var(--company-primary) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: var(--company-shadow-lg) !important;
+}
+
+/* Company Responsive Design - Highly Specific */
+@media (max-width: 768px) {
+  app-body.company-portal .hero-title,
+  app-body:has(.company-layout) .hero-title,
+  app-body:has(app-header .navbar-brand .brand-text) .hero-title,
+  app-body:has(.vision-page) .hero-title,
+  app-body:has(.contact-page) .hero-title,
+  app-body:has(.pricing-page) .hero-title {
+    font-size: 2.5rem !important;
+  }
+  
+  app-body.company-portal .hero-subtitle,
+  app-body:has(.company-layout) .hero-subtitle,
+  app-body:has(app-header .navbar-brand .brand-text) .hero-subtitle,
+  app-body:has(.vision-page) .hero-subtitle,
+  app-body:has(.contact-page) .hero-subtitle,
+  app-body:has(.pricing-page) .hero-subtitle {
+    font-size: 1.125rem !important;
+  }
+  
+  app-body.company-portal .hero-actions,
+  app-body:has(.company-layout) .hero-actions,
+  app-body:has(app-header .navbar-brand .brand-text) .hero-actions,
+  app-body:has(.vision-page) .hero-actions,
+  app-body:has(.contact-page) .hero-actions,
+  app-body:has(.pricing-page) .hero-actions {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  app-body.company-portal .hero-actions .btn,
+  app-body:has(.company-layout) .hero-actions .btn,
+  app-body:has(app-header .navbar-brand .brand-text) .hero-actions .btn,
+  app-body:has(.vision-page) .hero-actions .btn,
+  app-body:has(.contact-page) .hero-actions .btn,
+  app-body:has(.pricing-page) .hero-actions .btn {
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+  
+  app-body.company-portal .stat-number,
+  app-body:has(.company-layout) .stat-number,
+  app-body:has(app-header .navbar-brand .brand-text) .stat-number,
+  app-body:has(.vision-page) .stat-number,
+  app-body:has(.contact-page) .stat-number,
+  app-body:has(.pricing-page) .stat-number {
+    font-size: 2rem !important;
+  }
+  
+  app-body.company-portal .pricing-card.featured,
+  app-body:has(.company-layout) .pricing-card.featured,
+  app-body:has(app-header .navbar-brand .brand-text) .pricing-card.featured,
+  app-body:has(.vision-page) .pricing-card.featured,
+  app-body:has(.contact-page) .pricing-card.featured,
+  app-body:has(.pricing-page) .pricing-card.featured {
+    transform: none !important;
+  }
+  
+  app-body.company-portal .pricing-card.featured:hover,
+  app-body:has(.company-layout) .pricing-card.featured:hover,
+  app-body:has(app-header .navbar-brand .brand-text) .pricing-card.featured:hover,
+  app-body:has(.vision-page) .pricing-card.featured:hover,
+  app-body:has(.contact-page) .pricing-card.featured:hover,
+  app-body:has(.pricing-page) .pricing-card.featured:hover {
+    transform: translateY(-8px) !important;
+  }
+}
+
+/* Company Animations - Highly Specific */
+@keyframes companyFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes companyFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+app-body.company-portal .animate-fade-in,
+app-body:has(.company-layout) .animate-fade-in,
+app-body:has(app-header .navbar-brand .brand-text) .animate-fade-in,
+app-body:has(.vision-page) .animate-fade-in,
+app-body:has(.contact-page) .animate-fade-in,
+app-body:has(.pricing-page) .animate-fade-in {
+  animation: companyFadeInUp 0.8s ease-out !important;
+}
+
+app-body.company-portal .animate-float,
+app-body:has(.company-layout) .animate-float,
+app-body:has(app-header .navbar-brand .brand-text) .animate-float,
+app-body:has(.vision-page) .animate-float,
+app-body:has(.contact-page) .animate-float,
+app-body:has(.pricing-page) .animate-float {
+  animation: companyFloat 6s ease-in-out infinite !important;
+}
+
+/* Company Utility Classes - Highly Specific */
+app-body.company-portal .text-gradient,
+app-body:has(.company-layout) .text-gradient,
+app-body:has(app-header .navbar-brand .brand-text) .text-gradient,
+app-body:has(.vision-page) .text-gradient,
+app-body:has(.contact-page) .text-gradient,
+app-body:has(.pricing-page) .text-gradient {
+  background: var(--company-gradient-primary) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+app-body.company-portal .section-padding,
+app-body:has(.company-layout) .section-padding,
+app-body:has(app-header .navbar-brand .brand-text) .section-padding,
+app-body:has(.vision-page) .section-padding,
+app-body:has(.contact-page) .section-padding,
+app-body:has(.pricing-page) .section-padding {
+  padding: 4rem 0 !important;
+}
+
+/* Company Vision Page Specific - Highly Specific */
+app-body.company-portal .hero-section-vision,
+app-body:has(.company-layout) .hero-section-vision,
+app-body:has(app-header .navbar-brand .brand-text) .hero-section-vision,
+app-body:has(.vision-page) .hero-section-vision,
+app-body:has(.contact-page) .hero-section-vision,
+app-body:has(.pricing-page) .hero-section-vision {
+  background: var(--company-gradient-light) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+app-body.company-portal .hero-section-vision::before,
+app-body:has(.company-layout) .hero-section-vision::before,
+app-body:has(app-header .navbar-brand .brand-text) .hero-section-vision::before,
+app-body:has(.vision-page) .hero-section-vision::before,
+app-body:has(.contact-page) .hero-section-vision::before,
+app-body:has(.pricing-page) .hero-section-vision::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(37, 99, 235, 0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') !important;
+  opacity: 0.5 !important;
+}
+
+app-body.company-portal .vision-points .point-item,
+app-body:has(.company-layout) .vision-points .point-item,
+app-body:has(app-header .navbar-brand .brand-text) .vision-points .point-item,
+app-body:has(.vision-page) .vision-points .point-item,
+app-body:has(.contact-page) .vision-points .point-item,
+app-body:has(.pricing-page) .vision-points .point-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+app-body.company-portal .vision-points .point-item i,
+app-body:has(.company-layout) .vision-points .point-item i,
+app-body:has(app-header .navbar-brand .brand-text) .vision-points .point-item i,
+app-body:has(.vision-page) .vision-points .point-item i,
+app-body:has(.contact-page) .vision-points .point-item i,
+app-body:has(.pricing-page) .vision-points .point-item i {
+  margin-top: 2px !important;
+  flex-shrink: 0 !important;
+}
+
+app-body.company-portal .floating-card,
+app-body:has(.company-layout) .floating-card,
+app-body:has(app-header .navbar-brand .brand-text) .floating-card,
+app-body:has(.vision-page) .floating-card,
+app-body:has(.contact-page) .floating-card,
+app-body:has(.pricing-page) .floating-card {
+  animation: companyFloat 6s ease-in-out infinite !important;
+}
+
+app-body.company-portal .divider-gradient,
+app-body:has(.company-layout) .divider-gradient,
+app-body:has(app-header .navbar-brand .brand-text) .divider-gradient,
+app-body:has(.vision-page) .divider-gradient,
+app-body:has(.contact-page) .divider-gradient,
+app-body:has(.pricing-page) .divider-gradient {
+  height: 3px !important;
+  background: var(--company-gradient-primary) !important;
+  border-radius: 9999px !important;
+  width: 80px !important;
+}

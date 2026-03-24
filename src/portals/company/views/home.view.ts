@@ -3,7 +3,6 @@ import {AppSetup, AppSetupService, TypingComponent} from "@app-global";
 
 @Component({
   templateUrl: './templates/home.html',
-  //styleUrls: [`./templates/home.css`],
   standalone: false
 })
 export class HomeView implements OnInit {

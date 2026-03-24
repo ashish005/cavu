@@ -1,77 +1,185 @@
-<div class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-md-10">
-                <div class="text-center mb-5">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="mb-3">
-                            <span class="avatar w-56 bg-success text-white rounded-circle d-flex align-items-center justify-content-center">
-                                <span class="fa fa-money fa-2x"></span>
-                            </span>
+<div class="pricing-info-page">
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-5">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="hero-content">
+                        <div class="badge bg-white bg-opacity-20 text-white mb-3 d-inline-block px-3 py-2">
+                            <i class="fa fa-tags me-2"></i>Pricing Details
                         </div>
-                        <div>
-                            <h1 class="display-5 fw-bold">Pricing Simplified</h1>
-                            <p class="lead text-muted">for your business</p>
+                        <h1 class="hero-title animate-fade-in">Pricing Simplified</h1>
+                        <p class="hero-subtitle animate-slide-up">Transparent, flexible pricing plans designed for your business growth</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Software Selection Tabs -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="text-center mb-5">
+                        <h2 class="display-5 fw-bold text-gradient">Choose Your Software</h2>
+                        <p class="lead text-muted">Select the software solution that fits your needs</p>
+                    </div>
+                    
+                    <!-- Software Tabs -->
+                    <div class="feature-card mb-5">
+                        <div class="p-4">
+                            <div class="nav nav-pills d-flex flex-wrap justify-content-center gap-2" role="tablist">
+                                <ng-template ngFor let-software [ngForOf]="apiResolver.masterType.softwares" let-i="index">
+                                    <button class="nav-link px-4 py-2" 
+                                            [class.active]="activeSoftware?.code == software.code"
+                                            [class.bg-primary]="activeSoftware?.code == software.code"
+                                            [class.text-white]="activeSoftware?.code == software.code"
+                                            (click)="showBySoftware(software)" 
+                                            type="button">
+                                        <i class="fa fa-box me-2"></i>{{software.code}}
+                                    </button>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing Comparison Table -->
+                    <div class="feature-card">
+                        <div class="p-4">
+                            <div class="text-center mb-4">
+                                <h3 class="display-6 fw-bold text-gradient">Plan Comparison Chart</h3>
+                                <p class="text-muted">Compare features across different license types</p>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-0">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="feature-icon me-2">
+                                                        <i class="fa fa-list"></i>
+                                                    </div>
+                                                    <span class="fw-bold">Features</span>
+                                                </div>
+                                            </th>
+                                            <ng-template ngFor let-licenseType [ngForOf]="software.licenseTypes" let-i="index">
+                                                <th class="border-0 text-center">
+                                                    <div class="feature-icon mx-auto mb-2" style="width: 40px; height: 40px;">
+                                                        <i class="fa fa-cube"></i>
+                                                    </div>
+                                                    <div class="fw-bold">
+                                                        <h6 class="text-uppercase mb-0">{{licenseType.name}}</h6>
+                                                    </div>
+                                                </th>
+                                            </ng-template>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-template ngFor let-row [ngForOf]="software.licensingFeatures" let-i="index">
+                                            <tr>
+                                                <td class="border-0">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="feature-icon me-2" style="width: 30px; height: 30px; font-size: 0.875rem;">
+                                                            <i class="fa fa-check"></i>
+                                                        </div>
+                                                        <span class="fw-bold">{{ row.name }}</span>
+                                                    </div>
+                                                </td>
+                                                <ng-template ngFor let-feature [ngForOf]="row?.softwareLicenseFeatures" let-i="index">
+                                                    <td class="border-0 text-center">
+                                                        <div class="feature-icon mx-auto mb-2" style="width: 30px; height: 30px; font-size: 0.75rem; background: var(--company-success);">
+                                                            <i class="fa fa-star"></i>
+                                                        </div>
+                                                        <span class="badge bg-light text-dark px-3 py-2">{{ feature.value }}</span>
+                                                    </td>
+                                                </ng-template>
+                                            </tr>
+                                        </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- No Features Message -->
+                            <div class="text-center py-5" *ngIf="!software.licensingFeatures?.length">
+                                <div class="feature-card">
+                                    <div class="p-5">
+                                        <div class="feature-icon mx-auto mb-3" style="width: 60px; height: 60px;">
+                                            <i class="fa fa-clock fa-2x"></i>
+                                        </div>
+                                        <h4 class="feature-title">Plan Under Review</h4>
+                                        <p class="feature-description">We're currently updating our pricing plans. Please check back soon or contact us for more information.</p>
+                                        <button class="btn btn-primary mt-3" [routerLink]="['/contact']">
+                                            <i class="fa fa-envelope me-2"></i>Contact Sales
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="nav nav-tabs border-info mb-4" role="tablist">
-            <ng-template ngFor let-software [ngForOf]="apiResolver.masterType.softwares" let-i="index">
-                <button class="nav-link" [class.active]="activeSoftware?.code == software.code"
-                        (click)="showBySoftware(software)" type="button">
-                    {{software.code}}
-                </button>
-            </ng-template>
-        </div>
-    </div>
-    <div class="container">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white text-center">
-                <h2 class="fw-bold mb-0">Plan Comparison Chart</h2>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section-padding bg-light" *ngIf="software.licensingFeatures?.length">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-gradient">Why Choose Our Plans?</h2>
+                <p class="lead text-muted">Flexible pricing that grows with your business</p>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th><span class="fw-bold">Features</span></th>
-                                <ng-template ngFor let-licenseType
-                                             [ngForOf]="software.licenseTypes" let-i="index">
-                                    <th class="text-center">
-                                        <div class="fw-bold">
-                                            <h6 class="text-uppercase mb-0">{{licenseType.name}}</h6>
-                                        </div>
-                                    </th>
-                                </ng-template>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-template ngFor let-row [ngForOf]="software.licensingFeatures"
-                                         let-i="index">
-                                <tr>
-                                    <td><span class="fw-bold text-sm">{{ row.name }}</span></td>
-                                    <ng-template ngFor let-feature
-                                                 [ngForOf]="row?.softwareLicenseFeatures"
-                                                 let-i="index">
-                                        <td class="text-center">
-                                            <span class="badge bg-light text-dark">{{ feature.value }}</span>
-                                        </td>
-                                    </ng-template>
-                                </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto">
+                            <i class="fa fa-dollar-sign fa-2x"></i>
+                        </div>
+                        <h4 class="feature-title">Transparent Pricing</h4>
+                        <p class="feature-description">No hidden fees or surprise charges. What you see is what you pay.</p>
+                    </div>
                 </div>
-                <div class="alert alert-info text-center" *ngIf="!software.licensingFeatures?.length">
-                    <i class="fa fa-info-circle me-2"></i>
-                    Plan is Under Review
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-success);">
+                            <i class="fa fa-arrows-alt fa-2x"></i>
+                        </div>
+                        <h4 class="feature-title">Scalable Solutions</h4>
+                        <p class="feature-description">Start small and scale up as your business grows and needs evolve.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card text-center h-100">
+                        <div class="feature-icon mx-auto" style="background: var(--company-accent);">
+                            <i class="fa fa-headset fa-2x"></i>
+                        </div>
+                        <h4 class="feature-title">Premium Support</h4>
+                        <p class="feature-description">Get expert help when you need it with our dedicated support team.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!--<pricing-plan></pricing-plan>-->
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section bg-primary text-white py-5">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+                <p class="lead mb-4">Choose the perfect plan for your business needs</p>
+                <div class="cta-buttons d-flex gap-3 justify-content-center flex-wrap">
+                    <button class="btn btn-warning btn-lg px-5 py-3 fw-bold" [routerLink]="['/trial']">
+                        <i class="fa fa-rocket me-2"></i>Start Free Trial
+                    </button>
+                    <button class="btn btn-outline-light btn-lg px-5 py-3 fw-bold" [routerLink]="['/contact']">
+                        <i class="fa fa-phone me-2"></i>Schedule Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
