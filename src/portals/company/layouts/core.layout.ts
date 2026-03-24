@@ -4,6 +4,7 @@ import { AppSetupService, AppSetup } from "@app-global";
 
 @Component({
     templateUrl: './core.layout.html',
+    styleUrls: ['./company-portal.scss'],
     standalone: false
 })
 export class CoreLayout {

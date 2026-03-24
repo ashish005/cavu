@@ -42,13 +42,13 @@ export const routes: Routes = [
         path: '', component: CoreLayout, canActivate: [ appLoggedInGuard ],
         children: [
           { path: '', redirectTo: 'home', pathMatch: 'full'},
-            {path: 'home', component: HomeView},
-            {path: 'about', component: AboutView},
-            {path: 'vision', component: VisionView},
-            {path: 'whywe', component: WhyweView},
-            {path: 'contact', component: ContactView},
-            {path: 'pricing', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: PricingInfoView},
-            {path: 'trial', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: TrialBusinessView}
+            {path: 'home', component: HomeView, data: { title: 'Home - EnRator | Digital Transformation & IT Solutions' }},
+            {path: 'about', component: AboutView, data: { title: 'About Us - EnRator | Our Company & Team' }},
+            {path: 'vision', component: VisionView, data: { title: 'Vision & Mission - EnRator | Our Core Values' }},
+            {path: 'whywe', component: WhyweView, data: { title: 'Why Choose Us - EnRator | Excellence & Expertise' }},
+            {path: 'contact', component: ContactView, data: { title: 'Contact Us - EnRator | Get In Touch' }},
+            {path: 'pricing', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: PricingInfoView, data: { title: 'Pricing - EnRator | Plans & Pricing' }},
+            {path: 'trial', canActivate: [ companyRouteGuard ], resolve: {items: TrialBusinessAPIResolver}, component: TrialBusinessView, data: { title: 'Free Trial - EnRator | Start Your Journey' }}
         ]
     }
 ];
