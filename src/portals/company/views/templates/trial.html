@@ -9,7 +9,7 @@
                             <i class="fa fa-rocket me-2"></i>Free Trial
                         </div>
                         <h1 class="hero-title">Start Your 14-Day Free Trial</h1>
-                        <p class="hero-subtitle">Experience the full power of EnRator with no credit card required. Get started in minutes.</p>
+                        <p class="hero-subtitle">Experience full power of EnRator with no credit card required. Get started in minutes.</p>
                     </div>
                 </div>
             </div>
@@ -20,170 +20,177 @@
     <section class="section-padding" *ngIf="!successResp?.isSuccess">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="text-center mb-5">
-                        <h2 class="display-5 fw-bold text-gradient">Organization Registration</h2>
-                        <p class="lead text-muted">Tell us about your business to get started</p>
+                <div class="col-lg-8 b-a box-radius-2 box-shadow-1">
+                    <div class="contact-form-card highlighted-form">
+                        <form class="contact-form" [formGroup]="customForm">
+                            <!-- Form Header -->
+                            <div class="form-header text-center mb-4">
+                                <div class="badge badge-primary mb-3">
+                                    <i class="fa fa-rocket me-2"></i>Start Your Free Trial
+                                </div>
+                                <h3 class="form-title">Complete Your Registration</h3>
+                                <p class="form-subtitle">Fill in details below to create your account</p>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4 b-r">
+                                    <!-- Personal Information Section -->
+                                    <div class="form-section mb-4">
+                                        <div class="section-header mb-3">
+                                            <div>
+                                                <h5 class="section-title mb-1">Personal Information</h5>
+                                                <p class="section-subtitle">Your contact details</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <div class="md-form-group float-label">
+                                                    <input type="text" formControlName="contactPersonName" class="md-input"
+                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }"
+                                                           placeholder="First and last name">
+                                                    <label>Full Name</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="md-form-group float-label">
+                                                    <input type="email" formControlName="contactPersonEmail" class="md-input"
+                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }"
+                                                           placeholder="your.email@company.com">
+                                                    <label>Work Email</label>
+                                                    <div *ngIf="submitted && f['contactPersonEmail'].errors" class="text-danger small mt-1">
+                                                        <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
+                                                        <div *ngIf="f['contactPersonEmail'].errors?.['email']">Please enter a valid email</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="md-form-group float-label">
+                                                    <input type="tel" formControlName="contactPersonMobile" class="md-input"
+                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }"
+                                                           placeholder="+1 (555) 123-4567">
+                                                    <label>Mobile Number</label>
+                                                    <div *ngIf="submitted && f['contactPersonMobile'].errors" class="text-danger small mt-1">
+                                                        <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile number is required</div>
+                                                        <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Please enter a valid phone number</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <!-- Company Information Section -->
+                                    <div class="form-section mb-4">
+                                        <div class="section-header mb-3">
+                                            <div>
+                                                <h5 class="section-title mb-1">Company Information</h5>
+                                                <p class="section-subtitle">Your organization details</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            <div class="col-8">
+                                                <div class="md-form-group float-label">
+                                                    <input type="text" formControlName="name" class="md-input"
+                                                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                                                           placeholder="Enter your registered company name">
+                                                    <label>Company Name</label>
+                                                    <div *ngIf="submitted && f['name'].errors" class="text-danger small mt-1">
+                                                        Company name is required
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="md-form-group float-label p-0">
+                                                    <label class="text-xs text-muted m-0">Operated By</label>
+                                                    <select class="md-input" formControlName="operatedById">
+                                                        <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="md-form-group float-label p-0">
+                                                    <label class="text-xs text-muted m-0">Country</label>
+                                                    <select class="md-input" formControlName="countryId">
+                                                        <option value="">Select country</option>
+                                                        <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="md-form-group float-label">
+                                                    <input type="text" formControlName="address" class="md-input"
+                                                           [ngClass]="{ 'is-invalid': submitted && f['address'].errors }"
+                                                           placeholder="Complete business address">
+                                                    <label>Business Address</label>
+                                                    <div *ngIf="submitted && f['address'].errors" class="text-danger small mt-1">
+                                                        Business address is required
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="md-form-group float-label p-0">
+                                                    <label class="text-xs text-muted m-0">Software</label>
+                                                    <select class="md-input" formControlName="softwareId">
+                                                        <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="md-form-group float-label p-0">
+                                                    <label class="text-xs text-muted m-0">Business Type</label>
+                                                    <select class="md-input" formControlName="orgBusinessTypeId">
+                                                        <option value="">Select business type</option>
+                                                        <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Terms and Submit -->
+                            <div class="form-section mb-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                                <label class="form-check-label" for="terms">
+                                                    I agree to the <a href="#" class="link-primary">Terms of Service</a> and <a href="#" class="link-primary">Privacy Policy</a>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-4">
+                                    <i class="fa fa-info-circle me-2"></i>
+                                    <strong>Important:</strong> All account communications and trial updates will be sent to the provided contact details. Please ensure information is accurate.
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="row mt-4">
+                                <div class="col-12 text-center">
+                                    <button class="btn btn-primary btn-lg px-5 py-3" (click)="onSubmit(customForm)"
+                                            [disabled]="!customForm.valid || submitted">
+                                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
+                                        {{ submitted ? 'Creating Your Account...' : 'Start Free Trial Now' }}
+                                    </button>
+                                </div>
+                                
+                                <div class="col-12 text-center mt-3" *ngIf="submitted">
+                                    <div class="alert alert-warning">
+                                        <i class="fa fa-clock-o me-2"></i>
+                                        Setting up your business account may take a few moments. Please be patient...
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    
-                    <form class="contact-form" [formGroup]="customForm">
-                        <div class="row g-4">
-                            <!-- Business Information -->
-                            <div class="col-lg-6">
-                                <div class="mb-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="feature-icon me-3">
-                                            <i class="fa fa-building"></i>
-                                        </div>
-                                        <h5 class="feature-title mb-0">Business Information</h5>
-                                    </div>
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Business Name *</label>
-                                                <input type="text" formControlName="name" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['name'].errors }" placeholder="Enter your business name">
-                                                <div *ngIf="submitted && f['name'].errors" class="text-danger small mt-1">
-                                                    Business name is required
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label class="form-label">Country</label>
-                                                <select class="form-input" formControlName="countryId">
-                                                    <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label class="form-label">Location *</label>
-                                                <input type="text" formControlName="address" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['address'].errors }" placeholder="Business address">
-                                                <div *ngIf="submitted && f['address'].errors" class="text-danger small mt-1">
-                                                    Address is required
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Operated By</label>
-                                                <select class="form-input" formControlName="operatedById">
-                                                    <option *ngFor="let entity of apiResolver?.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-lg-8">
-                                            <div class="form-group">
-                                                <label class="form-label">Software</label>
-                                                <select class="form-input" formControlName="softwareId">
-                                                    <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
-                                                <label class="form-label">Business Type</label>
-                                                <select class="form-input" formControlName="orgBusinessTypeId">
-                                                    <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Contact Information -->
-                            <div class="col-lg-6">
-                                <div class="mb-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="feature-icon me-3" style="background: var(--company-success);">
-                                            <i class="fa fa-user"></i>
-                                        </div>
-                                        <h5 class="feature-title mb-0">Contact Information</h5>
-                                    </div>
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Contact Person Name *</label>
-                                                <input type="text" formControlName="contactPersonName" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }" placeholder="Full name">
-                                                <div *ngIf="submitted && f['contactPersonName'].errors" class="text-danger small mt-1">
-                                                    <div *ngIf="f['contactPersonName'].errors?.['required']">Name is required</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Email Address *</label>
-                                                <input type="email" formControlName="contactPersonEmail" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }" placeholder="work@email.com">
-                                                <div *ngIf="submitted && f['contactPersonEmail'].errors" class="text-danger small mt-1">
-                                                    <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
-                                                    <div *ngIf="f['contactPersonEmail'].errors?.['email']">Email must be valid</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Mobile Number *</label>
-                                                <input type="tel" formControlName="contactPersonMobile" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }" placeholder="+1 (555) 123-4567">
-                                                <div *ngIf="submitted && f['contactPersonMobile'].errors" class="text-danger small mt-1">
-                                                    <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile is required</div>
-                                                    <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Phone must be valid</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="form-label">Login Username *</label>
-                                                <input type="text" formControlName="userName" class="form-input"
-                                                       [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }" placeholder="Choose username">
-                                                <div *ngIf="submitted && f['userName'].errors" class="text-danger small mt-1">
-                                                    <div *ngIf="f['userName'].errors?.['required']">Username is required</div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="alert alert-info mt-3">
-                                                <i class="fa fa-info-circle me-2"></i>
-                                                <small>All further communications will be sent to these details.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Submit Button -->
-                        <div class="row mt-5">
-                            <div class="col-12 text-center">
-                                <button class="btn btn-primary btn-lg px-5 py-3" (click)="onSubmit(customForm)"
-                                        [disabled]="!customForm.valid || submitted">
-                                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
-                                    {{ submitted ? 'Creating Your Account...' : 'Start Free Trial' }}
-                                </button>
-                            </div>
-                            
-                            <div class="col-12 text-center mt-3" *ngIf="submitted">
-                                <div class="alert alert-warning">
-                                    <i class="fa fa-clock-o me-2"></i>
-                                    Setting up your business may take a few moments. Please be patient...
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>

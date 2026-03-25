@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common"
 import {COMPANY_SERVICES} from "./services";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
-import {TypingComponent} from "@app-global";
+import {GlobalModule, TypingComponent} from "@app-global";
 import {CoreLayout} from "./layouts/core.layout";
 
 @NgModule({
@@ -13,7 +13,7 @@ import {CoreLayout} from "./layouts/core.layout";
     ReactiveFormsModule,
     CommonModule, // Add CommonModule to imports
     FormsModule, RouterModule, TypingComponent,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes), GlobalModule
   ],
   declarations: [ CoreLayout, APP_COMPONENT ],
   providers: [ COMPANY_SERVICES ]
