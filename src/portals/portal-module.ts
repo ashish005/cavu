@@ -1,27 +1,11 @@
 import {
-  ActivatedRouteSnapshot,
-  CanLoad,
-  Route,
-  Router,
   RouterModule,
-  RouterStateSnapshot,
-  ROUTES,
-  UrlSegment,
-  UrlTree
+  ROUTES
 } from "@angular/router";
 import {Injectable, NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {AppSetupService, OrgLookupService, GlobalModule, PreSetupLayout, CoreLayout} from "@app-global";
+import {AppSetupService, OrgLookupService, GlobalModule, PreSetupLayout, CoreLayout, ORG_SECTOR} from "@app-global";
 
-enum ORG_SECTOR {
-  SETUP_ORG = "setup_organizations",
-  EDUCATION = "education",
-  REAL_ESTATE = "real_estate",
-  HEALTH_CARE = "health_care",
-  HOSPITALLITY = "hospitality",
-
-  TRANSPORTATION = "transportation"
-};
 enum ORG_USER_TYPE {
   ROOT = "root",
   EMPLOYEE = "employee",

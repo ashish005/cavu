@@ -1,21 +1,39 @@
 import { NgModule } from '@angular/core';
 
-import {APP_COMPONENT, routes} from './app.router';
 import {CommonModule} from "@angular/common"
-import {COMPANY_SERVICES} from "./services";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {RouterModule} from "@angular/router";
-import {GlobalModule, TypingComponent} from "@app-global";
-import {CoreLayout} from "./layouts/core.layout";
+import {RouterModule, ROUTES} from "@angular/router";
+import {
+  AppSetupService,
+  GlobalModule,
+  ORG_SECTOR,
+  TypingComponent
+} from "@app-global";
+
+export const companyRoutesFactory = (setupService: AppSetupService) => {
+  const { sectorMasterType }= setupService.appSetup;
+
+  if(ORG_SECTOR.COMPANY === sectorMasterType){
+    return [
+      {
+        path: '',
+        loadChildren: () => import('portals/company/app.router').then(m => m.AppCompanyModule)
+      }
+    ];
+  }
+  return [
+    {
+      path: '',
+      loadChildren: () => import('portals/company/app.router').then(m => m.OrgCompanyModule)
+    }
+  ];
+};
 
 @NgModule({
   imports: [
-    ReactiveFormsModule,
-    CommonModule, // Add CommonModule to imports
-    FormsModule, RouterModule, TypingComponent,
-    RouterModule.forChild(routes), GlobalModule
+    CommonModule, RouterModule
   ],
-  declarations: [ CoreLayout, APP_COMPONENT ],
-  providers: [ COMPANY_SERVICES ]
+  providers: [
+    { provide: ROUTES, useFactory: companyRoutesFactory, multi: true, deps: [ AppSetupService ] }
+  ]
 })
-export class SetupModule { }
+export class CompanyModule { }

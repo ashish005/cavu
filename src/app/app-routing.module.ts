@@ -1,11 +1,11 @@
-import {APP_INITIALIZER, inject, NgModule} from '@angular/core';
-import {CanActivateFn, Router, RouterModule, Routes} from '@angular/router';
+import {APP_INITIALIZER, Component, inject, NgModule, OnInit} from '@angular/core';
+import {CanActivateFn, Router, RouterModule, ROUTES, Routes} from '@angular/router';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 import {THIRD_PARTY_ROUTES, THIRD_PARTY_SERVICES, THIRD_PARTY_VIEWS, AuthGuard} from "./third-party/index";
 import {NotFoundComponent} from "./not-found.component";
-import {AppSetupService, GlobalModule} from "@app-global";
+import {AppSetup, AppSetupService, ORG_SECTOR} from "@app-global";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {AuthInterceptor} from "./auth.interceptor";
 
@@ -17,8 +17,9 @@ export const appSetupGuard: CanActivateFn = (route, state) => {
   if (setupService.hasAppSetup()) {
     return true;
   }
+  return false;
   // Redirect to the login page if not authenticated
-  return router.createUrlTree(['/company/trial']);
+  //return router.createUrlTree(['/company/trial']);
 };
 
 const routes: Routes = [
@@ -31,7 +32,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    loadChildren: () => import('portals/company').then(m => m.SetupModule)
+    loadChildren: () => import('portals/company').then(m => m.CompanyModule)
   },
   ...THIRD_PARTY_ROUTES,
   {path: '**', component: NotFoundComponent}

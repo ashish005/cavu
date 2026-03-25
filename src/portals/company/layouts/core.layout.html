@@ -18,15 +18,6 @@
 
                 <!-- Navigation -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    @if (appSetup && appSetup?.sectorMasterType !== 'COMPANY') {
-                    <div class="navbar-nav ms-auto">
-                        <button class="btn btn-primary" (click)='login()'>
-                            <i class="fa fa-sign-in-alt me-2"></i>Login
-                        </button>
-                    </div>
-                    }
-
-                    @if (appSetup?.sectorMasterType === 'COMPANY') {
                     <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a [routerLink]="['/home']" routerLinkActive="active"
@@ -67,7 +58,6 @@
                                 </a>
                             </li>
                         </ul>
-                    }
                 </div>
             </nav>
         </div>

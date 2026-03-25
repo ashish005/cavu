@@ -1,0 +1,35 @@
+<header class="app-header">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg">
+      <!-- Brand -->
+      <a [routerLink]="['/']" class="navbar-brand d-flex align-items-center">
+        <div class="brand-logo">
+          <span class="brand-text">EnRator</span>
+        </div>
+      </a>
+
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navigation -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav ms-auto">
+            <button class="btn btn-primary" (click)='login()'>
+                <i class="fa fa-sign-in-alt me-2"></i>Login
+            </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Main Content Area -->
+<main class="main-content">
+  <div class="content-main" id="content-main">
+    <!-- Angular Router Outlet for Component Views -->
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+  </div>
+</main>

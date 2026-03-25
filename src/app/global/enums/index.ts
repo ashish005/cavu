@@ -1,7 +1,9 @@
+import {ORG_SECTOR} from "./constants";
+
 export * from "./voucher-type";
 export * from "./voucher-status";
 
-export {Referrals} from "./constants";
+export {Referrals, ORG_SECTOR} from "./constants";
 
 export {FREQUENCY_TYPE, WEEK_DAYS, MONTHS, DAYS, WEEK_OF, YEAR_MODES, YEAR_MODE_ENUM } from "./tasks.enums";
 
