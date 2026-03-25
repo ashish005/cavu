@@ -14,8 +14,7 @@ import {Router} from "@angular/router";
 import {SupportUploader, SupportUploadQueue} from "../domain/support-uploader";
 import {HttpEventType} from "@angular/common/http";
 import {FeedbackSupportService} from "../services";
-
-declare const html2canvas: any;
+import html2canvas from 'html2canvas';
 
 @Directive()
 class SupportFileUploaderComponent {
