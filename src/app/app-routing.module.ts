@@ -3,11 +3,12 @@ import {CanActivateFn, Router, RouterModule, ROUTES, Routes} from '@angular/rout
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
-import {THIRD_PARTY_ROUTES, THIRD_PARTY_SERVICES, THIRD_PARTY_VIEWS, AuthGuard} from "./third-party/index";
+import {THIRD_PARTY_ROUTES, THIRD_PARTY_SERVICES, THIRD_PARTY_VIEWS, AuthGuard, AuthService} from "./third-party/index";
 import {NotFoundComponent} from "./not-found.component";
 import {AppSetup, AppSetupService, ORG_SECTOR} from "@app-global";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {AuthInterceptor} from "./auth.interceptor";
+import {map, take} from "rxjs";
 
 function StartupServiceFactory(setupService: AppSetupService) { return () => setupService.loadApp(); }
 
@@ -22,6 +23,22 @@ export const appSetupGuard: CanActivateFn = (route, state) => {
   //return router.createUrlTree(['/company/trial']);
 };
 
+export const orgSetupGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  return authService.isAuthenticated$.pipe(
+      take(1), // Important: take only the first value and complete the observable.
+      map(isAuthenticated => {
+        debugger
+        if (!isAuthenticated) { return true; }
+        else {
+          // Optional: Redirect the user if they are not authenticated.
+          return router.createUrlTree(['/app']);
+        }
+      })
+  );
+};
+
 const routes: Routes = [
   //{ path: '', redirectTo: 'docusign-sign', pathMatch: 'full' },
   {
@@ -31,7 +48,7 @@ const routes: Routes = [
     loadChildren: () => import('portals/portal-module').then(m => m.PortalModule)
   },
   {
-    path: '',
+    path: '', canActivate: [ orgSetupGuard ],
     loadChildren: () => import('portals/company').then(m => m.CompanyModule)
   },
   ...THIRD_PARTY_ROUTES,
