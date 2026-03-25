@@ -95,9 +95,10 @@ export class SupportComponent extends SupportFileUploaderComponent implements On
     if (modalAside) {
       modalAside.setAttribute('data-html2canvas-ignore', "true");
     }
-    if (typeof html2canvas !== 'function') {
-      return Promise.resolve(null);
-    }
+    // debugger
+    // if (typeof html2canvas !== 'function') {
+    //   return Promise.resolve(null);
+    // }
     return html2canvas(document.body);
   }
 

@@ -18,12 +18,7 @@ enum ORG_USER_TYPE {
 
 export const setupRoutesFactory = (setupService: AppSetupService) => {
   const { license, sectorMasterType }= setupService.appSetup;
-  //const userMasterType = coreService.currentUser?.userMasterType;
     const userMasterType = ORG_USER_TYPE.EMPLOYEE;
-  // const { license }= this.orgSetup;
-  // if(!license){
-  //   this.router.navigate(['subscription', 'payment'], { relativeTo: this.activatedRoute.parent });
-  // }
 
   if(ORG_SECTOR.SETUP_ORG === sectorMasterType){
     return [
@@ -45,7 +40,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
     ];
   }
 
-  if(!license){
+  if(!license || license?.validityInDays < 0){
     return [
       {
         path: '', component: PreSetupLayout,

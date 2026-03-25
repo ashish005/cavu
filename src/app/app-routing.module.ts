@@ -29,7 +29,6 @@ export const orgSetupGuard: CanActivateFn = (route, state) => {
   return authService.isAuthenticated$.pipe(
       take(1), // Important: take only the first value and complete the observable.
       map(isAuthenticated => {
-        debugger
         if (!isAuthenticated) { return true; }
         else {
           // Optional: Redirect the user if they are not authenticated.

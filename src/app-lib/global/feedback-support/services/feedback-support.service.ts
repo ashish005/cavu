@@ -26,14 +26,14 @@ export class FeedbackSupportService extends CoreEndpointBase {
             }
             this.isLoading = true;
 
-            const endpointUrl = this.baseSectorAPIUrl + `ticketLookup/${this.apiVersion}`;
+            const endpointUrl = this.baseSectorAPIUrl + `/ticketLookup/${this.apiVersion}`;
             return this.httpClient.get(endpointUrl, this.requestHeaders).toPromise().then(success, failure);
         });
         return promise;
     }
 
     getNotification(activeNavId: string) {
-        const url = this.baseSectorAPIUrl + `portalNotification/${this.orgSetup.sectorMasterType}/${activeNavId}/summary?noLoader=true`;
+        const url = this.baseSectorAPIUrl + `/portalNotification/${this.orgSetup.sectorMasterType}/${activeNavId}/summary?noLoader=true`;
         return this.httpClient.get(url, this.requestHeaders).toPromise();
     }
 
@@ -60,7 +60,7 @@ export class FeedbackSupportService extends CoreEndpointBase {
 
     saveSupportTicket(form: any): Observable<any> {
         //return this.httpClient.post(`${this.configurationService.baseApiUrl}supportTicket`, formData, this.requestHeaders);
-        const supportUrl = `${this.baseSectorAPIUrl}supportTicket`;
+        const supportUrl = `${this.baseSectorAPIUrl}/supportTicket`;
 
         //const { userId, email, mobile } = super.authService;
 
@@ -91,7 +91,7 @@ export class FeedbackSupportService extends CoreEndpointBase {
     }
 
     supportTicketUploadImages(supportTicketId: any, file: any) {
-        const supportUrl = `${this.baseSectorAPIUrl}supportTicket/${supportTicketId}/includes`;
+        const supportUrl = `${this.baseSectorAPIUrl}/supportTicket/${supportTicketId}/includes`;
 
         const formData = new FormData();
         formData.append('file', file);
