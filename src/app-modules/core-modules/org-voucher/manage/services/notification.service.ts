@@ -55,7 +55,7 @@ export class NotificationRecipientService extends OrgResourceService<Recipient> 
 
     getRecipients(search){
         return this.httpClient
-            .get(`${super.baseSectorAPIUrl}lookupSearch/contact/user/${search}`, super.requestHeaders)
+            .get(`${super.baseSectorAPIUrl}/lookupSearch/contact/user/${search}`, super.requestHeaders)
             .pipe(map(resp => resp), catchError(r => r));
     }
 }

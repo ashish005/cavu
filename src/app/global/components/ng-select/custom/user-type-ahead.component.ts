@@ -120,7 +120,7 @@ export class UserTypeAheadComponent extends CoreEndpointBase {
     }
 
     getUsers(name: string): Observable<any> {
-      return this.httpClient.get(`${this.baseSectorAPIUrl}lookupSearch/contact/${this.userType}/${name}`, this.requestHeaders);
+      return this.httpClient.get(`${this.baseSectorAPIUrl}/lookupSearch/contact/${this.userType}/${name}`, this.requestHeaders);
     }
 
     trackByFn(item: any) { return item.id; }

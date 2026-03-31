@@ -11,37 +11,30 @@ import {
 } from "@angular/core";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {pairwise, startWith, distinctUntilChanged} from "rxjs";
-import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF} from "../../../enums";
+import {DAYS, FREQUENCY_TYPE, FrequencyExtender, MONTHS, WEEK_DAYS, WEEK_OF} from "../../../enums";
 import {SchedulerTask, SchedulerTaskParam} from "../domains/schedular.domain";
 import {SchedulerService} from "../services/scheduler.service";
-import {EventFrequencyTypeLookup, OrgWorkflowAPIResolver, WorkflowPluginLookup} from "../../../services";
+import {
+    OrgLookup,
+    OrgLookupService
+} from "../../../services";
+import {LookupFrequencyType} from "../../../services/models/org-lookup.serializer";
 
 @Directive()
-class FrequencyCEComponent
+class FrequencyCEComponent extends FrequencyExtender
 {
     processMasterType: string;
     customForm: FormGroup;
-    frequencyTypes: EventFrequencyTypeLookup[] = [];
-    frequency: EventFrequencyTypeLookup;
+    frequencyTypes: LookupFrequencyType[] = [];
+    frequency: LookupFrequencyType;
     tasks: Array<SchedulerTask> = [];
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
 
-    frequencyOptions: Array<any> = [
-        { name: 'Every Month', id: 1, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Bi Monthly', id: 2, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Quarterly', id: 3, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Semester Wise', id: 6, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'One Time', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
-    ];
-    weekDays: Array<any> = WEEK_DAYS;
-    months: Array<any> = MONTHS;
-    days: Array<any> = DAYS;
-    weeksOf: Array<any> = WEEK_OF;
-
-    protected lookupService: OrgWorkflowAPIResolver;
+    protected lookupService: OrgLookupService;
     protected service: SchedulerService;
-    protected lookup: WorkflowPluginLookup;
+    protected lookup: OrgLookup;
     constructor(public fb: FormBuilder, public injector: Injector) {
+        super();
         this.customForm = this.fb.group({
             frequencyTypeId: [null, Validators.required],
             orgTaskId: [null],
@@ -57,8 +50,9 @@ class FrequencyCEComponent
         });
 
         this.service = injector.get(SchedulerService);
-        this.lookupService = injector.get(OrgWorkflowAPIResolver);
-        this.lookup = this.lookupService.masterType;
+        //this.lookupService = injector.get(OrgWorkflowAPIResolver);
+        this.lookupService = injector.get(OrgLookupService);
+        this.lookup = this.lookupService.getOrgLookup();
 
         const itemFormValueChange = ([prev, next]: [any, any]) =>
         {

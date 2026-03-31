@@ -6,16 +6,18 @@ import {FEE_PLAN_GRID_COLUMN_CELL_COMPONENTS} from "./grid-cells";
 import {FEE_PLAN_COMPONENT} from "./components";
 import {FEE_PLAN_SERVICE} from "./services";
 import {GlobalModule} from "@app-global";
+import {FEE_PLAN_SUMMARY_COMPONENTS} from "./views";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule,
+        CommonModule, FormsModule, ReactiveFormsModule,
         RouterModule.forChild(FeePlanRoutes),
         GlobalModule
     ],
     providers: [
         FEE_PLAN_SERVICE
     ],
-    declarations: [FEE_PLAN_VIEWS, FEE_PLAN_GRID_COLUMN_CELL_COMPONENTS, FEE_PLAN_COMPONENT]
+    declarations: [FEE_PLAN_VIEWS, FEE_PLAN_SUMMARY_COMPONENTS, FEE_PLAN_GRID_COLUMN_CELL_COMPONENTS, FEE_PLAN_COMPONENT]
 })
 export class FeePlanModule{}

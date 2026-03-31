@@ -1,0 +1,57 @@
+<div class="d-flex flex p-3">
+    <form class="d-flex flex" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn text-xs p-0 px-1"
+                        style="float: right; position: absolute; top: -5px; right: 15px; z-index: 9999;"
+                        type="button" (click)="toggleActiveAccType()">
+                    <small *ngIf="activeAccType === 1">Existing</small>
+                    <small *ngIf="activeAccType === 2">New</small>
+                    <span class="caret"></span>
+                </button>
+                <div class="md-form-group" [ngClass]="{'hide': (activeAccType == 2)}">
+                    <input class="md-input" formControlName="accountName">
+                    <label> Account Name </label>
+                </div>
+                <select-dropdown [ngClass]="{'hide': (activeAccType == 1)}" [items]="lookupService?.masterType['feeAccounts']"
+                                 title="Income Ledger (Account)"
+                                 (cb)="updateAccount($event)" [control]="formAccount"></select-dropdown>
+            </div>
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <div class="text-xs" style="float: right;position: absolute;top: 0px;right: 0px;">
+                        <label class="md-check">
+                            <span class="pr-4">Is Refundable</span>
+                            <input type="checkbox" formControlName="isRefundable"><i class="blue"></i>
+                        </label>
+                    </div>
+                    <input class="md-input" formControlName="amount" [ngClass]="{ 'is-invalid': submitted && f['amount'].errors }">
+                    <label>Default Amount </label>
+                    <small>Note: It's default Fee, Change it in Fee Plan Section</small>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm text-muted">Frequency</div>
+                <div class="clearfix">
+                    <frequency-type-ce #frequencyTypeCtrl (onOk)="frequencyTypeChange($event)"></frequency-type-ce>
+                </div>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="text-right">
+                <button class="btn btn-sm primary m-2" [disabled]="!customForm.valid || submitted"
+                        (click)="onSubmit(customForm)">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </ng-template>
+    </form>
+</div>

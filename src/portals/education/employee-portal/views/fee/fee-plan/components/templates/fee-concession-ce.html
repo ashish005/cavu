@@ -1,0 +1,48 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-6">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="md-form-group">
+                    <select class="md-input" formControlName="reservationCategoryId">
+                        <option *ngFor="let entity of lookupService.masterType?.reservationCategory;"
+                                [ngValue]="entity.id"> {{entity.name}}
+                        </option>
+                    </select>
+                    <label class="text-xs text-muted m-0">Reservation Category</label>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="md-form-group">
+                    <input class="md-input text-right" style="width: 70px" formControlName="calculationValue">
+                    <select class="md-input" formControlName="calculationType" style="width: 70px">
+                        <option *ngFor="let entity of calculationTypes;" [ngValue]="entity.id"> {{entity.name}}</option>
+                    </select>
+                    <label class="text-xs text-muted m-0">Concession</label>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="remark"
+                           [ngClass]="{ 'is-invalid': submitted && f['remark'].errors }">
+                    <label> Remark </label>
+                </div>
+            </div>
+            <ng-template #footerTemplate>
+                <div class="col-sm-12 text-right">
+                    <button class="btn btn-sm primary" [disabled]="!customForm.valid || submitted"
+                            (click)="onSubmit(customForm)">
+                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                        {{ submitted ? 'Submitting...' : actionType }}
+                    </button>
+                </div>
+            </ng-template>
+        </div>
+    </form>
+</div>

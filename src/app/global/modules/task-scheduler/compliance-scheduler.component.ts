@@ -1,13 +1,23 @@
 import {Component, Directive, EventEmitter, Injector, OnInit, Output} from "@angular/core";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {DAYS, FREQUENCY_TYPE, MONTHS, WEEK_DAYS, WEEK_OF, YEAR_MODES, YEAR_MODE_ENUM} from "../../enums";
+import {
+    FREQUENCY_TYPE,
+    YEAR_MODE_ENUM,
+    FrequencyExtender
+} from "../../enums";
 import {OrgConfigOptions} from "../../services/models";
 import {AppSetupService} from "../../services";
 import {ShortScheduler} from "./domains/short-scheduler.domain";
 
-class FrequencyCEComponent
+
+@Component({
+    standalone: false,
+    selector: 'compliance-frequency-ce',
+    templateUrl: './templates/compliance-scheduler.html',
+    styles: [`:host{ display: contents; }`]
+})
+export class ComplianceFrequencyComponent extends FrequencyExtender implements OnInit
 {
-    freqEnum = FREQUENCY_TYPE;
     frequencyTypes: any[] = [
         { "name": "One Time", "masterType": FREQUENCY_TYPE.FIXED_TIME, "isFeeType": true, "isPeriodType": true },
         // { "name": "Daily", "masterType": FREQUENCY_TYPE.DAILY, "isFeeType": false, "isPeriodType": true },
@@ -15,27 +25,6 @@ class FrequencyCEComponent
         { "name": "Monthly", "masterType": FREQUENCY_TYPE.MONTHLY, "isFeeType": true, "isPeriodType": true },
         //{ "name": "On Event", "masterType": FREQUENCY_TYPE.ON_EVENT, "isFeeType": false, "isPeriodType": true }
     ];
-    frequencyOptions: Array<any> = [
-        { name: 'Every Month', id: 1, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Bi Monthly', id: 2, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Quarterly', id: 3, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Half-Yearly', id: 6, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Yearly', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
-    ];
-    weekDays: Array<any> = WEEK_DAYS;
-    months: Array<any> = MONTHS;
-    days: Array<any> = DAYS;
-    weeksOf: Array<any> = WEEK_OF;
-    yearModes = YEAR_MODES.filter(r => r.showInShortScheduler);
-}
-@Component({
-    standalone: false,
-    selector: 'compliance-frequency-ce',
-    templateUrl: './templates/compliance-scheduler.html',
-    styles: [`:host{ display: contents; }`]
-})
-export class ComplianceFrequencyComponent extends FrequencyCEComponent implements OnInit
-{
     @Output() onFrequencyChange: EventEmitter<any> = new EventEmitter<any>();
     customForm: FormGroup;
     orgConfig: OrgConfigOptions;

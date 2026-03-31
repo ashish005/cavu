@@ -1,0 +1,41 @@
+<div class="d-flex flex">
+    <div class="d-flex flex flex-column">
+        <div class="scroll-y">
+            <div class="d-flex flex p-3">
+                <div class="d-flex flex-column flex">
+                    <div class="row row-sm form-group">
+                        <ng-template ngFor let-branch [ngForOf]="orgSetup?.branches" let-i="index">
+                            <div class="col-12">
+                                <div class="input-group mb-2">
+                                    <div class="form-control">
+                                        <div class="list-body">
+                                            <div>
+                                                <a>{{ branch?.name }}</a>
+                                                <small>( {{branch?.branchCode }} )</small>
+                                                <small class="float-right pr-2" *ngIf="branch?.isHeadBranch">Head Branch
+                                                </small>
+                                                <small class="float-right pr-2" *ngIf="branch?.isSelfAdministration">
+                                                    Self
+                                                    Administration
+                                                </small>
+                                            </div>
+                                            <small class="text-muted">{{ branch?.address }}</small>
+                                            <small class="float-right pr-2">Established on: <span class="text-theme">{{ branch?.establishedDate  }}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="input-group-append flex-column">
+                                        <!--*ngIf="!branch.isMasterSeedApplied"-->
+                                        <button class="btn btn-xs m-1" (click)="refreshAndApplyMaster(branch)">
+                                            <i class="fa fa-refresh"></i>Synch
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

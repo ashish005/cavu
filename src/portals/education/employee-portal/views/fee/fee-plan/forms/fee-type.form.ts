@@ -28,7 +28,8 @@ export class FeeTypeForm {
             //defaultTaskName: [''],
             depositDurationType: [null],
             //depositDurationTypeName: [null],
-            feeTaxes: this.fb.array([])
+            feeTaxes: this.fb.array([]),
+            isActive: [false]
         });
     }
 

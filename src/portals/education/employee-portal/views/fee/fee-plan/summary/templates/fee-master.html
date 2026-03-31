@@ -1,0 +1,23 @@
+<div class="container d-flex flex" role="main" *ngIf="tabs.feeTax == viewType">
+    <fee-tax *ngIf="!loading"></fee-tax>
+</div>
+<div class="container d-flex flex" role="main" *ngIf="tabs.feeType == viewType">
+    <fee-type *ngIf="!loading"></fee-type>
+</div>
+<div class="container d-flex flex" role="main" *ngIf="tabs.concession == viewType">
+    <fee-concession *ngIf="!loading"></fee-concession>
+</div>
+<div class="container d-flex flex" role="main" *ngIf="tabs.feePenalty == viewType">
+    <fee-penalty *ngIf="!loading"></fee-penalty>
+</div>
+<loader [isLoading]="loading"></loader>
+<ng-template #popupOptionsTemplate>
+    <div class="nav-active-border b-primary b-theme bottom">
+        <ul class="nav nav-pills nav-sm nav-rounded">
+            <li class="nav-item" (click)="openTab(tabs.feeType)"><a class="nav-link" [class.active]="tabs.feeType == viewType">Fee Type</a></li>
+            <li class="nav-item" (click)="openTab(tabs.feeTax)"><a class="nav-link" [class.active]="tabs.feeTax == viewType">Fee Tax</a></li>
+            <li class="nav-item" (click)="openTab(tabs.feePenalty)"><a class="nav-link" [class.active]="tabs.feePenalty == viewType">Fee Penalty</a></li>
+            <li class="nav-item" (click)="openTab(tabs.concession)"><a class="nav-link" [class.active]="tabs.concession == viewType">Concession</a></li>
+        </ul>
+    </div>
+</ng-template>

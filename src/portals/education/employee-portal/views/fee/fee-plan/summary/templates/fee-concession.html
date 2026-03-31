@@ -1,0 +1,39 @@
+<div class="d-flex flex p-3">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl modal-dialog">
+            <div class="scrollable hover">
+                <a class="nav-link" (click)="createNew()">
+                    <span class="btn btn-sm btn-block b-a b-theme text-theme btn-rounded theme"><i class="fa fa-plus float-left"></i> New Concession</span>
+                </a>
+                <div class="list-group list-group-gap">
+                    <span class="p-1 text-muted">Fee Concessions</span>
+                    <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                        <a class="list-group-item box p-1 px-2" (click)="feeConcessionChange(row)">
+                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                            {{row.name}}
+                        </a>
+                    </ng-template>
+                </div>
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex" id="chat-list">
+            <div class="navbar flex-nowrap white lt box-shadow">
+                <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i> </span></a>
+                <span class="text-md text-ellipsis flex">Fee Concession</span>
+            </div>
+            <div class="scrollable hover">
+                <fee-concession-ce #feeConcessionForm (onOk)="onFeeConcessionUpdate($event)"></fee-concession-ce>
+            </div>
+            <div class="lt b-t mt-auto">
+                <ng-template *ngTemplateOutlet="feeConcessionForm.footerTemplate"></ng-template>
+            </div>
+        </div>
+    </div>
+    <!--<loader [isLoading]="loading"></loader>-->
+</div>

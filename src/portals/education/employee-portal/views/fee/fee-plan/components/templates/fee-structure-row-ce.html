@@ -1,0 +1,77 @@
+<tr [formGroup]="customForm">
+    <td>
+        <div class="text-sm">
+            <label class="md-check">
+                <input type="checkbox" formControlName="isActive"><i class="theme"></i>
+            </label>
+        </div>
+        <!--<div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" formControlName="isActive"><i class="theme"></i>
+            </label>
+        </div>
+        <button type="button" class="btn btn-xs btn-icon" (click)="deleteRow()"><i class="fa fa-trash"></i></button>-->
+    </td>
+    <td>
+        <div class="py-1">
+            <span class="item-title _500">{{ customForm.value.name }}</span>
+        </div>
+    </td>
+    <td>
+        <div class="md-form-group p-0">
+            <input class="md-input text-right" type="text" formControlName="amount">
+        </div>
+    </td>
+    <td>
+        <div class="py-1 text-right">
+            <span class="">{{ customForm.value.taxAmount| orgCurrency}}</span>
+        </div>
+    </td>
+    <td>
+        <div class="py-1 text-right">
+            = <span class="">{{ customForm.value.totalAmount | orgCurrency}}</span>
+        </div>
+        <!--<div class="dropdown" *ngIf="(formScheduledInfoToShow?.value && formScheduledInfoToShow?.value?.length)"
+             style="position: absolute;left: 75px;top: 5px;">
+            <a class="btn btn-xs dropdown-toggle "style="font-size: .6rem" data-toggle="dropdown" aria-expanded="false"><i
+                    class="fa fa-info"></i></a>
+            <div class="dropdown-menu w-xl p-2" x-placement="top-start">
+                <div class="flex pb-2">
+                    <h6 class="text-sm mb-0 _600">Scheduled Fee Information</h6>
+                    <small class="text-muted">Breakup details</small>
+                </div>
+                <table class="table small-table text-xs">
+                    <thead>
+                    <tr>
+                        <th>Scheduled Date</th>
+                        <th><span class="float-right">Amount</span></th>
+                        <th><span class="float-right">Tax</span></th>
+                        <th><span class="float-right">Total</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-template ngFor let-scheduledInfo [ngForOf]="formScheduledInfoToShow?.value" let-j="index">
+                        <tr>
+                            <td><span>{{ scheduledInfo.scheduledDate | date }}</span></td>
+                            <td><span class="float-right">{{ scheduledInfo.amount }}</span></td>
+                            <td><span class="float-right">{{ scheduledInfo.taxAmount }}</span></td>
+                            <td><span class="float-right">{{ scheduledInfo.amount + scheduledInfo.taxAmount }}</span></td>
+                        </tr>
+                    </ng-template>
+                    </tbody>
+                </table>
+            </div>
+        </div>-->
+    </td>
+    <!--<td>
+        <div class="md-form-group p-0">
+            <input class="md-input text-right" type="text" formControlName="fineAmountPerDay">
+        </div>
+    </td>-->
+    <td>
+        <frequency-type-ce #frequencyTypeCtrl (onOk)="frequencyTypeChange($event)"></frequency-type-ce>
+    </td>
+    <!--<td>
+        <button type="click" class="btn btn-xs primary" (click)="planStructureTest()">Test </button>
+    </td>-->
+</tr>

@@ -1,0 +1,125 @@
+<form class="d-flex flex" [formGroup]="customForm">
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex">
+            <div class="d-flex flex">
+                <div class="d-flex flex-column flex p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="md-form-group">
+                                <input class="md-input" formControlName="name"
+                                       [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                                <label> Plan Name </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <select-dropdown [items]="lookupService?.masterType?.orgSession" title="Session"
+                                             (cb)="updateOrgSession($event)"
+                                             [control]="formOrgSession"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <select-dropdown [items]="lookupService?.masterType?.studyLevel" title="Study Level"
+                                             (cb)="updateStudyLevel($event)"
+                                             [control]="formStudyLevel"></select-dropdown>
+                        </div>
+                        <div class="col-sm-3">
+                            <select-dropdown [items]="lookupService?.masterType?.studyMode" title="Study Mode"
+                                             (cb)="updateStudyMode($event)"
+                                             [control]="formStudyMode"></select-dropdown>
+                        </div>
+                        <div class="col-3">
+                            <select-dropdown [items]="filteredCourse" title="Course"
+                                             (cb)="updateCourse($event)"
+                                             [control]="formCourse"></select-dropdown>
+                        </div>
+                        <div class="col-3">
+                            <select-dropdown [items]="selectedCourse?.sections" title="Course Section"
+                                             (cb)="updateCourseSection($event)"
+                                             [control]="formCourseSection"></select-dropdown>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table small-table text-xs mb-0">
+                                <thead>
+                                <tr>
+                                    <th class="w-40"></th>
+                                    <th>Fee Type</th>
+                                    <th>Amount</th>
+                                    <th>Tax</th>
+                                    <th>Total</th>
+                                    <th>Frequency & Duration</th>
+                                    <!--<th></th>-->
+                                </tr>
+                                </thead>
+                                <tbody formArrayName="feeStructureList">
+                                    <ng-template ngFor let-row [ngForOf]="formFeeStructureList?.controls" let-i="index">
+                                        <tr fee-structure-row-ce [customForm]="row" [index]="i" (onDelete)="deleteRow($event)" (onTest)="structureTest($event)"></tr>
+                                    </ng-template>
+                                <!--<ng-template ngFor let-row [ngForOf]="formFeeStructureList?.controls" let-i="index">
+                                    <tr fee-structure-row-ce [customForm]="row" [index]="i" (onDelete)="deleteRow($event)" (onTest)="structureTest($event)"></tr>
+                                </ng-template>-->
+                                </tbody>
+                                <!--<tfoot>
+                                    <tr>
+                                        <td><b class="pl-2">Total</b></td>
+                                        <td><b class="float-right pr-2">{{ item?.getTotalAmount() | orgCurrency }}</b></td>
+                                        <td><b class="float-right pr-2">{{ item?.getTotalTaxAmount() | orgCurrency }}</b></td>
+                                        <td></td>
+                                        <td><b class="float-right pr-2">{{ item?.getTotalAmount() + item?.getTotalTaxAmount() | orgCurrency}}</b></td>
+                                    </tr>
+                                </tfoot>-->
+                            </table>
+                        </div>
+                        <!--<div class="col-sm-3 hide">
+                            <plan-structure-test #planStructureTest></plan-structure-test>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 white lt b-t mt-auto">
+                <div class="row row-sm">
+                    <div class="col-sm-12 text-center">
+                        <button type="click" class="btn btn-sm primary m-2 theme" data-dismiss="modal"
+                                (click)="onSubmit(customForm)" [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ?
+                            'Submitting...' : actionType}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--<loader [isLoading]="isLoading"></loader>-->
+        </div>
+    </div>
+
+    <ng-template #subCourseTemplateRef let-data="data">
+        <ng-template ngFor let-section [ngForOf]="data.sections" let-i="index">
+            <div class="list-group-item px-2 b-l-primary py-1">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="courseSectionId"
+                               formControlName="courseSectionId" [value]="section.id">
+                        <small>{{ section.name }}</small>
+                    </label>
+                </div>
+            </div>
+        </ng-template>
+    </ng-template>
+</form>
+<ng-template #popupOptionsTemplate>
+    <!--<div class="d-flex flex-row" [formGroup]="customForm">
+        <div class="text-center text-sm text-sm-center">
+            <div class="d-inline-block">
+                <span class="text-muted">Session</span>
+            </div>
+            <div class="d-inline-block">
+                <select class="md-input" formControlName="orgSessionId">
+                    <option *ngFor="let entity of lookupService?.masterType?.orgSession;" [ngValue]="entity.id">
+                        {{entity.name}}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>-->
+</ng-template>

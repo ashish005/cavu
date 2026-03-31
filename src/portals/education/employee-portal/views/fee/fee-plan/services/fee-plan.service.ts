@@ -6,8 +6,15 @@ import  { OrgResourceService } from "@app-global";
 @Injectable()
 export class FeePlanService extends OrgResourceService<FeePlan>{
   constructor(public override injector: Injector) { super(injector, 'feePlan', new FeePlanSerializer()); }
-
-  updateFeeStructure(feeplanId, feePlan){
+    getDefaultFeeStructure(studyModeId, studyLevelId, feePlanId){
+        return this.httpClient
+            .get(`${this.viewUrl}/structure/${studyModeId}/${studyLevelId}/${feePlanId}`, this.requestHeaders)
+            .pipe(
+                map((resp: any) => (resp.entities || [])),
+                catchError(error=> this.handleError(error, () => this.getDefaultFeeStructure(studyModeId, studyLevelId, feePlanId)))
+            );
+    }
+    updateFeeStructure(feeplanId, feePlan){
     return this.httpClient
       .put(`${this.viewUrl}/structure/${feeplanId}`, feePlan, this.requestHeaders)
       .pipe(

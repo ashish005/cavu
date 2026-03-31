@@ -41,14 +41,14 @@ export class FeePlanDetailView implements OnInit, OnDestroy {
     ngOnDestroy(){ this.subscriber?.unsubscribe(); }
 
     scheduleClick(row: FeeStructure){
-        const { orgTaskScheduleId, feeTypeName, orgTaskId, frequencyTypeId } = row;
+        const { orgTaskScheduleId, name, orgTaskId, frequencyTypeId } = row;
         this.activeFeeStructure = row;
         this.schedulerActionType = ACTION_ENUM.UPDATE;
         this.schedulerEl.id = orgTaskScheduleId;
         this.schedulerEl.resetFormData({
             id: orgTaskScheduleId,
             orgTaskId: orgTaskId,
-            name: `${feeTypeName}`,
+            name: `${name}`,
             frequencyTypeId: frequencyTypeId
         });
         this.schedulerEl.refreshScheduler(orgTaskScheduleId);

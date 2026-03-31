@@ -1,0 +1,29 @@
+<ng-container [formGroup]="customForm">
+    <td>
+        <span class="text-primary clear text-xs">{{customForm.value.name}}</span>
+    </td>
+    <td>
+        <select class="md-input text-xs" formControlName="categoryId">
+            <option *ngFor="let entity of lookupService.masterType['taxCategories'];" [ngValue]="entity.id"> {{entity.name}}</option>
+        </select>
+    </td>
+    <td>
+        <select class="md-input text-xs" formControlName="taxTypeRateId">
+            <option *ngFor="let entity of taxTypes;" [ngValue]="entity.id"> {{entity.name}}</option>
+        </select>
+    </td>
+    <td class="text-right">
+        {{ customForm.value.rate }}%
+    </td>
+    <td>
+        <div class="d-block b-a px-1">
+            <label class="md-switch"><input type="checkbox" formControlName="hasExtraTaxRate"><i class="blue"></i></label>
+            <div class="d-inline-block float-right">
+                {{customForm.value['extraTaxRate'] || 0}}%
+            </div>
+        </div>
+    </td>
+    <td class="text-right">
+        <button type="button" class="btn btn-xs btn-icon" (click)="deleteRow()"><i class="fa fa-trash"></i></button>
+    </td>
+</ng-container>

@@ -1,0 +1,53 @@
+<div class="d-flex flex p-3">
+    <div class="fade aside aside-sm">
+        <div class="d-flex flex-column w-xl modal-dialog">
+            <div class="scrollable hover">
+                <a class="nav-link" (click)="createNew()">
+                    <span class="btn btn-sm btn-block b-a b-theme text-theme btn-rounded theme"><i class="fa fa-plus float-left"></i> New</span>
+                </a>
+                <div class="list-group list-group-gap">
+                    <span class="p-1 text-muted">Fee Types</span>
+                    <ng-template ngFor let-row [ngForOf]="gridData" let-i="index">
+                        <a class="list-group-item box p-1 px-2" (click)="feeTypeChange(row)">
+                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>
+                            {{row?.name}}
+                        </a>
+                    </ng-template>
+                </div>
+                <!--<nav class="nav-border right b-theme" data-nav="">
+                    <ul class="list inset">
+                        <ng-template ngFor let-row [ngForOf]="lookup?.feeType" let-i="index">
+                            <li class="list-item" (click)="feeTypeChange(row)">
+                                <div class="list-body">
+                                    <a class="item-title _500" data-pjax-state="">{{row?.name}}</a>
+                                    <div class="item-except text-sm text-muted h-1x">
+                                        <a class="d-inline-block px-1 text-center b">
+                                            <small class="text-xs" >{{row?.defaultTaskName}} {{row?.defaultFrequencyType}}</small>
+                                        </a>
+                                    </div>
+                                    <div class="item-tag tag hide"></div>
+                                </div>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </nav>-->
+                <div class="no-result hide">
+                    <div class="p-4 text-center">No Results</div>
+                </div>
+            </div>
+            <div class="p-3 mt-auto"><span class="text-sm text-muted"></span>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex" id="content-body">
+        <div class="d-flex flex-column flex" id="chat-list">
+            <div class="scrollable hover p-3 h-100">
+                <fee-type-ce-form #feeTypeForm (onOk)="refreshFeeType($event)"></fee-type-ce-form>
+            </div>
+            <div class="px-3 lt b-t mt-auto">
+                <ng-template *ngTemplateOutlet="feeTypeForm.footerTemplate"></ng-template>
+            </div>
+        </div>
+    </div>
+    <!--<loader [isLoading]="loading"></loader>-->
+</div>

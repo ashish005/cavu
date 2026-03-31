@@ -78,3 +78,20 @@ export const YEAR_MODES: Array<any> = [
     { id: YEAR_MODE_ENUM.CALENDER_YEAR, name: 'Calendar Year', showInShortScheduler: true, },
     { id: YEAR_MODE_ENUM.FINANCIAL_YEAR, name: 'Financial Year', showInShortScheduler: true, }
 ];
+
+export class FrequencyExtender
+{
+    freqEnum = FREQUENCY_TYPE;
+    frequencyOptions: Array<any> = [
+        { name: 'Every Month', id: 1, masterType: FREQUENCY_TYPE.MONTHLY },
+        { name: 'Bi Monthly', id: 2, masterType: FREQUENCY_TYPE.MONTHLY },
+        { name: 'Quarterly', id: 3, masterType: FREQUENCY_TYPE.MONTHLY },
+        { name: 'Half-Yearly', id: 6, masterType: FREQUENCY_TYPE.MONTHLY },
+        { name: 'Yearly', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
+    ];
+    weekDays: Array<any> = WEEK_DAYS;
+    months: Array<any> = MONTHS;
+    days: Array<any> = DAYS;
+    weeksOf: Array<any> = WEEK_OF;
+    yearModes = YEAR_MODES.filter(r => r.showInShortScheduler);
+}

@@ -1,0 +1,97 @@
+<div class="d-flex flex">
+    <form class="d-flex flex-column flex p-3" [formGroup]="customForm">
+        <div class="row row-sm">
+            <div class="col-sm-12">
+                <div class="md-form-group">
+                    <input class="md-input" formControlName="name"
+                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+                    <label> Name </label>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <table class="table table-sm">
+                    <thead class="cf">
+                    <tr>
+                        <th class="text-xs">Rule</th>
+                        <th class="text-xs">Penalty Amount</th>
+                        <th class="w-40"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="scroll-y" formArrayName="rules">
+                    <tr *ngFor="let item of feePenaltyRules.controls; let i= index" [formGroup]="item">
+                        <!--<td>
+                            <label class="md-check"><input type="checkbox" formControlName="isBalanceDue"> <i
+                                    class="blue"></i></label>
+                        </td>-->
+                        <td>
+                            <div class="float-left text-xs px-1">
+                                <div class="md-form-group p-0 float-right">
+                                    <select class="md-input b-a" formControlName="penaltyFrequency" style="height: 20px;">
+                                        <option *ngFor="let entity of penaltyFrequencies;"
+                                                [ngValue]="entity.id"> {{entity.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="float-left text-xs px-1"
+                                 *ngIf="item.value.penaltyFrequency == frequency.DAY_RANGE">
+                                <small class="text-primary pr-2 float-left">From</small>
+                                <div class="md-form-group p-0 float-left" style="width: 50px;">
+                                    <input type="number" class="md-input text-right" formControlName="fromDay"
+                                           style="height: 20px;">
+                                </div>
+                                <small class="text-primary float-left">till</small>
+                                <div class="md-form-group p-0 float-left" style="width: 50px;">
+                                    <input type="number" class="md-input text-right" formControlName="toDay"
+                                           style="height: 20px;">
+                                </div>
+                                <small class="text-primary">Days</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="float-left text-xs px-1">
+                                <div class="md-form-group p-0 float-right">
+                                    <input type="number" class="md-input text-right" formControlName="value"
+                                           style="height: 20px;width: 80px;">
+                                    <select class="md-input b-a" formControlName="calculationType" style="width: 70px;height: 20px;">
+                                        <option *ngFor="let entity of calculationTypes;"
+                                                [ngValue]="entity.id"> {{entity.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-xs btn-icon" (click)="deleteRow(i)"><i
+                                    class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="box">
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            <button type="button" class="btn btn-xs btn-block" (click)="addNewRow(null)"><i
+                                    class="fa fa-plus"></i> Rule
+                            </button>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <ng-template #footerTemplate>
+            <div class="float-left">
+                <button type="button" class="btn btn-xs float-left" (click)="addNewRow(null)">
+                    <i class="fa fa-plus"></i> New Rule
+                </button>
+            </div>
+            <div class="text-right">
+                <button class="btn btn-sm primary" [disabled]="!customForm.valid || submitted"
+                        (click)="onSubmit(customForm)">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Submitting...' : actionType }}
+                </button>
+            </div>
+        </ng-template>
+    </form>
+</div>

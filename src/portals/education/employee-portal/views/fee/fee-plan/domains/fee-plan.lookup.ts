@@ -1,6 +1,5 @@
 import {CoreResource} from "@app-global";
 
-
 class StudyLevelTypeLookup {
     id: string;
     name: string;
@@ -12,11 +11,11 @@ class StudyLevelTypeLookup {
 }
 
 export class FeeTypeLookup {
-    id: string;
-    feeTypeId: number;
-    taxMapperId: number;
-    studyModeTypeId: number;
-    studyLevelTypeId: number;
+    id: number;
+    // feeTypeId: number;
+    // taxMapperId: number;
+    // studyModeTypeId: number;
+    // studyLevelTypeId: number;
 
     accountId: number;
     name: string;
@@ -40,17 +39,17 @@ export class FeeTypeLookup {
 
     constructor(model: any = <any>{}) {
         const {
-            id, feeTypeId, taxMapperId, studyModeTypeId, studyLevelTypeId,
+            id, //feeTypeId, taxMapperId, studyModeTypeId, studyLevelTypeId,
             accountId, amount, rate, name, sortOrder, isRefundable,
             voucherTypeId, voucherConfigId, defaultTaskId,
             defaultFrequencyTypeId, depositDurationType, defaultFrequencyMasterType, defaultDay, defaultMonth,
         } = model;
         this.id = id;
-        this.feeTypeId = feeTypeId;
-
-        this.taxMapperId = taxMapperId;
-        this.studyModeTypeId = studyModeTypeId;
-        this.studyLevelTypeId = studyLevelTypeId;
+        // this.feeTypeId = feeTypeId;
+        //
+        // this.taxMapperId = taxMapperId;
+        // this.studyModeTypeId = studyModeTypeId;
+        // this.studyLevelTypeId = studyLevelTypeId;
 
         this.accountId = accountId;
         this.name = name;
@@ -74,118 +73,118 @@ export class FeeTypeLookup {
 }
 
 class CourseSubjectLookup {
-  id: string;
-  name: string;
-  code: string;
+    id: string;
+    name: string;
+    code: string;
 
-  constructor(model: any = <any>{}) {
-    this.id = model.id;
-    this.name = model.name;
-    this.code = model.code;
-  }
+    constructor(model: any = <any>{}) {
+        this.id = model.id;
+        this.name = model.name;
+        this.code = model.code;
+    }
 }
 
 class CourseSectionLookup {
-  id: string;
-  name: string;
-  code: string;
-  courseId: string;
-  subjects: Array<CourseSubjectLookup>;
+    id: string;
+    name: string;
+    code: string;
+    courseId: string;
+    subjects: Array<CourseSubjectLookup>;
 
-  constructor(model: any = <any>{}) {
-    this.id = model.id;
-    this.name = model.name;
-    this.code = model.code;
-    this.courseId = model.courseId;
-    this.subjects = (model.subjects || []).map((r) => new CourseSubjectLookup(r));
-  }
+    constructor(model: any = <any>{}) {
+        this.id = model.id;
+        this.name = model.name;
+        this.code = model.code;
+        this.courseId = model.courseId;
+        this.subjects = (model.subjects || []).map((r) => new CourseSubjectLookup(r));
+    }
 }
 
 export class CourseLookup {
-  id: string;
-  name: string;
-  abbreviation: string;
-  duration: string;
-  eligibility: string;
-  created: string;
-  sections: Array<CourseSectionLookup>;
-  studyDegreeId: number;
-  studyLevelId: number;
-  parentStudyLevelId: number;
-  studyStreamId: number;
-  studyProgramId: number;
-  division: number;
-  durationTerm: number;
-  durationType: number;
-  countryId: number;
-  parentId: number;
-  orgUnitId: string;
-  studyLevelName: string;
-  studyModes: Array<number>;
+    id: string;
+    name: string;
+    abbreviation: string;
+    duration: string;
+    eligibility: string;
+    created: string;
+    sections: Array<CourseSectionLookup>;
+    studyDegreeId: number;
+    studyLevelId: number;
+    parentStudyLevelId: number;
+    studyStreamId: number;
+    studyProgramId: number;
+    division: number;
+    durationTerm: number;
+    durationType: number;
+    countryId: number;
+    parentId: number;
+    orgUnitId: string;
+    studyLevelName: string;
+    studyModes: Array<number>;
 
-  constructor(model: any = <any>{}) {
-    this.id = model.id;
-    this.name = model.name;
-    this.abbreviation = model.abbreviation;
-    this.duration = model.duration;
-    this.eligibility = model.eligibility;
-    this.division = model.division;
-    this.durationTerm = model.durationTerm;
-    this.durationType = model.durationType;
-    this.studyDegreeId = model.studyDegreeId;
-    this.studyLevelId = model.studyLevelId;
-    this.parentStudyLevelId = model.parentStudyLevelId;
-    this.studyStreamId = model.studyStreamId;
-    this.studyProgramId = model.studyProgramId;
-    this.sections = model.sections.map((r) => new CourseSectionLookup(r));
-    this.countryId = model.countryId;
-    this.studyModes = model.studyModes;
-    this.parentId = model.parentId;
-    this.orgUnitId = model.orgUnitId;
-    this.studyLevelName = model.studyLevelName;
-  }
+    constructor(model: any = <any>{}) {
+        this.id = model.id;
+        this.name = model.name;
+        this.abbreviation = model.abbreviation;
+        this.duration = model.duration;
+        this.eligibility = model.eligibility;
+        this.division = model.division;
+        this.durationTerm = model.durationTerm;
+        this.durationType = model.durationType;
+        this.studyDegreeId = model.studyDegreeId;
+        this.studyLevelId = model.studyLevelId;
+        this.parentStudyLevelId = model.parentStudyLevelId;
+        this.studyStreamId = model.studyStreamId;
+        this.studyProgramId = model.studyProgramId;
+        this.sections = model.sections.map((r) => new CourseSectionLookup(r));
+        this.countryId = model.countryId;
+        this.studyModes = model.studyModes;
+        this.parentId = model.parentId;
+        this.orgUnitId = model.orgUnitId;
+        this.studyLevelName = model.studyLevelName;
+    }
 
-  get sectionCount() {
-    return (this.sections || []).length;
-  }
+    get sectionCount() {
+        return (this.sections || []).length;
+    }
 }
 
 export class OrgSessionLookup {
-  id: string;
-  name: string;
-  fromYear: string;
-  toYear: string;
-  startDate: string;
-  endDate: string;
+    id: string;
+    name: string;
+    fromYear: string;
+    toYear: string;
+    startDate: string;
+    endDate: string;
 
-  constructor(model: any = <any>{}) {
-    this.id = model.id;
-    this.name = model.name;
-    this.fromYear = model.fromYear;
-    this.toYear = model.toYear;
-    this.startDate = model.startDate;
-    this.endDate = model.endDate;
-  }
-
-  getMonthRange() {
-    const _rangeInfo = new Date(this.startDate);
-    var start = _rangeInfo.getMonth();
-    var end = _rangeInfo.getMonth() - 1;
-    var startYear = parseInt(this.fromYear);
-    var endYear = parseInt(this.toYear);
-    var dates = [];
-
-    for (var i = startYear; i <= endYear; i++) {
-      var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
-      var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
-      for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
-        var month = j + 1;
-        var displayMonth = month < 10 ? '0' + month : month;
-        dates.push([i, displayMonth, '01'].join('-'));
-      }
+    constructor(model: any = <any>{}) {
+        this.id = model.id;
+        this.name = model.name;
+        this.fromYear = model.fromYear;
+        this.toYear = model.toYear;
+        this.startDate = model.startDate;
+        this.endDate = model.endDate;
     }
-    return dates;
-  }
+
+    getMonthRange() {
+        const _rangeInfo = new Date(this.startDate);
+        var start = _rangeInfo.getMonth();
+        var end = _rangeInfo.getMonth() - 1;
+        var startYear = parseInt(this.fromYear);
+        var endYear = parseInt(this.toYear);
+        var dates = [];
+
+        for (var i = startYear; i <= endYear; i++) {
+            var endMonth = i != endYear ? 11 : parseInt(end[1]) - 1;
+            var startMon = i === startYear ? parseInt(start[1]) - 1 : 0;
+            for (var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j + 1) {
+                var month = j + 1;
+                var displayMonth = month < 10 ? '0' + month : month;
+                dates.push([i, displayMonth, '01'].join('-'));
+            }
+        }
+        return dates;
+    }
 }
 
 class StudyModeTypeLookup {
@@ -212,6 +211,42 @@ class OrgTaskLookup {
         this.id = model.id;
         this.name = model.name;
         this.masterType = model.masterType;
+    }
+}
+
+class FeeTaxTypeLookup {
+    id: number;
+    name: string;
+    accountId:string;
+    rate:number;
+    extraTaxRate:number;
+    hasExtraTaxRate:boolean;
+    taxGroupId:number;
+
+    constructor(model: any = <any>{}){
+        this.id = model.id;
+        this.name = model.name;
+        this.accountId = model.accountId;
+        this.rate = model.rate;
+        this.extraTaxRate = model.extraTaxRate;
+        this.hasExtraTaxRate = model.hasExtraTaxRate;
+        this.taxGroupId = model.taxGroupId;
+    }
+}
+
+class TaxCategoryLookup {
+    id: string;
+    name: string;
+    taxCode:string;
+    isService:boolean;
+    taxGroupId:number;
+
+    constructor(model: any = <any>{}){
+        this.id = model.id;
+        this.name = model.name;
+        this.taxCode = model.taxCode;
+        this.isService = model.isService;
+        this.taxGroupId = model.taxGroupId;
     }
 }
 
@@ -242,49 +277,83 @@ class TaxMapperLookup {
         this.taxGroup = model.taxGroup;
     }
 }
+
+class FeeAccountLookup {
+    id: string;
+    name: string;
+    accountGroupId: string;
+    constructor(model: any = <any>{})
+    {
+        const { id, name, accountGroupId } = model;
+        this.id = id;
+        this.name = name;
+        this.accountGroupId = accountGroupId;
+    }
+}
+
+class PenaltyTypeLookup {
+    id: string;
+    name: string;
+    constructor(model: any = <any>{})
+    {
+        const { id, name } = model;
+        this.id = id;
+        this.name = name;
+    }
+}
+
 export class FeePlanLookup extends CoreResource{
     courses: Array<CourseLookup> = [];
+    feeAccounts:Array<FeeAccountLookup> = [];
     //courseSection: Array<CourseSection> = [];
     orgSession: Array<OrgSessionLookup> = [];
 
     studyMode: Array<StudyModeTypeLookup> = [];
     studyLevel: Array<StudyLevelTypeLookup>;
+
     taxMapper: Array<TaxMapperLookup>;
 
     orgTask: Array<OrgTaskLookup> = [];
+
     feeTypes: Array<FeeTypeLookup> = [];
+    feeTaxTypes: Array<FeeTaxTypeLookup> = [];
+    taxCategories: Array<TaxCategoryLookup> = [];
 
     reservationCategory: Array<any>;
-    // feePenaltyTypes: Array<PenaltyTypeLookup>;
+    feePenaltyTypes: Array<PenaltyTypeLookup>;
 
     constructor(model: any = <any>{}) {
         super();
         const {
-            courses, orgSession, feeTypes, frequency,
-            orgTask, studyMode, studyLevel, calculationTypes, penaltyFrequencies,
-            reservationCategory, taxMapper
+            courses, orgSession, feeTypes, feeTaxTypes, taxCategories,
+            orgTask, studyMode, studyLevel, feeAccounts,
+            reservationCategory, taxMapper, feePenaltyTypes
         } = model;
         this.courses = (courses || []).map(r => new CourseLookup(r));
+        this.feeAccounts = (feeAccounts || []).map(r => new FeeAccountLookup(r));
         this.orgSession = (orgSession || []).map(r => new OrgSessionLookup(r));
 
         this.studyMode = (studyMode || []).map(r => new StudyModeTypeLookup(r));
         this.studyLevel = (studyLevel || []).map(r => new StudyLevelTypeLookup(r));
+
         this.taxMapper = (taxMapper || []).map(r => new TaxMapperLookup(r));
 
         this.orgTask = (orgTask || []).map(r => new OrgTaskLookup(r));
+
         this.feeTypes = (feeTypes || []).map(r => new FeeTypeLookup(r));
+        this.feeTaxTypes = (feeTaxTypes || []).map(r => new FeeTaxTypeLookup(r));
+        this.taxCategories = (taxCategories || []).map(r => new TaxCategoryLookup(r));
 
         this.reservationCategory = reservationCategory;
-        // this.feePenaltyTypes = (feePenaltyTypes || []).map(r => new PenaltyTypeLookup(r));
-
+        this.feePenaltyTypes = (feePenaltyTypes || []).map(r => new PenaltyTypeLookup(r));
     }
     getCourseByModeType(modeTypeId: any) { return (this.courses || []).filter(r => r.studyModes.indexOf(modeTypeId)>-1); }
 
     addFeeType=(data)=> this.feeTypes.push(new FeeTypeLookup(data));
 }
 export class FeePlanLookupSerializer {
-  fromJson(json: any): FeePlanLookup {
-    return new FeePlanLookup(json);
-  }
-  toJson(data: any): any { return {}; }
+    fromJson(json: any): FeePlanLookup {
+        return new FeePlanLookup(json);
+    }
+    toJson(data: any): any { return {}; }
 }

@@ -148,10 +148,9 @@ export class FeeStructure {
     orgTaskScheduleId: number;
 
     sortOrder: number;
-    status: boolean;
+    isActive: boolean;
 
-
-    feeTypeName: string;
+    name: string;
 
     orgTaskName: string;
     orgTaskScheduleDesc: any;
@@ -161,6 +160,7 @@ export class FeeStructure {
     dueDay: string;
     totalAmount: number;
     totalTaxAmount: number;
+    rate: number;
 
     //schedular from fee type
 
@@ -184,11 +184,12 @@ export class FeeStructure {
         this.voucherConfigId = model.voucherConfigId;
 
         this.sortOrder = model.sortOrder;
-        this.status = model.status;
+        this.isActive = model.isActive;
         this.orgTaskName = model.defaultTaskName;
         this.orgTaskScheduleDesc = model.orgTaskScheduleDesc;
         //this.depositDurationTypeName = model.depositDurationTypeName;
-        this.feeTypeName = model.feeTypeName;
+        this.name = model.name;
+        this.rate = model.rate;
 
         this.dueDay = model.dueDay;
         this.totalAmount = model.totalAmount;

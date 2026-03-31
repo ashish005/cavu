@@ -1,6 +1,6 @@
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {FeePenaltyType} from "../domains/fee-penalty-type.serializer";
-import {CALC_TYPE, PENALTY_FREQUENCY_TYPE} from "@app-base/enums";
+import {CALC_TYPE, PENALTY_FREQUENCY_TYPE} from "@app-global";
 
 export class FeePenaltyTypeForm {
     customForm: FormGroup;
@@ -14,7 +14,7 @@ export class FeePenaltyTypeForm {
 
     // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-    get feePenaltyRules(){ return <FormArray>this.customForm.get('rules');}
+    get feePenaltyRules(): FormArray<FormGroup>{ return this.customForm.get('rules') as FormArray<FormGroup>;}
 
     populateData(data: FeePenaltyType){
         this.customForm.get('id').setValue(data.id);

@@ -1,5 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
+import {FeePlanPluginFactory} from "../services/fee-plan.factory";
 
 @Component({
     standalone: false,
@@ -10,7 +11,7 @@ export class Layout implements OnInit {
   public actionTemplate: TemplateRef<any>;
   public pageTitleTemplate: TemplateRef<any>;
   public title: string;
-  constructor(private activatedRoute: ActivatedRoute){//, private feePlanFactory: FeePlanPluginFactory
+  constructor(private activatedRoute: ActivatedRoute, private feePlanFactory: FeePlanPluginFactory){//
       //this.title = this.activatedRoute.snapshot.data.title;
   }
 
@@ -21,11 +22,11 @@ export class Layout implements OnInit {
     this.actionTemplate = componentRef.actionTemplate;
   }
 
-    showFeeTypesMasterPopup=()=> {};//this.feePlanFactory.showFeeTypesMasterPopup(()=>{});
+    showFeeTypesMasterPopup=()=> this.feePlanFactory.showFeeTypesMasterPopup(()=>{});
 
-    showConcessionFeeMasterPopup=()=> {};//this.feePlanFactory.showConcessionFeeMasterPopup(()=>{});
+    showConcessionFeeMasterPopup=()=> this.feePlanFactory.showConcessionFeeMasterPopup(()=>{});
 
-    showFeePenaltyMasterPopup=()=> {};//this.feePlanFactory.showFeePenaltyMasterPopup(()=>{});
+    showFeePenaltyMasterPopup=()=> this.feePlanFactory.showFeePenaltyMasterPopup(()=>{});
 }
 
 @Component({ standalone: false, templateUrl: './layout1.html' })

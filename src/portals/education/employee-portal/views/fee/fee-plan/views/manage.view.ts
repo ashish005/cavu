@@ -4,6 +4,7 @@ import {FeePlan, FeePlanQueryOptions} from "../domains/fee-plan.serializer";
 import {FeePlanService} from "../services/fee-plan.service";
 import {ViewExtender, NumberCell, CurrencyCell} from "@app-global";
 import {FeePlanNameActionCell} from "../grid-cells/fee-plan-grid-cell.component";
+import {FeePlanPluginFactory} from "../services/fee-plan.factory";
 
 @Component({
   standalone: false,
@@ -12,10 +13,9 @@ import {FeePlanNameActionCell} from "../grid-cells/fee-plan-grid-cell.component"
 export class FeePlanManageView extends ViewExtender<FeePlan> implements OnInit, OnDestroy {
   //@ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
   override coreState: FeePlanQueryOptions = new FeePlanQueryOptions();
-    constructor(public override service: FeePlanService,
+    constructor(public override service: FeePlanService, public feePlanFactory: FeePlanPluginFactory,
               public override activatedRoute: ActivatedRoute) {
     super(activatedRoute, service);
-      //this.pageTitle = this.activatedRoute.snapshot.data.title;
       this.gridOptions.columnDefs = [
           {headerName: 'Plan Name', field: 'name', cellTemplate: FeePlanNameActionCell },
           {headerName: 'Session', field: 'orgSessionName'  },
@@ -34,10 +34,10 @@ export class FeePlanManageView extends ViewExtender<FeePlan> implements OnInit, 
     createNew() {
         const popupHeaderOption = {text: `Fee Plan`, desc: `Fee Plan`};
         const inputData: any = { id: null };
-        // this.feePlanFactory.feePlanCEPopup(inputData, popupHeaderOption).then(()=>{
-        //     this.feePlanFactory.destroy();
-        //     this.populateGrid();
-        // }, ()=>{ this.feePlanFactory.destroy(); });
+        this.feePlanFactory.feePlanCEPopup(inputData, popupHeaderOption).then(()=>{
+            this.feePlanFactory.destroy();
+            this.populateGrid();
+        }, ()=>{ this.feePlanFactory.destroy(); });
     }
 
     actionCb(fePlan)
@@ -45,10 +45,10 @@ export class FeePlanManageView extends ViewExtender<FeePlan> implements OnInit, 
         const { id, name } = fePlan;
         const popupHeaderOption = {text: `${name}`, desc: `Fee Plan`};
         const inputData: any = { id: id, data: fePlan };
-        // this.feePlanFactory.feePlanCEPopup(inputData, popupHeaderOption).then(()=>{
-        //     this.feePlanFactory.destroy();
-        //     this.populateGrid();
-        // }, ()=>{ this.feePlanFactory.destroy(); });
+        this.feePlanFactory.feePlanCEPopup(inputData, popupHeaderOption).then(()=>{
+            this.feePlanFactory.destroy();
+            this.populateGrid();
+        }, ()=>{ this.feePlanFactory.destroy(); });
     }
 
   //showFeePlaneDetails = (fePlan) => this.router.navigate(['edit', fePlan.id], {relativeTo: this.activatedRoute.parent});

@@ -1,0 +1,22 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="scrollable hover">
+            <table class="table small-table text-xs mb-0">
+                <thead>
+                <tr>
+                    <th><span class="pl-2">Month</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-template ngFor let-row [ngForOf]="entities" let-k="index">
+                    <tr>
+                        <td>
+                            <span class="pl-2">{{row | json}}</span>
+                        </td>
+                    </tr>
+                </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

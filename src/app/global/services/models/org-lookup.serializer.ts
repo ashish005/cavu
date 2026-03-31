@@ -529,7 +529,9 @@ export class OrgLookup extends VoucherCommonLookup {
         this.orgSessions = (orgSessions || []).map(r => new OrgSession(r));
         this.frequencyTypes = (frequencyTypes || []).map(r => new LookupFrequencyType(r));
     }
-    getFeeFrequencies() { return this.frequencyTypes.filter(r => r.isFeeType); }
+    public defaultFrequency=()=> (this.frequencyTypes || []).find(r => r.isDefault);
+    public getFeeFrequencies=()=> (this.frequencyTypes || []).filter(r => r.isFeeType);
+
     getDefaultOrgCurrency = () => this.getOrgCurrency(this.orgBranch?.currencyCode);
     getDefaultOrgLanguage = () => this.getOrgLanguage(this.orgBranch?.cultureCode);
 

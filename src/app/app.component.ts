@@ -129,6 +129,7 @@ export class AppComponent extends ToastaSpecific {
   title = 'Enrator';
   constructor(public override injector: Injector, private setupService: AppSetupService, private setupFactory: SetupFactory) {
     super(injector);
+    this.setupService.showGlobalFilterPopup = () => this.setupFactory.showGlobalFilterPopup();
 
     this.setupService.showBellPopup = () => this.setupFactory.showBellPopup();
     this.setupService.createSupportTicket = () => this.setupFactory.createSupportTicket();
