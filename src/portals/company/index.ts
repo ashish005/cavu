@@ -10,7 +10,7 @@ import {
 } from "@app-global";
 
 export const companyRoutesFactory = (setupService: AppSetupService) => {
-  const { sectorMasterType }= setupService.appSetup;
+  const { sectorMasterType }= setupService?.appSetup || { sectorMasterType: null };
 
   if(ORG_SECTOR.COMPANY === sectorMasterType){
     return [

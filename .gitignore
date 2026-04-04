@@ -3,3 +3,9 @@
 /node_modules
 /.angular/cache
 /dist
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/blob-report/

@@ -17,7 +17,7 @@
             <!-- Navigation -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" *ngIf="app">
                         <div class="navbar-nav ms-auto">
                             <button class="btn btn-primary" (click)='login()'>
                                 <i class="fa fa-sign-in-alt me-2"></i>Login
