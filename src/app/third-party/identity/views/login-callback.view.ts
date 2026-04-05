@@ -1,17 +1,38 @@
 import {Component, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {OAuthService} from "angular-oauth2-oidc";
+import {filter, take} from "rxjs/operators";
 
 @Component({
-  template: ``,
+  template: `<div class="login-callback-container">
+    <h2>Processing login...</h2>
+    <p>Please wait while we complete the authentication.</p>
+  </div>`,
   standalone: false
 })
 export class LoginCallbackView implements OnInit {
-  constructor(private authService: OAuthService, private router: Router) { }
+  constructor(private oauthService: OAuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.authService.initLoginFlow();
-    // Show message or navigate user back after consent
-    // Could optionally notify server that user has consented
+    // Subscribe to token events to detect successful login
+    this.oauthService.events
+      .pipe(
+        filter(event => event.type === 'token_received' || event.type === 'code_received'),
+        take(1)
+      )
+      .subscribe(() => {
+        console.log('✅ Authentication successful, redirecting to dashboard...');
+        // Redirect to dashboard after successful login
+        this.router.navigate(['/app/dashboard']);
+      });
+
+    // If already authenticated, redirect immediately
+    if (this.oauthService.hasValidAccessToken()) {
+      console.log('✅ Already authenticated, redirecting to dashboard...');
+      this.router.navigate(['/app/dashboard']);
+    } else {
+      // Start login flow if not authenticated
+      this.oauthService.initLoginFlow();
+    }
   }
 }
