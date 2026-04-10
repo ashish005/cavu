@@ -104,7 +104,14 @@ export class AuthService {
 
     this.oauthService.events
       .pipe(filter(e => ['token_received'].includes(e.type)))
-      .subscribe(e => this.oauthService.loadUserProfile());
+      .subscribe(e => {
+        console.log('Token received event, fetching user profile...');
+        this.oauthService.loadUserProfile().then(() => {
+          console.log('User profile loaded successfully');
+        }).catch(err => {
+          console.error('Failed to load user profile:', err);
+        });
+      });
 
     this.oauthService.events
       .pipe(filter(e => ['session_terminated', 'session_error'].includes(e.type)))
@@ -114,13 +121,49 @@ export class AuthService {
   }
 
   public runInitialLoginSequence(): Promise<void> {
+    console.log('[AuthService] runInitialLoginSequence started');
+    console.log('[AuthService] Current URL:', window.location.href);
+    console.log('[AuthService] Has valid token:', this.oauthService.hasValidAccessToken());
+    
     if (location.hash) {
-      console.log('Encountered hash fragment, plotting as table...');
+      console.log('[AuthService] Encountered hash fragment, plotting as table...');
       console.table(location.hash.substr(1).split('&').map(kvp => kvp.split('=')));
     }
+
     return this.oauthService.loadDiscoveryDocumentAndTryLogin()
-      .then(() => new Promise<void>(resolve => setTimeout(() => resolve(), 100)))
-      .catch(() => { this.isDoneLoadingSubject$.next(true); });
+      .then(() => {
+        console.log('[AuthService] loadDiscoveryDocumentAndTryLogin completed');
+        this.isDoneLoadingSubject$.next(true);
+        
+        // If we have a valid token after tryLogin, load user profile
+        if (this.oauthService.hasValidAccessToken()) {
+          console.log('[AuthService] Token already valid, loading user profile...');
+          this.oauthService.loadUserProfile().then(() => {
+            console.log('[AuthService] User profile loaded');
+          }).catch(err => {
+            console.error('[AuthService] Failed to load user profile:', err);
+          });
+        } else {
+          console.log('[AuthService] No valid token after tryLogin');
+        }
+        
+        // Check for state to redirect after login
+        if (this.oauthService.state && this.oauthService.state !== 'undefined' && this.oauthService.state !== 'null') {
+          let stateUrl = this.oauthService.state;
+          if (stateUrl.startsWith('/') === false) {
+            stateUrl = decodeURIComponent(stateUrl);
+          }
+          console.log(`[AuthService] Redirecting to state: ${stateUrl}`);
+          this.router.navigateByUrl(stateUrl);
+        }
+        
+        return undefined;
+      })
+      .catch(err => {
+        console.error('[AuthService] Login sequence error:', err);
+        this.isDoneLoadingSubject$.next(true);
+        return undefined;
+      });
 
     /*return this.oauthService.loadDiscoveryDocumentAndTryLogin()
 
@@ -210,7 +253,27 @@ export class AuthService {
   public login(targetUrl?: string) {
     // Note: before version 9.1.0 of the library you needed to
     // call encodeURIComponent on the argument to the method.
-    this.oauthService.initLoginFlow(targetUrl || this.router.url);
+    const currentUrl = window.location.href;
+    console.log('[AuthService.login] Initiating login flow...');
+    console.log('[AuthService.login] Current URL:', currentUrl);
+    console.log('[AuthService.login] Target URL:', targetUrl || this.router.url);
+    console.log('[AuthService.login] OAuth config issuer:', this.oauthService.issuer);
+    console.log('[AuthService.login] OAuth config redirectUri:', (this.oauthService as any).redirectUri);
+
+    // Ensure discovery document is loaded before initiating login flow
+    // This is required for PKCE code_challenge generation
+    if (!this.oauthService.discoveryDocumentLoaded) {
+      console.log('[AuthService.login] Discovery document not loaded, loading now...');
+      this.oauthService.loadDiscoveryDocument().then(() => {
+        console.log('[AuthService.login] Discovery document loaded, starting login flow');
+        this.oauthService.initLoginFlow(targetUrl || this.router.url);
+      }).catch(err => {
+        console.error('[AuthService.login] Failed to load discovery document:', err);
+      });
+    } else {
+      console.log('[AuthService.login] Discovery document already loaded, starting login flow');
+      this.oauthService.initLoginFlow(targetUrl || this.router.url);
+    }
   }
 
   public logout() { this.oauthService.logOut(); }

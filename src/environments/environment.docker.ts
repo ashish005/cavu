@@ -5,7 +5,10 @@ const svcUrl = 'http://localhost:8082';
 export const environment = {
   production: true,
   identityServer: {
-    issuer: 'http://localhost:8082', // For IdentityServer/Authorization Server API. You can set to null if same as baseUrl
+    // Set to null to use current host as issuer (multi-tenant mode)
+    // Each tenant subdomain gets its own issuer for token isolation
+    issuer: null as string | null,
+    clientId: 'localhost-spa'
   },
   authBaseUrl: svcUrl
 };

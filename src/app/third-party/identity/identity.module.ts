@@ -16,7 +16,6 @@ import {getAuthConfig} from "./auth-config";
 import {AuthService} from "./auth.service";
 import {AuthGuard} from "./guard/auth-guard.service";
 
-export const AUTH_VIEWS = [];
 export const AUTH_ROUTES: Routes = [
   { path: 'login-callback', component: LoginCallbackView },
   { path: 'logout-callback', component: LogoutCallbackView }
@@ -58,7 +57,7 @@ export const authModuleConfig: OAuthModuleConfig = {
 };
 
 @NgModule({
-  declarations: [AUTH_VIEWS],
+  declarations: [LoginCallbackView, LogoutCallbackView],
   imports: [
     OAuthModule.forRoot(),
     RouterModule.forRoot(AUTH_ROUTES)
