@@ -19,7 +19,6 @@
                     <div class="d-flex" [ngSwitch]="customForm.value.frequencyMasterType">
                         <ng-container *ngSwitchCase="freqEnum.FIXED_TIME" [ngTemplateOutlet]="fixedFreq"></ng-container>
                         <ng-container *ngSwitchCase="freqEnum.MONTHLY" [ngTemplateOutlet]="monthlyFreq"></ng-container>
-                        <ng-container *ngSwitchCase="freqEnum.ON_EVENT" [ngTemplateOutlet]="eventFreq"></ng-container>
                     </div>
                 </div>
             </div>
@@ -67,6 +66,4 @@
             </select>
         </div>
     </div>
-</ng-template>
-<ng-template #eventFreq>
 </ng-template>

@@ -8,7 +8,7 @@ export const OrgUserRoutes: Routes = [
     path: '', component: OrgEmployeeLayout, resolve: { items: OrgUserAPIResolver },
     children:[
       { path: '', pathMatch: 'full', redirectTo:'manage' },
-      { path: 'manage', component: OrgEmployeeManageView, data: {  title: 'Manage', headers: 'Manage' } }
+      { path: '', component: OrgEmployeeManageView, data: {  title: 'Manage', headers: 'Manage' } }
     ]
   },
 ];

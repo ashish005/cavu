@@ -3,23 +3,19 @@ import { NgModule } from '@angular/core';
 import {CommonModule} from "@angular/common"
 import {RouterModule, ROUTES} from "@angular/router";
 import {
-  AppSetupService,
-  GlobalModule,
-  ORG_SECTOR,
-  TypingComponent
+  AppSetupService
 } from "@app-global";
 
 export const companyRoutesFactory = (setupService: AppSetupService) => {
   const { sectorMasterType }= setupService?.appSetup || { sectorMasterType: null };
-
-  if(ORG_SECTOR.COMPANY === sectorMasterType){
+  /*if(ORG_SECTOR.COMPANY === sectorMasterType){
     return [
       {
         path: '',
         loadChildren: () => import('portals/company/app.router').then(m => m.AppCompanyModule)
       }
     ];
-  }
+  }*/
   return [
     {
       path: '',

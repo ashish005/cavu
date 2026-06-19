@@ -87,7 +87,7 @@ export class FrequencyExtender
         { name: 'Bi Monthly', id: 2, masterType: FREQUENCY_TYPE.MONTHLY },
         { name: 'Quarterly', id: 3, masterType: FREQUENCY_TYPE.MONTHLY },
         { name: 'Half-Yearly', id: 6, masterType: FREQUENCY_TYPE.MONTHLY },
-        { name: 'Yearly', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
+        //{ name: 'Yearly', id: 12, masterType: FREQUENCY_TYPE.MONTHLY }
     ];
     weekDays: Array<any> = WEEK_DAYS;
     months: Array<any> = MONTHS;
