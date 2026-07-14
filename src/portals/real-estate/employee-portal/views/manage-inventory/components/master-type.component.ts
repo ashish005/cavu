@@ -34,7 +34,7 @@ export class MasterTypeLayout extends CoreEndpointBase implements OnInit, OnDest
         super(injector);
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name'},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

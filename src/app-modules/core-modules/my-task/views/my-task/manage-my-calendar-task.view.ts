@@ -26,7 +26,7 @@ export class ManageMyCalendarTaskView extends ViewExtender<MyCalendar> implement
     super(activatedRoute, service);
     this.gridOptions.columnDefs = [
       {headerName: 'Name', field: 'name' },
-        {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent},
+        {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent},
       //{headerName: 'Task Type', field: 'taskType'},
       //{headerName: 'Next Run Time', field: 'nextRunTime', cellFn: rowData => this.sharedService.customDateTime(rowData.nextRunTime)},
       //{headerName: 'Last Run Time', field: 'lastRunTime', cellFn: rowData => this.sharedService.customDateTime(rowData.lastRunTime)},

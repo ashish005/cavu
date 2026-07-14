@@ -9,6 +9,8 @@ import {BusinessManageView} from "./views/business-manage.view";
 import {ReactiveFormsModule} from "@angular/forms";
 import {BUSINESS_COMPONENT} from "./components/index";
 import { BUSINESS_SERVICES } from './services';
+import {PricingInfoView} from "./views/pricing-info.view";
+import {TrialBusinessView} from "./views/trial.view";
 
 @NgModule({
     imports: [
@@ -16,7 +18,7 @@ import { BUSINESS_SERVICES } from './services';
         RouterModule.forChild(ROOT_Routes)
     ],
     providers: [ BUSINESS_SERVICES ],
-    declarations: [Layout, DashboardView, BusinessManageView, ...BUSINESS_COMPONENT]
+    declarations: [Layout, DashboardView, BusinessManageView, PricingInfoView, TrialBusinessView, ...BUSINESS_COMPONENT]
 })
 
 export class RootPortalModule{

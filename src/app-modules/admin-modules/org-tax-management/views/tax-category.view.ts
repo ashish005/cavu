@@ -23,7 +23,7 @@ export class TaxCategoryView extends ViewExtender<TaxCategory> implements OnInit
           {headerName: 'Tax Code', field: 'taxCode' },
           {headerName: 'Tax Group', field: 'taxGroup'},
           {headerName: 'Tax Rates', class: 'text-center', cellTemplate: TaxRateMapperCellComponent},
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+          {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ];
       this.activatedRoute.parent.paramMap.subscribe((params: ParamMap) => {
           const id: any = +params.get('id');

@@ -35,7 +35,7 @@ export class ProjectSideNavLayout implements OnInit {
             { id:3, icon:"fa fa-pie-chart", route: 'invoice', key: `${translatePath}.invoice.name`, sortOrder: 4 },
             { id:7, icon:"fa fa-shield", route: 'quotation', key: `${translatePath}.quote.name`, sortOrder: 5 },
             { id:11, icon:"fa fa-envelope", route: 'recurring', key: `${translatePath}.rec_invoice.name`, sortOrder: 6 },
-            //{ id:12, icon:"fa fa-folder-open", route: 'retainer', name: "sideOptions.retainers", sortOrder: 1 },
+            //{ id:12, icon:"fa fa-folder-open", route: 'retainer', name: "retainers", sortOrder: 1 },
             { id:12, icon:"fa fa-folder-open", route: 'workflow', key: `${translatePath}.workflow.name`, sortOrder: 1 },
             { id:12, icon:"fa fa-folder-open", route: 'status-tracking', key: `${translatePath}.tracking.name`, sortOrder: 1 }
         ];

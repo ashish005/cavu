@@ -4,11 +4,11 @@ import {SharedService} from "@app-global";
 @Injectable()
 export class ProductExtensionFactory {
     public items : Array<any> = [
-        { id:1, icon:"fa fa-dashboard", route: 'dashboard', name: "sideOptions.dashboard", sortOrder: 1 },
-        { id:9, icon:"fa fa-folder-open", route: 'variant', name: "sideOptions.variants", sortOrder: 2 },
-        // { id:10, icon:"fa fa-folder-open", route: 'transaction', name: "sideOptions.transactions", sortOrder: 1 },
+        { id:1, icon:"fa fa-dashboard", route: 'dashboard', name: "dashboard", sortOrder: 1 },
+        { id:9, icon:"fa fa-folder-open", route: 'variant', name: "variants", sortOrder: 2 },
+        // { id:10, icon:"fa fa-folder-open", route: 'transaction', name: "transactions", sortOrder: 1 },
         { id:10, icon:"fa fa-folder-open", route: 'transactions', name: "Transactions", sortOrder: 3 },
-        { id:5, icon:"fa fa-tags", route: 'tokens', name: "sideOptions.tokens", sortOrder: 5 }
+        { id:5, icon:"fa fa-tags", route: 'tokens', name: "tokens", sortOrder: 5 }
     ];
     public reportItems: any = {
             name: "Reports",

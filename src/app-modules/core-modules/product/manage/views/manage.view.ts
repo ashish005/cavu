@@ -18,12 +18,12 @@ export class ProductManageView extends ViewExtender<Product> implements OnInit {
                 protected sharedService: SharedService) {
         super(activatedRoute, service);
         this.gridOptions.columnDefs = [
-            {headerName: 'grid.header.name', field: 'name', cellTemplate: ProductNameActionCell },
-            {headerName: 'grid.header.barcode', cellTemplate: ProductBarcodeCell},
-            {headerName: 'grid.header.brand', cellTemplate: ProductBrandCell},
-            {headerName: 'grid.header.type', field: 'productType', cellTemplate: ProductTypeNameCell },
-            {headerName: 'grid.header.selling_price', cellTemplate: ProductPriceCell},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'name', field: 'name', cellTemplate: ProductNameActionCell },
+            {headerName: 'barcode', cellTemplate: ProductBarcodeCell},
+            {headerName: 'brand', cellTemplate: ProductBrandCell},
+            {headerName: 'type', field: 'productType', cellTemplate: ProductTypeNameCell },
+            {headerName: 'selling_price', cellTemplate: ProductPriceCell},
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ]
     }
 

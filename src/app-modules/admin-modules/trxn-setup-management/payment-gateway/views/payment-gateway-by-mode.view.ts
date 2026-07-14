@@ -30,7 +30,7 @@ export class PaymentGatewayByModeView extends ViewExtender<PaymentGatewayByMode>
             {headerName: 'ReceiptAllowed', field: 'isReceiptAllowed', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'PaymentAllowed', field: 'isPaymentAllowed', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'Charges', field: 'isReconciliationRequired', cellTemplate: PaymentModeServiceChargesCell },
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

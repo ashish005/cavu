@@ -1,15 +1,20 @@
-import {Component, Directive, Injector, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {Branch, Business, BusinessQueryOptions} from "../domains/business.serializer";
-import {BusinessService} from "../services/business.service";
+import {Component, Directive, Injectable, Injector, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Branch, Business, BusinessQueryOptions, BusinessSerializer} from "../domains/business.serializer";
 import {BusinessPermissionInfo, BusinessContactGridCell} from "../components/grid.cell.component";
 import {ActivatedRoute} from "@angular/router";
 import {BusinessAPIResolver} from "../services/api.resolver";
-import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, CoreResponse, ViewExtender} from "@app-global";
+import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, CoreResponse, ViewExtender, CoreResourceService} from "@app-global";
+
+@Injectable()
+export class BusinessService extends CoreResourceService<Business>{
+    constructor(public override injector: Injector) { super(injector, 'tenant', new BusinessSerializer());}
+}
 
 @Component({
     templateUrl: './templates/business-manage.html',
     styles: [ `#manage_business .modal-dialog{ width: auto;}`],
-    standalone: false
+    standalone: false,
+    providers: [BusinessService]
 })
 export class BusinessManageView extends ViewExtender<Business> implements OnInit{
     override coreState: BusinessQueryOptions = new BusinessQueryOptions();

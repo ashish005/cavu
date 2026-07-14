@@ -25,7 +25,7 @@ export class ContactView extends ViewExtender<Contact> implements OnInit, OnDest
           { headerName: 'Phone', field: 'phone' },
           { headerName: 'User Type', field: 'userTypeName' },
           { headerName: 'roles', cellFn: (row) => `${row.activeRoles()}` },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent},
+          {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent},
           { headerName: 'Login Grant', field: 'orgUserId', cellTemplate: LoginGrantAccessCell }
           //{ headerName: 'Login', field: 'orgUserId', cellFn: (row) => `${row.orgUserId ? 'App Accesss: Allowed': 'App Accesss: Grant'}` }
       ];

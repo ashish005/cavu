@@ -8,15 +8,15 @@ import {MasterTypeLayout} from "../components/master-type.component";
 export class ProductLookupResolver extends OrgResourceService<ProductLookup> implements Resolve<any> {
     masterType: ProductLookup;
     public items : Array<any> = [
-        { id:1, icon:"fa fa-dashboard", route: 'dashboard', name: "sideOptions.dashboard", sortOrder: 1 },
-        { id:9, icon:"fa fa-folder-open", route: 'variant', name: "sideOptions.variants", sortOrder: 1 },
-        // { id:10, icon:"fa fa-folder-open", route: 'transaction', name: "sideOptions.transactions", sortOrder: 1 },
+        { id:1, icon:"fa fa-dashboard", route: 'dashboard', name: "dashboard", sortOrder: 1 },
+        { id:9, icon:"fa fa-folder-open", route: 'variant', name: "variants", sortOrder: 1 },
+        // { id:10, icon:"fa fa-folder-open", route: 'transaction', name: "transactions", sortOrder: 1 },
         { id:10, icon:"fa fa-folder-open", route: 'purchase-order', name: "Purchase History", sortOrder: 1 },
         { id:10, icon:"fa fa-folder-open", route: 'sale-order', name: "Sale History", sortOrder: 1 },
 
-        //{ id:3, icon:"fa fa-pie-chart", route: 'categories', name: "sideOptions.categories", sortOrder: 1 },
+        //{ id:3, icon:"fa fa-pie-chart", route: 'categories', name: "categories", sortOrder: 1 },
         //{ id:5, icon:"fa fa-money", route: 'attributes', name: "Attributes", sortOrder: 1 },
-        //{ id:5, icon:"fa fa-tags", route: 'tokens', name: "sideOptions.tokens", sortOrder: 1 }
+        //{ id:5, icon:"fa fa-tags", route: 'tokens', name: "tokens", sortOrder: 1 }
     ];
 
     public reportItems: any = {

@@ -26,7 +26,7 @@ export class VoucherTypeView extends ViewExtender<VoucherType> implements OnInit
 
             {headerName: 'Accounting', field: 'enableAccounting', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'Inventory', field: 'enableInventory', cellTemplate: GridUISwitchCellComponent },
-            {headerName: 'grid.header.status', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

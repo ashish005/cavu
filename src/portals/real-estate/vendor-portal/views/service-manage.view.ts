@@ -30,7 +30,7 @@ export class ServicesManageView extends ViewExtender<Product> implements OnInit 
             {headerName: 'Brand', cellTemplate: ProductBrandCell},
             {headerName: 'Type', field: 'productType', cellTemplate: ProductTypeNameCell },
             {headerName: 'Selling Price', cellTemplate: ProductPriceCell},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ]
     }
 

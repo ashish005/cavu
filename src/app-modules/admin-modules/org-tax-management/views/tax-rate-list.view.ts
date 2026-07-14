@@ -21,7 +21,7 @@ export class TaxRateListComponent extends ViewExtender<TaxTypeRate> implements O
       this.gridOptions.columnDefs = [
       {headerName: 'Name', field: 'name', cellTemplate: NameCellComponent},
       {headerName: 'Rate', field: 'rate', cellTemplate: TaxRateCellComponent},
-      {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+      {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
     ];
   }
 

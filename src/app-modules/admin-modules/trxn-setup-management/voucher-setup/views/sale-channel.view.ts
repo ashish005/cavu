@@ -17,7 +17,7 @@ export class SaleChannelView extends ViewExtender<SaleChannel> implements OnInit
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name' },
             {headerName: 'Commission Rate', field: 'commissionRate' },
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

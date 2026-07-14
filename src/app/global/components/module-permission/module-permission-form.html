@@ -1,0 +1,45 @@
+<!--
+<div class="content-main d-flex flex">
+    <table class="table text-xs table-condensed" [formGroup]="customForm">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Module</th>
+            <th>Full Access</th>
+            <th>
+                <div class="text-xs">
+                    <div class="d-inline-block px-1" style="font-size: .6em;color: green;">Manage
+                    </div>
+                    <div class="d-inline-block px-1" style="font-size: .8em;">View</div>
+                    <div class="d-inline-block px-1 b-l b-r" style="font-size: .8em;">Create</div>
+                    <div class="d-inline-block px-1" style="font-size: .8em;">Modify</div>
+                </div>
+            </th>
+            <th>Soft Delete</th>
+            <th>Destroy</th>
+            &lt;!&ndash;<th>Import</th>
+            <th>Export</th>&ndash;&gt;
+        </tr>
+        </thead>
+        <tbody formArrayName="moduleRight">
+        <ng-template ngFor let-rule [ngForOf]="formModuleRight?.controls" let-i="index">
+            <ng-container [formGroup]="rule">
+                <tr>
+                    <module-permission-row [customForm]="rule"></module-permission-row>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="getModulePermissions(rule) as subPerms">
+                <tr *ngFor="let ruleItem of subPerms.controls; let k = index" [formGroup]="ruleItem">
+                    <ng-container *ngIf="k === 0">
+                        <td [attr.rowspan]="subPerms.controls.length"
+                            style="border-top: none; border-right: 1px solid #e9ebed;"></td>
+                    </ng-container>
+
+                    <sub-module-permission-row [customForm]="ruleItem"></sub-module-permission-row>
+                </tr>
+            </ng-container>
+        </ng-template>
+        </tbody>
+    </table>
+    <loader [isLoading]="isLoading"></loader>
+</div>-->

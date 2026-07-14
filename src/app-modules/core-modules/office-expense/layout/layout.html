@@ -24,12 +24,12 @@
               </ng-template>
             </div>
             <div class="p-2 px-3">
-              <span class="text-muted text-sm">{{'sideOptions.office.heading.ledger'}}</span>
+              <span class="text-muted text-sm">{{'office.heading.ledger'}}</span>
             </div>
             <div class="list-group list-group-gap p-2">
               <a class="list-group-item p-0 px-2" [routerLink]="['ledger', 'all']" routerLinkActive="active">
                 <span class="float-right py-1"><i class="fa fa-chevron-right"></i></span>
-                <span class="nav-text py-1"><i class="fa fa-money" class="pr-2"></i>{{'sideOptions.office.heading.show_all_ledger'}}</span>
+                <span class="nav-text py-1"><i class="fa fa-money" class="pr-2"></i>{{'office.heading.show_all_ledger'}}</span>
               </a>
               &lt;!&ndash;<ng-template ngFor let-item [ngForOf]="apiResolver.masterType.accountGroup| sortBy:'asc': 'name'" let-i="index">
                 <a class="list-group-item p-0 px-2" [routerLink]="['ledger', item.id ]" routerLinkActive="active">

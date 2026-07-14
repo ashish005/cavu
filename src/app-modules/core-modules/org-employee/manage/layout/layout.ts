@@ -21,10 +21,10 @@ export class LayoutCELayout implements OnInit {
                 public userResolver: FetchEmployeeService) {
     }
     public items : Array<any> = [
-        { id:2, icon:"fa fa-dashboard", route: 'info', name: "sideOptions.info", sortOrder: 1 },
-        { id:9, icon:"fa fa-folder-open", route: 'documents', name: "sideOptions.documents", sortOrder: 2 },
-        // { id:10, icon:"fa fa-user", route: 'executive', name: "sideOptions.executives", sortOrder: 3 },
-        // { id:6, icon:"fa fa-calculator", route: 'invoice', name: "sideOptions.invoices", sortOrder: 4 },
+        { id:2, icon:"fa fa-dashboard", route: 'info', name: "info", sortOrder: 1 },
+        { id:9, icon:"fa fa-folder-open", route: 'documents', name: "documents", sortOrder: 2 },
+        // { id:10, icon:"fa fa-user", route: 'executive', name: "executives", sortOrder: 3 },
+        // { id:6, icon:"fa fa-calculator", route: 'invoice', name: "invoices", sortOrder: 4 },
         // { id:11, icon:"fa fa-folder-open", route: 'purchase-order', name: "Purchase Order", sortOrder: 5 },
     ];
 

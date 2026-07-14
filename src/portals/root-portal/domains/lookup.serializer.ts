@@ -10,6 +10,15 @@ class Country{
   }
 }
 
+class OperatedBy{
+    id: number;
+    name: string;
+
+    constructor(model: any){
+        this.id = model.id;
+        this.name = model.name;
+    }
+}
 class BusinessType {
   id: string;
   name: string;
@@ -39,29 +48,32 @@ export class SoftwareLicenseType {
 export class Software {
     id: number;
     name: string;
+    code: string;
     licenseTypes: Array<SoftwareLicenseType>;
-    constructor(model: any = <any>{}){
-        const  { id, name, licenseTypes } = model;
+    businessTypes: Array<BusinessType>;
+    constructor(model: any){
+        const  { id, name, code, licenseTypes, businessTypes } = model;
         this.id = id;
-        this.name = name;
-        this.licenseTypes = (licenseTypes || []).map(r => new SoftwareLicenseType(r));
+        this.name = `${code} : ${name}`;
+        this.code = code;
+        this.licenseTypes = (licenseTypes || []).map((r: any) => new SoftwareLicenseType(r));
+        this.businessTypes = (businessTypes || []).map((r: any) => new BusinessType(r));
     }
 }
 
 export class BusinessLookup extends CoreResource{
   tenantTypes: BusinessType[] = [];
   country: Country[];
-  operatedBy: Array<{Id: number, Name: string}>[];
-  dbTypes: Array<any>;
-  softwares: Array<Software>;
+  operatedBy: Array<OperatedBy> = [];
+  softwares: Array<Software> = [];
 
   constructor(model: any = <any>{}){
     super();
-    const { softwares } = model;
-    this.country = model.country;
-    this.tenantTypes = model.tenantTypes;
-    this.operatedBy = model.operatedBy;
-    this.dbTypes = model.dbTypes;
+    const { country, softwares, tenantTypes, operatedBy } = model;
+    this.country = country;
+    this.tenantTypes = tenantTypes;
+    this.operatedBy = (operatedBy || []).map((r: any) => new OperatedBy(r));
+    //this.dbTypes = model.dbTypes;
     this.softwares = (softwares || []).map(r => new Software(r));
   }
 

@@ -80,7 +80,7 @@ export const EMPLOYEE_COMMON_ROUES = [
         isFLatChildren: false, key: 'Contact',
         children:[
             { routeTo: ['org-emp'], icon:"fa fa-group", key: 'Employee' },// code: "EMP",
-            { routeTo: ['vendor'], icon:"fa fa-bell", key: 'Supplier' },// code: "PERM_VENDOR",
+            { routeTo: ['supplier'], icon:"fa fa-bell", key: 'Supplier' },// code: "PERM_VENDOR",
             { routeTo: ['client'], icon:"fa fa-bell", key: 'Client' },// code: "PERM_CLIENT"
         ]
     },

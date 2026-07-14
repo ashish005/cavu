@@ -23,18 +23,18 @@ export class ProjectModuleView extends ViewExtender<ProjectModule> implements On
   {
       super(activatedRoute, service);
       this.gridOptions.columnDefs = [
-          {headerName: 'grid.header.name', field: 'name' },
-          {headerName: 'grid.header.division', field: 'division' },
-          {headerName: 'grid.header.executive', field: 'empExecutive' },
-          {headerName: 'grid.header.est_cost', field: 'estimatedCost', class: 'text-right', cellTemplate: NumberCell  },
-          {headerName: 'grid.header.est_st_data', field: 'estimatedStartDate', cellTemplate: DateFormatCell },
-          {headerName: 'grid.header.approved', field: 'approvedCost', class: 'text-right', cellTemplate: NumberCell },
-          {headerName: 'grid.header.sDate', field: 'actualStartDate', cellTemplate: DateFormatCell },
-          {headerName: 'grid.header.quoteNo', cellTemplate: ServiceQuotationCell },
-          {headerName: 'grid.header.sale_order', cellTemplate: ServiceSaleOrderCell },
-          //{headerName: 'grid.header.audit', cellTemplate: ServiceAuditCell },
+          {headerName: 'name', field: 'name' },
+          {headerName: 'division', field: 'division' },
+          {headerName: 'executive', field: 'empExecutive' },
+          {headerName: 'est_cost', field: 'estimatedCost', class: 'text-right', cellTemplate: NumberCell  },
+          {headerName: 'est_st_data', field: 'estimatedStartDate', cellTemplate: DateFormatCell },
+          {headerName: 'approved', field: 'approvedCost', class: 'text-right', cellTemplate: NumberCell },
+          {headerName: 'sDate', field: 'actualStartDate', cellTemplate: DateFormatCell },
+          {headerName: 'quoteNo', cellTemplate: ServiceQuotationCell },
+          {headerName: 'sale_order', cellTemplate: ServiceSaleOrderCell },
+          //{headerName: 'audit', cellTemplate: ServiceAuditCell },
           {headerName: '', field: '',  cellTemplate: ProjectPipelineSetupCell },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+          {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ];
   }
 

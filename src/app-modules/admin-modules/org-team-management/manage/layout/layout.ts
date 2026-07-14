@@ -49,7 +49,7 @@ export class TeamLayout extends ViewExtender<TeamUserGroup> implements OnInit{
           {headerName: 'Name', field: 'name'},
           {headerName: 'Category', field: 'categoryName'},
           {headerName: 'Dynamic Rules', cellTemplate: GridUISwitchCellComponent },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+          {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ];
   }
 

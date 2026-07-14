@@ -20,7 +20,7 @@ export class ComplianceTypeLayout extends ViewExtender<ComplianceType> implement
         this.gridOptions.columnDefs = [
             {headerName: 'Name', field: 'name'},
             {headerName: 'Subscription', field: 'status', cellTemplate: SubscriptionCellComponent},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ]
     }
 

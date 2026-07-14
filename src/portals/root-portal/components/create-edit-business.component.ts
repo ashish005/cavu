@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {BusinessService} from "../services/business.service";
 import {BusinessAPIResolver} from "../services/api.resolver";
 import {Business} from "../domains/business.serializer";
 import {ACTION_ENUM} from "@app-global";
 import {BusinessHostConfig} from "../domains/business-host.serializer";
+import {BusinessService} from "../views/business-manage.view";
 
 const Referrals: Array<any> = [
   { name: 'Facebook' },
@@ -19,6 +19,7 @@ const Referrals: Array<any> = [
 @Component({
   templateUrl: 'templates/create-edit-business.html',
   styles: [`:host {display: contents;}`],
+  providers: [BusinessService],
   standalone: false
     //styles:[`::ng-deep .ng-value-container { display: contents; } ::ng-deep .ng-placeholder{ display: none !important;}`]
 })

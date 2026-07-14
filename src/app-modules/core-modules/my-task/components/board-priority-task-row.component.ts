@@ -16,8 +16,8 @@ export class BoardPriorityTaskRowComponent extends CoreLoaderComponent implement
     constructor(public service: MyTaskService) {
         super();
         this.gridOptions.columnDefs = [
-            {headerName: 'grid.header.dashboard.pay_mode', field: 'paymentMode'},
-            {headerName: 'grid.header.dashboard.total_paid', field: 'totalPaid'}
+            {headerName: 'dashboard.pay_mode', field: 'paymentMode'},
+            {headerName: 'dashboard.total_paid', field: 'totalPaid'}
         ];
         /*this.apiResolver.$synchFilterViews.subscribe((r)=> {
           this.callService(r);

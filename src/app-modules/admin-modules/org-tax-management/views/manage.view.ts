@@ -23,7 +23,7 @@ export class ManageTaxView extends ViewExtender<TaxManagement> implements OnInit
           {headerName: 'Tax', field: 'name'},
           {headerName: 'Rate', field: 'rate'},
           {headerName: 'Tax Code', field: 'taxCode' },
-          {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+          {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ];
       this.activatedRoute.parent.paramMap.subscribe((params: ParamMap) => {
           const id: any = +params.get('id');

@@ -18,7 +18,7 @@ export class SundryTypeView extends ViewExtender<VoucherSundryType> implements O
             {headerName: 'Name', field: 'name' },
             {headerName: 'Has Tax', field: 'hasTax', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'Has Voucher Credit', field: 'hasVoucherCredit', cellTemplate: GridUISwitchCellComponent },
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

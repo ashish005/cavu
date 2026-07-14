@@ -23,7 +23,7 @@ export class TrxnTypeAllocationView extends ViewExtender<TrxnTypeAllocation> imp
             {headerName: 'Branch', cellTemplate: BankBranchNameCell},
             {headerName: 'Account No', cellTemplate: BankAccountNoCell},
             {headerName: 'Account', cellTemplate: BankAccountNameCell},
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ]
     }
 

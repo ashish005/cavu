@@ -47,7 +47,7 @@ export class StudyTypeListComponent implements OnInit, AfterViewInit {
       isOrderable: false,
       columnDefs: [
         {headerName: 'Name', field: 'name' },
-        {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+        {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
       ]
     };
   }

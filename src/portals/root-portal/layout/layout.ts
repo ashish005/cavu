@@ -11,13 +11,15 @@ import {AuthService} from "@app-third-party";
 export class Layout implements OnInit  {
   public actionTemplate: TemplateRef<any>;
   country: any;
-    constructor(public router: Router, public authService: AuthService,public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}
+  constructor(public router: Router, public authService: AuthService,public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}
 
   public navList: Array<any> = [
     {
       name: "Main", isFLatChildren: true,
       children:[
         { routeTo: ['business'], icon:"fa fa-graduation-cap", name: "Business", key: 'Business' },
+        { routeTo: ['pricing'], icon:"fa fa-graduation-cap", name: "pricing", key: 'pricing' },
+        { routeTo: ['trial'], icon:"fa fa-graduation-cap", name: "Setup Business", key: 'Setup Business' }
       ]
     },
     /*{

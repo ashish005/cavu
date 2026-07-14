@@ -13,6 +13,8 @@ export const CoreCommonModuleRoutes = [
     { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 
     { path: 'org-emp', loadChildren: () => import('app-modules/core-modules/org-employee/manage').then(m => m.OrgEmployeeManageModule), data: { code: "EMP", title: 'Employee', header:'Employee'} },
+    { path: 'client', loadChildren: () => import('app-modules/core-modules/org-client').then(m => m.OrgClientModule) },
+    { path: 'supplier', loadChildren: () => import('app-modules/core-modules/org-supplier').then(m => m.OrgSupplierModule) },
 
     { path: 'my-task', loadChildren: () => import('app-modules/core-modules/my-task').then(m => m.MyTaskModule), data: {code: "ACCESS_TASK_MGT", title: 'Task', header:'Task'}  },//, canActivate:[ModuleGuard]
     { path: 'conversation', loadChildren: () => import('app-modules/core-modules/conversation').then(m => m.CommunicationModule), data: { code: "ACCESS_NOTIFY_MGT"} },//, canActivate:[ModuleGuard]

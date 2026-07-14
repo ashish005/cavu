@@ -1,0 +1,81 @@
+<div class="container">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3 text-gradient">Choose Your Software</h2>
+        <p class="lead text-muted">Select the software solution that fits your needs</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Software Tabs -->
+            <div class="feature-card">
+                <div class="p-4">
+                    <div class="nav nav-pills d-flex flex-wrap justify-content-center gap-2" role="tablist">
+                        <ng-template ngFor let-software [ngForOf]="apiResolver.masterType.softwares" let-i="index">
+                            <button class="nav-link"
+                                    [class.active]="activeSoftware?.code == software.code"
+                                    [class.bg-primary]="activeSoftware?.code == software.code"
+                                    [class.text-white]="activeSoftware?.code == software.code"
+                                    (click)="showBySoftware(software)"
+                                    type="button">
+                                <i class="fa fa-box me-2"></i>{{software.code}}
+                            </button>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            <!-- Pricing Comparison Table -->
+            <div class="feature-card">
+                <div class="p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <div class="d-flex align-items-center">
+                                        <div class="feature-icon">
+                                            <i class="fa fa-list"></i>
+                                        </div>
+                                        <span class="fw-bold">Features</span>
+                                    </div>
+                                </th>
+                                <ng-template ngFor let-licenseType [ngForOf]="software.licenseTypes" let-i="index">
+                                    <th class="text-center">
+                                        <div class="feature-icon">
+                                            <i class="fa fa-cube"></i>
+                                        </div>
+                                        <div class="fw-bold">
+                                            <h6 class="text-uppercase">{{licenseType.name}}</h6>
+                                        </div>
+                                    </th>
+                                </ng-template>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ng-template ngFor let-row [ngForOf]="software.licensingFeatures" let-i="index">
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="feature-icon">
+                                                <i class="fa fa-check"></i>
+                                            </div>
+                                            <span class="fw-bold">{{ row.name }}</span>
+                                        </div>
+                                    </td>
+                                    <ng-template ngFor let-feature [ngForOf]="row?.softwareLicenseFeatures" let-i="index">
+                                        <td class="text-center">
+                                            <div class="feature-icon">
+                                                <i class="fa fa-star icon-success"></i>
+                                            </div>
+                                            <span class="badge">{{ feature.value }}</span>
+                                        </td>
+                                    </ng-template>
+                                </tr>
+                            </ng-template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

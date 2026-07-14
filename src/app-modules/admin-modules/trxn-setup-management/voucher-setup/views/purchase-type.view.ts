@@ -18,7 +18,7 @@ export class PurchaseTypeView extends ViewExtender<PurchaseType> implements OnIn
             {headerName: 'Name', field: 'name' },
             {headerName: 'Order', field: 'sortOrder', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'isDefault', field: 'isDefault', cellTemplate: GridUISwitchCellComponent },
-            {headerName: 'grid.header.status', field: 'status', cellTemplate: GridUISwitchCellComponent}
+            {headerName: 'status', field: 'status', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 

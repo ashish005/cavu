@@ -82,11 +82,12 @@ export class OrgModulePermissionComponent implements OnInit {
     getModulesByLicense()
     {
       const { orgSectorMasterType, orgUnitId, license: { softwareCode, softwareId, licenseTypeId } } = this.data;
+
       this.software = this.apiResolver.masterType.getSoftwareById(softwareId);
       if(!this.licenseType){
         this.licenseType = this.apiResolver.masterType.getLicenseTypesBySoftwareId(softwareId, licenseTypeId);
       }
-      const { masterType } = this.licenseType;
+      const { masterType } = this.licenseType || { masterType: null };
 
       const query = new ModulePermissionQueryOptions();
       query.orgUnitId = orgUnitId;
@@ -94,10 +95,12 @@ export class OrgModulePermissionComponent implements OnInit {
       query.softwareCode = softwareCode;
       query.licenseType = masterType;
 
-      const modulesData = this.permissionService.list(query).toPromise();
-      modulesData.then((r: any)=> {
-        this.populateData(r.entities || []);
-      }, ()=>{});
+      if(masterType) {
+        const modulesData = this.permissionService.list(query).toPromise();
+        modulesData.then((r: any)=> {
+          this.populateData(r.entities || []);
+        }, ()=>{});
+      }
     }
 
   updateModules(){

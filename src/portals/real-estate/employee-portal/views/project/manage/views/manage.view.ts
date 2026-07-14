@@ -32,8 +32,8 @@ export class ProjectManageView extends ViewExtender<Project> implements OnInit, 
       const translate_path = 'modules.project.manage.grid';
       this.gridOptions.columnDefs = [
           {headerName: `${translate_path}.name`, field: 'name', cellTemplate: ProjectNameActionCell },
-          {headerName: 'grid.header.customer', field: 'name', cellTemplate: ProjectCustomerCell },
-          {headerName: 'grid.header.manager', field: 'name', cellTemplate: ProjectManagerCell },
+          {headerName: 'customer', field: 'name', cellTemplate: ProjectCustomerCell },
+          {headerName: 'manager', field: 'name', cellTemplate: ProjectManagerCell },
           {headerName: `${translate_path}.type`, field: 'projectType' },
           {headerName: `${translate_path}.division`, field: 'division' },
           {headerName: `${translate_path}.billingType`, field: 'billingType' },
