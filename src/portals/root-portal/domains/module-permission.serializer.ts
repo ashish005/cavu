@@ -1,10 +1,10 @@
 import { CoreQueryOptions } from "@app-global";
 
 export class ModulePermissionQueryOptions extends CoreQueryOptions {
-    orgUnitId: string;
-    orgSector: string;
-    softwareCode: string;
-    licenseType: string;
+    orgUnitId!: string;
+    orgSector!: string;
+    softwareCode!: string;
+    licenseType!: string;
     constructor(model: any = {}){ super(model); }
 
     override toQueryString (){
@@ -22,6 +22,7 @@ export class ModulePermission {
     public id: string;
     public code: string;
     public name: string;
+    public description: string;
     public parentId: number | string;
     public status: string;
     public isActive: boolean;
@@ -31,10 +32,11 @@ export class ModulePermission {
         this.id = model.id;
         this.code = model.code;
         this.name = model.name;
+        this.description = model.description;
         this.parentId = model.parentId;
         this.status = model.status;
         this.isActive = model.isActive;
-        this.children = (model.children || []).map(r => new ModulePermission(r));
+        this.children = (model.children || []).map((r: any) => new ModulePermission(r));
     }
 }
 

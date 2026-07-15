@@ -1,3 +1,5 @@
+import {Business} from "./business.serializer";
+
 export class SoftwareLicenseFeature {
     id: number;
     licenseTypeId: number;
@@ -69,5 +71,15 @@ export class SoftwarePrice {
         this.description = description;
         this.licenseTypes = (licenseTypes || []).map((r: any) => new LicenseType(r));
         this.licensingFeatures = (licensingFeatures || []).map((r: any) => new LicensingFeature(r));
+    }
+}
+
+export class SoftwarePriceSerializer {
+    fromJson(json: any): SoftwarePrice {
+        return new SoftwarePrice(json);
+    }
+
+    toJson(data: any): any {
+        return data;
     }
 }

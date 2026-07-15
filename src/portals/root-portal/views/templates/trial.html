@@ -1,250 +1,570 @@
-<div class="trial-page">
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center min-vh-100">
-                <div class="col-lg-8 mx-auto text-center">
-                    <div class="hero-content">
-                        <div class="badge">
-                            <i class="fa fa-rocket me-2"></i>Free Trial
-                        </div>
-                        <h1 class="hero-title">Start Your 14-Day Free Trial</h1>
-                        <p class="hero-subtitle">Experience full power of EnRator with no credit card required. Get started in minutes.</p>
-                    </div>
-                </div>
-            </div>
+<div class="trial-container">
+    <!-- Header Section -->
+    <div class="trial-header text-center mb-3">
+        <div class="header-badge mb-2">
+            <span class="badge badge-primary">
+                <i class="fa fa-rocket me-1"></i>Free Trial
+            </span>
         </div>
-    </section>
+        <h2 class="fw-bold mb-2">Start Your 14-Day Free Trial</h2>
+        <p class="text-muted mb-2">Experience full power of EnRator with no credit card required</p>
+    </div>
 
     <!-- Registration Form -->
-    <section class="section-padding" *ngIf="!successResp?.isSuccess">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 b-a box-radius-2 box-shadow-1">
-                    <div class="contact-form-card highlighted-form">
-                        <form class="contact-form" [formGroup]="customForm">
-                            <!-- Form Header -->
-                            <div class="form-header text-center mb-4">
-                                <div class="badge badge-primary mb-3">
-                                    <i class="fa fa-rocket me-2"></i>Start Your Free Trial
-                                </div>
-                                <h3 class="form-title">Complete Your Registration</h3>
-                                <p class="form-subtitle">Fill in details below to create your account</p>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-4 b-r">
-                                    <!-- Personal Information Section -->
-                                    <div class="form-section mb-4">
-                                        <div class="section-header mb-3">
-                                            <div>
-                                                <h5 class="section-title mb-1">Personal Information</h5>
-                                                <p class="section-subtitle">Your contact details</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3">
-                                            <div class="col-12">
-                                                <div class="md-form-group float-label">
-                                                    <input type="text" formControlName="contactPersonName" class="md-input"
-                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }"
-                                                           placeholder="First and last name">
-                                                    <label>Full Name</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="md-form-group float-label">
-                                                    <input type="email" formControlName="contactPersonEmail" class="md-input"
-                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }"
-                                                           placeholder="your.email@company.com">
-                                                    <label>Work Email</label>
-                                                    <div *ngIf="submitted && f['contactPersonEmail'].errors" class="text-danger small mt-1">
-                                                        <div *ngIf="f['contactPersonEmail'].errors?.['required']">Email is required</div>
-                                                        <div *ngIf="f['contactPersonEmail'].errors?.['email']">Please enter a valid email</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="md-form-group float-label">
-                                                    <input type="tel" formControlName="contactPersonMobile" class="md-input"
-                                                           [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }"
-                                                           placeholder="+1 (555) 123-4567">
-                                                    <label>Mobile Number</label>
-                                                    <div *ngIf="submitted && f['contactPersonMobile'].errors" class="text-danger small mt-1">
-                                                        <div *ngIf="f['contactPersonMobile'].errors?.['required']">Mobile number is required</div>
-                                                        <div *ngIf="f['contactPersonMobile'].errors?.['pattern']">Please enter a valid phone number</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-8">
-                                    <!-- Company Information Section -->
-                                    <div class="form-section mb-4">
-                                        <div class="section-header mb-3">
-                                            <div>
-                                                <h5 class="section-title mb-1">Company Information</h5>
-                                                <p class="section-subtitle">Your organization details</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3">
-                                            <div class="col-8">
-                                                <div class="md-form-group float-label">
-                                                    <input type="text" formControlName="name" class="md-input"
-                                                           [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
-                                                           placeholder="Enter your registered company name">
-                                                    <label>Company Name</label>
-                                                    <div *ngIf="submitted && f['name'].errors" class="text-danger small mt-1">
-                                                        Company name is required
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="md-form-group float-label p-0">
-                                                    <label class="text-xs text-muted m-0">Operated By</label>
-                                                    <select class="md-input" formControlName="operatedById">
-                                                        <option *ngFor="let entity of apiResolver.masterType?.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="md-form-group float-label p-0">
-                                                    <label class="text-xs text-muted m-0">Country</label>
-                                                    <select class="md-input" formControlName="countryId">
-                                                        <option value="">Select country</option>
-                                                        <option *ngFor="let entity of apiResolver?.masterType?.country;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="md-form-group float-label">
-                                                    <input type="text" formControlName="address" class="md-input"
-                                                           [ngClass]="{ 'is-invalid': submitted && f['address'].errors }"
-                                                           placeholder="Complete business address">
-                                                    <label>Business Address</label>
-                                                    <div *ngIf="submitted && f['address'].errors" class="text-danger small mt-1">
-                                                        Business address is required
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <div class="md-form-group float-label p-0">
-                                                    <label class="text-xs text-muted m-0">Software</label>
-                                                    <select class="md-input" formControlName="softwareId">
-                                                        <option *ngFor="let entity of apiResolver?.masterType?.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="md-form-group float-label p-0">
-                                                    <label class="text-xs text-muted m-0">Business Type</label>
-                                                    <select class="md-input" formControlName="orgBusinessTypeId">
-                                                        <option value="">Select business type</option>
-                                                        <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Terms and Submit -->
-                            <div class="form-section mb-4">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="terms" required>
-                                                <label class="form-check-label" for="terms">
-                                                    I agree to the <a href="#" class="link-primary">Terms of Service</a> and <a href="#" class="link-primary">Privacy Policy</a>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="alert alert-info mt-4">
-                                    <i class="fa fa-info-circle me-2"></i>
-                                    <strong>Important:</strong> All account communications and trial updates will be sent to the provided contact details. Please ensure information is accurate.
-                                </div>
-                            </div>
-                            
-                            <!-- Submit Button -->
-                            <div class="row mt-4">
-                                <div class="col-12 text-center">
-                                    <button class="btn btn-primary btn-lg px-5 py-3" (click)="onSubmit(customForm)"
-                                            [disabled]="!customForm.valid || submitted">
-                                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
-                                        {{ submitted ? 'Creating Your Account...' : 'Start Free Trial Now' }}
-                                    </button>
-                                </div>
-                                
-                                <div class="col-12 text-center mt-3" *ngIf="submitted">
-                                    <div class="alert alert-warning">
-                                        <i class="fa fa-clock-o me-2"></i>
-                                        Setting up your business account may take a few moments. Please be patient...
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+    <div class="registration-form" *ngIf="!successResp?.isSuccess">
+        <div class="form-card">
+            <div class="card-header">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="fa fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title mb-0">Complete Your Registration</h5>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+            <div class="card-body">
+                <form class="trial-form" [formGroup]="customForm">
+                    <div class="form-grid">
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <div>
+                                    <h6 class="section-title">Personal Information</h6>
+                                    <p class="section-subtitle">Your contact details</p>
+                                </div>
+                            </div>
+                            <div class="form-fields">
+                                <div class="form-field">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="contactPersonName" class="md-input"
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactPersonName'].errors }"
+                                               placeholder="First and last name">
+                                        <label>Full Name</label>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <div class="md-form-group float-label">
+                                        <input type="email" formControlName="contactPersonEmail" class="md-input"
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactPersonEmail'].errors }"
+                                               placeholder="your.email@company.com">
+                                        <label>Work Email</label>
+                                        <div *ngIf="submitted && f['contactPersonEmail'].errors" class="text-danger small mt-1">
+                                            <div *ngIf="f['contactPersonEmail'].errors['required']">Email is required</div>
+                                            <div *ngIf="f['contactPersonEmail'].errors['email']">Please enter a valid email</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <div class="md-form-group float-label">
+                                        <input type="tel" formControlName="contactPersonMobile" class="md-input"
+                                               [ngClass]="{ 'is-invalid': submitted && f['contactPersonMobile'].errors }"
+                                               placeholder="+1 (555) 123-4567">
+                                        <label>Mobile Number</label>
+                                        <div *ngIf="submitted && f['contactPersonMobile'].errors" class="text-danger small mt-1">
+                                            <div *ngIf="f['contactPersonMobile'].errors['required']">Mobile number is required</div>
+                                            <div *ngIf="f['contactPersonMobile'].errors['pattern']">Please enter a valid phone number</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- Success Section -->
-    <section class="section-padding" *ngIf="successResp?.isSuccess">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="feature-card">
-                        <div class="p-5">
-                            <div class="text-center mb-5">
-                                <div class="feature-icon mx-auto" style="background: var(--company-success); width: 80px; height: 80px;">
-                                    <i class="fa fa-check fa-3x"></i>
+                        <!-- Company Information -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fa fa-building"></i>
                                 </div>
-                                <h3 class="display-6 fw-bold text-success mt-4">Registration Successful!</h3>
-                                <p class="lead text-muted mt-3">Please save your credentials below. This information will only be shown once.</p>
-                            </div>
-                            
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Your Domain</label>
-                                        <input type="text" class="form-input" readonly [value]="successResp.data.url">
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Username</label>
-                                        <input type="text" class="form-input" readonly [value]="customForm.value.userName">
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Temporary Password</label>
-                                        <input type="text" class="form-input" readonly value="Password@123">
-                                        <small class="text-muted">Please change this after first login</small>
-                                    </div>
+                                <div>
+                                    <h6 class="section-title">Company Information</h6>
+                                    <p class="section-subtitle">Your organization details</p>
                                 </div>
                             </div>
-                            
-                            <div class="text-center mt-5">
-                                <a [attr.href]="successResp.data.url"
-                                   class="btn btn-success btn-lg px-5 py-3">
-                                    Access Your Account <i class="fa fa-arrow-right ms-2"></i>
-                                </a>
+                            <div class="form-fields">
+                                <div class="form-field">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="name" class="md-input"
+                                               [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+                                               placeholder="Enter your registered company name">
+                                        <label>Company Name</label>
+                                        <div *ngIf="submitted && f['name'].errors" class="text-danger small mt-1">
+                                            Company name is required
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field half">
+                                        <div class="md-form-group float-label p-0">
+                                            <label class="text-xs text-muted m-0">Operated By</label>
+                                            <select class="md-input" formControlName="operatedById">
+                                                <option *ngFor="let entity of apiResolver.masterType.operatedBy;" [ngValue]="entity.id">{{entity.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-field half">
+                                        <div class="md-form-group float-label p-0">
+                                            <label class="text-xs text-muted m-0">Country</label>
+                                            <select class="md-input" formControlName="countryId">
+                                                <option value="">Select country</option>
+                                                <option *ngFor="let entity of apiResolver.masterType.country;" [ngValue]="entity.id">{{entity.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <div class="md-form-group float-label">
+                                        <input type="text" formControlName="address" class="md-input"
+                                               [ngClass]="{ 'is-invalid': submitted && f['address'].errors }"
+                                               placeholder="Complete business address">
+                                        <label>Business Address</label>
+                                        <div *ngIf="submitted && f['address'].errors" class="text-danger small mt-1">
+                                            Business address is required
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field half">
+                                        <div class="md-form-group float-label p-0">
+                                            <label class="text-xs text-muted m-0">Software</label>
+                                            <select class="md-input" formControlName="softwareId">
+                                                <option *ngFor="let entity of apiResolver.masterType.softwares;" [ngValue]="entity.id">{{entity.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-field half">
+                                        <div class="md-form-group float-label p-0">
+                                            <label class="text-xs text-muted m-0">Business Type</label>
+                                            <select class="md-input" formControlName="orgBusinessTypeId">
+                                                <option value="">Select business type</option>
+                                                <option *ngFor="let entity of businessTypes;" [ngValue]="entity.id">{{entity.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Terms and Submit -->
+                    <div class="form-footer">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="link-primary">Terms of Service</a> and <a href="#" class="link-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="info-alert">
+                            <i class="fa fa-info-circle"></i>
+                            <span>All account communications will be sent to the provided contact details. Please ensure information is accurate.</span>
+                        </div>
+
+                        <button class="submit-btn" (click)="onSubmit(customForm)"
+                                [disabled]="!customForm.valid || submitted">
+                            <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin me-2'></i>
+                            {{ submitted ? 'Creating Your Account...' : 'Start Free Trial Now' }}
+                        </button>
+
+                        <div class="loading-alert" *ngIf="submitted">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Setting up your business account may take a few moments. Please be patient...</span>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Success Section -->
+    <div class="success-section" *ngIf="successResp?.isSuccess">
+        <div class="success-card">
+            <div class="success-header">
+                <div class="success-icon">
+                    <i class="fa fa-check"></i>
+                </div>
+                <h3 class="success-title">Registration Successful!</h3>
+                <p class="success-subtitle">Please save your credentials below. This information will only be shown once.</p>
+            </div>
+            <div class="success-body">
+                <div class="credential-field">
+                    <label class="credential-label">Your Domain</label>
+                    <input type="text" class="credential-input" readonly [value]="successResp.data.url">
+                </div>
+                <div class="credential-row">
+                    <div class="credential-field half">
+                        <label class="credential-label">Username</label>
+                        <input type="text" class="credential-input" readonly [value]="customForm.value.userName">
+                    </div>
+                    <div class="credential-field half">
+                        <label class="credential-label">Temporary Password</label>
+                        <input type="text" class="credential-input" readonly value="Password@123">
+                        <small class="text-muted">Please change this after first login</small>
+                    </div>
+                </div>
+                <a [attr.href]="successResp.data.url"
+                   class="access-btn">
+                    Access Your Account <i class="fa fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .trial-container {
+        padding: 1rem 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .trial-header {
+        padding: 1rem 0;
+    }
+
+    .header-badge {
+        display: inline-block;
+    }
+
+    .header-badge .badge {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .trial-header h2 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        font-size: 1.5rem;
+    }
+
+    .trial-header p {
+        font-size: 0.875rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #212529;
+        font-size: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.75rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .section-icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 6px;
+        color: white;
+        font-size: 0.75rem;
+    }
+
+    .section-title {
+        font-weight: 600;
+        color: #212529;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .section-subtitle {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-field {
+        width: 100%;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .form-field.half {
+        flex: 1;
+    }
+
+    .form-footer {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .form-check {
+        margin-bottom: 0.75rem;
+    }
+
+    .form-check-label {
+        font-size: 0.875rem;
+        color: #495057;
+    }
+
+    .link-primary {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .link-primary:hover {
+        text-decoration: underline;
+    }
+
+    .info-alert {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #e3f2fd;
+        border-radius: 6px;
+        margin-bottom: 0.75rem;
+        font-size: 0.8125rem;
+        color: #0d47a1;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .loading-alert {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #fff3cd;
+        border-radius: 6px;
+        margin-top: 0.75rem;
+        font-size: 0.8125rem;
+        color: #856404;
+    }
+
+    .success-section {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .success-header {
+        padding: 1.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, #d4edda 0%, #fff 100%);
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .success-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #28a745;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+    }
+
+    .success-title {
+        font-weight: 700;
+        color: #155724;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .success-subtitle {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .success-body {
+        padding: 1.5rem;
+    }
+
+    .credential-field {
+        margin-bottom: 0.75rem;
+    }
+
+    .credential-field.half {
+        flex: 1;
+    }
+
+    .credential-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .credential-label {
+        display: block;
+        font-weight: 600;
+        color: #212529;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .credential-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background: #f8f9fa;
+        font-size: 0.875rem;
+        color: #495057;
+    }
+
+    .access-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.75rem;
+        background: #28a745;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        margin-top: 0.75rem;
+    }
+
+    .access-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .trial-container {
+            padding: 0.5rem 0;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .credential-row {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 0.75rem;
+        }
+
+        .form-section {
+            padding: 0.5rem;
+        }
+    }
+</style>

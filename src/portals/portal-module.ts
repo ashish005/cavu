@@ -19,7 +19,7 @@ enum ORG_USER_TYPE {
 export const setupRoutesFactory = (setupService: AppSetupService) => {
   const { license, sectorMasterType }= setupService.appSetup;
   const userMasterType = ORG_USER_TYPE.EMPLOYEE;
-  debugger
+
 
   if(ORG_SECTOR.SETUP_ORG === sectorMasterType){
     return [

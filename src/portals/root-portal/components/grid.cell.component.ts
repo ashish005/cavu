@@ -3,26 +3,22 @@ import {ASIDE_CLASS, ASIDE_SIZE, SharedService, DynamicComponent} from "@app-glo
 import {OrgModulePermissionComponent} from "./module-permission.component";
 
 @Component({
-  standalone: false,
-    template: `
-      @if (context.orgSectorMasterType != 'setup_organizations') {
-      <div>{{ context.license?.licenseNo }}
-        {{ context.license.softwareCode }}: {{ context.license.licenseType }}
-        @if (context.license.showExpiryWarning) {
-            <div class="d-inline-block">
-              @if (context.license.validityInDays < 0) { <span class="badge mx-2 red">Expired</span> }
-              @if (context.license.validityInDays >= 0) { <span class="badge mx-2 warning"> Expiring in {{ context.license.validityInDays }} Days </span> }
-            </div>
-        }
-          <button class="btn btn-xs theme b-theme text-xs border px-1 mx-1" (click)="showPermissionModulesPopup(context, context.license)">Permission</button>
+    standalone: false,
+    template: `{{ context.name }} 
+    <div class="clear">
+        {{ context.license.softwareCode }} <b>{{ context.license.licenseType }} </b>
+        <button class="permission-btn" (click)="showPermissionModulesPopup(context, context.license)">
+            <i class="fa fa-shield-alt"></i>
+            <span>Permission</span>
+        </button>
     </div>
-      }`
+    `
 })
-export class BusinessPermissionInfo extends DynamicComponent {
+export class BusinessCell extends DynamicComponent {
     constructor(private sharedService: SharedService) {
         super();
     }
-    showPermissionModulesPopup(data, license) {
+    showPermissionModulesPopup(data: any, license: any) {
         const popup = {
             header: {text: `Module Permission ${data.name}`, desc: `Set Module Permissions for ${data.name}`},
             aside: ASIDE_CLASS.RIGHT,
@@ -44,9 +40,27 @@ export class BusinessPermissionInfo extends DynamicComponent {
 
 @Component({
   standalone: false,
-    template: `<div>{{ context.contactPersonName }}
-    <div class="item-except text-sm text-muted h-1x">{{ context.contactPersonEmail }} {{ context.contactPersonMobile }}</div>
-</div>`
+    template: ` {{context.orgBusinessType}} {{context.countryName}} {{ context.license?.licenseNo }}
+    @if (context.license.showExpiryWarning) {
+    <div class="expiry-warning">
+    @if (context.license.validityInDays < 0) { <span class="status-badge status-expired">Expired</span> }
+    @if (context.license.validityInDays >= 0) { <span class="status-badge status-warning">Expiring in {{ context.license.validityInDays }} Days</span> }
+    </div>
+    }`,
+})
+export class BusinessPermissionInfo extends DynamicComponent {
+    constructor(private sharedService: SharedService) {
+        super();
+    }
+}
+
+@Component({
+  standalone: false,
+    template: `{{ context.contactPersonName }}
+    <div class="contact-item">
+        <i class="fa fa-envelope"></i>
+        <span>{{ context.contactPersonEmail }}</span>
+    </div>`
 })
 export class BusinessContactGridCell extends DynamicComponent {
     constructor() {
