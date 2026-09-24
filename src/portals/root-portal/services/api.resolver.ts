@@ -1,6 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
-import {BusinessLookup, BusinessLookupSerializer} from "../domains/lookup.serializer";
+import {BusinessLookup} from "../domains/lookup.serializer";
 import {ASIDE_CLASS, ASIDE_SIZE, SharedService, CoreEndpointBase} from "@app-global";
 import {CreateEditBusinessView} from "../components";
 
@@ -15,7 +15,7 @@ export class BusinessAPIResolver extends CoreEndpointBase implements Resolve<any
     };
     const failure = (err: any) => {};
       const setup = this.httpClient.get(
-        this.baseAPIUrl + `/orgLookup/business-setup`,
+        this.baseSectorAPIUrl + `/v1/orgLookup/business-setup`,
         this.requestHeaders
       );
     //const setup = this.read(this.coreService.apiVersion);

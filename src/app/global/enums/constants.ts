@@ -9,8 +9,7 @@ export const Referrals: Array<any> = [
 ];
 
 export enum ORG_SECTOR {
-    SETUP_ORG = "setup_organizations",
-    COMPANY = "COMPANY",
+    ROOT_SETUP_ORG = "root_setup_org",
     EDUCATION = "education",
     REAL_ESTATE = "real_estate",
     HEALTH_CARE = "health_care",

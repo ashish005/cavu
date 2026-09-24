@@ -84,10 +84,9 @@ export class CoreEndpointBase {
     //protected get softwareId() { return this.coreService.orgSetup?.softwareId || ''; }
     //protected get softwareCode() { return this.coreService.orgSetup?.softwareCode || ''; }
     //protected get sectorMasterType() { return this.coreService.orgSetup?.sectorMasterType || ''; }
-    protected get baseAPIUrl() { return environment.authBaseUrl + '/api'; }
+    protected get baseAPIUrl() { return this.appSetupService.baseAPIUrl; }
     protected get orgSetup() { return this.appSetupService.appSetup; }
-    protected get baseSectorAPIUrl(): string { return this.orgSetup.tenantPoint + '/api'; }
-    //public get baseSectorAPIUrl() { return `${environment.authBaseUrl}${this.orgSetup.sectorMasterType}/api/`; }
+    protected get baseSectorAPIUrl(): string { return this.appSetupService.baseSectorAPIUrl; }
 
     private getRequestHeaders(d) {
         //const { id: orgId, countryId } = this.orgSetup;

@@ -201,6 +201,108 @@
     padding: 1rem;
   }
 
+  /* Grid Table Styling */
+  .grid-wrapper ::ng-deep table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .grid-wrapper ::ng-deep thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .grid-wrapper ::ng-deep th {
+    color: white;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .grid-wrapper ::ng-deep tbody tr {
+    transition: background-color 0.15s ease;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .grid-wrapper ::ng-deep tbody tr:hover {
+    background: #f8f9ff;
+  }
+
+  .grid-wrapper ::ng-deep td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #495057;
+    vertical-align: middle;
+  }
+
+  /* Permission Button Styling */
+  .grid-wrapper ::ng-deep .permission-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: white;
+    border: 1px solid #667eea;
+    border-radius: 6px;
+    color: #667eea;
+    font-weight: 600;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .grid-wrapper ::ng-deep .permission-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  }
+
+  /* Status Badge Styling */
+  .grid-wrapper ::ng-deep .status-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 50px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.25px;
+  }
+
+  .grid-wrapper ::ng-deep .status-expired {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .grid-wrapper ::ng-deep .status-warning {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  /* Contact Item Styling */
+  .grid-wrapper ::ng-deep .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+
+  .grid-wrapper ::ng-deep .contact-item i {
+    font-size: 0.6875rem;
+    color: #667eea;
+    width: 14px;
+    text-align: center;
+  }
+
   .pagination-wrapper {
     background: white;
     border-top: 1px solid #e9ecef;

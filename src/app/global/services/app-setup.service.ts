@@ -28,8 +28,8 @@ export class AppSetupService {
 
     public toggleThemeSwitcher: { (): void } | undefined;
 
-    protected get baseAPIUrl() { return environment.authBaseUrl + '/api'; }
-    protected get baseSectorAPIUrl(): string { return this.appSetup.tenantPoint + '/api'; }
+    public get baseAPIUrl() { return environment.authBaseUrl + '/api'; }
+    public get baseSectorAPIUrl(): string { return environment.tenantUrl + '/api'; }
     constructor(private injector: Injector) {
         this.loaderService = injector.get(LoaderService);
         this.httpClient = injector.get(HttpClient);
@@ -42,8 +42,8 @@ export class AppSetupService {
   loadApp = () => {
     this.loaderService.show();
     const promise = new Promise<boolean>((resolve, reject) => {
-        const endpointUrl = `${environment.authBaseUrl}/appSetup/pre`;
-        const loadApp = this.httpClient.get(endpointUrl, { headers: new HttpHeaders() });
+        const endpointUrl = `${this.baseSectorAPIUrl}/v1/appSetup/pre`;
+        const loadApp = this.httpClient.get(endpointUrl);// { headers: new HttpHeaders() }
         loadApp.subscribe({
           next: (response: any) => {
             const { isSuccess, data, message } = response;

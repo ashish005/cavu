@@ -20,8 +20,10 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
   const { license, sectorMasterType }= setupService.appSetup;
   const userMasterType = ORG_USER_TYPE.EMPLOYEE;
 
+  debugger
 
-  if(ORG_SECTOR.SETUP_ORG === sectorMasterType){
+
+  if(ORG_SECTOR.ROOT_SETUP_ORG === sectorMasterType){
     return [
       {
         path: '',

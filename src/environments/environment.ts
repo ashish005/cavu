@@ -10,5 +10,6 @@ export const environment = {
     issuer: null as string | null,
     clientId: 'localhost-spa'
   },
-  authBaseUrl: svcUrl
+  authBaseUrl: svcUrl,
+  tenantUrl: 'https://localhost:7090'
 };

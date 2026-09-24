@@ -4,7 +4,7 @@ import {BusinessAPIResolver} from "../services/api.resolver";
 import {Business} from "../domains/business.serializer";
 import {ACTION_ENUM} from "@app-global";
 import {BusinessHostConfig} from "../domains/business-host.serializer";
-import {BusinessService} from "../views/business-manage.view";
+import {BusinessService} from "../services/module-permission.service";
 
 const Referrals: Array<any> = [
   { name: 'Facebook' },
@@ -19,7 +19,6 @@ const Referrals: Array<any> = [
 @Component({
   templateUrl: 'templates/create-edit-business.html',
   styles: [`:host {display: contents;}`],
-  providers: [BusinessService],
   standalone: false
     //styles:[`::ng-deep .ng-value-container { display: contents; } ::ng-deep .ng-placeholder{ display: none !important;}`]
 })

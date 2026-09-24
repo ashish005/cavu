@@ -3,18 +3,13 @@ import {Branch, Business, BusinessQueryOptions, BusinessSerializer} from "../dom
 import {BusinessPermissionInfo, BusinessContactGridCell, BusinessCell} from "../components/grid.cell.component";
 import {ActivatedRoute} from "@angular/router";
 import {BusinessAPIResolver} from "../services/api.resolver";
-import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, CoreResponse, ViewExtender, CoreResourceService} from "@app-global";
-
-@Injectable()
-export class BusinessService extends CoreResourceService<Business>{
-    constructor(public override injector: Injector) { super(injector, 'tenant', new BusinessSerializer());}
-}
+import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, CoreResponse, ViewExtender, OrgResourceService} from "@app-global";
+import {BusinessService} from "../services/module-permission.service";
 
 @Component({
     templateUrl: './templates/business-manage.html',
     styles: [ `#manage_business .modal-dialog{ width: auto;}`],
-    standalone: false,
-    providers: [BusinessService]
+    standalone: false
 })
 export class BusinessManageView extends ViewExtender<Business> implements OnInit{
     override coreState: BusinessQueryOptions = new BusinessQueryOptions();

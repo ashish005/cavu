@@ -2,27 +2,11 @@ import {Component, Injectable, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {catchError, Observable, pairwise, startWith, tap} from "rxjs";
 import {BusinessAPIResolver} from "../services/api.resolver";
-import {environment} from "@app-environments";
-import {HttpClient} from "@angular/common/http";
-
-@Injectable()
-export class TrialBusinessService {
-    public viewUrl = `${environment.authBaseUrl}/trialRegister`;
-    constructor(protected httpClient: HttpClient) {}
-
-    public create(item: any): Observable<any> {
-        return this.httpClient.post(this.viewUrl, item)
-            .pipe(
-                tap(data => data),
-                catchError(error => error)
-            );
-    }
-}
+import {BusinessService} from "../services/module-permission.service";
 
 @Component({
   templateUrl: './templates/trial.html',
-  standalone: false,
-    providers: [TrialBusinessService]
+  standalone: false
 })
 export class TrialBusinessView implements OnInit {
     customForm: FormGroup;
@@ -31,7 +15,7 @@ export class TrialBusinessView implements OnInit {
 
     successResp: any;
     constructor(private formBuilder: FormBuilder,
-                private businessService: TrialBusinessService,
+                private businessService: BusinessService,
                 public apiResolver: BusinessAPIResolver) {
         this.customForm = this.formBuilder.group({
             name: [null, Validators.required],

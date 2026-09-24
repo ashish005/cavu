@@ -91,11 +91,6 @@ export class ConfigurationService {
     public static readonly defaultShowDashboardTodo: boolean = false;
     public static readonly defaultShowDashboardBanner: boolean = true;
 
-    //public baseUrl = environment.baseUrl || UtilHelper.baseUrl();
-    //public authBaseUrl = environment.authBaseUrl || environment.baseUrl || UtilHelper.baseUrl();
-    //public baseApiUrl = environment.baseApiUrl || environment.baseUrl || UtilHelper.baseUrl();
-    //public loginUrl = environment.loginUrl;
-    //public documentUrl = environment.documentUrl+ '/';
     public fallbackBaseUrl = '';
     // ***End of defaults***
 
