@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {forkJoin, take} from "rxjs";
 import {AuthService} from "@app-third-party";
 
 @Component({
@@ -17,16 +16,16 @@ export class Layout implements OnInit  {
     {
       name: "Main", isFLatChildren: true,
       children:[
-        { routeTo: ['business'], icon:"fa fa-graduation-cap", name: "Business", key: 'Business' },
-        { routeTo: ['pricing'], icon:"fa fa-graduation-cap", name: "pricing", key: 'pricing' },
-        { routeTo: ['trial'], icon:"fa fa-graduation-cap", name: "Setup Business", key: 'Setup Business' }
+        { routeTo: ['business-setup'], icon:"fa fa-graduation-cap", name: "Business", key: 'Business' },
+        { routeTo: ['business-setup/pricing'], icon:"fa fa-graduation-cap", name: "pricing", key: 'pricing' },
+        { routeTo: ['business-setup/trial'], icon:"fa fa-graduation-cap", name: "Setup Business", key: 'Setup Business' }
       ]
     },
     {
       name: "Finance Configuration", isFLatChildren: true,
       children:[
-        { routeTo: ['banking'], icon:"fa fa-university", name: "Banking", key: 'Banking' },
-        { routeTo: ['payment'], icon:"fa fa-credit-card", name: "Payment", key: 'Payment' }
+        { routeTo: ['bank-setup'], icon:"fa fa-university", name: "Banking", key: 'Banking' },
+        { routeTo: ['payment-setup'], icon:"fa fa-credit-card", name: "Payment", key: 'Payment' }
       ]
     }
     /*{

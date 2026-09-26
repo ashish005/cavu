@@ -1,13 +1,6 @@
 import {Routes} from '@angular/router';
 import {Layout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard";
-import {BusinessManageView} from "./views/business-manage.view";
-import {BusinessAPIResolver} from "./services/api.resolver";
-import {PricingInfoView} from "./views/pricing-info.view";
-import {TrialBusinessView} from "./views/trial.view";
-import {BankingManageView} from "./views/banking-manage.view";
-import {PaymentManageView} from "./views/payment-manage.view";
-import {BankingSetupResolver, PaymentSetupResolver} from "./services/account.service";
 
 export const ROOT_Routes: Routes = [
   {
@@ -16,11 +9,21 @@ export const ROOT_Routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo:'business' },
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', header:'Dashboard' } },
-      { path: 'business', resolve: { items: BusinessAPIResolver }, component: BusinessManageView, data: {title: 'Business', header:'Business'}},
-      { path: 'banking', resolve: { items: BankingSetupResolver }, component: BankingManageView, data: {title: 'Banking Configuration', header:'Banking Configuration'}},
-      { path: 'payment', resolve: { items: PaymentSetupResolver }, component: PaymentManageView, data: {title: 'Payment Configuration', header:'Payment Configuration'}},
-      {path: 'pricing', resolve: {items: BusinessAPIResolver}, component: PricingInfoView, data: { title: 'Pricing - EnRator | Plans & Pricing' }},
-      {path: 'trial', resolve: {items: BusinessAPIResolver}, component: TrialBusinessView, data: { title: 'Free Trial - EnRator | Start Your Journey' }}
+      {
+        path: 'business-setup', //canLoad:[ModuleGuard],
+        loadChildren: () => import('./setup/business-setup').then(m => m.BusinessModule),
+        data: {title: 'business', header:'business', name: "business", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
+      },
+      {
+        path: 'bank-setup', //canLoad:[ModuleGuard],
+        loadChildren: () => import('./setup/bank-setup').then(m => m.BankingModule),
+        data: {title: 'Bank', header:'Bank', name: "Banking", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
+      },
+      {
+        path: 'payment-setup', //canLoad:[PortalAuthGuard],
+        loadChildren: () => import('./setup/payment-setup').then(m => m.PaymenyGatewayModule),
+        data: { code: "ACCESS_TAX_MGT", title: 'Paymeny Gateway', header:'Paymeny Gateway'}
+      },
     ]
   },
 ];

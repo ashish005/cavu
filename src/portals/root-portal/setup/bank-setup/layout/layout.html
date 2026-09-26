@@ -1,0 +1,25 @@
+<div class="app">
+    <div class="app-content box-shadow-0" role="main">
+        <div class="content-header white box-shadow-0">
+            <div class="navbar flex-nowrap">
+                <a data-toggle="modal" data-target="#content-aside" class="mr-1 d-md-none">
+                    <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+                </a>
+                <div class="no-shadow">
+                    <h6 class="mb-0"> Bank Setup </h6>
+                    <small class="float-left"> Setup Management</small>
+                </div>
+                <div class="nav-active-border b-theme px-4 px-md-0">
+                    <div class="nav nav-xs flex-row">
+                        <ng-template ngFor let-item [ngForOf]="navList | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="nav-link text-center"[routerLink]="item.routeTo" routerLinkActive="active" >{{item.key  }}</a>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-main d-flex flex">
+            <router-outlet (activate)='onActivate($event)'></router-outlet>
+        </div>
+    </div>
+</div>

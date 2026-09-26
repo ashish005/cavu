@@ -1,0 +1,26 @@
+<div class="app-content box-shadow-0" role="main">
+    <div class="nav-active-border b-warning bottom box mb-0">
+        <ul class="nav nav-sm float-left">
+            <li class="nav-item" (click)="changeSystemRoute(null)">
+                <a class="nav-link" [class.active]="!systemType?.id">All</a>
+            </li>
+            <ng-template ngFor let-item [ngForOf]="apiResolver.masterType?.systemTypes | sortBy:'asc': 'sortOrder'" let-i="index">
+                <li class="nav-item">
+                    <a class="nav-link text-center" [class.active]="systemType?.id == item.id"  (click)="changeSystemRoute(item)">{{item.name}}</a>
+                </li>
+            </ng-template>
+        </ul>
+        <div class="d-flex flex float-right">
+            <small class="p-1 text-xs _600 text-muted">Payment Gateway: </small>
+            <div class="btn-group p-1">
+                <ng-template ngFor let-item [ngForOf]="menuItems | sortBy:'asc': 'sortOrder'" let-i="index">
+                    <a class="btn btn-xs btn-outline b-primary" (click)="changeRouteTo(item)"><i class="fa" [class]="item.icon"></i></a>
+                </ng-template>
+            </div>
+            <div class="btn btn-sm btn-outline" (click)="showPaymentModes()"><i class="fa fa-modx"></i></div>
+        </div>
+    </div>
+    <div class="content-main d-flex flex">
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
+    </div>
+</div>

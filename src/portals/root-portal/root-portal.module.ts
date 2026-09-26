@@ -5,22 +5,14 @@ import {ROOT_Routes} from "./root-portal.routing";
 import {Layout} from "./layout/layout";
 import {DashboardView} from "./views/dashboard";
 import {GlobalModule} from "@app-global";
-import {BusinessManageView} from "./views/business-manage.view";
 import {ReactiveFormsModule} from "@angular/forms";
-import {BUSINESS_COMPONENT} from "./components/index";
-import { BUSINESS_SERVICES } from './services';
-import {PricingInfoView} from "./views/pricing-info.view";
-import {TrialBusinessView} from "./views/trial.view";
-import {BankingManageView} from "./views/banking-manage.view";
-import {PaymentManageView} from "./views/payment-manage.view";
 
 @NgModule({
     imports: [
         CommonModule, ReactiveFormsModule, GlobalModule,
         RouterModule.forChild(ROOT_Routes)
     ],
-    providers: [ BUSINESS_SERVICES ],
-    declarations: [Layout, DashboardView, BusinessManageView, PricingInfoView, TrialBusinessView, BankingManageView, PaymentManageView, ...BUSINESS_COMPONENT]
+    declarations: [Layout, DashboardView]
 })
 
 export class RootPortalModule{

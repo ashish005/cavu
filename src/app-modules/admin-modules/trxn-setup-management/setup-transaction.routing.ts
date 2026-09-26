@@ -54,13 +54,13 @@ export const SetupTransactionRoutes: Routes = [
         path: '', component: TransactionSetupLayout, data: { translatePath: 'trxn_setup' },
         children: [
             {
-                path: 'bank-setup', //canLoad:[ModuleGuard],
-                loadChildren: () => import('./bank-setup').then(m => m.BankingModule),
+                path: 'voucher-setup', //canLoad:[ModuleGuard],
+                loadChildren: () => import('./voucher-setup').then(m => m.VoucherSetupModule),
                 data: {title: 'Bank', header:'Bank', name: "Banking", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
             },
             {
-                path: 'voucher-setup', //canLoad:[ModuleGuard],
-                loadChildren: () => import('./voucher-setup').then(m => m.VoucherSetupModule),
+                path: 'bank-setup', //canLoad:[ModuleGuard],
+                loadChildren: () => import('./bank-setup').then(m => m.BankingModule),
                 data: {title: 'Bank', header:'Bank', name: "Banking", key: 'layout.banking' }//code: "ACCESS_VT_MGT",
             },
             {
