@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
       headers = headers.set('X-Timezone-Id', `${timeZone}`);
       headers = headers.set('X-Timezone-Browser', timezone);
       headers = headers.set('X-Country-Id', `${countryId}`);
-      headers = headers.set('X-OrgBranch-Id', `${branch?.id}`);
+      headers = headers.set('X-Branch-Id', `${branch?.id}`);
     }
 
     if (this.ignoredUrls.some(url => req.url.includes(url))) {

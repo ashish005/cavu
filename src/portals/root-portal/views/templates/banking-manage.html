@@ -1,23 +1,42 @@
 <ng-template #actionTemplate>
-  <div class="business-navbar">
-    <div class="navbar-content">
-      <div class="navbar-title">
-        <div class="title-icon">
-          <i class="fa fa-building"></i>
+  <ul class="nav">
+    <li class="nav-item mr-2">
+      <button class="btn btn-sm btn-block btn-rounded theme">
+        <i class="fa fa-plus pr-2"></i> New {{ pageTitle  }}
+      </button>
+    </li>
+    <!--<li>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label class="filter-label">Filter by Country:</label>
+          <select class="filter-select" (change)="filterByCountry($event)">
+            <option value="">All Countries</option>
+            <option *ngFor="let country of countries" [value]="country.id">
+              {{ country.name }}
+            </option>
+          </select>
         </div>
-        <span class="title-text">Businesses</span>
       </div>
-      <div class="navbar-actions">
-        <button class="action-btn" type="button" (click)="newBusiness()">
-          <i class="fa fa-plus"></i>
-          <span>New Business</span>
-        </button>
-      </div>
-    </div>
-    <div class="search-bar">
+    </li>-->
+    <li>
+      <div class="search-bar">
+        <form class="search-form" novalidate>
+          <div class="search-input-group">
+            <input class="search-input" placeholder="Search banks..." type="text">
+            <div class="search-actions">
+              <button class="column-btn" title="Columns">
+                <i class="fa fa-th-list"></i>
+              </button>
+              <button class="search-btn">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div><div class="search-bar">
       <form class="search-form" novalidate>
         <div class="search-input-group">
-          <input class="search-input" placeholder="Search businesses..." type="text">
+          <input class="search-input" placeholder="Search banks..." type="text">
           <div class="search-actions">
             <button class="column-btn" title="Columns">
               <i class="fa fa-th-list"></i>
@@ -29,9 +48,9 @@
         </div>
       </form>
     </div>
-  </div>
+    </li>
+  </ul>
 </ng-template>
-
 <ng-template #pageTitleTemplate>
   <div class="no-shadow">
     <h6 class="mb-0"> {{ pageTitle  }} </h6>

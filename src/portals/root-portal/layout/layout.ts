@@ -22,6 +22,13 @@ export class Layout implements OnInit  {
         { routeTo: ['trial'], icon:"fa fa-graduation-cap", name: "Setup Business", key: 'Setup Business' }
       ]
     },
+    {
+      name: "Finance Configuration", isFLatChildren: true,
+      children:[
+        { routeTo: ['banking'], icon:"fa fa-university", name: "Banking", key: 'Banking' },
+        { routeTo: ['payment'], icon:"fa fa-credit-card", name: "Payment", key: 'Payment' }
+      ]
+    }
     /*{
         name: "Others", isFLatChildren: true,
         children:[

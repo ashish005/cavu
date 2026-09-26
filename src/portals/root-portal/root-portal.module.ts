@@ -11,6 +11,8 @@ import {BUSINESS_COMPONENT} from "./components/index";
 import { BUSINESS_SERVICES } from './services';
 import {PricingInfoView} from "./views/pricing-info.view";
 import {TrialBusinessView} from "./views/trial.view";
+import {BankingManageView} from "./views/banking-manage.view";
+import {PaymentManageView} from "./views/payment-manage.view";
 
 @NgModule({
     imports: [
@@ -18,7 +20,7 @@ import {TrialBusinessView} from "./views/trial.view";
         RouterModule.forChild(ROOT_Routes)
     ],
     providers: [ BUSINESS_SERVICES ],
-    declarations: [Layout, DashboardView, BusinessManageView, PricingInfoView, TrialBusinessView, ...BUSINESS_COMPONENT]
+    declarations: [Layout, DashboardView, BusinessManageView, PricingInfoView, TrialBusinessView, BankingManageView, PaymentManageView, ...BUSINESS_COMPONENT]
 })
 
 export class RootPortalModule{
