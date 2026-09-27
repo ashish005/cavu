@@ -7,5 +7,5 @@ import {
 
 @Injectable()
 export class PaymentCardTypeService extends OrgResourceService<PaymentCardType>{
-    constructor(public override injector: Injector) { super(injector, 'paymentCardMasterType', new PaymentCardTypeSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'v1/global/paymentCardType', new PaymentCardTypeSerializer()); }
 }

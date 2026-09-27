@@ -7,7 +7,7 @@ export const ROOT_Routes: Routes = [
     path: '',
     component: Layout, data: { code: '', title: 'Business', icon: 'fa fa-dashboard', header: 'Business' },
     children: [
-      { path: '', pathMatch: 'full', redirectTo:'business' },
+      { path: '', pathMatch: 'full', redirectTo:'business-setup' },
       { path: 'dashboard', component: DashboardView, data: { title: 'Dashboard', header:'Dashboard' } },
       {
         path: 'business-setup', //canLoad:[ModuleGuard],

@@ -4,5 +4,5 @@ import {PaymentSystemType, PaymentSystemTypeSerializer} from "../domains/payment
 
 @Injectable()
 export class PaymentSystemTypeService extends OrgResourceService<PaymentSystemType>{
-    constructor(public override injector: Injector) { super(injector, 'paymentSystemType', new PaymentSystemTypeSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'v1/global/paymentSystemType', new PaymentSystemTypeSerializer()); }
 }
