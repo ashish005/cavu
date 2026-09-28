@@ -52,7 +52,7 @@ export class ViewExtender<T> {
 
     updateGrid<T>(_coreState) {
         this.isLoading = true;
-        this.paramsSubscription = this.service.list(_coreState.toQueryString()).subscribe((resp: CoreResponse<T>) => {
+        this.paramsSubscription = this.service.list(_coreState).subscribe((resp: CoreResponse<T>) => {
             this.isLoading = false;
             this.hasError = !resp.isSuccess;
             this.errorMsg = resp.message;

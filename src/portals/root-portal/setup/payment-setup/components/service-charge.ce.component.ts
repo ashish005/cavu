@@ -6,12 +6,11 @@ import {
     Output
 } from "@angular/core";
 import {FormBuilder, FormGroup} from "@angular/forms";
-import {PaymentGatewayLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 import {PaymentGatewayServiceChargeForm} from "../forms/payment-gateway-service-charge.form";
 import {Subscription} from "rxjs";
 import {PaymentGatewayChargeService} from "../services/payment-gateway-charges.service";
 import {PaymentGateway} from "../domains/payment-gateway.serializer";
-import {CardTypeLookup, ModeGatewayMapperLookup} from "../domains/lookup.serializer";
 import {ServiceCharge} from "../domains/gateway-service-charge.serializer";
 
 @Component({
@@ -23,20 +22,19 @@ export class ServiceChargeCeComponent extends PaymentGatewayServiceChargeForm im
     submitted: boolean = false;
     subscribe: Subscription;
     gateway: PaymentGateway;
-    cardType: CardTypeLookup;
+    cardType: any;
     @Input() mapperId;
-    @Input() modeMapper: ModeGatewayMapperLookup;
-
+    @Input() modeMapper: any;
 
     @Input() set data(item: PaymentGateway) { this.gateway = item; }
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     constructor(public override fb: FormBuilder,
-                public apiResolver: PaymentGatewayLookupAPIResolver,
+                public apiResolver: PaymentSetupLookupAPIResolver,
                 public service: PaymentGatewayChargeService){
         super(fb);
     }
 
-    showCardTypes(cardType: CardTypeLookup){
+    showCardTypes(cardType: any){
         this.cardType = cardType;
         this.fetchCharges();
     }

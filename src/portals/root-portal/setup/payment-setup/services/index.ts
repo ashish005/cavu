@@ -1,11 +1,11 @@
-import {PaymentGatewayLookupAPIResolver} from "./api.resolver";
+import {PaymentSetupLookupAPIResolver} from "./api.resolver";
 import {PaymentGatewayService, PaymentModeGatewayMapperService} from "./payment-gateway.service";
 import {PaymentGatewayChargeService} from "./payment-gateway-charges.service";
 import {PaymentModeService} from "./payment-mode.service";
 
 
 export const PAYMENT_GATEWAY_SERVICES = [
-    PaymentGatewayLookupAPIResolver,
+    PaymentSetupLookupAPIResolver,
     PaymentGatewayService, PaymentModeGatewayMapperService, PaymentGatewayChargeService,
     PaymentModeService
 ];

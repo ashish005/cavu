@@ -4,8 +4,8 @@ import {RouterModule} from "@angular/router";
 import {BankingRoutes} from "./banking.routing";
 import {BankSetupLayout} from "./layout/layout";
 import {GlobalModule} from "@app-global";
-import {BankService} from "./bank/services/bank-account.service";
 import {BankingSetupResolver} from "./bank-setup.service";
+import {BankService} from "./bank/services/bank.service";
 
 @NgModule({
     imports: [

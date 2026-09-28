@@ -11,13 +11,13 @@
             <div class="scrollable hover px-3">
                 <div class="list-group list-group-gap">
                     <span class="p-1 text-muted">Card  Types</span>
-                    <ng-template ngFor let-cardType
-                                 [ngForOf]="apiResolver.masterType?.cardTypes | sortBy:'asc': 'sortOrder'"
-                                 let-i="index">
-                        <a class="list-group-item box p-1 px-2" (click)="showCardTypes(cardType)">
-                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>{{cardType.name}}
-                        </a>
-                    </ng-template>
+<!--                    <ng-template ngFor let-cardType-->
+<!--                                 [ngForOf]="apiResolver.masterType?.cardTypes | sortBy:'asc': 'sortOrder'"-->
+<!--                                 let-i="index">-->
+<!--                        <a class="list-group-item box p-1 px-2" (click)="showCardTypes(cardType)">-->
+<!--                            <span class="float-right"><i class="fa fa-chevron-right"></i></span>{{cardType.name}}-->
+<!--                        </a>-->
+<!--                    </ng-template>-->
                 </div>
             </div>
             <div class="p-3 mt-auto"><span class="text-sm text-muted"></span></div>

@@ -7,7 +7,7 @@ import {
     TemplateRef,
     ViewChild
 } from "@angular/core";
-import {PaymentGatewayLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 import {PaymentMode, PaymentModeQueryOptions} from "../domains/payment-mode.serializer";
 import {PaymentModeService} from "../services/payment-mode.service";
 import {ActivatedRoute} from "@angular/router";
@@ -24,7 +24,7 @@ export class BankInstrumentInfoComponent extends ViewExtender<PaymentMode> imple
     @Input() isBank: boolean;
     @Input() systemTypeId: any;
     constructor(public override activatedRoute: ActivatedRoute,
-                public apiResolver: PaymentGatewayLookupAPIResolver,
+                public apiResolver: PaymentSetupLookupAPIResolver,
                 public override service: PaymentModeService){
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;

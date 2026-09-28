@@ -5,6 +5,6 @@ import {PaymentMode, PaymentModeSerializer} from "../domains/payment-mode.serial
 @Injectable()
 export class PaymentModeService extends OrgResourceService<PaymentMode>{
     constructor(public override injector: Injector) {
-        super(injector, 'paymentMasterMode', new PaymentModeSerializer());
+        super(injector, 'v1/global/paymentMode', new PaymentModeSerializer());
     }
 }

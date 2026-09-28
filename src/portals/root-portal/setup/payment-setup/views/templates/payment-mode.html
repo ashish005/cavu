@@ -10,7 +10,8 @@
                               (update)="updateGrid($event)"></org-grid>
                 </div>
                 <div class="mt-auto">
-                    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page"
+                    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take"
+                                         [page]="coreState?.page"
                                          (cb)="moveToPage($event)">
                     </org-grid-pagination>
                 </div>

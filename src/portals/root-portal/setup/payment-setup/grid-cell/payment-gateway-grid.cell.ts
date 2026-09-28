@@ -1,8 +1,7 @@
 import { DynamicComponent } from "@app-global";
 import {Component} from "@angular/core";
 import {PaymentGateway} from "../domains/payment-gateway.serializer";
-import {PaymentGatewayLookupAPIResolver} from "../services/api.resolver";
-import {ModeGatewayMapperLookup} from "../domains/lookup.serializer";
+import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 
 @Component({
   standalone: false,
@@ -17,7 +16,7 @@ import {ModeGatewayMapperLookup} from "../domains/lookup.serializer";
     </div>`
 })
 export class PaymentGatewayCell extends DynamicComponent {
-    constructor(public apiResolver: PaymentGatewayLookupAPIResolver) { super(); }
+    constructor(public apiResolver: PaymentSetupLookupAPIResolver) { super(); }
     showScheduler(row: PaymentGateway){
         const { orgTaskScheduleId, orgTaskId, orgTaskName } = row;
         const inputData: any = {
@@ -52,8 +51,8 @@ export class PaymentGatewayCell extends DynamicComponent {
     </div>`
 })
 export class PaymentModeCell extends DynamicComponent {
-    constructor(public apiResolver: PaymentGatewayLookupAPIResolver) { super(); }
-    serviceCharges(row: PaymentGateway, modeMapper: ModeGatewayMapperLookup) {
+    constructor(public apiResolver: PaymentSetupLookupAPIResolver) { super(); }
+    serviceCharges(row: PaymentGateway, modeMapper: any) {
         let { id, name } = row;
         const inputData: any = {
             mapperId: modeMapper.id,

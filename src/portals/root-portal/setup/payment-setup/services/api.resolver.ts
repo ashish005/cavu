@@ -1,21 +1,18 @@
 import {EventEmitter, Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 import {
-    PaymentGatewayLookup,
-    PaymentGatewayLookupSerializer, PaymentSystemTypeLookup
+    PaymentSetupLookup, PaymentSetupLookupSerializer
 } from "../domains/lookup.serializer";
 import {ACTION_ENUM, ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService} from "@app-global";
 import {PaymentGatewayCeComponent} from "../components/payment-gateway-ce.component";
 import {ServiceChargeCeComponent} from "../components/service-charge.ce.component";
-import {PaymentGatewayService} from "./payment-gateway.service";
 import {BankInstrumentInfoComponent} from "../components/bank-instrument-info.component";
 
 @Injectable()
-export class PaymentGatewayLookupAPIResolver extends OrgResourceService<PaymentGatewayLookup> implements Resolve<any> {
-  masterType: PaymentGatewayLookup;
-  allSystemType = new PaymentSystemTypeLookup({name: 'All', masterType: 'all'});
-  constructor(public override injector: Injector, private sharedService: SharedService, public service: PaymentGatewayService) {
-      super(injector, 'v1/orgLookup/payment-setup', new PaymentGatewayLookupSerializer());
+export class PaymentSetupLookupAPIResolver extends OrgResourceService<PaymentSetupLookup> implements Resolve<any> {
+  masterType: PaymentSetupLookup;
+  constructor(public override injector: Injector, private sharedService: SharedService) {
+      super(injector, 'v1/orgLookup/payment-setup', new PaymentSetupLookupSerializer());
   }
 
   resolve(route: ActivatedRouteSnapshot) {

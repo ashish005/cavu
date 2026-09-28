@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {PaymentGatewayForm} from "../forms/payment-gateway.form";
-import {PaymentGatewayLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 import {pairwise, startWith, Subscription} from "rxjs";
 import {ACTION_ENUM} from "@app-global";
 import {PaymentGatewayService} from "../services/payment-gateway.service";
@@ -36,7 +36,7 @@ export class PaymentGatewayCeComponent extends PaymentGatewayForm implements  On
     @Input() set data(val){
         super.populateForm(val);
     };
-    constructor(public override fb: FormBuilder, public apiResolver: PaymentGatewayLookupAPIResolver, public service: PaymentGatewayService){
+    constructor(public override fb: FormBuilder, public apiResolver: PaymentSetupLookupAPIResolver, public service: PaymentGatewayService){
         super(fb);
         /*const itemFormValueChange = ([prev, next]: [any, any]) =>
         {

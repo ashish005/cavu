@@ -1,4 +1,4 @@
-import {ViewExtender} from "@app-global";
+import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
 import {Component, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {PaymentCardType, PaymentCardTypeQueryOptions} from "../domains/card-type.serializer";
@@ -14,7 +14,14 @@ export class CardTypeView extends ViewExtender<PaymentCardType> implements OnIni
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
-            {headerName: 'Name', field: 'name' }
+            {headerName: 'Code', field: 'code' },
+            {headerName: 'Name', field: 'name' },
+            {headerName: 'Category', field: 'categoryName' },
+            {headerName: 'Contactless', field: 'supportsContactless', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Online', field: 'supportsOnline', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Recurring', field: 'supportsRecurring', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Tokenization', field: 'supportsTokenization', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent }
         ];
     }
 

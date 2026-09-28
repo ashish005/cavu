@@ -1,4 +1,4 @@
-import {CoreQueryOptions} from "@app-global";
+import {CoreQueryOptions, CoreResource} from "@app-global";
 
 // Account Nature
 export class AccountNature {
@@ -53,28 +53,6 @@ export class Bank {
     this.isCentralBank = isCentralBank;
     this.isCommercialBank = isCommercialBank;
     this.isCooperative = isCooperative;
-  }
-}
-
-// Bank Branch
-export class BankBranch {
-  id: string;
-  name: string;
-  externalCode: string;
-  bankId: string;
-  bic: string;
-  city: string;
-  isActive: boolean;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, externalCode, bankId, bic, city, isActive } = model;
-    this.id = id;
-    this.name = name;
-    this.externalCode = externalCode;
-    this.bankId = bankId;
-    this.bic = bic;
-    this.city = city;
-    this.isActive = isActive;
   }
 }
 
@@ -170,128 +148,8 @@ export class BankInstrumentType {
   }
 }
 
-// Payment Provider
-export class PaymentProvider {
-  id: number;
-  name: string;
-  code: string;
-  type: number;
-  website: string;
-  description: string;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, type, website, description } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.type = type;
-    this.website = website;
-    this.description = description;
-  }
-}
-
-// Payment Rail
-export class PaymentRail {
-  id: number;
-  name: string;
-  code: string;
-  type: number;
-  description: string;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, type, description } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.type = type;
-    this.description = description;
-  }
-}
-
-// Payment Mode
-export class PaymentMode {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  systemTypeId: number;
-  supportsRefund: boolean;
-  supportsPartialRefund: boolean;
-  supportsRecurring: boolean;
-  supportsTokenization: boolean;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, description, systemTypeId, supportsRefund, supportsPartialRefund, supportsRecurring, supportsTokenization } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.description = description;
-    this.systemTypeId = systemTypeId;
-    this.supportsRefund = supportsRefund;
-    this.supportsPartialRefund = supportsPartialRefund;
-    this.supportsRecurring = supportsRecurring;
-    this.supportsTokenization = supportsTokenization;
-  }
-}
-
-// Payment System Type
-export class PaymentSystemType {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  category: number;
-  supportsIncoming: boolean;
-  supportsOutgoing: boolean;
-  supportsRefund: boolean;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, description, category, supportsIncoming, supportsOutgoing, supportsRefund } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.description = description;
-    this.category = category;
-    this.supportsIncoming = supportsIncoming;
-    this.supportsOutgoing = supportsOutgoing;
-    this.supportsRefund = supportsRefund;
-  }
-}
-
-// Country Payment Rail
-export class CountryPaymentRail {
-  id: number;
-  countryId: number;
-  paymentRailId: number;
-  paymentRailName: string;
-  paymentRailCode: string;
-  supportsIncoming: boolean;
-  supportsOutgoing: boolean;
-  supportsRefund: boolean;
-  supportsRecurring: boolean;
-  supportsMandate: boolean;
-  effectiveFrom: string;
-  effectiveTo: string;
-
-  constructor(model: any = <any>{}) {
-    const { id, countryId, paymentRailId, paymentRailName, paymentRailCode, supportsIncoming, supportsOutgoing, supportsRefund, supportsRecurring, supportsMandate, effectiveFrom, effectiveTo } = model;
-    this.id = id;
-    this.countryId = countryId;
-    this.paymentRailId = paymentRailId;
-    this.paymentRailName = paymentRailName;
-    this.paymentRailCode = paymentRailCode;
-    this.supportsIncoming = supportsIncoming;
-    this.supportsOutgoing = supportsOutgoing;
-    this.supportsRefund = supportsRefund;
-    this.supportsRecurring = supportsRecurring;
-    this.supportsMandate = supportsMandate;
-    this.effectiveFrom = effectiveFrom;
-    this.effectiveTo = effectiveTo;
-  }
-}
-
 // Combined Banking Setup Lookup
-export class BankingSetupLookup {
+export class BankingSetupLookup extends CoreResource {
   accountNatures: AccountNature[];
   supplyNatures: SupplyNature[];
   banks: Bank[];
@@ -301,6 +159,7 @@ export class BankingSetupLookup {
   bankInstrumentTypes: BankInstrumentType[];
 
   constructor(model: any = <any>{}) {
+    super();
     const { accountNatures, supplyNatures, banks, bankAccountTypes, bankIdentifierTypes, paymentCardTypes, bankInstrumentTypes } = model;
     this.accountNatures = (accountNatures || []).map(r => new AccountNature(r));
     this.supplyNatures = (supplyNatures || []).map(r => new SupplyNature(r));
@@ -310,4 +169,9 @@ export class BankingSetupLookup {
     this.paymentCardTypes = (paymentCardTypes || []).map(r => new PaymentCardType(r));
     this.bankInstrumentTypes = (bankInstrumentTypes || []).map(r => new BankInstrumentType(r));
   }
+}
+
+export class BankingSetupLookupSerializer {
+  fromJson(json: any): BankingSetupLookup { return new BankingSetupLookup(json); }
+  toJson(data: any): any { return {}; }
 }

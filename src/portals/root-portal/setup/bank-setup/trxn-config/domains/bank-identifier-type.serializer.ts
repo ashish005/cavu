@@ -1,10 +1,15 @@
 import {CoreQueryOptions} from "@app-global";
 
-export class BankQueryOptions extends CoreQueryOptions {
-    constructor(model: any = <any>{}){ super(); }
+export class BankIdentifierTypeQueryOptions extends CoreQueryOptions{
+    constructor(){super();}
+    override toQueryString ()
+    {
+        const obj = {};
+        return super.getParamByObject(obj);
+    }
 }
 
-export class Bank {
+export class BankIdentifierRule {
     id: number;
     countryId: number;
     bankIdentifierTypeId: number;
@@ -60,8 +65,36 @@ export class Bank {
     }
 }
 
-export class BankSerializer {
-  fromJson(json: any): Bank { return new Bank(json); }
-  toJson(data: any): any { return data; }
+export class BankIdentifierType {
+    id: number;
+    name: string;
+    description: string;
+    code: string;
+    countryCount: boolean;
+    requiredCountryCount: boolean;
+    activeRuleCount: boolean;
+    sortOrder: number;
+    isActive: boolean;
+    constructor(model: any = <any>{}){
+        const {
+            id, name, description, code,
+            countryCount, requiredCountryCount, activeRuleCount,
+            sortOrder,
+            isActive
+        }  = model;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.countryCount = countryCount;
+        this.requiredCountryCount = requiredCountryCount;
+        this.activeRuleCount = activeRuleCount;
+        this.sortOrder = sortOrder;
+        this.isActive = isActive;
+    }
 }
 
+export class BankIdentifierTypeSerializer {
+    fromJson(json: any): BankIdentifierType { return new BankIdentifierType(json); }
+    toJson(data: any): any { return data; }
+}
