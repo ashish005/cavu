@@ -5,7 +5,22 @@ import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 
 @Component({
     standalone: false,
-    templateUrl: './layout.html'
+    templateUrl: './templates/payment-layout.html'
+})
+export class PaymentLayout implements OnInit {
+    public navList: Array<any> = [
+        { id:1, icon:"fa fa-dashboard", routeTo: 'providers', key: "Providers", sortOrder: 1 },
+        { id:2, icon:"fa fa-dashboard", routeTo: 'systemType', key: "System Types", sortOrder: 2 },
+        { id:3, icon:"fa fa-dashboard", routeTo: 'rails', key: "Rails", sortOrder: 3 }
+    ];
+    constructor(public router: Router, public activatedRoute: ActivatedRoute){}
+    ngOnInit() {}
+    onActivate(componentRef){}
+}
+
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
 })
 export class PaymentGatewayLayout implements OnInit {
     systemType: PaymentSystemTypeLookup;
@@ -32,7 +47,7 @@ export class PaymentGatewayLayout implements OnInit {
 
 @Component({
     standalone: false,
-    templateUrl: './system-layout.html'
+    templateUrl: './templates/system-layout.html'
 })
 export class PaymentSystemLayout implements OnInit {
     systemType: PaymentSystemTypeLookup;
