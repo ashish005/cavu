@@ -6,7 +6,7 @@ import {
     Output
 } from "@angular/core";
 import {FormBuilder, FormGroup} from "@angular/forms";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 import {PaymentGatewayServiceChargeForm} from "../forms/payment-gateway-service-charge.form";
 import {Subscription} from "rxjs";
 import {PaymentGatewayChargeService} from "../services/payment-gateway-charges.service";

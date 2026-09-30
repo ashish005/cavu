@@ -1,7 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import  { OrgResourceService } from "@app-global";
-import {PaymentProvider} from "../domains/lookup.serializer";
-import {PaymentProviderSerializer} from "../domains/payment-provider.serializer";
+import {PaymentProvider, PaymentProviderSerializer} from "../domains/payment-provider.serializer";
 
 @Injectable()
 export class PaymentProviderService extends OrgResourceService<PaymentProvider>{

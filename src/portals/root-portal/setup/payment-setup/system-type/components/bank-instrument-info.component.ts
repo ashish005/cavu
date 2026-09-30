@@ -7,7 +7,7 @@ import {
     TemplateRef,
     ViewChild
 } from "@angular/core";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 import {PaymentMode, PaymentModeQueryOptions} from "../domains/payment-mode.serializer";
 import {PaymentModeService} from "../services/payment-mode.service";
 import {ActivatedRoute} from "@angular/router";

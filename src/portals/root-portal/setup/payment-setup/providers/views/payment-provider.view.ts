@@ -1,30 +1,28 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
-import {PaymentRail, PaymentRailQueryOptions} from "../domains/payment-rail.serializer";
-import {PaymentRailService} from "../services/payment-rail.service";
+import {PaymentProvider, PaymentProviderQueryOptions} from "../domains/payment-provider.serializer";
+import {PaymentProviderService} from "../services/payment-provider.service";
 
 @Component({
   standalone: false,
-  templateUrl: './templates/payment-rail.html',
+  templateUrl: './templates/payment-provider.html',
   styles: [`:host { display: contents; }`],
 })
-export class PaymentRailView extends ViewExtender<PaymentRail> implements OnInit, OnDestroy {
-    override coreState: PaymentRailQueryOptions = new PaymentRailQueryOptions();
+export class PaymentProviderView extends ViewExtender<PaymentProvider> implements OnInit, OnDestroy {
+    override coreState: PaymentProviderQueryOptions = new PaymentProviderQueryOptions();
     constructor(public router: Router,
                 public override activatedRoute: ActivatedRoute,
-                public override service: PaymentRailService,
-                public apiResolver: PaymentSetupLookupAPIResolver) {
+                public override service: PaymentProviderService) {
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
+            //{headerName: 'Code', field: 'code' },
             {headerName: 'Name', field: 'name' },
             {headerName: 'Type', field: 'typeName' },
-            {headerName: 'Currencies', field: 'currencies' },
+            {headerName: 'Website', field: 'website' },
+            {headerName: 'Rails', field: 'railCount' },
             {headerName: 'Countries', field: 'countries' },
-            {headerName: 'PaymentModes', field: 'paymentModes' },
-            {headerName: 'Providers', field: 'providers' },
             {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ];
     }

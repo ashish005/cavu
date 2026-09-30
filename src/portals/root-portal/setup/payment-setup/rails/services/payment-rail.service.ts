@@ -1,7 +1,6 @@
 import {Injectable, Injector} from "@angular/core";
 import  { OrgResourceService } from "@app-global";
-import {PaymentRail} from "../domains/lookup.serializer";
-import {PaymentRailSerializer} from "../domains/payment-rail.serializer";
+import {PaymentRail, PaymentRailSerializer} from "../domains/payment-rail.serializer";
 
 @Injectable()
 export class PaymentRailService extends OrgResourceService<PaymentRail>{

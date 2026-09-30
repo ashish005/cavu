@@ -1,41 +1,32 @@
-import {Routes} from "@angular/router";
-import {PaymentGatewayLayout, PaymentLayout, PaymentSystemLayout} from "./layout/layout";
-import {PaymentGatewayView} from "./views/payment-gateway.view";
-import {PaymentSetupLookupAPIResolver} from "./services/api.resolver";
-import {PaymentModeView} from "./views/payment-mode.view";
-import {PaymentProviderView} from "./views/payment-provider.view";
-import {PaymentRailView} from "./views/payment-rail.view";
+import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, Routes} from "@angular/router";
+import {Component, Injectable, Injector, OnInit} from "@angular/core";
+import {PaymentSetupLookupAPIResolver} from "./api.resolver";
 
-const getTranslationString = (key)=> `master_type.modules.${key}`;
+@Component({
+    standalone: false,
+    templateUrl: './payment-layout.html'
+})
+export class PaymentLayout implements OnInit {
+    public navList: Array<any> = [
+        { id:1, icon:"fa fa-dashboard", routeTo: 'providers', key: "Providers", sortOrder: 1 },
+        { id:2, icon:"fa fa-dashboard", routeTo: 'systemType', key: "System Types", sortOrder: 2 },
+        { id:3, icon:"fa fa-dashboard", routeTo: 'rails', key: "Rails", sortOrder: 3 }
+    ];
+    constructor(public router: Router, public activatedRoute: ActivatedRoute){}
+    ngOnInit() {}
+    onActivate(componentRef){}
+}
+
 export const PaymentGatewayRoutes: Routes = [
     {
-      path: '', component: PaymentLayout, resolve: { items: PaymentSetupLookupAPIResolver },
+      path: '', resolve: { items: PaymentSetupLookupAPIResolver }, component: PaymentLayout,
       children:[
           { path: '', pathMatch: 'full', redirectTo: 'providers' },
-          {
-              path: 'systemType', component: PaymentGatewayLayout,
-              children:[
-                  {
-                      path: ':systemCode', component: PaymentSystemLayout,
-                      data: { title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.cash.header') },
-                      children: [
-                          { path: '', pathMatch: 'full', redirectTo: 'mode' },
-                          { path: 'system', data: { title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.cash.header')}, component: PaymentGatewayView },
-                          { path: 'mode', data: { key: 'all', title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.all.header')}, component: PaymentModeView }
-                      ]
-                  }
-              ]
-          },
-          { path: 'providers', component: PaymentProviderView },
-          {
-              path: 'rails', component: PaymentRailView
-          },
+          { path: 'systemType', loadChildren: () => import('./system-type').then(m => m.PaymentSystemTypeModule) },
+          { path: 'providers', loadChildren: () => import('./providers').then(m => m.PaymentProviderModule) },
+          { path: 'rails', loadChildren: () => import('./rails').then(m => m.PaymentRailModule) },
       ]
     }
 ];
 
-export const PAYMENT_GATEWAY_VIEWS = [
-    PaymentLayout, PaymentGatewayLayout,
-    PaymentSystemLayout,
-    PaymentGatewayView, PaymentModeView, PaymentProviderView, PaymentRailView
-];
+export const PAYMENT_GATEWAY_VIEWS = [PaymentLayout];

@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 import {PaymentGatewayByMode} from "../domains/payment-gateway-by-mode.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
-import {PaymentSystemTypeLookup} from "../domains/lookup.serializer";
+import {PaymentSystemTypeLookup} from "../../lookup.serializer";
 import {PaymentModeService} from "../services/payment-mode.service";
 import {PaymentModeQueryOptions} from "../domains/payment-mode.serializer";
 

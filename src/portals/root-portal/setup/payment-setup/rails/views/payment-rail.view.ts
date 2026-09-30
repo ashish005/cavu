@@ -1,40 +1,35 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
-import {PaymentGatewayByMode} from "../domains/payment-gateway-by-mode.serializer";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
-import {PaymentProvider} from "../domains/lookup.serializer";
-import {PaymentProviderQueryOptions} from "../domains/payment-provider.serializer";
-import {PaymentProviderService} from "../services/payment-provider.service";
+import {PaymentRail, PaymentRailQueryOptions} from "../domains/payment-rail.serializer";
+import {PaymentRailService} from "../services/payment-rail.service";
 
 @Component({
   standalone: false,
-  templateUrl: './templates/payment-provider.html',
+  templateUrl: './templates/payment-rail.html',
   styles: [`:host { display: contents; }`],
 })
-export class PaymentProviderView extends ViewExtender<PaymentProvider> implements OnInit, OnDestroy {
-    override coreState: PaymentProviderQueryOptions = new PaymentProviderQueryOptions();
+export class PaymentRailView extends ViewExtender<PaymentRail> implements OnInit, OnDestroy {
+    override coreState: PaymentRailQueryOptions = new PaymentRailQueryOptions();
     constructor(public router: Router,
                 public override activatedRoute: ActivatedRoute,
-                public override service: PaymentProviderService,
-                public apiResolver: PaymentSetupLookupAPIResolver) {
+                public override service: PaymentRailService) {
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
-            //{headerName: 'Code', field: 'code' },
             {headerName: 'Name', field: 'name' },
             {headerName: 'Type', field: 'typeName' },
-            {headerName: 'Website', field: 'website' },
-            {headerName: 'Rails', field: 'railCount' },
+            {headerName: 'Currencies', field: 'currencies' },
             {headerName: 'Countries', field: 'countries' },
-            //{headerName: 'Charges', field: 'isReconciliationRequired', cellTemplate: PaymentModeServiceChargesCell },
+            {headerName: 'PaymentModes', field: 'paymentModes' },
+            {headerName: 'Providers', field: 'providers' },
             {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 
     ngOnInit(){ super.populateGrid(); }
     override ngOnDestroy(){ super.ngOnDestroy(); }
-    actionCb(row: PaymentGatewayByMode){
+    actionCb(row: any){
         // const inputData: any = { id: row.id, data: row };
         // const success = ()=> {
         //     super.populateGrid();

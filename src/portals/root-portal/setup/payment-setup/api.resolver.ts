@@ -2,13 +2,13 @@ import {EventEmitter, Injectable, Injector} from "@angular/core";
 import {ActivatedRouteSnapshot, Resolve} from "@angular/router";
 import {
     PaymentSetupLookup, PaymentSetupLookupSerializer
-} from "../domains/lookup.serializer";
+} from "./lookup.serializer";
 import {ACTION_ENUM, ASIDE_CLASS, ASIDE_SIZE, SharedService, OrgResourceService} from "@app-global";
-import {PaymentGatewayCeComponent} from "../components/payment-gateway-ce.component";
-import {ServiceChargeCeComponent} from "../components/service-charge.ce.component";
-import {BankInstrumentInfoComponent} from "../components/bank-instrument-info.component";
+import {PaymentGatewayCeComponent} from "./system-type/components/payment-gateway-ce.component";
+import {ServiceChargeCeComponent} from "./system-type/components/service-charge.ce.component";
+import {BankInstrumentInfoComponent} from "./system-type/components/bank-instrument-info.component";
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PaymentSetupLookupAPIResolver extends OrgResourceService<PaymentSetupLookup> implements Resolve<any> {
   masterType: PaymentSetupLookup;
   constructor(public override injector: Injector, private sharedService: SharedService) {

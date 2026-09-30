@@ -10,8 +10,8 @@ import {
 } from "../grid-cell/payment-gateway-grid.cell";
 import {PaymentGateway, PaymentGatewayQueryOptions} from "../domains/payment-gateway.serializer";
 import {PaymentGatewayService} from "../services/payment-gateway.service";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
-import {PaymentSystemTypeLookup} from "../domains/lookup.serializer";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
+import {PaymentSystemTypeLookup} from "../../lookup.serializer";
 
 @Component({
   standalone: false,

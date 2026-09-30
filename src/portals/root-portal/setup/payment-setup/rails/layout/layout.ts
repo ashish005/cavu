@@ -1,28 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {PaymentSystemTypeLookup} from "../domains/lookup.serializer";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
-
-@Component({
-    standalone: false,
-    templateUrl: './templates/payment-layout.html'
-})
-export class PaymentLayout implements OnInit {
-    public navList: Array<any> = [
-        { id:1, icon:"fa fa-dashboard", routeTo: 'providers', key: "Providers", sortOrder: 1 },
-        { id:2, icon:"fa fa-dashboard", routeTo: 'systemType', key: "System Types", sortOrder: 2 },
-        { id:3, icon:"fa fa-dashboard", routeTo: 'rails', key: "Rails", sortOrder: 3 }
-    ];
-    constructor(public router: Router, public activatedRoute: ActivatedRoute){}
-    ngOnInit() {}
-    onActivate(componentRef){}
-}
+import {PaymentSystemTypeLookup} from "../../lookup.serializer";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 
 @Component({
     standalone: false,
     templateUrl: './templates/layout.html'
 })
-export class PaymentGatewayLayout implements OnInit {
+export class RailLayout implements OnInit {
     systemType: PaymentSystemTypeLookup;
     systemTypes: Array<PaymentSystemTypeLookup>;
 
@@ -34,6 +19,7 @@ export class PaymentGatewayLayout implements OnInit {
                 public activatedRoute: ActivatedRoute,
                 public apiResolver: PaymentSetupLookupAPIResolver){}
     ngOnInit() {
+        debugger
         this.systemTypes = this.apiResolver.masterType.paymentSystemTypes;
         var systemType = this.apiResolver.masterType.getSystemTypeByName('cash');
         this.changeSystemRoute(systemType);
@@ -47,9 +33,9 @@ export class PaymentGatewayLayout implements OnInit {
 
 @Component({
     standalone: false,
-    templateUrl: './templates/system-layout.html'
+    templateUrl: './templates/sub-layout.html'
 })
-export class PaymentSystemLayout implements OnInit {
+export class RailSubLayout implements OnInit {
     systemType: PaymentSystemTypeLookup;
     // public navList: Array<any> = [
     //     { id:1, icon:"fa fa-dashboard", routeTo: 'system', key: "Payment System", sortOrder: 1 },

@@ -1,6 +1,6 @@
 import { DynamicComponent } from "@app-global";
 import {Component} from "@angular/core";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 import {PaymentGatewayByMode} from "../domains/payment-gateway-by-mode.serializer";
 import {PaymentGateway} from "../domains/payment-gateway.serializer";
 

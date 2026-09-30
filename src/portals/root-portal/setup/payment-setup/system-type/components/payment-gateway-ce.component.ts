@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {PaymentGatewayForm} from "../forms/payment-gateway.form";
-import {PaymentSetupLookupAPIResolver} from "../services/api.resolver";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
 import {pairwise, startWith, Subscription} from "rxjs";
 import {ACTION_ENUM} from "@app-global";
 import {PaymentGatewayService} from "../services/payment-gateway.service";
