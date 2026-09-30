@@ -1,6 +1,6 @@
 import {CoreResource} from "@app-global";
 
-export class PaymentProvider {
+export class PaymentProviderLookup {
     id: number;
     name: string;
     code: string;
@@ -19,7 +19,7 @@ export class PaymentProvider {
     }
 }
 // Payment Rail
-export class PaymentRail {
+export class PaymentRailLookup {
     id: number;
     name: string;
     code: string;
@@ -86,57 +86,72 @@ export class PaymentSystemTypeLookup {
         this.paymentModes = (paymentModes || []).map(r => new PaymentModeLookup(r));
     }
 }
-// Country Payment Rail
-export class CountryPaymentRail {
+
+export class InstrumentTypeLookup {
     id: number;
-    countryId: number;
-    paymentRailId: number;
-    paymentRailName: string;
-    paymentRailCode: string;
-    supportsIncoming: boolean;
-    supportsOutgoing: boolean;
-    supportsRefund: boolean;
-    supportsRecurring: boolean;
-    supportsMandate: boolean;
-    effectiveFrom: string;
-    effectiveTo: string;
+    name: string;
+    code: string;
+    description: string;
+    sortOrder: number;
 
     constructor(model: any = <any>{}) {
-        const { id, countryId, paymentRailId, paymentRailName, paymentRailCode, supportsIncoming, supportsOutgoing, supportsRefund, supportsRecurring, supportsMandate, effectiveFrom, effectiveTo } = model;
+        const {
+            id, name, code, description, sortOrder
+        } = model;
         this.id = id;
-        this.countryId = countryId;
-        this.paymentRailId = paymentRailId;
-        this.paymentRailName = paymentRailName;
-        this.paymentRailCode = paymentRailCode;
-        this.supportsIncoming = supportsIncoming;
-        this.supportsOutgoing = supportsOutgoing;
-        this.supportsRefund = supportsRefund;
-        this.supportsRecurring = supportsRecurring;
-        this.supportsMandate = supportsMandate;
-        this.effectiveFrom = effectiveFrom;
-        this.effectiveTo = effectiveTo;
+        this.name = name;
+        this.code = code;
+        this.description = description;
+        this.sortOrder = sortOrder;
+    }
+}
+
+export class IdentifierTypeLookup {
+    id: number;
+    name: string;
+    description: string;
+    code: string;
+    sortOrder: number;
+    isActive: boolean;
+    constructor(model: any = <any>{}){
+        const {
+            id, name, description, code,
+            sortOrder,
+            isActive
+        }  = model;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.sortOrder = sortOrder;
+        this.isActive = isActive;
     }
 }
 // Combined Payment Setup Lookup
 export class PaymentSetupLookup extends CoreResource {
-    paymentProviders: PaymentProvider[];
-    paymentRails: PaymentRail[];
+    paymentProviders: PaymentProviderLookup[];
+    paymentRails: PaymentRailLookup[];
     paymentModes: PaymentModeLookup[];
     paymentSystemTypes: PaymentSystemTypeLookup[];
-    countryPaymentRails: CountryPaymentRail[];
+    instrumentTypes: InstrumentTypeLookup[];
+    identifierTypes: IdentifierTypeLookup[];
     constructor(model: any = <any>{}) {
         super();
-        const { paymentProviders, paymentRails, paymentModes, paymentSystemTypes, countryPaymentRails } = model;
-        this.paymentProviders = (paymentProviders || []).map(r => new PaymentProvider(r));
-        this.paymentRails = (paymentRails || []).map(r => new PaymentRail(r));
+        const { paymentProviders, paymentRails, paymentSystemTypes, instrumentTypes, identifierTypes } = model;
+        this.paymentProviders = (paymentProviders || []).map(r => new PaymentProviderLookup(r));
+        this.paymentRails = (paymentRails || []).map(r => new PaymentRailLookup(r));
         this.paymentSystemTypes = (paymentSystemTypes || []).map(r => new PaymentSystemTypeLookup(r));
-        this.countryPaymentRails = (countryPaymentRails || []).map(r => new CountryPaymentRail(r));
+        this.instrumentTypes = (instrumentTypes || []).map(r => new InstrumentTypeLookup(r));
+        this.identifierTypes = (identifierTypes || []).map(r => new IdentifierTypeLookup(r));
 
         this.paymentModes = (this.paymentSystemTypes ?? []).flatMap(x => x.paymentModes ?? []);
     }
 
-    getSystemTypeByName = (systemMasterType: string) => this.paymentSystemTypes.find(k => k.code == systemMasterType);
-    getModesBySystemTypeId = (systemTypeId: any) => this.paymentModes.filter(k => k.systemTypeId == systemTypeId);
+    getSystemTypeByName = (code: string) => this.paymentSystemTypes.find(k => k.code == code);
+    getRailByCode = (code: any) => this.paymentRails.find(k => k.code == code);
+    getProviderByCode = (code: any) => this.paymentProviders.find(k => k.code == code);
+    getInstrumentByCode = (code: any) => this.instrumentTypes.find(k => k.code == code);
+    getIdentifierTypeByCode = (code: any) => this.identifierTypes.find(k => k.code == code);
 }
 // export class PaymentGatewayLookup extends CoreResource{
 //     systemTypes: Array<PaymentSystemTypeLookup> = [];
@@ -157,7 +172,6 @@ export class PaymentSetupLookup extends CoreResource {
 //     getAllModes = () => this.modes;
 //
 //     getSystemTypeByName = (systemMasterType: string) => this.systemTypes.find(k => k.masterType == systemMasterType);
-//     getModesBySystemTypeId = (systemTypeId: any) => this.modes.filter(k => k.systemTypeId == systemTypeId);
 // }
 export class PaymentSetupLookupSerializer {
   fromJson(json: any): PaymentSetupLookup { return new PaymentSetupLookup(json); }

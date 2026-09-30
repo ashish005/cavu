@@ -7,10 +7,10 @@ import {
     TemplateRef,
     ViewChild
 } from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder} from "@angular/forms";
 import {PaymentGatewayForm} from "../forms/payment-gateway.form";
 import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
-import {pairwise, startWith, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {ACTION_ENUM} from "@app-global";
 import {PaymentGatewayService} from "../services/payment-gateway.service";
 
@@ -22,8 +22,6 @@ import {PaymentGatewayService} from "../services/payment-gateway.service";
 export class PaymentGatewayCeComponent extends PaymentGatewayForm implements  OnInit, OnDestroy {
     @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
     @Input() id: string;
-
-
     get actionType() { return this.id? ACTION_ENUM.UPDATE : ACTION_ENUM.ADD; };
     @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCancel: EventEmitter<any> = new EventEmitter<any>();
@@ -45,9 +43,7 @@ export class PaymentGatewayCeComponent extends PaymentGatewayForm implements  On
         this.formSystemTypeId.valueChanges.pipe(startWith(null as string), pairwise()).subscribe(itemFormValueChange);*/
     }
 
-    ngOnInit(){
-
-    }
+    ngOnInit(){}
 
     onSubmit(form) {
         // stop here if form is invalid

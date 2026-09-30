@@ -1,6 +1,4 @@
-import {Business} from "./business.serializer";
-
-export class SoftwareLicenseFeature {
+export class SoftwareFeatureValue {
     id: number;
     licenseTypeId: number;
     licenseType: string;
@@ -16,15 +14,15 @@ export class SoftwareLicenseFeature {
     }
 }
 
-export class LicensingFeature {
+export class SoftwareFeature {
     id: string;
     name: string;
     description: string;
     sortOrder: number;
-    softwareLicenseFeatures: Array<SoftwareLicenseFeature>;
+    values: Array<SoftwareFeatureValue>;
 
     constructor(model: any = <any>{}){
-        const { id, name, description, sortOrder, softwareLicenseFeatures } = model;
+        const { id, name, description, sortOrder, values } = model;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,21 +35,21 @@ export class LicensingFeature {
             {}
         );
         this.softwareLicenseFeatures = temp;*/
-        this.softwareLicenseFeatures = (softwareLicenseFeatures || []).map((r: any) => new SoftwareLicenseFeature(r));
+        this.values = (values || []).map((r: any) => new SoftwareFeatureValue(r));
     }
 }
 
-export class LicenseType {
+export class SoftwarePlan {
     id: number;
     name: string;
     sortOrder: number;
-    isDefault: boolean;
+    isRecommended: boolean;
     constructor(model: any = <any>{}){
-        const { id, name, sortOrder, isDefault } = model || {};
+        const { id, name, sortOrder, isRecommended } = model || {};
         this.id = id;
         this.name = name;
         this.sortOrder = sortOrder;
-        this.isDefault = isDefault
+        this.isRecommended = isRecommended
     }
 }
 
@@ -60,17 +58,17 @@ export class SoftwarePrice {
     name: string;
     code: string;
     description: string;
-    licenseTypes: Array<LicenseType>;
-    licensingFeatures: Array<LicensingFeature>;
+    plans: Array<SoftwarePlan>;
+    features: Array<SoftwareFeature>;
 
     constructor(model: any = <any>{}){
-        const { id, name, code, description, licenseTypes, licensingFeatures } = model;
+        const { id, name, code, description, plans, features } = model;
         this.id = id;
         this.name = name;
         this.code = code;
         this.description = description;
-        this.licenseTypes = (licenseTypes || []).map((r: any) => new LicenseType(r));
-        this.licensingFeatures = (licensingFeatures || []).map((r: any) => new LicensingFeature(r));
+        this.plans = (plans || []).map((r: any) => new SoftwarePlan(r));
+        this.features = (features || []).map((r: any) => new SoftwareFeature(r));
     }
 }
 
@@ -78,7 +76,6 @@ export class SoftwarePriceSerializer {
     fromJson(json: any): SoftwarePrice {
         return new SoftwarePrice(json);
     }
-
     toJson(data: any): any {
         return data;
     }

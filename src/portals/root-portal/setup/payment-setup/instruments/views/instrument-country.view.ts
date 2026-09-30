@@ -1,33 +1,48 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {GridUISwitchCellComponent, ViewExtender} from "@app-global";
-import {PaymentRail, PaymentRailQueryOptions} from "../domains/payment-rail.serializer";
-import {PaymentRailService} from "../services/payment-rail.service";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
+import {InstrumentCountry, InstrumentCountryQueryOptions} from "../domains/instrument-country.serializer";
+import {InstrumentTypeLookup} from "../../lookup.serializer";
+import {InstrumentCountryService} from "../services/instrument-country.service";
 
 @Component({
   standalone: false,
-  templateUrl: './templates/payment-rail.html',
+  templateUrl: './templates/country.html',
   styles: [`:host { display: contents; }`],
 })
-export class PaymentRailView extends ViewExtender<PaymentRail> implements OnInit, OnDestroy {
-    override coreState: PaymentRailQueryOptions = new PaymentRailQueryOptions();
+export class InstrumentCountryView extends ViewExtender<InstrumentCountry> implements OnInit, OnDestroy {
+    instrument: InstrumentTypeLookup;
+    override coreState: InstrumentCountryQueryOptions = new InstrumentCountryQueryOptions();
     constructor(public router: Router,
                 public override activatedRoute: ActivatedRoute,
-                public override service: PaymentRailService) {
+                public override service: InstrumentCountryService, public apiResolver: PaymentSetupLookupAPIResolver) {
         super(activatedRoute, service);
         this.gridOptions.header.edit = false;
         this.gridOptions.columnDefs = [
-            {headerName: 'Name', field: 'name' },
-            {headerName: 'Type', field: 'typeName' },
-            {headerName: 'Currencies', field: 'currencies' },
-            {headerName: 'Countries', field: 'countries' },
-            {headerName: 'PaymentModes', field: 'paymentModes' },
-            {headerName: 'Providers', field: 'providers' },
+            {headerName: 'Payment Mode', field: 'paymentModeName' },
+            {headerName: 'Required', field: 'isRequired', cellTemplate: GridUISwitchCellComponent },
+            {headerName: 'Primary', field: 'isPrimary', cellTemplate: GridUISwitchCellComponent },
             {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 
-    ngOnInit(){ super.populateGrid(); }
+    ngOnInit()
+    {
+        this.paramsSubscription = this.activatedRoute.parent?.params
+            .subscribe((parms: { code: string }) =>
+        {
+            var provider = this.apiResolver.masterType.getInstrumentByCode(parms.code);
+            this.changeProvider(provider);
+        });
+    }
+
+    changeProvider(instrument: InstrumentTypeLookup) {
+        this.instrument = instrument;
+        this.coreState.instrumentId = this.instrument?.id;
+        super.populateGrid();
+    }
+
     override ngOnDestroy(){ super.ngOnDestroy(); }
     actionCb(row: any){
         // const inputData: any = { id: row.id, data: row };

@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {PaymentSystemTypeLookup} from "../../lookup.serializer";
 import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
+import {Subscription} from "rxjs";
 
 @Component({
     standalone: false,
@@ -19,7 +20,6 @@ export class PaymentGatewayLayout implements OnInit {
                 public activatedRoute: ActivatedRoute,
                 public apiResolver: PaymentSetupLookupAPIResolver){}
     ngOnInit() {
-        debugger
         this.systemTypes = this.apiResolver.masterType.paymentSystemTypes;
         var systemType = this.apiResolver.masterType.getSystemTypeByName('cash');
         this.changeSystemRoute(systemType);
@@ -35,8 +35,9 @@ export class PaymentGatewayLayout implements OnInit {
     standalone: false,
     templateUrl: './templates/system-layout.html'
 })
-export class PaymentSystemLayout implements OnInit {
+export class PaymentSystemLayout implements OnInit, OnDestroy {
     systemType: PaymentSystemTypeLookup;
+    paramsSubscription: Subscription;
     // public navList: Array<any> = [
     //     { id:1, icon:"fa fa-dashboard", routeTo: 'system', key: "Payment System", sortOrder: 1 },
     //     { id:2, icon:"fa fa-dashboard", routeTo: 'mode', key: "Payment Mode", sortOrder: 2 },
@@ -46,26 +47,30 @@ export class PaymentSystemLayout implements OnInit {
                 public apiResolver: PaymentSetupLookupAPIResolver){}
 
     ngOnInit() {
-        this.activatedRoute.params.subscribe((parms: { systemCode: string }) =>
+        this.paramsSubscription = this.activatedRoute.params.subscribe((parms: { code: string }) =>
         {
-            this.systemType = this.apiResolver.masterType.getSystemTypeByName(parms.systemCode);
+            this.systemType = this.apiResolver.masterType.getSystemTypeByName(parms.code);
         });
     }
+    ngOnDestroy() {
+        this.paramsSubscription.unsubscribe();
+    }
+
     onActivate(componentRef){}
 
     createNew() {
-        const modes = this.apiResolver.masterType.getModesBySystemTypeId(this.systemType?.id);
+        const modes = this.apiResolver.masterType.getSystemTypeByName(this.systemType?.code);
         const data = {
             systemTypeId: this.systemType.id,
-            modeGatewayMapper: (modes || []).map(r => <any>{
-                id: null,
-                gatewayId: null,
-                modeId: r.id,
-                modeName: r.name,
-                isReceiptAllowed: false,
-                isPaymentAllowed: false,
-                status: true,
-            })
+            // modeGatewayMapper: (modes || []).map(r => <any>{
+            //     id: null,
+            //     gatewayId: null,
+            //     modeId: r.id,
+            //     modeName: r.name,
+            //     isReceiptAllowed: false,
+            //     isPaymentAllowed: false,
+            //     status: true,
+            // })
         };
         const inputData: any = { id: null, data };
         const success = ()=> { };

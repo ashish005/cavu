@@ -32,6 +32,7 @@ export class ViewExtender<T> {
     hasError: boolean;
     errorMsg: string;
     public paramsSubscription : Subscription;
+    private listSubscription : Subscription;
     public subjectSubscription : Subscription;
     protected coreState: CoreQueryOptions;
     constructor(protected activatedRoute: ActivatedRoute, protected service: OrgResourceService<any> | CoreResourceService<any>){
@@ -43,6 +44,7 @@ export class ViewExtender<T> {
 
     ngOnDestroy(){
         this.paramsSubscription?.unsubscribe();
+        this.listSubscription?.unsubscribe();
         this.subjectSubscription?.unsubscribe();
     }
 
@@ -52,7 +54,7 @@ export class ViewExtender<T> {
 
     updateGrid<T>(_coreState) {
         this.isLoading = true;
-        this.paramsSubscription = this.service.list(_coreState).subscribe((resp: CoreResponse<T>) => {
+        this.listSubscription = this.service.list(_coreState).subscribe((resp: CoreResponse<T>) => {
             this.isLoading = false;
             this.hasError = !resp.isSuccess;
             this.errorMsg = resp.message;

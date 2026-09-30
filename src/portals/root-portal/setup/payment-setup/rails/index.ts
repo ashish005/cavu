@@ -3,9 +3,11 @@ import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
 import {GlobalModule} from "@app-global";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {PaymentRailView} from "./views/payment-rail.view";
 import {PAYMENT_RAIL_SERVICES} from "./services";
 import {RailLayout, RailSubLayout} from "./layout/layout";
+import {RailCountryView} from "./views/rail-country.view";
+import {RailCurrencyView} from "./views/rail-currency.view";
+import {RailModeView} from "./views/rail-mode.view";
 
 const getTranslationString = (key)=> `master_type.modules.${key}`;
 @NgModule({
@@ -16,13 +18,35 @@ const getTranslationString = (key)=> `master_type.modules.${key}`;
                 path: '', component: RailLayout,
                 children: [
                     {
-                        path: '', component: RailSubLayout,
-                        data: { title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.cash.header') },
+                        path: ':code', component: RailSubLayout,
+                        data: {
+                            title: getTranslationString('transaction.cash.title'),
+                            header: getTranslationString('transaction.cash.header')
+                        },
                         children: [
-                            { path: '', pathMatch: 'full', redirectTo: 'system' },
-                            { path: 'system',
-                                data: { title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.cash.header')},
-                                component: PaymentRailView
+                            { path: '', pathMatch: 'full', redirectTo: 'country' },
+                            {
+                                path: 'country',
+                                data: {
+                                    title: getTranslationString('transaction.cash.title'),
+                                    header: getTranslationString('transaction.cash.header')
+                                }, component: RailCountryView
+                            },
+                            {
+                                path: 'currency',
+                                data: {
+                                    title: getTranslationString('transaction.cash.title'),
+                                    header: getTranslationString('transaction.cash.header')
+                                },
+                                component: RailCurrencyView
+                            },
+                            {
+                                path: 'mode',
+                                data: {
+                                    title: getTranslationString('transaction.cash.title'),
+                                    header: getTranslationString('transaction.cash.header')
+                                },
+                                component: RailModeView
                             }
                         ]
                     }
@@ -32,7 +56,7 @@ const getTranslationString = (key)=> `master_type.modules.${key}`;
         GlobalModule
     ],
     providers: [PAYMENT_RAIL_SERVICES],
-    declarations: [RailLayout, RailSubLayout, PaymentRailView]
+    declarations: [RailLayout, RailSubLayout, RailCountryView, RailCurrencyView, RailModeView]
 })
 
 export class PaymentRailModule {

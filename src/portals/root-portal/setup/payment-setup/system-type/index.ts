@@ -19,7 +19,7 @@ const getTranslationString = (key)=> `master_type.modules.${key}`;
                 path: '', component: PaymentGatewayLayout,
                 children: [
                     {
-                        path: ':systemCode', component: PaymentSystemLayout,
+                        path: ':code', component: PaymentSystemLayout,
                         data: { title: getTranslationString('transaction.cash.title'), header: getTranslationString('transaction.cash.header') },
                         children: [
                             { path: '', pathMatch: 'full', redirectTo: 'mode' },

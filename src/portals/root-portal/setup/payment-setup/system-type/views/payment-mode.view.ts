@@ -32,9 +32,9 @@ export class PaymentModeView extends ViewExtender<PaymentGatewayByMode> implemen
     }
     ngOnInit()
     {
-        this.activatedRoute.parent.params.subscribe((parms: { systemCode: string }) =>
+        this.paramsSubscription = this.activatedRoute.parent.params.subscribe((parms: { code: string }) =>
         {
-            var systemType = this.apiResolver.masterType.getSystemTypeByName(parms.systemCode);
+            var systemType = this.apiResolver.masterType.getSystemTypeByName(parms.code);
             this.changeSystemRoute(systemType);
         });
     }

@@ -1,5 +1,5 @@
-import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, Routes} from "@angular/router";
-import {Component, Injectable, Injector, OnInit} from "@angular/core";
+import {ActivatedRoute, Router, Routes} from "@angular/router";
+import {Component, OnInit} from "@angular/core";
 import {PaymentSetupLookupAPIResolver} from "./api.resolver";
 
 @Component({
@@ -10,7 +10,10 @@ export class PaymentLayout implements OnInit {
     public navList: Array<any> = [
         { id:1, icon:"fa fa-dashboard", routeTo: 'providers', key: "Providers", sortOrder: 1 },
         { id:2, icon:"fa fa-dashboard", routeTo: 'systemType', key: "System Types", sortOrder: 2 },
-        { id:3, icon:"fa fa-dashboard", routeTo: 'rails', key: "Rails", sortOrder: 3 }
+        { id:3, icon:"fa fa-dashboard", routeTo: 'rails', key: "Rails", sortOrder: 3 },
+        { id:4, icon:"fa fa-dashboard", routeTo: 'instruments', key: "Instruments", sortOrder: 4 },
+        { id:5, icon:"fa fa-dashboard", routeTo: 'identifiers', key: "Identifiers", sortOrder: 5 },
+
     ];
     constructor(public router: Router, public activatedRoute: ActivatedRoute){}
     ngOnInit() {}
@@ -25,6 +28,8 @@ export const PaymentGatewayRoutes: Routes = [
           { path: 'systemType', loadChildren: () => import('./system-type').then(m => m.PaymentSystemTypeModule) },
           { path: 'providers', loadChildren: () => import('./providers').then(m => m.PaymentProviderModule) },
           { path: 'rails', loadChildren: () => import('./rails').then(m => m.PaymentRailModule) },
+          { path: 'instruments', loadChildren: () => import('./instruments').then(m => m.BankInstrumentTypeModule) },
+          { path: 'identifiers', loadChildren: () => import('./identifiers').then(m => m.BankIdentifierTypeModule) }
       ]
     }
 ];

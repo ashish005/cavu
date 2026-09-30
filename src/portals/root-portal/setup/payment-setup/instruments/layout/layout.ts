@@ -1,0 +1,77 @@
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {PaymentSetupLookupAPIResolver} from "../../api.resolver";
+import {InstrumentTypeLookup} from "../../lookup.serializer";
+import {Subscription} from "rxjs";
+
+@Component({
+    standalone: false,
+    templateUrl: './templates/layout.html'
+})
+export class InstrumentTypeLayout implements OnInit {
+    instrumentType: InstrumentTypeLookup;
+    instrumentTypes: InstrumentTypeLookup[];
+    public navList: Array<any> = [
+        { id:1, icon:"fa fa-dashboard", routeTo: 'system', key: "Payment System", sortOrder: 1 },
+        { id:2, icon:"fa fa-dashboard", routeTo: 'mode', key: "Payment Mode", sortOrder: 2 },
+    ];
+    constructor(public router: Router,
+                public activatedRoute: ActivatedRoute,
+                public apiResolver: PaymentSetupLookupAPIResolver){}
+    ngOnInit() {
+        this.instrumentTypes = this.apiResolver.masterType.instrumentTypes || [];
+        this.changeSystemRoute(this.instrumentTypes[0]);
+    }
+    changeSystemRoute(instrumentType: InstrumentTypeLookup){
+        this.instrumentType = instrumentType;
+        this.router.navigate([instrumentType.code],{relativeTo: this.activatedRoute});
+    }
+    onActivate(componentRef){}
+}
+
+@Component({
+    standalone: false,
+    templateUrl: './templates/sub-layout.html'
+})
+export class InstrumentTypeSubLayout implements OnInit, OnDestroy {
+    instrumentType: InstrumentTypeLookup;
+    paramsSubscription: Subscription;
+    public navList: Array<any> = [
+        { id:1, icon:"fa fa-dashboard", routeTo: 'country', key: "Country", sortOrder: 1 },
+        //{ id:3, icon:"fa fa-dashboard", routeTo: 'rail', key: "Rail", sortOrder: 3 },
+    ];
+    constructor(public router: Router,
+                public activatedRoute: ActivatedRoute,
+                public apiResolver: PaymentSetupLookupAPIResolver){}
+
+    ngOnInit() {
+        this.paramsSubscription = this.activatedRoute.params.subscribe((parms: { code: string }) =>
+        {
+            this.instrumentType = this.apiResolver.masterType.getInstrumentByCode(parms.code);
+        });
+    }
+    ngOnDestroy() {
+        this.paramsSubscription?.unsubscribe();
+    }
+
+    onActivate(componentRef){}
+
+    createNew() {
+        const modes = this.apiResolver.masterType.getRailByCode(this.instrumentType?.code);
+        const data = {
+            instrumentTypeId: this.instrumentType.id,
+            // modeGatewayMapper: (modes || []).map(r => <any>{
+            //     id: null,
+            //     gatewayId: null,
+            //     modeId: r.id,
+            //     modeName: r.name,
+            //     isReceiptAllowed: false,
+            //     isPaymentAllowed: false,
+            //     status: true,
+            // })
+        };
+        const inputData: any = { id: null, data };
+        const success = ()=> { };
+        this.apiResolver.showPaymentGatewayCEPopup(inputData, { text: `new Gateway`, desc: '' }, success);
+    }
+}

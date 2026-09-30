@@ -1,21 +1,20 @@
 import {CoreQueryOptions} from "@app-global";
+export class IdentifierCountryQueryOptions extends CoreQueryOptions {
+    identifierId: number;
+    constructor(model: any = {}){super(model);}
 
-export class BankIdentifierTypeQueryOptions extends CoreQueryOptions{
-    constructor(){super();}
-    override toQueryString ()
-    {
-        const obj = {};
+    override toQueryString (){
+        const obj = {
+            identifierId: this.identifierId
+        };
         return super.getParamByObject(obj);
     }
 }
 
-export class BankIdentifierRule {
+export class IdentifierCountry {
     id: number;
     countryId: number;
     bankIdentifierTypeId: number;
-
-    name: string;
-    code: string;
     countryName: string;
 
     isRequired: boolean;
@@ -34,7 +33,7 @@ export class BankIdentifierRule {
     isActive: boolean;
     constructor(model: any = <any>{}){
         const {
-            id, name, code,
+            id,
             countryId, countryName,
             bankIdentifierTypeId,
             isRequired, mustBeUnique,
@@ -44,8 +43,6 @@ export class BankIdentifierRule {
         }  = model;
 
         this.id = id;
-        this.name = name;
-        this.code = code;
         this.countryId = countryId;
         this.countryName = countryName;
         this.bankIdentifierTypeId = bankIdentifierTypeId;
@@ -65,36 +62,7 @@ export class BankIdentifierRule {
     }
 }
 
-export class BankIdentifierType {
-    id: number;
-    name: string;
-    description: string;
-    code: string;
-    countryCount: boolean;
-    requiredCountryCount: boolean;
-    activeRuleCount: boolean;
-    sortOrder: number;
-    isActive: boolean;
-    constructor(model: any = <any>{}){
-        const {
-            id, name, description, code,
-            countryCount, requiredCountryCount, activeRuleCount,
-            sortOrder,
-            isActive
-        }  = model;
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.code = code;
-        this.countryCount = countryCount;
-        this.requiredCountryCount = requiredCountryCount;
-        this.activeRuleCount = activeRuleCount;
-        this.sortOrder = sortOrder;
-        this.isActive = isActive;
-    }
-}
-
-export class BankIdentifierTypeSerializer {
-    fromJson(json: any): BankIdentifierType { return new BankIdentifierType(json); }
+export class IdentifierCountrySerializer {
+    fromJson(json: any): IdentifierCountry { return new IdentifierCountry(json); }
     toJson(data: any): any { return data; }
 }

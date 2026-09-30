@@ -55,16 +55,16 @@
                                         <span>Features</span>
                                     </div>
                                 </th>
-                                <ng-template ngFor let-licenseType [ngForOf]="software.licenseTypes" let-i="index">
+                                <ng-template ngFor let-plan [ngForOf]="software.plans" let-i="index">
                                     <th class="license-column">
                                         <div class="license-header">
                                             <div class="license-icon">
                                                 <i class="fa fa-star"></i>
                                             </div>
                                             <div class="license-info">
-                                                <h6 class="license-name text-uppercase mb-0">{{licenseType.name}}</h6>
-                                                <span class="license-badge" [class.badge-success]="licenseType.isDefault" [class.badge-secondary]="!licenseType.isDefault">
-                                                    {{licenseType.isDefault ? 'Recommended' : 'Standard'}}
+                                                <h6 class="license-name text-uppercase mb-0">{{plan.name}}</h6>
+                                                <span class="license-badge" [class.badge-success]="plan.isRecommended" [class.badge-secondary]="!plan.isRecommended">
+                                                    {{plan.isRecommended ? 'Recommended' : 'Standard'}}
                                                 </span>
                                             </div>
                                         </div>
@@ -73,7 +73,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <ng-template ngFor let-row [ngForOf]="software.licensingFeatures" let-i="index">
+                            <ng-template ngFor let-row [ngForOf]="software.features" let-i="index">
                                 <tr [class.feature-row-even]="i % 2 === 0" [class.feature-row-odd]="i % 2 !== 0">
                                     <td class="feature-cell">
                                         <div class="feature-content">
@@ -86,7 +86,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <ng-template ngFor let-feature [ngForOf]="row?.softwareLicenseFeatures" let-i="index">
+                                    <ng-template ngFor let-feature [ngForOf]="row?.values" let-i="index">
                                         <td class="license-cell">
                                             <div class="feature-value">
                                                 <span class="value-badge" [class.value-yes]="feature.value === 'Yes' || feature.value === 'Included'" 
@@ -124,7 +124,6 @@
         </div>
     </div>
 </div>
-
 <style>
     .pricing-container {
         padding: 1rem 0;

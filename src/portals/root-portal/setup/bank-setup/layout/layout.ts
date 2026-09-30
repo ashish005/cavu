@@ -19,8 +19,7 @@ export class BankSetupLayout {
         { id:1, icon:"fa fa-dashboard", routeTo: 'bank/info', key: "Banks", sortOrder: 1 },
         { id:2, icon:"fa fa-university", routeTo: ['config', 'bank-transaction-type'], key: `Transaction Types`, sortOrder: 2 },
         { id:3, icon:"fa fa-university", routeTo: ['config', 'card'], key: `Card`, sortOrder: 3 },
-        { id:4, icon:"fa fa-university", routeTo: ['config', 'bank-account-type'], key: `Account Types`, sortOrder: 4 },
-        { id:5, icon:"fa fa-university", routeTo: ['config', 'bank-identifier-type'], key: `Identifier Types`, sortOrder: 5 }
+        { id:4, icon:"fa fa-university", routeTo: ['config', 'bank-account-type'], key: `Account Types`, sortOrder: 4 }
     ];
 
     onActivate(componentRef){

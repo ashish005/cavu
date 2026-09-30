@@ -5,7 +5,7 @@
                 <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
             </a>
             <div class="no-shadow">
-                <h6 class="mb-0"> {{ systemType?.name }} </h6>
+                <h6 class="mb-0"> {{ rail?.name }} </h6>
                 <!--<small class="float-left"> Setup Management</small>-->
             </div>
             <!--<ul class="nav nav-xs flex-row no-border">
@@ -15,13 +15,13 @@
                     </button>
                 </li>
             </ul>-->
-            <!--<div class="nav-active-border b-theme px-4 px-md-0">
+            <div class="nav-active-border b-theme px-4 px-md-0">
                 <div class="nav nav-xs flex-row">
                     <ng-template ngFor let-item [ngForOf]="navList | sortBy:'asc': 'sortOrder'" let-i="index">
                         <a class="nav-link text-center" [routerLink]="item.routeTo" routerLinkActive="active" >{{item.key  }}</a>
                     </ng-template>
                 </div>
-            </div>-->
+            </div>
         </div>
     </div>
     <div class="content-main d-flex flex">

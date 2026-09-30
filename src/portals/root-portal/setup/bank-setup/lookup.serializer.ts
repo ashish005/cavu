@@ -82,26 +82,6 @@ export class BankAccountType {
   }
 }
 
-// Bank Identifier Type
-export class BankIdentifierType {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  isGlobal: boolean;
-  sortOrder: number;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, description, isGlobal, sortOrder } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.description = description;
-    this.isGlobal = isGlobal;
-    this.sortOrder = sortOrder;
-  }
-}
-
 // Payment Card Type
 export class PaymentCardType {
   id: number;
@@ -130,33 +110,13 @@ export class PaymentCardType {
   }
 }
 
-// Bank Instrument Type
-export class BankInstrumentType {
-  id: number;
-  name: string;
-  code: string;
-  description: string;
-  sortOrder: number;
-
-  constructor(model: any = <any>{}) {
-    const { id, name, code, description, sortOrder } = model;
-    this.id = id;
-    this.name = name;
-    this.code = code;
-    this.description = description;
-    this.sortOrder = sortOrder;
-  }
-}
-
 // Combined Banking Setup Lookup
 export class BankingSetupLookup extends CoreResource {
   accountNatures: AccountNature[];
   supplyNatures: SupplyNature[];
   banks: Bank[];
   bankAccountTypes: BankAccountType[];
-  bankIdentifierTypes: BankIdentifierType[];
   paymentCardTypes: PaymentCardType[];
-  bankInstrumentTypes: BankInstrumentType[];
 
   constructor(model: any = <any>{}) {
     super();
@@ -165,9 +125,7 @@ export class BankingSetupLookup extends CoreResource {
     this.supplyNatures = (supplyNatures || []).map(r => new SupplyNature(r));
     this.banks = (banks || []).map(r => new Bank(r));
     this.bankAccountTypes = (bankAccountTypes || []).map(r => new BankAccountType(r));
-    this.bankIdentifierTypes = (bankIdentifierTypes || []).map(r => new BankIdentifierType(r));
     this.paymentCardTypes = (paymentCardTypes || []).map(r => new PaymentCardType(r));
-    this.bankInstrumentTypes = (bankInstrumentTypes || []).map(r => new BankInstrumentType(r));
   }
 }
 

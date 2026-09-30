@@ -15,5 +15,4 @@ import {TRXN_CONFIG_SERVIES} from "./services";
     providers: [TRXN_CONFIG_SERVIES],
     declarations: [TRXN_CONFIG_VIEWS, TRXN_CONFIG_ENTRY_COMPONENT]
 })
-
 export class TrxnConfigModule {}
