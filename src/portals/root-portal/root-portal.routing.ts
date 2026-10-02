@@ -24,6 +24,11 @@ export const ROOT_Routes: Routes = [
         loadChildren: () => import('./setup/payment-setup').then(m => m.PaymenyGatewayModule),
         data: { code: "ACCESS_TAX_MGT", title: 'Paymeny Gateway', header:'Paymeny Gateway'}
       },
+      {
+        path: 'software-setup', //canLoad:[PortalAuthGuard],
+        loadChildren: () => import('./setup/software-setup').then(m => m.SoftwareSetupModule),
+        data: { code: "ACCESS_TAX_MGT", title: 'Paymeny Gateway', header:'Paymeny Gateway'}
+      },
     ]
   },
 ];

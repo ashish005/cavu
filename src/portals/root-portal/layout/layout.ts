@@ -22,6 +22,12 @@ export class Layout implements OnInit  {
       ]
     },
     {
+      name: "Software", isFLatChildren: true,
+      children:[
+        { routeTo: ['software-setup'], icon:"fa fa-graduation-cap", name: "Software", key: 'Software' }
+      ]
+    },
+    {
       name: "Finance Configuration", isFLatChildren: true,
       children:[
         { routeTo: ['bank-setup'], icon:"fa fa-university", name: "Banking", key: 'Banking' },

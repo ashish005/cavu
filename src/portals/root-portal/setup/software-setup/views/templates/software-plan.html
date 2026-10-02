@@ -1,0 +1,511 @@
+<div class="d-flex flex">
+  <div class="d-flex flex-column flex">
+    <div class="row no-gutters">
+      <div class="col-md-12 light lt p-3">
+        <table class="table small-table text-xs mb-0">
+          <tbody>
+          <tr>
+            <td><span class="pl-2">Software</span></td>
+            <td>{{softwarePlan?.name }}</td>
+          </tr>
+          <tr>
+            <td><span class="pl-2">API Ban Count</span></td>
+            <td>{{softwarePlan?.setting?.apiBanCount }}</td>
+          </tr>
+          <tr>
+            <td><span class="pl-2">API KeyGeneration Allowed</span></td>
+            <td>{{softwarePlan?.setting?.apiKeyGenerationAllowed }}</td>
+          </tr>
+          <tr>
+            <td><span class="pl-2">License Reminder For Validity (Days)</span></td>
+            <td>{{softwarePlan?.setting?.licenseValidityWarningDay }}</td>
+          </tr>
+          <tr>
+            <td><span class="pl-2">License Grace Period</span></td>
+            <td>{{softwarePlan?.setting?.licenseGraceDay }} (Days)</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="d-flex flex">
+      <div class="d-flex flex-column flex p-2">
+        <div class="box">
+          <div class="box-header p-2">
+            <div class="item-title mb-0">
+              Plan Comparison Chart
+              <!--<div class="float-right text-right">
+                  <span class="text-danger">Note</span><span class="text-md text-warning">Under Development...</span>
+              </div>-->
+            </div>
+          </div>
+          <table class="table small-table text-xs mb-0">
+            <thead>
+            <tr>
+              <th><span class="pl-2"></span></th>
+              <ng-template ngFor let-plan
+                           [ngForOf]="softwarePlan?.plans | sortBy:'asc': 'sortOrder'" let-i="index">
+                <th class="text-center"><span>{{plan.name}}</span></th>
+              </ng-template>
+            </tr>
+            <tr>
+              <th><span class="pl-2"></span></th>
+              <ng-template ngFor let-plan [ngForOf]="softwarePlan?.plans | sortBy:'asc': 'sortOrder'" let-i="index">
+                <th class="box m-t-n">
+                  <div class="box-body p-1 text-center" [class]="(plan.isRecommended)? 'r-t primary': 'light lt'">
+<!--                    <h6 class="text-u-c">{{plan.name}} </h6>-->
+                    <h3 class="py-1">
+                      <sup>$</sup>
+                      <span class="text-2x">{{plan.rate}} </span>
+                      <span class="text-xs">/ user / mo</span>
+                    </h3>
+                    <a class="btn btn-outline btn-round btn-block text-theme b-theme" [routerLink]="['../payment']" [class]="(plan.isRecommended)? 'b-white text-white': 'b-primary text-primary'">
+                      Buy now <b class="badge badge-pill success float-right up">{{plan.discount}}% Discount</b>
+                    </a>
+                  </div>
+                </th>
+              </ng-template>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-template ngFor let-row [ngForOf]="softwarePlan?.features" let-i="index">
+              <tr>
+                <td><span class="pl-2">{{ row.name }}</span></td>
+                <ng-template ngFor let-plan
+                             [ngForOf]="softwarePlan?.plans | sortBy:'asc': 'sortOrder'"
+                             let-i="index">
+                  <td>
+                      <span>
+                          {{ row?.values[plan.id]?.value ?? 'N/A' }}
+                      </span>
+                  </td>
+<!--                  <td class="license-cell">-->
+<!--                    <div class="feature-value">-->
+<!--                          <span class="value-badge" [class.value-yes]="feature.value === 'Yes' || feature.value === 'Included'"-->
+<!--                                [class.value-no]="feature.value === 'No' || feature.value === 'Excluded'"-->
+<!--                                [class.value-custom]="feature.value !== 'Yes' && feature.value !== 'No' && feature.value !== 'Included' && feature.value !== 'Excluded'">-->
+<!--                              {{ feature.value }}-->
+<!--                          </span>-->
+<!--                    </div>-->
+<!--                  </td>-->
+                </ng-template>
+              </tr>
+            </ng-template>
+            </tbody>
+          </table>
+          <div class="box-body light lt no-result" *ngIf="!softwarePlan?.features?.length">
+            <div class="p-2 text-center">No Results</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+<div class="pricing-container">
+  <div class="row justify-content-center">
+    <div class="col-xl-11">
+      &lt;!&ndash; Pricing Comparison Table &ndash;&gt;
+      <div class="pricing-table-card">
+        <div class="card-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="fa fa-table"></i>
+            </div>
+            <div>
+              <h5 class="card-title mb-0">Feature Comparison</h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table pricing-table">
+              <thead>
+              <tr>
+                <th class="feature-column">
+                  <div class="th-content">
+                    <i class="fa fa-list-ul th-icon"></i>
+                    <span>Features</span>
+                  </div>
+                </th>
+                <ng-template ngFor let-plan [ngForOf]="softwarePlan?.plans" let-i="index">
+                  <th class="license-column">
+                    <div class="license-header">
+                      <div class="license-icon">
+                        <i class="fa fa-star"></i>
+                      </div>
+                      <div class="license-info">
+                        <h6 class="license-name text-uppercase mb-0">{{plan.name}}</h6>
+                        <span class="license-badge" [class.badge-success]="plan.isRecommended" [class.badge-secondary]="!plan.isRecommended">
+                                                    {{plan.isRecommended ? 'Recommended' : 'Standard'}}
+                                                </span>
+                      </div>
+                    </div>
+                  </th>
+                </ng-template>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-template ngFor let-row [ngForOf]="softwarePlan?.features" let-i="index">
+                <tr [class.feature-row-even]="i % 2 === 0" [class.feature-row-odd]="i % 2 !== 0">
+                  <td class="feature-cell">
+                    <div class="feature-content">
+                      <div class="feature-check">
+                        <i class="fa fa-check-circle"></i>
+                      </div>
+                      <div class="feature-text">
+                        <span class="feature-name">{{ row.name }}</span>
+                        <span class="feature-desc" *ngIf="row.description">{{ row.description }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <ng-template ngFor let-feature [ngForOf]="row?.values" let-i="index">
+                    <td class="license-cell">
+                      <div class="feature-value">
+                                                <span class="value-badge" [class.value-yes]="feature.value === 'Yes' || feature.value === 'Included'"
+                                                      [class.value-no]="feature.value === 'No' || feature.value === 'Excluded'"
+                                                      [class.value-custom]="feature.value !== 'Yes' && feature.value !== 'No' && feature.value !== 'Included' && feature.value !== 'Excluded'">
+                                                    {{ feature.value }}
+                                                </span>
+                      </div>
+                    </td>
+                  </ng-template>
+                </tr>
+              </ng-template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  .pricing-container {
+    padding: 1rem 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .pricing-header {
+    padding: 1rem 0;
+  }
+
+  .header-badge {
+    display: inline-block;
+  }
+
+  .header-badge .badge {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .pricing-header h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    font-size: 1.5rem;
+  }
+
+  .pricing-header p {
+    font-size: 0.875rem;
+  }
+
+  .software-tabs-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    padding: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .software-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .software-tab {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    background: white;
+    color: #495057;
+    transition: all 0.2s ease;
+    min-width: 140px;
+  }
+
+  .software-tab:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  }
+
+  .software-tab.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  }
+
+  .tab-icon {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tab-name {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .tab-desc {
+    display: block;
+    font-size: 0.6875rem;
+    opacity: 0.9;
+    margin-top: 0.125rem;
+  }
+
+  .pricing-table-card,
+  .permissions-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .header-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+  }
+
+  .card-title {
+    font-weight: 600;
+    color: #212529;
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .pricing-table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .pricing-table thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem;
+    border: none;
+  }
+
+  .feature-column {
+    width: 35%;
+    text-align: left;
+  }
+
+  .th-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .th-icon {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .license-column {
+    text-align: center;
+    width: 21.66%;
+  }
+
+  .license-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .license-icon {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  .license-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .license-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 50px;
+  }
+
+  .badge-success {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .badge-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .pricing-table tbody tr {
+    transition: background-color 0.15s ease;
+  }
+
+  .feature-row-even {
+    background: #f8f9fa;
+  }
+
+  .feature-row-odd {
+    background: white;
+  }
+
+  .feature-row-even:hover,
+  .feature-row-odd:hover {
+    background: #f0f4ff;
+  }
+
+  .feature-cell {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .feature-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .feature-check {
+    color: #28a745;
+    font-size: 0.875rem;
+    margin-top: 0.0625rem;
+  }
+
+  .feature-text {
+    flex: 1;
+  }
+
+  .feature-name {
+    display: block;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.125rem;
+    font-size: 0.875rem;
+  }
+
+  .feature-desc {
+    display: block;
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+
+  .license-cell {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+  }
+
+  .feature-value {
+    display: flex;
+    justify-content: center;
+  }
+
+  .value-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  .value-yes {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .value-no {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .value-custom {
+    background: #e2e3e5;
+    color: #383d41;
+  }
+
+  @media (max-width: 768px) {
+    .pricing-container {
+      padding: 0.5rem 0;
+    }
+
+    .software-tabs {
+      flex-direction: column;
+    }
+
+    .software-tab {
+      min-width: 100%;
+    }
+
+    .card-body {
+      padding: 0.5rem;
+    }
+
+    .pricing-table thead th {
+      font-size: 0.6875rem;
+      padding: 0.5rem 0.25rem;
+    }
+
+    .feature-cell,
+    .license-cell {
+      padding: 0.5rem 0.25rem;
+    }
+
+    .feature-name {
+      font-size: 0.8125rem;
+    }
+
+    .feature-desc {
+      font-size: 0.6875rem;
+    }
+  }
+</style>-->
