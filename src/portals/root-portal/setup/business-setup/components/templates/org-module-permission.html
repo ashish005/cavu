@@ -5,8 +5,8 @@
                 <span class="_500 flex text-primary">{{data?.name}}</span>
                 <div class="nav-active-border b-warning bottom">
                     <div class="nav nav-sm">
-                        <ng-template ngFor let-entity [ngForOf]="software?.licenseTypes | sortBy:'asc': 'sortOrder'" let-i="index">
-                            <a class="nav-link" [class.active]="licenseType?.id == entity.id" (click)="getModulesByLicenseChange(entity)">{{ entity.name }}</a>
+                        <ng-template ngFor let-entity [ngForOf]="software?.plans | sortBy:'asc': 'sortOrder'" let-i="index">
+                            <a class="nav-link" [class.active]="plan?.id == entity.id" (click)="getModulesByLicenseChange(entity)">{{ entity.name }}</a>
                         </ng-template>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
         <li class="nav-item mx-2">
             <button class="btn btn-sm float-center" [disabled]="submitted" (click)="updateModulesByLicenseType()">
                 <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin pr-2'></i>
-                {{ submitted ? 'Updating...' : 'Apply ' + licenseType?.name + ' License Permission' }}
+                {{ submitted ? 'Updating...' : 'Apply ' + plan?.name + ' License Permission' }}
             </button>
         </li>
     </ul>

@@ -4,7 +4,7 @@ import {ModulePermission, ModulePermissionQueryOptions} from "../domains/module-
 import {AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ModulePermissionService} from "../services/module-permission.service";
 import {BusinessAPIResolver} from "../services/api.resolver";
-import {Software, SoftwareLicenseType} from "../lookup.serializer";
+import {Software, SoftwarePlanLookup} from "../domains/lookup.serializer";
 
 @Component({
   templateUrl: './templates/org-module-permission.html',
@@ -18,7 +18,7 @@ export class OrgModulePermissionComponent implements OnInit {
   submitted: boolean = false;
 
   software: Software;
-  licenseType: SoftwareLicenseType;
+  plan: SoftwarePlanLookup;
   @Output() onOk: EventEmitter<any>= new EventEmitter<any>();
   @Output() onCancel: EventEmitter<any>= new EventEmitter<any>();
   constructor(public fb: FormBuilder, private permissionService: ModulePermissionService, private apiResolver: BusinessAPIResolver){
@@ -74,8 +74,8 @@ export class OrgModulePermissionComponent implements OnInit {
     this.getModulesByLicense();
   }
 
-  getModulesByLicenseChange(licenseType: any){
-    this.licenseType = licenseType;
+  getModulesByLicenseChange(plan: SoftwarePlanLookup){
+    this.plan = plan;
     this.getModulesByLicense();
   }
 
@@ -84,10 +84,10 @@ export class OrgModulePermissionComponent implements OnInit {
       const { orgSectorMasterType, orgUnitId, license: { softwareCode, softwareId, licenseTypeId } } = this.data;
 
       this.software = this.apiResolver.masterType.getSoftwareById(softwareId);
-      if(!this.licenseType){
-        this.licenseType = this.apiResolver.masterType.getLicenseTypesBySoftwareId(softwareId, licenseTypeId);
+      if(!this.plan){
+        this.plan = this.apiResolver.masterType.getLicenseTypesBySoftwareId(softwareId, licenseTypeId);
       }
-      const { masterType } = this.licenseType || { masterType: null };
+      const { masterType } = this.plan || { masterType: null };
 
       const query = new ModulePermissionQueryOptions();
       query.orgUnitId = orgUnitId;
@@ -123,7 +123,7 @@ export class OrgModulePermissionComponent implements OnInit {
 
     updateModulesByLicenseType()
     {
-        const { masterType, id } = this.licenseType;
+        const { masterType, id } = this.plan;
         const { orgSectorMasterType, orgUnitId } = this.data;
 
         this.submitted = true;

@@ -17,7 +17,6 @@ export class Layout implements OnInit  {
       name: "Main", isFLatChildren: true,
       children:[
         { routeTo: ['business-setup'], icon:"fa fa-graduation-cap", name: "Business", key: 'Business' },
-        { routeTo: ['business-setup/pricing'], icon:"fa fa-graduation-cap", name: "pricing", key: 'pricing' },
         { routeTo: ['business-setup/trial'], icon:"fa fa-graduation-cap", name: "Setup Business", key: 'Setup Business' }
       ]
     },

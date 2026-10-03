@@ -19,7 +19,7 @@ class OperatedBy{
         this.name = model.name;
     }
 }
-class BusinessType {
+class BusinessTypeLookup {
   id: string;
   name: string;
 
@@ -29,7 +29,7 @@ class BusinessType {
   }
 }
 
-export class SoftwareLicenseType {
+export class SoftwarePlanLookup {
     id: any;
     softwareId: number;
     name: string;
@@ -49,20 +49,20 @@ export class Software {
     id: number;
     name: string;
     code: string;
-    licenseTypes: Array<SoftwareLicenseType>;
-    businessTypes: Array<BusinessType>;
+    plans: Array<SoftwarePlanLookup>;
+    businessTypes: Array<BusinessTypeLookup>;
     constructor(model: any){
-        const  { id, name, code, licenseTypes, businessTypes } = model;
+        const  { id, name, code, plans, businessTypes } = model;
         this.id = id;
         this.name = `${code} : ${name}`;
         this.code = code;
-        this.licenseTypes = (licenseTypes || []).map((r: any) => new SoftwareLicenseType(r));
-        this.businessTypes = (businessTypes || []).map((r: any) => new BusinessType(r));
+        this.plans = (plans || []).map((r: any) => new SoftwarePlanLookup(r));
+        this.businessTypes = (businessTypes || []).map((r: any) => new BusinessTypeLookup(r));
     }
 }
 
 export class BusinessLookup extends CoreResource{
-  tenantTypes: BusinessType[] = [];
+  tenantTypes: BusinessTypeLookup[] = [];
   country: Country[];
   operatedBy: Array<OperatedBy> = [];
   softwares: Array<Software> = [];
@@ -73,22 +73,21 @@ export class BusinessLookup extends CoreResource{
     this.country = country;
     this.tenantTypes = tenantTypes;
     this.operatedBy = (operatedBy || []).map((r: any) => new OperatedBy(r));
-    //this.dbTypes = model.dbTypes;
     this.softwares = (softwares || []).map(r => new Software(r));
   }
 
   getSoftwareById =(softwareId: number)=> this.softwares?.find(r => r.id == softwareId);
 
-  getLicenseTypesBySoftwareId(softwareId: number, licenseTypeId: number)
+  getLicenseTypesBySoftwareId(softwareId: number, planId: number)
   {
-    const { licenseTypes } = this.getSoftwareById(softwareId) || { licenseTypes: [] };
+    const { plans } = this.getSoftwareById(softwareId) || { plans: [] };
 
-      let licenseType = licenseTypes?.find(r => r.id == licenseTypeId);
+      let plan = plans?.find(r => r.id == planId);
 
-      if(!licenseType){
-        return licenseTypes?.find(r => r.isDefault);
+      if(!plan){
+        return plans?.find(r => r.isDefault);
       }
-      return licenseType;
+      return plan;
   }
 }
 
