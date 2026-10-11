@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
-import {Branch, Business, SoftwareLicense} from "../domains/business.serializer";
 import {ModulePermission, ModulePermissionQueryOptions} from "../domains/module-permission.serializer";
 import {AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ModulePermissionService} from "../services/module-permission.service";
@@ -12,7 +11,7 @@ import {Software, SoftwarePlanLookup} from "../domains/lookup.serializer";
 })
 export class OrgModulePermissionComponent implements OnInit {
   @ViewChild('footerTemplate', { static: true }) public footerTemplate: TemplateRef<any>;
-  @Input() data: Business;
+  @Input() data: any;
   //@Input() license: SoftwareLicense;
   customForm: FormGroup;
   submitted: boolean = false;
@@ -123,15 +122,15 @@ export class OrgModulePermissionComponent implements OnInit {
 
     updateModulesByLicenseType()
     {
-        const { masterType, id } = this.plan;
-        const { orgSectorMasterType, orgUnitId } = this.data;
-
-        this.submitted = true;
-        const modulesData = this.permissionService.updateBusinessPermissionModulesByLicenseType(orgUnitId, orgSectorMasterType, { id: id,  licenseType: masterType}).toPromise();
-        modulesData.then((r: any)=> {
-            this.submitted = false;
-        }, ()=>{
-            this.submitted = false;
-        });
+        // const { masterType, id } = this.plan;
+        // const { orgSectorMasterType, orgUnitId } = this.data;
+        //
+        // this.submitted = true;
+        // const modulesData = this.permissionService.updateBusinessPermissionModulesByLicenseType(orgUnitId, orgSectorMasterType, { id: id,  licenseType: masterType}).toPromise();
+        // modulesData.then((r: any)=> {
+        //     this.submitted = false;
+        // }, ()=>{
+        //     this.submitted = false;
+        // });
     }
 }

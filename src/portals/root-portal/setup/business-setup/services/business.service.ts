@@ -2,6 +2,7 @@ import {Injectable, Injector} from "@angular/core";
 import {OrgResourceService} from "@app-global";
 import {catchError, Observable, tap} from "rxjs";
 import {Business, BusinessSerializer} from "../domains/business.serializer";
+import {OrgBranch, OrgBranchSerializer} from "../domains/org-branch.serializer";
 
 @Injectable()
 export class BusinessService extends OrgResourceService<Business>{
@@ -14,4 +15,17 @@ export class BusinessService extends OrgResourceService<Business>{
             catchError(error => error)
         );
   }
+}
+
+@Injectable()
+export class OrgBranchService extends OrgResourceService<OrgBranch>{
+    constructor(public override injector: Injector) { super(injector, 'v1/branch', new OrgBranchSerializer());}
+
+    public seed(item: any): Observable<any> {
+        return this.httpClient.post(this.viewUrl + `/seed`, item)
+            .pipe(
+                tap(data => data),
+                catchError(error => error)
+            );
+    }
 }

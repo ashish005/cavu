@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Business} from "../domains/business.serializer";
 import {ACTION_ENUM} from "@app-global";
 import {BusinessHostConfig} from "../domains/business-host.serializer";
 import {BusinessService} from "../services/business.service";
@@ -38,7 +37,7 @@ export class CreateEditBusinessView implements OnInit {
 
   removeHostConfig(index) { this.hostConfigsForm.removeAt(index); }
 
-  @Input() set data(val: Business) {
+  /*@Input() set data(val: Business) {
     const now = new Date();
     const next1Year =  new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
     const { id, name,
@@ -75,7 +74,7 @@ export class CreateEditBusinessView implements OnInit {
       this.businessForm.get('userName').setValidators(null);
       this.businessForm.get('userName').disable();
     }
-  };
+  };*/
 
   disableControls: boolean;
 
@@ -146,7 +145,7 @@ export class CreateEditBusinessView implements OnInit {
   }
 
   get formBusinessTypeId(){
-    return <FormArray>this.businessForm.get('orgBusinessTypeId');
+    return <FormArray>this.businessForm.get('businessTypeId');
   }
 
   get formCountryId(){
@@ -158,7 +157,7 @@ export class CreateEditBusinessView implements OnInit {
   }
 
     get formLicenseTypeId(){
-        return <FormArray>this.businessForm.get('licenseTypeId');
+        return <FormArray>this.businessForm.get('planId');
     }
 
     updateLicenseType(val){

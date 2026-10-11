@@ -1,7 +1,7 @@
 import {Component, Directive, Injectable, Injector, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {BusinessPermissionInfo, BusinessContactGridCell, BusinessCell} from "../components/grid.cell.component";
+import {BusinessCell, BusinessNameCell} from "../components/grid.cell.component";
 import {ActivatedRoute} from "@angular/router";
-import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, ViewExtender} from "@app-global";
+import {DateFormatCell, ASIDE_CLASS, ASIDE_SIZE, ViewExtender, GridUISwitchCellComponent} from "@app-global";
 import {Business, BusinessQueryOptions} from "../domains/business.serializer";
 import {BusinessAPIResolver} from "../services/api.resolver";
 import {BusinessService} from "../services/business.service";
@@ -18,12 +18,15 @@ export class BusinessManageView extends ViewExtender<Business> implements OnInit
     ) {
         super(activatedRoute, service);
         this.gridOptions.columnDefs = [
-            {headerName: 'Name', field: 'name', cellTemplate: BusinessCell },
-            {headerName: 'License', cellTemplate: BusinessPermissionInfo },
-            {headerName: 'OperatedBy', field: 'operatedByName'},
-            {headerName: 'Contact', cellTemplate: BusinessContactGridCell },
-            {headerName: 'Mobile', field: 'contactPersonMobile' },
-            {headerName: 'Created Date', field: 'createdDate', cellTemplate: DateFormatCell },
+            {headerName: 'Name', field: 'name', cellTemplate: BusinessNameCell },
+            {headerName: 'Country', field: 'countryName'},
+            {headerName: 'Business', field: 'businessTypeName', cellTemplate: BusinessCell },
+            {headerName: 'Software', field: 'softwareName'},
+            {headerName: 'Sector', field: 'sectorName'},
+            {headerName: 'Active License', field: 'activeLicenseCount' },
+            {headerName: 'Modules', field: 'enabledModuleCount' },
+            {headerName: 'Users', field: 'userCount' },
+            {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
         ];
     }
 
