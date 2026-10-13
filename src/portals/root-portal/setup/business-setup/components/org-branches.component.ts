@@ -17,8 +17,8 @@ export class OrgBranchesComponent extends ViewExtender<OrgBranch> implements OnI
       {headerName: 'Name', field: 'name', cellTemplate: OrgBranchNameCell },
       {headerName: 'Address', field: 'address'},
       {headerName: 'Website', field: 'websiteUrl'},
-      {headerName: 'Demo', field: 'isDemoSeedApplied', cellTemplate: GridUISwitchCellComponent},
-      {headerName: 'Master', field: 'isMasterSeedApplied', cellTemplate: GridUISwitchCellComponent},
+      {headerName: 'Demo', field: 'applyDemoSeed', cellTemplate: GridUISwitchCellComponent},
+      {headerName: 'Master', field: 'applyMasterSeed', cellTemplate: GridUISwitchCellComponent},
       {headerName: 'Active', field: 'isActive', cellTemplate: GridUISwitchCellComponent}
     ];
   }

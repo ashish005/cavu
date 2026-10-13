@@ -18,22 +18,22 @@ export class OrgBranch {
   name: string;
   address: string;
   websiteUrl: string;
-  isDemoSeedApplied: string;
-  isMasterSeedApplied: string;
+    applyDemoSeed: boolean;
+    applyMasterSeed: boolean;
 
   isActive: boolean;
   constructor(model: any = <any>{}){
     const {
-        id, orgUnitId, name, address, websiteUrl, isDemoSeedApplied, isMasterSeedApplied, isActive
+        id, orgUnitId, name, address, websiteUrl, applyDemoSeed, applyMasterSeed, isActive
     } = model;
     this.id = id;
     this.orgUnitId = orgUnitId;
     this.name = name;
     this.address = address;
     this.websiteUrl = websiteUrl;
-    this.isDemoSeedApplied = isDemoSeedApplied;
 
-    this.isMasterSeedApplied = isMasterSeedApplied;
+    this.applyDemoSeed = applyDemoSeed;
+    this.applyMasterSeed = applyMasterSeed;
     this.isActive = isActive;
   }
 }
