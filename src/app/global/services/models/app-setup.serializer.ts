@@ -187,7 +187,7 @@ class Org {
     public softwareCode: string;
 
     public isUnderConstruction: boolean;
-
+    public configId: number;
     public orgConfig: OrgConfigOptions;
     public branches: Array<OrgBranch>;
     public sectorMasterType: string;
@@ -196,7 +196,7 @@ class Org {
     public software: OrgSoftware;
     constructor(model: any = {}){
         const {
-            id, name, countryId, countryName, countryCode,
+            id, name, countryId, configId, countryName, countryCode,
             profileId, profileUrl, orgAddress, isHeadBranch,
             isUnderConstruction, branches,
             sectorMasterType, businessMasterType,
@@ -204,6 +204,7 @@ class Org {
         } = model;
         this.id = id;
         this.name = name;
+        this.configId = configId;
 
         this.countryId = countryId;
         this.countryName = countryName;

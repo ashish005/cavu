@@ -13,8 +13,6 @@ export class OrgLayout {
     constructor(public setupService: AppSetupService, private router: Router, private route: ActivatedRoute) {
     }
 
-
-
     goStep(step: "config" | "sync" | "final") {
         const setup = this.setupService.appSetup;
         if (step === "sync" && !(setup && setup.orgConfig && setup.orgConfig.hasValidConfig())) {

@@ -40,7 +40,7 @@ class OrgConfigInfoForm {
         {id: 'd MMM, y', name: 'd MMM, y Like 15 Jun, 2015'}
     ];
     dateSeparatorList: Array<any> = [
-        {id: '', name: ''},
+        {id: ' ', name: ' '},
         {id: '/', name: '/'},
         {id: '.', name: '.'},
         {id: '-', name: '-'}
@@ -108,6 +108,7 @@ export class OrgConfigView extends OrgConfigInfoForm implements OnInit{
     constructor(public override fb: FormBuilder, public apiResolver: OrgSetupAPIResolver,
                 public coreService: AppSetupService, public service: OrgSettingService){
         super(fb);
+        debugger
         this.orgSetup = this.coreService.appSetup;
         this.orgLookup = this.apiResolver.masterType;
         const itemFormLanguageValueChange = ([prev, next]: [any, any]) =>

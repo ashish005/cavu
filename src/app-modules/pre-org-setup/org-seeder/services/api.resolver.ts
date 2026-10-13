@@ -1,11 +1,11 @@
 import {Injectable, Injector} from "@angular/core";
-import { CoreResourceService } from "../../../../app/global/services";
 import {ConfigLookup, ConfigLookupSerializer} from "../domains/lookup.serializer";
+import {OrgResourceService} from "@app-global";
 
 @Injectable()
-export class OrgSetupAPIResolver extends CoreResourceService<ConfigLookup> {
+export class OrgSetupAPIResolver extends OrgResourceService<ConfigLookup> {
     masterType: ConfigLookup;
-    constructor(public override injector: Injector) { super(injector, 'orgSetupLookup', new ConfigLookupSerializer()); }
+    constructor(public override injector: Injector) { super(injector, 'v1/orgLookup/org-setup', new ConfigLookupSerializer()); }
 
     resolve() {
         const success = (results) => {
