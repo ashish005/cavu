@@ -1,43 +1,32 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {
-    OrgSoftwareInvoiceQueryOptions,
-    OrgSoftwareInvoiceReceipt
-} from "../domains/org-software-invoice.serializer";
-import {OrgSoftwareInvoiceService} from "../services/software-invoice.service";
-import {ViewExtender, FullDateFormatCell, NumberCell} from "@app-global";
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {CoreQueryOptions, FullDateFormatCell, InvoiceCurrencyCell, ViewExtender} from "@app-global";
+import {SoftwareInvoiceRow} from "../domains/grid-row.serializers";
+import {SoftwareInvoiceService} from "../services";
 import {SoftwareInvoiceCellComponent} from "../grid-action-cell/software-invoice-cell.component";
 
 @Component({
     standalone: false,
-  templateUrl: './templates/software-invoice.html'
+    templateUrl: './templates/grid-page.html'
 })
-export class SoftwareInvoiceView extends ViewExtender<OrgSoftwareInvoiceReceipt> implements OnInit {
-    @ViewChild('orgLicenseGrid', { static: true }) orgLicenseGrid;
-  override coreState: OrgSoftwareInvoiceQueryOptions = new OrgSoftwareInvoiceQueryOptions();
-  constructor(public override service: OrgSoftwareInvoiceService,
-                public router: Router,
-                public override activatedRoute: ActivatedRoute) {
-        super(activatedRoute, service);
-        this.gridOptions.header.edit = false;
-        this.gridOptions.columnDefs = [
-            {headerName: 'Invoice No', field: 'voucherNo' },
-            {headerName: 'Invoice Date', field: 'voucherDate', cellTemplate: FullDateFormatCell },
-            {headerName: 'Payment Mode', field: 'paymentMode' },
-            {headerName: 'Payment Ref.', field: 'paymentReferenceNumber' },
-            {headerName: 'Amount', field: 'amount', class: 'text-right', cellTemplate: NumberCell },
-            {headerName: 'Action', cellTemplate: SoftwareInvoiceCellComponent },
+export class SoftwareInvoiceView extends ViewExtender<SoftwareInvoiceRow> implements OnInit {
+    override coreState = new CoreQueryOptions();
 
+    constructor(public override service: SoftwareInvoiceService, public override activatedRoute: ActivatedRoute) {
+        super(activatedRoute, service);
+        this.gridOptions.header = {...this.gridOptions.header, add: false, edit: false, delete: false};
+        this.gridOptions.columnDefs = [
+            {headerName: 'Invoice No', field: 'voucherNo'},
+            {headerName: 'Invoice Date', field: 'voucherDate', cellTemplate: FullDateFormatCell},
+            {headerName: 'Plan', field: 'planName'},
+            {headerName: 'Payment Mode', field: 'paymentModeLabel'},
+            {headerName: 'Payment Ref.', field: 'paymentReferenceNumber'},
+            {headerName: 'Amount', field: 'netAmount', currencyCodeField: 'currencyCode', class: 'text-right', cellTemplate: InvoiceCurrencyCell},
+            {headerName: 'Action', cellTemplate: SoftwareInvoiceCellComponent}
         ];
     }
 
-    ngOnInit(){
-        super.populateGrid();
-    }
+    ngOnInit() { this.populateGrid(); }
 
-   override ngOnDestroy()
-    {
-        super.ngOnDestroy();
-    }
-    actionCb(e){}
+    actionCb(_: any) {}
 }

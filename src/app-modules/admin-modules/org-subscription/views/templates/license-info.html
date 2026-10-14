@@ -1,0 +1,133 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex scroll-y">
+        <loader [isLoading]="isLoading"></loader>
+
+        <div *ngIf="errorMessage" class="p-3">
+            <div class="alert alert-danger d-flex align-items-center mb-0">
+                <span class="flex">{{ errorMessage }}</span>
+                <button class="btn btn-sm white" (click)="load(true)">Retry</button>
+            </div>
+        </div>
+
+        <ng-container *ngIf="overview">
+            <div class="row no-gutters">
+                <div class="col-md-6 light lt p-3">
+                    <h6 class="_600 mb-3">{{ overview.software.name }} license</h6>
+
+                    <ng-container *ngIf="license; else noLicense">
+                        <table class="table small-table text-xs mb-3">
+                            <tbody>
+                            <tr><td class="text-muted">License no.</td><td class="_600">{{ license.licenseNo }}</td></tr>
+                            <tr>
+                                <td class="text-muted">Status</td>
+                                <td><span class="badge" [ngClass]="statusClass">{{ statusText }}</span></td>
+                            </tr>
+                            <tr><td class="text-muted">Plan</td><td>{{ license.planName || '--' }}</td></tr>
+                            <tr><td class="text-muted">Valid from</td><td>{{ license.validFrom | dateFormat }}</td></tr>
+                            <tr><td class="text-muted">Valid to</td><td>{{ license.validTo | dateFormat }}</td></tr>
+                            <tr *ngIf="license.status === 'Active' && !license.isExpired">
+                                <td class="text-muted">Days remaining</td><td>{{ license.daysRemaining }}</td>
+                            </tr>
+                            <tr *ngIf="license.lastRenewedAt">
+                                <td class="text-muted">Last renewed</td><td>{{ license.lastRenewedAt | fullDateFormat }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div *ngIf="purchaseBlocked" class="alert alert-danger text-sm mb-0">
+                            Your license is {{ license.status | lowercase }}. Online renewal is not available; please contact support.
+                        </div>
+                        <ng-container *ngIf="!purchaseBlocked">
+                            <div *ngIf="license.isExpired" class="alert text-sm mb-2" [ngClass]="license.inGracePeriod ? 'alert-warning' : 'alert-danger'">
+                                Your license expired on {{ license.validTo | dateFormat }}.
+                                <ng-container *ngIf="license.inGracePeriod">Renew within the grace period to avoid an interruption.</ng-container>
+                            </div>
+                            <div *ngIf="license.showExpiryWarning" class="alert alert-warning text-sm mb-2">
+                                Your license expires in {{ license.daysRemaining }} day(s).
+                            </div>
+                            <a class="btn btn-sm theme" [routerLink]="['../payment']" [queryParams]="{planId: license.planId}">
+                                {{ license.isExpired ? 'Renew now' : 'Renew or change plan' }}
+                            </a>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noLicense>
+                        <p class="text-muted text-sm">You do not have a license for this software yet.</p>
+                        <a class="btn btn-sm theme" [routerLink]="['../payment']">Choose a plan</a>
+                    </ng-template>
+                </div>
+
+                <div class="col-md-6 light lt p-3">
+                    <h6 class="_600 mb-3">License settings</h6>
+                    <table class="table small-table text-xs mb-0" *ngIf="overview.software.setting as setting; else noSetting">
+                        <tbody>
+                        <tr><td class="text-muted">API key generation</td><td>{{ setting.apiKeyGenerationAllowed ? 'Allowed' : 'Not allowed' }}</td></tr>
+                        <tr><td class="text-muted">API failures before key suspension</td><td>{{ setting.apiFailureThreshold }}</td></tr>
+                        <tr><td class="text-muted">Expiry reminder</td><td>{{ setting.licenseValidityWarningDay }} day(s) before expiry</td></tr>
+                        <tr><td class="text-muted">Grace period</td><td>{{ setting.licenseGraceDay }} day(s)</td></tr>
+                        <tr><td class="text-muted">Auto renewal</td><td>{{ setting.allowAutoRenewal ? 'Supported' : 'Not supported' }}</td></tr>
+                        </tbody>
+                    </table>
+                    <ng-template #noSetting><p class="text-muted text-sm">No license settings are configured.</p></ng-template>
+                </div>
+            </div>
+
+            <div class="p-2">
+                <div class="box mb-0">
+                    <div class="box-header p-2"><div class="item-title mb-0 _600">Plan comparison</div></div>
+                    <div class="table-responsive" *ngIf="plans.length; else noPlans">
+                        <table class="table small-table text-xs mb-0">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th *ngFor="let plan of plans; trackBy: trackById" class="text-center">
+                                    <div class="box-body text-center r-t" [ngClass]="plan.isRecommended ? 'primary' : 'light lt'">
+                                        <h6 class="text-u-c mb-1">
+                                            {{ plan.name }}
+                                            <span *ngIf="plan.isCurrent" class="badge success ml-1">Current</span>
+                                        </h6>
+                                        <div *ngIf="plan.isRecommended" class="text-xs">Recommended</div>
+                                        <h4 class="py-2 mb-0">{{ plan.netAmount | voucherCurrency : currency }}</h4>
+                                        <div class="text-xs">for {{ plan.validityInDays }} days, incl. tax</div>
+                                        <div *ngIf="plan.discountPercent > 0" class="text-xs">
+                                            <s>{{ plan.rate | voucherCurrency : currency }}</s> &middot; {{ plan.discountPercent }}% off
+                                        </div>
+                                        <a *ngIf="plan.isPurchasable && !purchaseBlocked"
+                                           class="btn btn-sm btn-block mt-2" [ngClass]="plan.isRecommended ? 'white' : 'theme'"
+                                           [routerLink]="['../payment']" [queryParams]="{planId: plan.id}">
+                                            {{ plan.isCurrent ? 'Renew' : 'Choose' }}
+                                        </a>
+                                        <div *ngIf="!plan.isPurchasable" class="text-xs mt-2">Not available for purchase</div>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let feature of overview.features; trackBy: trackById">
+                                <td><span class="pl-2" [title]="feature.description || ''">{{ feature.name }}</span></td>
+                                <td *ngFor="let plan of plans; trackBy: trackById" class="text-center">
+                                    {{ featureValue(feature, plan) ?? '--' }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ng-template #noPlans>
+                        <div class="box-body light lt text-center text-muted p-3">No plans are configured for this software.</div>
+                    </ng-template>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">License</h6>
+        <small class="text-muted">{{ overview?.software?.name }}</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="load(true)" title="Refresh">
+        <i class="fa fa-refresh" [class.fa-spin]="isLoading"></i>
+    </button>
+</ng-template>

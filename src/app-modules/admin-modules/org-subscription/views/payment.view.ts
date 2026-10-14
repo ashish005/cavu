@@ -1,162 +1,178 @@
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {PaymentSoftware, PaymentSoftwareLicenseType} from "../domains/payment.lookup";
-import {Subscription} from "rxjs";
-import {PaymentService} from "../services/payment.service";
+import {Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
+import {finalize} from "rxjs";
+import {AlertService, MessageSeverity} from "@app-global";
+import {
+    LicenseSummary, PAYMENT_MODE_OPTIONS, PaymentModeOption, PlanOffer, SUBSCRIPTION_BILLING_CURRENCY,
+    SubscriptionOverview, SubscriptionPurchaseRequest, isPurchaseBlocked
+} from "../domains/subscription.models";
+import {SubscriptionService, errorMessageOf, newIdempotencyKey} from "../services";
+
+/** Router state handed to the success page. */
+export const PURCHASE_RESULT_STATE_KEY = 'subscriptionPurchase';
+
+const optional = (value: string | null | undefined): string | null => (value ?? '').trim() || null;
 
 @Component({
     standalone: false,
     templateUrl: './templates/payment.html'
 })
-export class PaymentView implements OnInit, OnDestroy {
-    @ViewChild('actionTemplate', { static: true }) public actionTemplate: TemplateRef<any>;
-    @ViewChild('pageTitleTemplate', { static: true }) public pageTitleTemplate: TemplateRef<any>;
-    software: PaymentSoftware;
-    isLoading: boolean = false;
-    subscriber: Subscription;
-    submitted: boolean = false;
+export class PaymentView implements OnInit {
+    @ViewChild('actionTemplate', {static: true}) public actionTemplate: TemplateRef<any>;
+    @ViewChild('pageTitleTemplate', {static: true}) public pageTitleTemplate: TemplateRef<any>;
 
-    activeLicenseType:  PaymentSoftwareLicenseType;
-    planType: string = 'monthly';
-    paymentModes = [
-        { id: 1, name: 'Credit Card', key: 'credit_card' },
-        { id: 2, name: 'Debit Card', key: 'debit_card' },
-        { id: 3, name: 'UPI', key: 'upi' },
-        { id: 3, name: 'Bank Transfer', key: 'bank_transfer' },
-    ];
+    private readonly destroyRef = inject(DestroyRef);
 
-    customForm: FormGroup;
-    constructor(public fb: FormBuilder,
-                public router: Router, public activatedRoute: ActivatedRoute,
-                protected service: PaymentService) {
+    readonly currency = SUBSCRIPTION_BILLING_CURRENCY;
+    readonly paymentModes = PAYMENT_MODE_OPTIONS;
+
+    overview: SubscriptionOverview | null = null;
+    plans: PlanOffer[] = [];
+    selectedPlan: PlanOffer | null = null;
+
+    isLoading = false;
+    loadError: string | null = null;
+    submitting = false;
+    submitError: string | null = null;
+
+    readonly customForm: FormGroup;
+
+    /**
+     * Key of the last submitted request and what it contained. Resubmitting the same request (for example after a
+     * timeout) reuses the key so the API replays the first result instead of billing twice; any change gets a new key.
+     */
+    private attempt: {key: string; fingerprint: string} | null = null;
+
+    constructor(private fb: FormBuilder,
+                private router: Router,
+                private route: ActivatedRoute,
+                private alertService: AlertService,
+                private service: SubscriptionService) {
         this.customForm = this.fb.group({
-            cardNumber: [null, Validators.required],
-            expMonth: [null, Validators.required],
-            expYear: [null, Validators.required],
-            cvc: [null, Validators.required],
-            cardHolder: [null, Validators.required],
-            address: [null, Validators.required],
-            city: [null, Validators.required],
-            state: [null, Validators.required],
-            pinCode: [null, Validators.required],
-            email: [null, Validators.required],
-            amount: [null],
-            tax: [null],
-            netAmount: [null],
-            paymentMode: [null],
-            paymentReferenceNumber: [null],
-            remark: [null],
-            //licenseId: [null, Validators.required],
-            licenseTypeId: [null, Validators.required],
-            terms: [null],
-            desc: [null]
+            billingName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(150)]],
+            billingEmail: ['', [Validators.required, Validators.email, Validators.maxLength(256)]],
+            billingContactNo: ['', [Validators.maxLength(30)]],
+            billingAddress: ['', [Validators.maxLength(500)]],
+            taxNumber: ['', [Validators.maxLength(50)]],
+            paymentMode: [null, Validators.required],
+            paymentReferenceNumber: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+            remark: ['', [Validators.maxLength(500)]]
         });
     }
 
-    // convenience getter for easy access to form fields
     get f() { return this.customForm.controls; }
-    get formPaymentMode() { return this.customForm.get('paymentMode'); }
-    changePaymentMode(key) { return this.formPaymentMode.setValue(key); }
+    get license(): LicenseSummary | null { return this.overview?.license ?? null; }
+    get purchaseBlocked(): boolean { return isPurchaseBlocked(this.license); }
 
-    ngOnInit()
-    {
-        this.customForm.patchValue({
-            cardNumber: 123453523,
-            expMonth: 11,
-            expYear: 2026,
-            cvc: 123,
-            cardHolder: 'Ashiss Chaturvedi',
-            address: '123 sada in Heaven',
-            city: 'San Ramon',
-            state: 'CA',
-            pinCode: 93458,
-            email: 'me.ashish005@gmail.com',
-            netAmount: 200,
-        });
-        this.submitted = false;
+    get selectedMode(): PaymentModeOption | null {
+        return this.paymentModes.find(m => m.id === this.f['paymentMode'].value) ?? null;
+    }
+
+    /** Mirrors the API rule: renewing the current plan before it lapses extends the current term. */
+    get extendsCurrentTerm(): boolean {
+        const license = this.license;
+        return !!license && !!this.selectedPlan && license.status === 'Active' && !license.isExpired && license.planId === this.selectedPlan.id;
+    }
+
+    get canSubmit(): boolean { return !!this.selectedPlan && !this.submitting && !this.purchaseBlocked; }
+
+    invalid(control: string): boolean {
+        const c = this.f[control];
+        return c.invalid && (c.touched || c.dirty);
+    }
+
+    ngOnInit() { this.load(); }
+
+    load(refresh = false) {
         this.isLoading = true;
-        const success = (resp)=>{
-            this.isLoading = false;
-            this.software = new PaymentSoftware(resp);
-            this.activeLicenseType = this.software.licenseTypes.find(r => r.isRecommended);
-            this.populateFinalRates();
-        };
-        const failure = ()=>{ this.isLoading = false; };
-        this.subscriber = this.service.getPaymentLookup().subscribe(success, failure);
+        this.loadError = null;
+        this.service.getOverview(refresh)
+            .pipe(finalize(() => this.isLoading = false), takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: overview => this.apply(overview),
+                error: err => this.loadError = errorMessageOf(err, 'Could not load plans. Please try again.')
+            });
     }
 
-    ngOnDestroy()
-    {
-        this.subscriber?.unsubscribe();
+    selectPlan(plan: PlanOffer) {
+        if (!plan.isPurchasable || this.submitting) { return; }
+        this.selectedPlan = plan;
+        this.submitError = null;
+        // Keep the URL shareable and refresh-safe.
+        this.router.navigate([], {relativeTo: this.route, queryParams: {planId: plan.id}, replaceUrl: true});
     }
 
-    updateLicenseType(planType, data: PaymentSoftwareLicenseType)
-    {
-        this.planType = planType;
-        this.activeLicenseType = data;
-        this.populateFinalRates();
+    selectPaymentMode(mode: PaymentModeOption) {
+        if (this.submitting) { return; }
+        this.f['paymentMode'].setValue(mode.id);
+        this.f['paymentMode'].markAsTouched();
     }
 
-    populateFinalRates()
-    {
-        const price: any = this.activeLicenseType.discountedRate();
-        const tax: any = this.activeLicenseType.taxAmount();
-        const netAmount: any = this.activeLicenseType.paymentAmount();
-
-        this.customForm.get('amount').setValue(parseFloat(price).toFixed(2));
-        this.customForm.get('tax').setValue(parseFloat(tax).toFixed(2));
-        this.customForm.get('netAmount').setValue(parseFloat(netAmount).toFixed(2));
-
-        this.customForm.get('licenseTypeId').setValue(this.activeLicenseType.id);
-        // this.customForm.get('terms').setValue(data.terms);
-        // this.customForm.get('desc').setValue(data.desc);
-    }
-
-    purchaseTicket() {
+    onSubmit() {
         this.customForm.markAllAsTouched();
-        const formData = this.customForm.getRawValue();
-        const { card_number, exp_month, exp_year, cvc, card_holder } = formData;
-        const card = { number: card_number, exp_month: exp_month, exp_year: exp_year, cvc: cvc };
+        if (!this.canSubmit || this.customForm.invalid) { return; }
 
-        this.submitted = true;
-        const stripeResponse = (status: number, response: any) =>
-        {
-            if (status === 200) {
-                this.saveForm(formData, response);
-            } else {
-                this.submitted = false;
-                //this.errorMessage = 'There was a problem purchasing the ticket.';
-            }
+        const v = this.customForm.getRawValue();
+        const body: Omit<SubscriptionPurchaseRequest, 'idempotencyKey'> = {
+            planId: this.selectedPlan!.id,
+            paymentMode: v.paymentMode,
+            paymentReferenceNumber: v.paymentReferenceNumber.trim(),
+            billingName: v.billingName.trim(),
+            billingEmail: v.billingEmail.trim(),
+            billingContactNo: optional(v.billingContactNo),
+            billingAddress: optional(v.billingAddress),
+            taxNumber: optional(v.taxNumber),
+            remark: optional(v.remark)
         };
-        this.saveForm(formData, { id: 'rrturrrytryrrvrytrytrvyrtyrvryt'});
-        //(<any>window).Stripe.card.createToken(card, stripeResponse);
+
+        const fingerprint = JSON.stringify(body);
+        if (this.attempt?.fingerprint !== fingerprint) {
+            this.attempt = {key: newIdempotencyKey(), fingerprint};
+        }
+
+        this.submitting = true;
+        this.submitError = null;
+        this.customForm.disable({emitEvent: false});
+
+        this.service.purchase({...body, idempotencyKey: this.attempt.key})
+            .pipe(
+                finalize(() => {
+                    this.submitting = false;
+                    this.customForm.enable({emitEvent: false});
+                }),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe({
+                next: result => {
+                    this.attempt = null;
+                    this.alertService.showMessage('Subscription', result.isReplay
+                        ? 'This payment was already recorded.'
+                        : 'Payment recorded and your license is updated.', MessageSeverity.success);
+                    this.router.navigate(['../payment-success'], {relativeTo: this.route, state: {[PURCHASE_RESULT_STATE_KEY]: result}});
+                },
+                error: err => this.submitError = errorMessageOf(err, 'The payment could not be recorded. Please try again.')
+            });
     }
 
-    saveForm(formData, payGatewayResp)
-    {
-        this.customForm.markAsTouched();
-        const { cardHolder, address, city, state, pincode, email, amount, tax, netAmount, remark, licenseTypeId, terms, desc, paymentMode } = formData;
+    trackById(_: number, item: {id: number}) { return item.id; }
 
-        const model = {
-            name: cardHolder, address: address, city: city, state: state, pincode: pincode, email: email,
-            amount: amount, tax: tax, netAmount: netAmount,
-            paymentMode: paymentMode, paymentReferenceNumber: payGatewayResp.id,
-            remark: remark,
-            licenseTypeId, description: desc, terms: terms,
-            softwareId: this.software.id,
-        };
+    private apply(overview: SubscriptionOverview) {
+        this.overview = overview;
+        this.plans = overview.plans.filter(p => p.isPurchasable).sort((a, b) => a.sortOrder - b.sortOrder);
 
-        const success = ()=>{
-            this.customForm.reset();
-            this.submitted = false;
-            this.router.navigate(['payment-success'], { relativeTo: this.activatedRoute.parent });
-            //this.successMessage = 'Thank you for purchasing a ticket!';
-        };
-        const failure = ()=>{
-            this.submitted = false;
-            //this.errorMessage = 'There was a problem registering you.';
-        };
-        this.service.savePaymentDetails(model).toPromise().then(success, failure);
+        const requested = Number(this.route.snapshot.queryParamMap.get('planId'));
+        this.selectedPlan =
+            this.plans.find(p => p.id === requested) ??
+            this.plans.find(p => p.isCurrent) ??
+            this.plans.find(p => p.isRecommended) ??
+            this.plans[0] ?? null;
+
+        // Prefill billing details from the organisation's registered contact, without overwriting user input.
+        const contact = overview.billingContact;
+        if (contact && this.customForm.pristine) {
+            this.customForm.patchValue({billingName: contact.name, billingEmail: contact.email, billingContactNo: contact.contactNo});
+        }
     }
 }

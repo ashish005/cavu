@@ -8,3 +8,5 @@ export {DualListOptions} from "./dual-listbox";
 
 export {BasicListDomain} from "./dual-listbox/basic-list.domain";
 export {DualListfilterButtonsDomain} from "./dual-listbox/basic-list.domain";
+
+export {LoaderComponent} from "./loader/loader.component";

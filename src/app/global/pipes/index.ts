@@ -15,3 +15,7 @@ export const GLOBAL_PIPES = [
     SortByPipe,
     PrettyPrintPipe, CORE_SETUP_PIPES, DatePipe, CurrencyPipe, JsonPipe
 ];
+
+// Standalone pipes, exported for standalone components that cannot import GlobalModule.
+export {DateFormat, DateHourMinFormat} from "./app-pipes/date-format.pipe";
+export {VoucherCurrencyPipe, OrgCurrencyPipe} from "./app-pipes/currency.pipe";

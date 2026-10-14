@@ -1,13 +1,31 @@
-<ng-template #pageTitleTemplate>
-    <div class="no-shadow">
-        <!--<h6 class="mb-0"> {{ pageTitle  }} </h6>
-        <small class="float-left"><i [class]="pageIcon"></i> Management</small>-->
-    </div>
-</ng-template>
 <div class="d-flex flex align-items-center">
     <div class="text-center p-5 w-100">
-        <h1 class="display-5 my-5 text-success">Payment Successful!</h1>
-        <p><a [routerLink]="['../invoices']" class="b-b"> Check the Receipt here</a></p>
-        <p class="my-5 text-muted h4">Thank you for purchasing a subscription!</p>
+        <i class="fa fa-check-circle text-success" style="font-size: 3rem"></i>
+        <h3 class="my-3 text-success">{{ result?.isReplay ? 'Payment already recorded' : 'Payment successful' }}</h3>
+
+        <ng-container *ngIf="result; else generic">
+            <table class="table small-table text-sm mx-auto mb-4" style="max-width: 420px">
+                <tbody>
+                <tr><td class="text-muted text-left">Invoice</td><td class="text-right _600">{{ result.voucherNo }}</td></tr>
+                <tr><td class="text-muted text-left">Amount</td><td class="text-right">{{ result.netAmount | voucherCurrency : currency }}</td></tr>
+                <tr><td class="text-muted text-left">License</td><td class="text-right">{{ result.licenseNo }}</td></tr>
+                <tr>
+                    <td class="text-muted text-left">Valid</td>
+                    <td class="text-right">{{ result.validFrom | dateFormat }} &ndash; {{ result.validTo | dateFormat }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-sm theme mr-2" (click)="viewInvoice()">View invoice</button>
+        </ng-container>
+        <ng-template #generic>
+            <p class="text-muted">Thank you for your purchase. Your invoice is available under Invoices.</p>
+        </ng-template>
+
+        <a class="btn btn-sm white mr-2" [routerLink]="['../invoices']">All invoices</a>
+        <a class="btn btn-sm white" [routerLink]="['../info']">Back to license</a>
     </div>
 </div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Payment</h6></div>
+</ng-template>

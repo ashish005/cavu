@@ -1,213 +1,164 @@
-<ng-template #pageTitleTemplate>
-    <div class="no-shadow">
-        <!--<h6 class="mb-0"> {{ pageTitle  }} </h6>
-        <small class="float-left"><i [class]="pageIcon"></i> Management</small>-->
-    </div>
-</ng-template>
 <div class="d-flex flex">
-    <div class="d-flex flex-column flex">
-        <div class="d-flex flex bg-light d-md-flex">
-            <div class="d-flex flex">
-                <div class="d-flex flex-column flex">
-                    <div class="p-3 container">
-                        <h6 class="_600">{{software?.name}}</h6>
-                        <div class="box">
-                            <table class="table small-table text-xs mb-0">
-                                <thead>
-                                <tr>
-                                    <th><span class="pl-2">Subscription Plan</span></th>
-                                    <th class="text-center"><span class="pl-2">Monthly / User</span></th>
-                                    <th class="text-center"><span class="pl-2">Discount</span></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <ng-template ngFor let-licenseType
-                                             [ngForOf]="software?.licenseTypes | sortBy:'asc': 'sortOrder'"
-                                             let-i="index">
-                                    <tr>
-                                        <td>
-                                            <span class="pl-2">{{licenseType.name}}</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-xs"
-                                                    [class]="(activeLicenseType?.id === licenseType.id)? 'b-theme theme text-theme': 'white'"
-                                                    (click)="updateLicenseType('monthly', licenseType)">
-                                                ${{licenseType.rate }}
-                                            </button>
-                                        </td>
-                                        <td class="text-center">
-                                            {{licenseType.discount}}%
-                                        </td>
-                                    </tr>
-                                </ng-template>
-                                <tbody>
-                            </table>
-                        </div>
-                        <div class="d-flex flex-column px-4 text-xs">
-                            <h6>Billing</h6>
-                            <div class="border-bottom"></div>
-                            <div class="list">
-                                <div class="list-item p-1">
-                                    <div class="list-body">
-                                        <a class="item-title _500">Plan</a>
-                                    </div>
-                                    <div>{{activeLicenseType?.name}}</div>
-                                </div>
-                                <div class="list-item p-1">
-                                    <div class="list-body">
-                                        <a class="item-title _500">Software Cost/ User</a>
-                                    </div>
-                                    <div>${{activeLicenseType?.discountedRate() | number : '1.2-2'}}</div>
-                                </div>
-                                <div class="list-item p-1">
-                                    <div class="list-body"><a class="item-title _500">Tax</a></div>
-                                    <div> ${{activeLicenseType?.taxAmount() | number : '1.2-2' }}</div>
-                                </div>
-                                <div class="list-item p-1">
-                                    <div class="list-body"><a class="item-title _500">Coupon</a></div>
-                                    <div> --</div>
-                                </div>
-                            </div>
-                            <div class="border-bottom mb-4"></div>
-                            <div class="align-center text-sm text-center">
-                                <span>You are saving ${{activeLicenseType?.savingsAmount() | number : '1.2-2'}}</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between text mb-4">
-                                <span>Plan Cost</span> <span class="fas fa-dollar-sign"><span class="ps-1">${{activeLicenseType?.paymentAmount() | number : '1.2-2' }} / Month</span></span>
-                            </div>
-                        </div>
-                        <form class="align-center text-sm text-center" [formGroup]="customForm" (submit)="purchaseTicket()">
-                            <div class="d-flex align-items-center justify-content-between text mb-4">
-                                <div></div>
-                                <div>
-                                    <div class="align-center text-sm text-center" style="width: 200px">
-                                        <select-dropdown [items]="paymentModes"
-                                                         title="Payment Mode" bindValue="key"
-                                                         (cb)="changePaymentMode($event)"
-                                                         [control]="formPaymentMode"></select-dropdown>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-rounded theme"  [disabled]="!customForm.valid || submitted" type="submit">
-                                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i> {{ submitted ? 'Submitting...' : 'Pay' }}
-                                        ${{customForm.value.netAmount}}
-                                    </button>
-                                </div>
-                                <div></div>
-                            </div>
-                            <div class="row row-sm">
-                                <div class="col-sm-12">
-                                    <div [ngSwitch]="formPaymentMode.value">
-                                        <div *ngSwitchCase="'credit_card'"><ng-template *ngTemplateOutlet="credit_cardTemplate"></ng-template></div>
-                                        <div *ngSwitchCase="'debit_card'"><ng-template *ngTemplateOutlet="debit_cardTemplate"></ng-template></div>
-                                        <div *ngSwitchCase="'upi'"><ng-template *ngTemplateOutlet="upiTemplate"></ng-template></div>
-                                        <div *ngSwitchCase="'bank_transfer'"><ng-template *ngTemplateOutlet="bank_transferTemplate"></ng-template></div>
-                                        <div *ngSwitchDefault></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <loader [isLoading]="isLoading"></loader>
+    <div class="d-flex flex-column flex scroll-y bg-light">
+        <loader [isLoading]="isLoading"></loader>
+
+        <div *ngIf="loadError" class="p-3">
+            <div class="alert alert-danger d-flex align-items-center mb-0">
+                <span class="flex">{{ loadError }}</span>
+                <button class="btn btn-sm white" (click)="load(true)">Retry</button>
             </div>
-            <!--<div class="d-flex flex">
-                <div class="d-flex flex-column flex">
-                    <div class="card p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span class="h5 fw-bold m-0">Payment methods</span>
+        </div>
+
+        <div *ngIf="overview" class="container p-3">
+            <div *ngIf="purchaseBlocked" class="alert alert-danger">
+                Your license is {{ license?.status | lowercase }}. Online purchases are not available; please contact support.
+            </div>
+
+            <div *ngIf="!plans.length && !purchaseBlocked" class="box p-4 text-center text-muted">
+                There are no plans available for purchase at the moment.
+            </div>
+
+            <div class="row" *ngIf="plans.length && !purchaseBlocked">
+                <!-- Plan selection and price breakdown -->
+                <div class="col-md-5">
+                    <h6 class="_600">1. Choose a plan</h6>
+                    <div class="box">
+                        <div class="list">
+                            <a *ngFor="let plan of plans; trackBy: trackById"
+                               class="list-item p-2" role="button"
+                               [class.active]="selectedPlan?.id === plan.id"
+                               [class.b-l-3x]="selectedPlan?.id === plan.id" [class.b-theme]="selectedPlan?.id === plan.id"
+                               (click)="selectPlan(plan)">
+                                <div class="list-body">
+                                    <div class="item-title _500">
+                                        {{ plan.name }}
+                                        <span *ngIf="plan.isRecommended" class="badge primary ml-1">Recommended</span>
+                                        <span *ngIf="plan.isCurrent" class="badge success ml-1">Current</span>
+                                    </div>
+                                    <div class="item-except text-muted text-xs">{{ plan.validityInDays }} days</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="_600">{{ plan.netAmount | voucherCurrency : currency }}</div>
+                                    <div *ngIf="plan.discountPercent > 0" class="text-xs text-success">{{ plan.discountPercent }}% off</div>
+                                </div>
+                            </a>
                         </div>
-                        <div class="nav-active-border b-warning bottom box mb-0">
-                            <div class="nav nav-md">
-                                <a class="nav-link">Credit Card</a>
-                                <a class="nav-link">Mobile Payment</a>
-                                <a class="nav-link">+ More</a>
-                            </div>
-                        </div>
-                        <form class="d-flex align-items-center justify-content-between p-2"
-                              [formGroup]="customForm" (submit)="purchaseTicket()">
-                            <div class="row row-sm">
-                                <div class="col-sm-12">
-                                    <div class="md-form-group">
-                                        <input class="md-input" formControlName="cardNumber"
-                                               [ngClass]="{ 'is-invalid': submitted && f.cardNumber.errors }">
-                                        <label>CARD NUMBER</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group">
-                                        <input class="md-input" formControlName="expMonth"
-                                               [ngClass]="{ 'is-invalid': submitted && f.expMonth.errors }">
-                                        <label>EXPIRATION MONTH</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group">
-                                        <input class="md-input" formControlName="expYear"
-                                               [ngClass]="{ 'is-invalid': submitted && f.expYear.errors }">
-                                        <label>EXPIRATION YEAR</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group"><input class="md-input" formControlName="cvc"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.cvc.errors }"><label>CVC/CVV</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="md-form-group"><input class="md-input" formControlName="cardHolder"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.cardHolder.errors }"><label>CARD
-                                        HOLDER</label></div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="md-form-group"><input class="md-input" formControlName="address"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.address.errors }"><label>ADDRESS</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group"><input class="md-input" formControlName="city"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.city.errors }"><label>CITY</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group"><input class="md-input" formControlName="state"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.state.errors }"><label>STATE</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="md-form-group"><input class="md-input" formControlName="pinCode"
-                                                                      [ngClass]="{ 'is-invalid': submitted && f.pinCode.errors }"><label>POSTAL
-                                        CODE</label></div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="md-form-group float-label">
-                                        <input class="md-input" value="" formControlName="email"
-                                               [ngClass]="{ 'is-invalid': submitted && f.email.errors }"
-                                               onkeyup="this.setAttribute('value', this.value);" required=""><label>BILLING
-                                        EMAIL</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 px-md-5 px-4 mt-3">
-                                    <button class="btn btn-primary w-100" type="submit">Pay
-                                        ${{customForm.value.netAmount}}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                    </div>
+
+                    <div class="box p-3" *ngIf="selectedPlan as plan">
+                        <h6 class="_600 mb-2">Order summary</h6>
+                        <table class="table small-table text-xs mb-2">
+                            <tbody>
+                            <tr><td>{{ plan.name }} &middot; {{ plan.validityInDays }} days</td><td class="text-right">{{ plan.rate | voucherCurrency : currency }}</td></tr>
+                            <tr *ngIf="plan.discountAmount > 0">
+                                <td>Discount ({{ plan.discountPercent }}%)</td><td class="text-right text-success">- {{ plan.discountAmount | voucherCurrency : currency }}</td>
+                            </tr>
+                            <tr><td>Taxable amount</td><td class="text-right">{{ plan.taxableAmount | voucherCurrency : currency }}</td></tr>
+                            <tr *ngIf="plan.taxPercent > 0">
+                                <td>Tax ({{ plan.taxPercent }}%)</td><td class="text-right">{{ plan.taxAmount | voucherCurrency : currency }}</td>
+                            </tr>
+                            <tr class="_600"><td>Total</td><td class="text-right">{{ plan.netAmount | voucherCurrency : currency }}</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="text-xs text-muted mb-0" *ngIf="extendsCurrentTerm">
+                            You are renewing your current plan: {{ plan.validityInDays }} days are added to your current end date
+                            ({{ license?.validTo | dateFormat }}).
+                        </p>
+                        <p class="text-xs text-muted mb-0" *ngIf="!extendsCurrentTerm">
+                            The new term starts today and runs for {{ plan.validityInDays }} days.
+                            <ng-container *ngIf="license && !license.isExpired && license.status === 'Active'">
+                                It replaces your current {{ license.planName }} term; unused days are not carried over.
+                            </ng-container>
+                        </p>
                     </div>
                 </div>
-            </div>-->
+
+                <!-- Billing and payment -->
+                <div class="col-md-7">
+                    <form [formGroup]="customForm" (ngSubmit)="onSubmit()" novalidate>
+                        <h6 class="_600">2. Billing details</h6>
+                        <div class="box p-3">
+                            <div class="row row-sm">
+                                <div class="col-sm-6 form-group">
+                                    <label class="text-xs">Billing name *</label>
+                                    <input class="form-control form-control-sm" formControlName="billingName" autocomplete="organization"
+                                           [class.is-invalid]="invalid('billingName')">
+                                    <div class="invalid-feedback">Enter a name of 2 to 150 characters.</div>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <label class="text-xs">Billing email *</label>
+                                    <input class="form-control form-control-sm" type="email" formControlName="billingEmail" autocomplete="email"
+                                           [class.is-invalid]="invalid('billingEmail')">
+                                    <div class="invalid-feedback">Enter a valid email address.</div>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <label class="text-xs">Contact number</label>
+                                    <input class="form-control form-control-sm" formControlName="billingContactNo" autocomplete="tel"
+                                           [class.is-invalid]="invalid('billingContactNo')">
+                                    <div class="invalid-feedback">At most 30 characters.</div>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <label class="text-xs">Tax number (GST/VAT)</label>
+                                    <input class="form-control form-control-sm" formControlName="taxNumber"
+                                           [class.is-invalid]="invalid('taxNumber')">
+                                    <div class="invalid-feedback">At most 50 characters.</div>
+                                </div>
+                                <div class="col-sm-12 form-group mb-0">
+                                    <label class="text-xs">Billing address</label>
+                                    <textarea class="form-control form-control-sm" rows="2" formControlName="billingAddress" autocomplete="street-address"
+                                              [class.is-invalid]="invalid('billingAddress')"></textarea>
+                                    <div class="invalid-feedback">At most 500 characters.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="_600">3. Payment</h6>
+                        <div class="box p-3">
+                            <label class="text-xs d-block">Payment mode *</label>
+                            <div class="btn-group flex-wrap mb-2" role="radiogroup">
+                                <button *ngFor="let mode of paymentModes" type="button" role="radio"
+                                        class="btn btn-sm" [ngClass]="f['paymentMode'].value === mode.id ? 'theme' : 'white'"
+                                        [attr.aria-checked]="f['paymentMode'].value === mode.id"
+                                        [disabled]="submitting"
+                                        (click)="selectPaymentMode(mode)">{{ mode.name }}</button>
+                            </div>
+                            <div *ngIf="invalid('paymentMode')" class="text-danger text-xs mb-2">Choose how you paid.</div>
+
+                            <div class="form-group" *ngIf="selectedMode as mode">
+                                <label class="text-xs">{{ mode.referenceLabel }} *</label>
+                                <input class="form-control form-control-sm" formControlName="paymentReferenceNumber"
+                                       [class.is-invalid]="invalid('paymentReferenceNumber')">
+                                <small class="text-muted">{{ mode.referenceHint }}</small>
+                                <div class="invalid-feedback">Enter the payment reference (3 to 100 characters).</div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="text-xs">Remark</label>
+                                <input class="form-control form-control-sm" formControlName="remark" [class.is-invalid]="invalid('remark')">
+                                <div class="invalid-feedback">At most 500 characters.</div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="submitError" class="alert alert-danger text-sm">{{ submitError }}</div>
+
+                        <div class="d-flex align-items-center">
+                            <span class="text-xs text-muted flex">Amounts are calculated by the server from the selected plan.</span>
+                            <button type="submit" class="btn theme" [disabled]="!canSubmit">
+                                <i *ngIf="submitting" class="fa fa-circle-o-notch fa-spin mr-1"></i>
+                                {{ submitting ? 'Processing...' : 'Pay ' + ((selectedPlan?.netAmount ?? 0) | voucherCurrency : currency) }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<ng-template #credit_cardTemplate>
-    credit_card details
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Plans &amp; Payment</h6>
+        <small class="text-muted">{{ overview?.software?.name }}</small>
+    </div>
 </ng-template>
-<ng-template #debit_cardTemplate>
-    debit_card details
-</ng-template>
-<ng-template #upiTemplate>
-    upi details
-</ng-template>
-<ng-template #bank_transferTemplate>
-    bank_transfer details
-</ng-template>
+<ng-template #actionTemplate></ng-template>

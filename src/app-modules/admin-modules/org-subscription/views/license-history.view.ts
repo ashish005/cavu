@@ -1,36 +1,32 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {OrgLicenseHistory, OrgLicenseHistoryQueryOptions} from "../domains/org-license-history.serializer";
-import {OrgLicenseHistoryService} from "../services/license-history.service";
-import {DateFormatCell, FullDateFormatCell, GridUISwitchCellComponent, ViewExtender} from "@app-global";
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {CoreQueryOptions, DateFormatCell, FullDateFormatCell, ViewExtender} from "@app-global";
+import {LicenseHistoryRow} from "../domains/grid-row.serializers";
+import {LicenseHistoryService} from "../services";
+
 @Component({
     standalone: false,
-  templateUrl: './templates/pricing-history.html'
+    templateUrl: './templates/grid-page.html'
 })
-export class LicenseHistoryView extends ViewExtender<OrgLicenseHistory> implements OnInit {
-    @ViewChild('orgLicenseGrid', { static: true }) orgLicenseGrid;
-    override coreState: OrgLicenseHistoryQueryOptions = new OrgLicenseHistoryQueryOptions();
-    constructor(public override service: OrgLicenseHistoryService,
-                public router: Router,
-                public override activatedRoute: ActivatedRoute) {
+export class LicenseHistoryView extends ViewExtender<LicenseHistoryRow> implements OnInit {
+    override coreState = new CoreQueryOptions();
+
+    constructor(public override service: LicenseHistoryService, public override activatedRoute: ActivatedRoute) {
         super(activatedRoute, service);
-        this.gridOptions.header.edit = false;
+        this.gridOptions.header = {...this.gridOptions.header, add: false, edit: false, delete: false};
         this.gridOptions.columnDefs = [
-            {headerName: 'License Type', field: 'licenseTypeName' },
-            {headerName: 'License No', field: 'licenseNo' },
-            {headerName: 'Valid From', field: 'validFrom', cellTemplate: DateFormatCell },
-            {headerName: 'Validity(Days)', field: 'validityInDays' },
-            {headerName: 'Created', field: 'createdDate', cellTemplate: FullDateFormatCell }
+            {headerName: 'Date', field: 'occurredAt', cellTemplate: FullDateFormatCell},
+            {headerName: 'Event', field: 'eventLabel'},
+            {headerName: 'Plan', field: 'planLabel'},
+            {headerName: 'Status', field: 'statusLabel'},
+            {headerName: 'Valid From', field: 'currentValidFrom', cellTemplate: DateFormatCell},
+            {headerName: 'Valid To', field: 'currentValidTo', cellTemplate: DateFormatCell},
+            {headerName: 'License No', field: 'licenseNo'},
+            {headerName: 'Remark', field: 'remark'}
         ];
     }
 
-    ngOnInit(){
-        super.populateGrid();
-    }
+    ngOnInit() { this.populateGrid(); }
 
-    override ngOnDestroy()
-    {
-        super.ngOnDestroy();
-    }
-    actionCb(e){}
+    actionCb(_: any) {}
 }

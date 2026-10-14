@@ -1,11 +1,9 @@
-import {OrgLicenseHistoryService} from "./license-history.service";
-import {ModulePermissionService} from "./module-permission.service";
-import {OrgSoftwareInvoiceService} from "./software-invoice.service";
-import {PaymentService} from "./payment.service";
+import {SubscriptionService} from "./subscription.service";
+import {LicenseHistoryService, SoftwareInvoiceService} from "./grid.services";
 
-export const SUBSCRIPTION_SERVICES = [
-    PaymentService,
-    OrgLicenseHistoryService,
-    ModulePermissionService,
-    OrgSoftwareInvoiceService
-];
+export {SubscriptionService} from "./subscription.service";
+export {LicenseHistoryService, SoftwareInvoiceService} from "./grid.services";
+export {ensureSuccess, errorMessageOf, newIdempotencyKey} from "./api-response";
+
+/** Provided once on the lazy module so the cached overview is shared by every view. */
+export const SUBSCRIPTION_SERVICES = [SubscriptionService, LicenseHistoryService, SoftwareInvoiceService];

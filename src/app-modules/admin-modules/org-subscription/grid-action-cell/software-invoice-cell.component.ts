@@ -1,36 +1,16 @@
-import { Component } from "@angular/core";
-import {ASIDE_CLASS, ASIDE_SIZE, SharedService, DynamicComponent} from "@app-global";
-import {SoftwareInvoicePrintView} from "../components/software-invoice-print.view";
-import {OrgSoftwareInvoiceReceipt} from "../domains/org-software-invoice.serializer";
+import {Component} from "@angular/core";
+import {DynamicComponent, SharedService} from "@app-global";
+import {SoftwareInvoiceRow} from "../domains/grid-row.serializers";
+import {openInvoicePopup} from "../components/software-invoice-print.view";
 
 @Component({
-  template: '<button class="btn btn-xs theme text-theme b-theme" (click)="showMyDetails(context)">Invoice</button>'
+    standalone: true,
+    template: '<button type="button" class="btn btn-xs theme text-theme b-theme" (click)="open(context)">View</button>'
 })
-export class SoftwareInvoiceCellComponent extends DynamicComponent{
-  constructor(private sharedService: SharedService){ super(); }
+export class SoftwareInvoiceCellComponent extends DynamicComponent {
+    constructor(private sharedService: SharedService) { super(); }
 
-    showMyDetails(row: OrgSoftwareInvoiceReceipt) {
-      const { id, invoiceId, licenseId, voucherNo } = row;
-        const inputData: any = {
-            data: {
-                invoiceId: invoiceId,
-                licenseId: licenseId,
-                voucherNo: voucherNo
-            }
-        };
-        const popupHeaderOptions = {text: `${row.voucherNo}: ${ row.voucherDate }`, desc: '' };
-        const onSuccess = (resp)=> {
-            this.sharedService.destroy();
-        };
-        const onFailure = (resp)=> {
-            this.sharedService.destroy();
-        };
-
-        const popupOptions = {
-            header: popupHeaderOptions,
-            aside: ASIDE_CLASS.RIGHT,
-            size: ASIDE_SIZE.W_75
-        };
-        this.sharedService.showCustomPopup(SoftwareInvoicePrintView, popupOptions, inputData).then(onSuccess, onFailure);
+    open(row: SoftwareInvoiceRow) {
+        openInvoicePopup(this.sharedService, row.id, row.voucherNo);
     }
 }
