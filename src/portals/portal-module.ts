@@ -40,12 +40,13 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
     ];
   }
 
-  if(!license || license?.validityInDays < 0){
+  // Validity is decided by the backend (status, dates and grace days); an expired or suspended license lands on renewal.
+  if(!license?.isValidLicense){
+    const subscription = () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule);
     return [
-      {
-        path: '', component: PreSetupLayout,
-        loadChildren: () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule)
-      }
+      // Same URLs as when licensed, so links from payment gateways (admin/subscription/payment-return) work either way.
+      { path: 'admin/subscription', component: PreSetupLayout, loadChildren: subscription },
+      { path: '', component: PreSetupLayout, loadChildren: subscription }
     ];
   }
 

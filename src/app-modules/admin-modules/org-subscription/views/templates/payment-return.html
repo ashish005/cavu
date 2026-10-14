@@ -1,0 +1,72 @@
+<div class="d-flex flex align-items-center">
+    <div class="text-center p-5 w-100" style="max-width: 560px; margin: 0 auto">
+
+        <ng-container *ngIf="error">
+            <i class="fa fa-exclamation-circle text-danger" style="font-size: 3rem"></i>
+            <h4 class="my-3">Something went wrong</h4>
+            <p class="text-muted">{{ error }}</p>
+            <button *ngIf="checkoutId" class="btn btn-sm theme mr-2" (click)="startPolling()">Check again</button>
+            <a class="btn btn-sm white" [routerLink]="['../payment']">Back to plans</a>
+        </ng-container>
+
+        <ng-container *ngIf="!error">
+            <!-- Waiting for the gateway -->
+            <ng-container *ngIf="isWaiting && !canceledByUser">
+                <i class="fa fa-circle-o-notch fa-spin text-primary" style="font-size: 3rem"></i>
+                <h4 class="my-3">Confirming your payment&hellip;</h4>
+                <p class="text-muted" *ngIf="!slow">This usually takes a few seconds. Please keep this page open.</p>
+                <ng-container *ngIf="slow">
+                    <p class="text-muted">
+                        The confirmation is taking longer than usual. If you completed the payment, your plan is activated
+                        automatically once {{ checkout?.gatewayName || 'the payment provider' }} confirms it; you can safely leave this page.
+                    </p>
+                    <button class="btn btn-sm theme mr-2" (click)="startPolling()">Check again</button>
+                    <a class="btn btn-sm white" [routerLink]="['../info']">Back to subscription</a>
+                </ng-container>
+            </ng-container>
+
+            <!-- Left the gateway page without paying -->
+            <ng-container *ngIf="isWaiting && canceledByUser && checkout">
+                <i class="fa fa-info-circle text-muted" style="font-size: 3rem"></i>
+                <h4 class="my-3">Payment not completed</h4>
+                <p class="text-muted">You left the payment page before paying. Nothing was charged.</p>
+                <button *ngIf="checkout.checkoutUrl" class="btn btn-sm theme mr-2" (click)="resumePayment()">Continue payment</button>
+                <a class="btn btn-sm white" [routerLink]="['../payment']">Choose another plan</a>
+            </ng-container>
+
+            <!-- Paid and applied -->
+            <ng-container *ngIf="checkout?.status === 'Fulfilled'">
+                <i class="fa fa-check-circle text-success" style="font-size: 3rem"></i>
+                <h4 class="my-3 text-success">Payment successful</h4>
+                <table class="table small-table text-sm mx-auto mb-4" style="max-width: 420px">
+                    <tbody>
+                    <tr><td class="text-muted text-left">Plan</td><td class="text-right _600">{{ checkout!.planName }}</td></tr>
+                    <tr><td class="text-muted text-left">Amount</td><td class="text-right">{{ checkout!.netAmount | voucherCurrency : checkout!.currencyCode }}</td></tr>
+                    <tr *ngIf="checkout!.termFrom">
+                        <td class="text-muted text-left">Valid</td>
+                        <td class="text-right">{{ checkout!.termFrom | dateFormat }} &ndash; {{ checkout!.termTo | dateFormat }}</td>
+                    </tr>
+                    <tr *ngIf="checkout!.voucherNo"><td class="text-muted text-left">Invoice</td><td class="text-right">{{ checkout!.voucherNo }}</td></tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-sm theme mr-2" (click)="continueToApp()">Continue</button>
+                <button *ngIf="checkout!.invoiceId" class="btn btn-sm white" (click)="viewInvoice()">View invoice</button>
+            </ng-container>
+
+            <!-- Not applied -->
+            <ng-container *ngIf="checkout && !isWaiting && checkout.status !== 'Fulfilled'">
+                <i class="fa" style="font-size: 3rem"
+                   [ngClass]="checkout.status === 'RequiresAttention' ? 'fa-life-ring text-warning' : 'fa-times-circle text-danger'"></i>
+                <h4 class="my-3">{{ checkout.status === 'RequiresAttention' ? 'Payment received' : 'Payment not completed' }}</h4>
+                <p class="text-muted">{{ checkout.message }}</p>
+                <p *ngIf="checkout.status === 'RequiresAttention'" class="text-xs text-muted">Reference: {{ checkout.id }}</p>
+                <a *ngIf="checkout.status !== 'RequiresAttention'" class="btn btn-sm theme mr-2" [routerLink]="['../payment']" [queryParams]="{planId: checkout.planId}">Try again</a>
+                <a class="btn btn-sm white" [routerLink]="['../info']">Back to subscription</a>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Payment</h6></div>
+</ng-template>

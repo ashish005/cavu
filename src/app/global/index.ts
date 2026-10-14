@@ -1,4 +1,5 @@
 import { SetupLayout } from "./layouts";
+import { moduleGuard } from "./services/orgwise/entitlement/module.guard";
 import {Routes} from "@angular/router";
 export * from "./layouts";
 export {CoreProcessFactory} from "./pluginFactory";
@@ -27,17 +28,17 @@ export const ADMIN_SETUP_ROUES: Routes = [
         //canActivate:[PortalAuthGuard], canLoad: [ModuleGuard],
         children: [
             { path: 'setup', loadChildren: () => import('app-modules/admin-modules/app-identity/index').then(m => m.OrgIdentitySetupModule), data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'} },
-            { path: 'process', loadChildren: () => import('app-modules/admin-modules/org-process-management/index').then(m => m.ProcessManageModule), data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'} },
+            { path: 'process', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-process-management/index').then(m => m.ProcessManageModule), data: {code: "ACCESS_TASK_MGT", module: "PROCESS_MGT", title: 'Process', key: 'process', header: 'process'} },
             { path: 'compliance', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/index').then(m => m.ComplianceManageModule), data: {title: 'Compliance', header: 'Compliance'} },
             { path: 'org-log', loadChildren: () => import('app-modules/admin-modules/org-log-management/index').then(m => m.OrgLogModule), data: {title: 'Log', header: 'Log'} },
-            { path: 'accounting', loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN" } },
-            { path: 'reports', loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN" } },
+            { path: 'accounting', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN", module: "FIN" } },
+            { path: 'reports', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN", module: "FIN" } },
             { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
-            { path: 'trxn-setup', loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN" } },
+            { path: 'trxn-setup', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN", module: "FIN" } },
             {
-                path: 'tax-management', //canLoad: [PortalAuthGuard],
+                path: 'tax-management', canMatch: [moduleGuard],
                 loadChildren: () => import('app-modules/admin-modules/org-tax-management/index').then(m => m.TaxManagementModule),
-                data: {code: "ACCESS_TAX_MGT", title: 'Tax', header: 'Manage Tax'}
+                data: {code: "ACCESS_TAX_MGT", module: "TAX_MGT", title: 'Tax', header: 'Manage Tax'}
             },
             {
                 path: 'payroll', //canLoad:[ModuleGuard],

@@ -10,8 +10,20 @@
         </div>
 
         <div *ngIf="overview" class="container p-3">
-            <div *ngIf="purchaseBlocked" class="alert alert-danger">
-                Your license is {{ license?.status | lowercase }}. Online purchases are not available; please contact support.
+            <div *ngIf="requestedModule && !purchaseBlocked" class="alert alert-info">
+                Your current plan does not include <span class="_600">{{ requestedModule.name }}</span>.
+                The first plan that includes it is selected below.
+            </div>
+            <div *ngIf="blockedReason" class="alert alert-danger d-flex align-items-center">
+                <span class="flex">{{ blockedReason }}</span>
+                <a *ngIf="overview.subscription?.status === 'Paused'" class="btn btn-sm white" [routerLink]="['../manage']" [queryParams]="{action: 'resume'}">Resume</a>
+            </div>
+            <div *ngIf="requestedDowngrade && !purchaseBlocked" class="alert alert-info d-flex align-items-center">
+                <span class="flex">
+                    {{ requestedDowngrade.name }} costs less than your current plan, so there is nothing to pay now:
+                    the switch is scheduled for the end of your current period.
+                </span>
+                <a class="btn btn-sm white" [routerLink]="['../manage']" [queryParams]="{action: 'change', planId: requestedDowngrade.id}">Schedule switch</a>
             </div>
 
             <div *ngIf="!plans.length && !purchaseBlocked" class="box p-4 text-center text-muted">
@@ -34,11 +46,12 @@
                                         {{ plan.name }}
                                         <span *ngIf="plan.isRecommended" class="badge primary ml-1">Recommended</span>
                                         <span *ngIf="plan.isCurrent" class="badge success ml-1">Current</span>
+                                        <span *ngIf="plan.action === 'Upgrade'" class="badge info ml-1">Upgrade</span>
                                     </div>
-                                    <div class="item-except text-muted text-xs">{{ plan.validityInDays }} days</div>
+                                    <div class="item-except text-muted text-xs">{{ billingLabel(plan) }}</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="_600">{{ plan.netAmount | voucherCurrency : currency }}</div>
+                                    <div class="_600">{{ plan.netAmount | voucherCurrency : plan.currencyCode }} <span class="text-xs text-muted _400">/ {{ termLabel(plan) }}</span></div>
                                     <div *ngIf="plan.discountPercent > 0" class="text-xs text-success">{{ plan.discountPercent }}% off</div>
                                 </div>
                             </a>
@@ -47,29 +60,43 @@
 
                     <div class="box p-3" *ngIf="selectedPlan as plan">
                         <h6 class="_600 mb-2">Order summary</h6>
-                        <table class="table small-table text-xs mb-2">
-                            <tbody>
-                            <tr><td>{{ plan.name }} &middot; {{ plan.validityInDays }} days</td><td class="text-right">{{ plan.rate | voucherCurrency : currency }}</td></tr>
-                            <tr *ngIf="plan.discountAmount > 0">
-                                <td>Discount ({{ plan.discountPercent }}%)</td><td class="text-right text-success">- {{ plan.discountAmount | voucherCurrency : currency }}</td>
-                            </tr>
-                            <tr><td>Taxable amount</td><td class="text-right">{{ plan.taxableAmount | voucherCurrency : currency }}</td></tr>
-                            <tr *ngIf="plan.taxPercent > 0">
-                                <td>Tax ({{ plan.taxPercent }}%)</td><td class="text-right">{{ plan.taxAmount | voucherCurrency : currency }}</td>
-                            </tr>
-                            <tr class="_600"><td>Total</td><td class="text-right">{{ plan.netAmount | voucherCurrency : currency }}</td></tr>
-                            </tbody>
-                        </table>
-                        <p class="text-xs text-muted mb-0" *ngIf="extendsCurrentTerm">
-                            You are renewing your current plan: {{ plan.validityInDays }} days are added to your current end date
-                            ({{ license?.validTo | dateFormat }}).
-                        </p>
-                        <p class="text-xs text-muted mb-0" *ngIf="!extendsCurrentTerm">
-                            The new term starts today and runs for {{ plan.validityInDays }} days.
-                            <ng-container *ngIf="license && !license.isExpired && license.status === 'Active'">
-                                It replaces your current {{ license.planName }} term; unused days are not carried over.
-                            </ng-container>
-                        </p>
+                        <div *ngIf="isQuoting" class="text-xs text-muted py-2"><i class="fa fa-circle-o-notch fa-spin mr-1"></i>Calculating price...</div>
+                        <div *ngIf="quoteError" class="alert alert-danger text-sm mb-0 d-flex align-items-center">
+                            <span class="flex">{{ quoteError }}</span>
+                            <button class="btn btn-xs white" (click)="selectPlan(plan)">Retry</button>
+                        </div>
+                        <ng-container *ngIf="quote as q">
+                            <table class="table small-table text-xs mb-2">
+                                <tbody>
+                                <tr><td>{{ q.planName }} &middot; {{ billingLabel(plan) }}</td><td class="text-right">{{ q.rate | voucherCurrency : currency }}</td></tr>
+                                <tr *ngIf="q.discountAmount > 0">
+                                    <td>Discount ({{ q.discountPercent }}%)</td><td class="text-right text-success">- {{ q.discountAmount | voucherCurrency : currency }}</td>
+                                </tr>
+                                <tr *ngIf="q.creditAmount > 0">
+                                    <td>Credit for {{ q.creditDays }} unused day(s) of {{ q.fromPlanName }}</td>
+                                    <td class="text-right text-success">- {{ q.creditAmount | voucherCurrency : currency }}</td>
+                                </tr>
+                                <tr><td>Taxable amount</td><td class="text-right">{{ q.taxableAmount | voucherCurrency : currency }}</td></tr>
+                                <tr *ngIf="q.taxPercent > 0">
+                                    <td>Tax ({{ q.taxPercent }}%)</td><td class="text-right">{{ q.taxAmount | voucherCurrency : currency }}</td>
+                                </tr>
+                                <tr class="_600"><td>Total</td><td class="text-right">{{ q.netAmount | voucherCurrency : currency }}</td></tr>
+                                </tbody>
+                            </table>
+                            <p class="text-xs text-muted mb-0" [ngSwitch]="q.kind">
+                                <ng-container *ngSwitchCase="'Extend'">
+                                    You are renewing your current plan: your paid period now runs to {{ q.termTo | dateFormat }}.
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'Upgrade'">
+                                    You switch to {{ q.planName }} as soon as the payment is recorded. The new term runs
+                                    {{ q.termFrom | dateFormat }} &ndash; {{ q.termTo | dateFormat }}, and the unused days of
+                                    {{ q.fromPlanName }} are credited above.
+                                </ng-container>
+                                <ng-container *ngSwitchDefault>
+                                    The new term runs {{ q.termFrom | dateFormat }} &ndash; {{ q.termTo | dateFormat }}.
+                                </ng-container>
+                            </p>
+                        </ng-container>
                     </div>
                 </div>
 
@@ -114,38 +141,68 @@
 
                         <h6 class="_600">3. Payment</h6>
                         <div class="box p-3">
-                            <label class="text-xs d-block">Payment mode *</label>
-                            <div class="btn-group flex-wrap mb-2" role="radiogroup">
-                                <button *ngFor="let mode of paymentModes" type="button" role="radio"
-                                        class="btn btn-sm" [ngClass]="f['paymentMode'].value === mode.id ? 'theme' : 'white'"
-                                        [attr.aria-checked]="f['paymentMode'].value === mode.id"
-                                        [disabled]="submitting"
-                                        (click)="selectPaymentMode(mode)">{{ mode.name }}</button>
-                            </div>
-                            <div *ngIf="invalid('paymentMode')" class="text-danger text-xs mb-2">Choose how you paid.</div>
-
-                            <div class="form-group" *ngIf="selectedMode as mode">
-                                <label class="text-xs">{{ mode.referenceLabel }} *</label>
-                                <input class="form-control form-control-sm" formControlName="paymentReferenceNumber"
-                                       [class.is-invalid]="invalid('paymentReferenceNumber')">
-                                <small class="text-muted">{{ mode.referenceHint }}</small>
-                                <div class="invalid-feedback">Enter the payment reference (3 to 100 characters).</div>
+                            <div *ngIf="noPaymentMethod" class="alert alert-warning text-sm mb-0">
+                                Online payment is not available for your account yet. Please contact support to renew.
                             </div>
 
-                            <div class="form-group mb-0">
-                                <label class="text-xs">Remark</label>
-                                <input class="form-control form-control-sm" formControlName="remark" [class.is-invalid]="invalid('remark')">
-                                <div class="invalid-feedback">At most 500 characters.</div>
-                            </div>
+                            <!-- Online (default) -->
+                            <ng-container *ngIf="!payByReference && canPayOnline">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-lock text-success mr-3" style="font-size: 1.5rem"></i>
+                                    <div class="text-sm">
+                                        You will pay on {{ payment?.gatewayName }}'s secure page (card, UPI, netbanking and more).
+                                        Your plan is activated as soon as the payment is confirmed.
+                                    </div>
+                                </div>
+                                <button *ngIf="canPayByReference" type="button" class="btn btn-link btn-sm px-0 mt-2" (click)="usePayByReference(true)">
+                                    Already paid by bank transfer? Enter the reference instead
+                                </button>
+                            </ng-container>
+
+                            <!-- Record a payment made elsewhere (only when enabled) -->
+                            <ng-container *ngIf="payByReference">
+                                <label class="text-xs d-block">How did you pay? *</label>
+                                <div class="btn-group flex-wrap mb-2" role="radiogroup">
+                                    <button *ngFor="let mode of paymentModes" type="button" role="radio"
+                                            class="btn btn-sm" [ngClass]="f['paymentMode'].value === mode.id ? 'theme' : 'white'"
+                                            [attr.aria-checked]="f['paymentMode'].value === mode.id"
+                                            [disabled]="submitting"
+                                            (click)="selectPaymentMode(mode)">{{ mode.name }}</button>
+                                </div>
+                                <div *ngIf="invalid('paymentMode')" class="text-danger text-xs mb-2">Choose how you paid.</div>
+
+                                <div class="form-group" *ngIf="selectedMode as mode">
+                                    <label class="text-xs">{{ mode.referenceLabel }} *</label>
+                                    <input class="form-control form-control-sm" formControlName="paymentReferenceNumber"
+                                           [class.is-invalid]="invalid('paymentReferenceNumber')">
+                                    <small class="text-muted">{{ mode.referenceHint }}</small>
+                                    <div class="invalid-feedback">Enter the payment reference (3 to 100 characters).</div>
+                                </div>
+
+                                <div class="form-group mb-0">
+                                    <label class="text-xs">Remark</label>
+                                    <input class="form-control form-control-sm" formControlName="remark" [class.is-invalid]="invalid('remark')">
+                                    <div class="invalid-feedback">At most 500 characters.</div>
+                                </div>
+                                <button *ngIf="canPayOnline" type="button" class="btn btn-link btn-sm px-0 mt-2" (click)="usePayByReference(false)">
+                                    Pay online instead
+                                </button>
+                            </ng-container>
                         </div>
 
                         <div *ngIf="submitError" class="alert alert-danger text-sm">{{ submitError }}</div>
 
-                        <div class="d-flex align-items-center">
-                            <span class="text-xs text-muted flex">Amounts are calculated by the server from the selected plan.</span>
+                        <div class="d-flex align-items-center" *ngIf="!noPaymentMethod">
+                            <span class="text-xs text-muted flex">Amounts are calculated by the server from your current subscription.</span>
                             <button type="submit" class="btn theme" [disabled]="!canSubmit">
                                 <i *ngIf="submitting" class="fa fa-circle-o-notch fa-spin mr-1"></i>
-                                {{ submitting ? 'Processing...' : 'Pay ' + ((selectedPlan?.netAmount ?? 0) | voucherCurrency : currency) }}
+                                <ng-container *ngIf="!submitting && !payByReference">
+                                    <i class="fa fa-lock mr-1"></i>Pay {{ (quote?.netAmount ?? 0) | voucherCurrency : currency }} securely
+                                </ng-container>
+                                <ng-container *ngIf="!submitting && payByReference">
+                                    Record payment of {{ (quote?.netAmount ?? 0) | voucherCurrency : currency }}
+                                </ng-container>
+                                <ng-container *ngIf="submitting">{{ payByReference ? 'Recording...' : 'Opening secure payment...' }}</ng-container>
                             </button>
                         </div>
                     </form>

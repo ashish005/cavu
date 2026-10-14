@@ -50,7 +50,6 @@ export class CoreLayout implements OnInit {
                 }
             }
         });
-        this.setupService.synchBranch();
     }
 
     login() { this.authService.login(); }

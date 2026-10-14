@@ -1,6 +1,6 @@
 import {Component, TemplateRef, ViewChild} from "@angular/core";
 import {Router} from "@angular/router";
-import {SUBSCRIPTION_BILLING_CURRENCY, SubscriptionPurchaseResult} from "../domains/subscription.models";
+import {DEFAULT_BILLING_CURRENCY, SubscriptionPurchaseResult} from "../domains/subscription.models";
 import {PURCHASE_RESULT_STATE_KEY} from "./payment.view";
 import {SharedService} from "@app-global";
 import {openInvoicePopup} from "../components/software-invoice-print.view";
@@ -12,8 +12,6 @@ import {openInvoicePopup} from "../components/software-invoice-print.view";
 export class PaymentSuccessView {
     @ViewChild('pageTitleTemplate', {static: true}) public pageTitleTemplate: TemplateRef<any>;
 
-    readonly currency = SUBSCRIPTION_BILLING_CURRENCY;
-
     /** Only present when arriving from a purchase; a reload or deep link shows the generic message. */
     readonly result: SubscriptionPurchaseResult | null;
 
@@ -21,6 +19,8 @@ export class PaymentSuccessView {
         const state = router.getCurrentNavigation()?.extras.state ?? history.state;
         this.result = state?.[PURCHASE_RESULT_STATE_KEY] ?? null;
     }
+
+    get currency(): string { return this.result?.currencyCode || DEFAULT_BILLING_CURRENCY; }
 
     viewInvoice() {
         if (this.result) {

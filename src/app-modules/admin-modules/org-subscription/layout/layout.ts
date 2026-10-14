@@ -14,7 +14,8 @@ export class SubscriptionLayout {
             isFLatChildren: true, key: 'Subscription',
             children: [
                 {routeTo: ['info'], icon: 'fa fa-id-card-o', key: 'License'},
-                {routeTo: ['payment'], icon: 'fa fa-credit-card', key: 'Plans & Payment'}
+                {routeTo: ['payment'], icon: 'fa fa-credit-card', key: 'Plans & Payment'},
+                {routeTo: ['manage'], icon: 'fa fa-sliders', key: 'Manage subscription'}
             ]
         },
         {

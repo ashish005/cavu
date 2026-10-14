@@ -1,0 +1,197 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex scroll-y bg-light">
+        <loader [isLoading]="isLoading"></loader>
+
+        <div *ngIf="loadError" class="p-3">
+            <div class="alert alert-danger d-flex align-items-center mb-0">
+                <span class="flex">{{ loadError }}</span>
+                <button class="btn btn-sm white" (click)="load(true)">Retry</button>
+            </div>
+        </div>
+
+        <div *ngIf="overview" class="container p-3" style="max-width: 760px">
+            <div *ngIf="!subscription" class="box p-4 text-center text-muted">
+                You do not have a subscription yet.
+                <a [routerLink]="['../payment']">Choose a plan</a> to start one.
+            </div>
+
+            <ng-container *ngIf="subscription as sub">
+                <div class="box p-3 mb-3">
+                    <div class="text-xs text-muted">Current subscription</div>
+                    <div class="_600">{{ sub.planName }} &middot; {{ sub.status }}</div>
+                    <div class="text-xs text-muted">
+                        Paid period {{ sub.currentPeriodStart | dateFormat }} &ndash; {{ sub.currentPeriodEnd | dateFormat }}
+                        <ng-container *ngIf="sub.maxPausesPerYear > 0">&middot; {{ sub.pausesUsedThisYear }} of {{ sub.maxPausesPerYear }} pauses used this year</ng-container>
+                    </div>
+                    <div *ngIf="sub.pendingChange as change" class="text-xs mt-1">
+                        <i class="fa fa-clock-o mr-1"></i>Scheduled: {{ describeChange(change) }} on {{ change.effectiveOn | dateFormat }}
+                    </div>
+                </div>
+
+                <div *ngIf="!availableActions.length" class="alert alert-warning">
+                    No changes are available while the subscription is {{ sub.status | lowercase }}.
+                    <a [routerLink]="['../payment']">Go to plans</a>
+                </div>
+
+                <ng-container *ngIf="availableActions.length">
+                    <div class="btn-group mb-3">
+                        <button *ngFor="let a of availableActions" type="button" class="btn btn-sm"
+                                [ngClass]="a === action ? 'theme' : 'white'" [disabled]="submitting" (click)="setAction(a)">
+                            <ng-container [ngSwitch]="a">
+                                <span *ngSwitchCase="'change'"><i class="fa fa-exchange mr-1"></i>Change plan</span>
+                                <span *ngSwitchCase="'pause'"><i class="fa fa-pause mr-1"></i>Pause</span>
+                                <span *ngSwitchCase="'resume'"><i class="fa fa-play mr-1"></i>Resume</span>
+                                <span *ngSwitchCase="'cancel'"><i class="fa fa-times mr-1"></i>Cancel</span>
+                            </ng-container>
+                        </button>
+                    </div>
+
+                    <form class="box p-3" [formGroup]="form" (ngSubmit)="review()" novalidate>
+                        <ng-container [ngSwitch]="action">
+                            <!-- Change plan -->
+                            <ng-container *ngSwitchCase="'change'">
+                                <p class="text-sm text-muted">
+                                    Moving to a cheaper plan takes effect when your paid period ends, with nothing to pay now.
+                                    Moving to a higher plan is paid now, with credit for the days you have not used.
+                                </p>
+                                <div *ngIf="!targetPlans.length" class="text-sm text-muted">There are no other plans to switch to.</div>
+                                <div class="list mb-2" *ngIf="targetPlans.length">
+                                    <label *ngFor="let plan of targetPlans; trackBy: trackById" class="list-item p-2 mb-0" role="button">
+                                        <input type="radio" class="mr-2" formControlName="planId" [value]="plan.id">
+                                        <span class="list-body">
+                                            <span class="_500">{{ plan.name }}</span>
+                                            <span class="badge ml-1" [ngClass]="plan.action === 'Upgrade' ? 'info' : 'grey'">
+                                                {{ plan.action === 'Upgrade' ? 'Upgrade, pay now' : 'Downgrade at period end' }}
+                                            </span>
+                                        </span>
+                                        <span class="text-right text-sm">{{ plan.netAmount | voucherCurrency : plan.currencyCode }} / {{ termLabel(plan) }}</span>
+                                    </label>
+                                </div>
+                            </ng-container>
+
+                            <!-- Pause -->
+                            <ng-container *ngSwitchCase="'pause'">
+                                <p class="text-sm text-muted">
+                                    While paused your data stays available read-only and nothing is billed.
+                                    The paused days are added to the end of your paid period when you resume
+                                    (at most {{ sub.maxPauseDays }} days per pause).
+                                </p>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label class="text-xs">Pause from</label>
+                                        <input type="date" class="form-control form-control-sm" formControlName="effectiveOn"
+                                               [min]="today" [max]="sub.currentPeriodEnd">
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label class="text-xs">Resume on</label>
+                                        <input type="date" class="form-control form-control-sm" formControlName="resumeOn"
+                                               [min]="form.value.effectiveOn || today" [max]="maxResumeOn">
+                                        <small class="text-muted text-xs">You can resume earlier at any time.</small>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <!-- Resume -->
+                            <ng-container *ngSwitchCase="'resume'">
+                                <p class="text-sm text-muted">
+                                    Resuming makes your data editable again and adds the paused days to your paid period.
+                                </p>
+                                <div class="form-group" style="max-width: 260px">
+                                    <label class="text-xs">Resume on</label>
+                                    <input type="date" class="form-control form-control-sm" formControlName="effectiveOn"
+                                           [min]="today" [max]="maxResumeOn">
+                                </div>
+                            </ng-container>
+
+                            <!-- Cancel -->
+                            <ng-container *ngSwitchCase="'cancel'">
+                                <p class="text-sm text-muted">
+                                    Your subscription stays active until {{ sub.currentPeriodEnd | dateFormat }}, then ends and your data
+                                    becomes read-only. You can withdraw the cancellation any time before then.
+                                </p>
+                            </ng-container>
+                        </ng-container>
+
+                        <div class="form-group">
+                            <label class="text-xs">Reason (optional)</label>
+                            <input class="form-control form-control-sm" formControlName="reason" maxlength="500"
+                                   [class.is-invalid]="form.controls['reason'].invalid && form.controls['reason'].touched">
+                        </div>
+
+                        <div *ngIf="previewError" class="alert alert-danger text-sm">{{ previewError }}</div>
+
+                        <button type="submit" class="btn btn-sm white" [disabled]="isPreviewing || submitting || form.invalid">
+                            <i *ngIf="isPreviewing" class="fa fa-circle-o-notch fa-spin mr-1"></i>Review
+                        </button>
+                    </form>
+
+                    <!-- Preview -->
+                    <div *ngIf="preview as p" class="box p-3">
+                        <ng-container *ngIf="!p.allowed">
+                            <div class="alert alert-danger text-sm mb-2">{{ p.blockedReason }}</div>
+                            <table *ngIf="p.seatsOverLimit.length" class="table small-table text-xs mb-0">
+                                <thead><tr><th>Users</th><th class="text-right">Active</th><th class="text-right">{{ p.targetPlanName }} allows</th></tr></thead>
+                                <tbody>
+                                <tr *ngFor="let s of p.seatsOverLimit">
+                                    <td>{{ s.name }}</td><td class="text-right text-danger">{{ s.used }}</td><td class="text-right">{{ s.limit }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </ng-container>
+
+                        <ng-container *ngIf="p.allowed">
+                            <h6 class="_600 mb-2">Review</h6>
+                            <table class="table small-table text-xs mb-2">
+                                <tbody>
+                                <tr *ngIf="p.targetPlanName"><td class="text-muted">Plan</td><td>{{ p.currentPlanName }} &rarr; {{ p.targetPlanName }}</td></tr>
+                                <tr>
+                                    <td class="text-muted">Takes effect</td>
+                                    <td>{{ p.isImmediate ? 'Immediately' : (p.effectiveOn | dateFormat) }}</td>
+                                </tr>
+                                <tr *ngIf="p.resumeOn && p.type === 'Pause'"><td class="text-muted">Resumes on</td><td>{{ p.resumeOn | dateFormat }}</td></tr>
+                                <tr *ngIf="p.newPeriodEnd && !p.requiresPayment">
+                                    <td class="text-muted">Paid period ends</td>
+                                    <td>{{ p.currentPeriodEnd | dateFormat }} &rarr; {{ p.newPeriodEnd | dateFormat }}</td>
+                                </tr>
+                                <tr *ngIf="p.quote as q">
+                                    <td class="text-muted">To pay now</td>
+                                    <td>
+                                        {{ q.netAmount | voucherCurrency : q.currencyCode }}
+                                        <span *ngIf="q.creditAmount > 0" class="text-success">
+                                            (after {{ q.creditAmount | voucherCurrency : q.currencyCode }} credit for {{ q.creditDays }} unused day(s))
+                                        </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <div *ngIf="p.modulesLost.length" class="alert alert-warning text-sm mb-2">
+                                {{ p.targetPlanName }} does not include: <span class="_600">{{ p.modulesLost.join(', ') }}</span>.
+                                These modules become unavailable when the switch takes effect.
+                            </div>
+                            <div *ngIf="p.replacesChange as r" class="alert alert-info text-sm mb-2">
+                                This replaces your scheduled change "{{ describeChange(r) }}" on {{ r.effectiveOn | dateFormat }}.
+                            </div>
+                            <div *ngIf="submitError" class="alert alert-danger text-sm mb-2">{{ submitError }}</div>
+
+                            <button type="button" class="btn btn-sm" [ngClass]="p.type === 'Cancel' ? 'danger' : 'theme'"
+                                    [disabled]="submitting" (click)="confirm()">
+                                <i *ngIf="submitting" class="fa fa-circle-o-notch fa-spin mr-1"></i>{{ confirmLabel }}
+                            </button>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Manage subscription</h6>
+        <small class="text-muted">{{ overview?.software?.name }}</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a class="btn btn-sm white" [routerLink]="['../info']">Back</a>
+</ng-template>

@@ -103,7 +103,6 @@ export class AppSetupService {
         };
 
         const setup= forkJoin([
-            this.syncUserRolesEndpoint(branchId),
             this.seederOrgBranchAsync(branchId)
         ]);
         setup.pipe(
@@ -126,6 +125,7 @@ export class AppSetupService {
     seederOrgBranchDemo = (orgBranchId) => this.applySeed(orgBranchId, 'demo');
 
     private applySeed = (orgBranchId, moduleMasterType): Observable<any> => {
+        debugger
         const { id} = this.appSetup;
         const reqBody = {
             orgBranchId: orgBranchId,
@@ -133,14 +133,4 @@ export class AppSetupService {
         };
         return this.httpClient.post(`${this.baseSectorAPIUrl}/seed/tenant`, reqBody).pipe();
     };
-
-    public syncUserRolesEndpoint=(orgBranchId)=> {
-        const { id : orgId} = this.appSetup;
-        return this.httpClient.get(this.baseAPIUrl+`/orgSetupLookup/org-roles-to-sync`)
-            .pipe().toPromise()
-            .then((r: { data })=>
-            {
-                return this.httpClient.post(this.baseSectorAPIUrl+`/seed/${orgId}/syncUserRole`, r.data).toPromise();
-            });
-    }
 }

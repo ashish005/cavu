@@ -303,17 +303,20 @@ class OrgLicense {
     licenseTypeName: string;
     remark: string;
     validFrom: string;
+    expiry: string;
     validityInDays: number;
 
     showExpiryWarning: boolean;
+    isValidLicense: boolean;
+    inGracePeriod: boolean;
     licenseTypeId: number;
     softwareId: number;
     licenseMasterType: string;
 
     constructor(model: any = {}){
         const {
-            id, licenseNo, remark, validFrom, validityInDays,
-            showExpiryWarning,
+            id, licenseNo, remark, validFrom, expiry, validityInDays,
+            showExpiryWarning, isValidLicense, inGracePeriod,
             licenseTypeId, softwareId,
             licenseTypeName, licenseMasterType
         } = model;
@@ -321,9 +324,12 @@ class OrgLicense {
         this.licenseNo = licenseNo;
         this.remark = remark;
         this.validFrom = validFrom;
+        this.expiry = expiry;
         this.validityInDays = validityInDays;
 
         this.showExpiryWarning = showExpiryWarning;
+        this.isValidLicense = !!isValidLicense;
+        this.inGracePeriod = !!inGracePeriod;
 
         this.licenseTypeId = licenseTypeId;
         this.softwareId = softwareId;

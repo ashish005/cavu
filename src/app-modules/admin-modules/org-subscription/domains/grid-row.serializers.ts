@@ -1,5 +1,5 @@
 import {CoreResource, CoreSerializer} from "@app-global";
-import {LicenseStatus, SUBSCRIPTION_BILLING_CURRENCY, paymentModeName} from "./subscription.models";
+import {DEFAULT_BILLING_CURRENCY, LicenseStatus, paymentModeName} from "./subscription.models";
 
 /** Grid rows are read-only views of the API payload, so rows are built straight from the JSON. */
 const readOnlySerializer = <T extends CoreResource>(Row: new (json: any) => T): CoreSerializer => ({
@@ -49,18 +49,21 @@ export class SoftwareInvoiceRow extends CoreResource {
     declare description: string | null;
     declare netAmount: number;
     declare paidAmount: number;
+    declare invoiceCurrency: string | null;
     declare paymentMode: string | null;
     declare paymentReferenceNumber: string | null;
 
     constructor(json: any = {}) {
         super();
-        Object.assign(this, json);
+        const {currencyCode, ...rest} = json ?? {};
+        Object.assign(this, rest);
+        this.invoiceCurrency = currencyCode ?? null;
     }
 
     get paymentModeLabel(): string { return paymentModeName(this.paymentMode); }
 
     /** Read by the shared currency cell through `currencyCodeField`. */
-    get currencyCode(): string { return SUBSCRIPTION_BILLING_CURRENCY; }
+    get currencyCode(): string { return this.invoiceCurrency || DEFAULT_BILLING_CURRENCY; }
 }
 
 export const LICENSE_HISTORY_SERIALIZER = readOnlySerializer(LicenseHistoryRow);

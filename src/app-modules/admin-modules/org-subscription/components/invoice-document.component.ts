@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {DateFormat, DateHourMinFormat, VoucherCurrencyPipe} from "@app-global";
-import {SUBSCRIPTION_BILLING_CURRENCY, SoftwareInvoiceDetail, paymentModeName} from "../domains/subscription.models";
+import {DEFAULT_BILLING_CURRENCY, SoftwareInvoiceDetail, paymentModeName} from "../domains/subscription.models";
 
 /**
  * Scoped under `.sub-invoice` and not encapsulated, so the same rules apply when the rendered
@@ -70,6 +70,7 @@ export const INVOICE_STYLES = `
                 <tbody>
                 <tr><td>Subtotal</td><td class="num">{{ inv.grossAmount | voucherCurrency : currency }}</td></tr>
                 <tr *ngIf="inv.discountAmount > 0"><td>Discount</td><td class="num">- {{ inv.discountAmount | voucherCurrency : currency }}</td></tr>
+                <tr *ngIf="inv.creditAmount > 0"><td>Credit for unused time</td><td class="num">- {{ inv.creditAmount | voucherCurrency : currency }}</td></tr>
                 <tr><td>Taxable amount</td><td class="num">{{ inv.taxableAmount | voucherCurrency : currency }}</td></tr>
                 <tr><td>Tax</td><td class="num">{{ inv.taxAmount > 0 ? (inv.taxAmount | voucherCurrency : currency) : '--' }}</td></tr>
                 <tr class="grand"><td>Total</td><td class="num">{{ inv.netAmount | voucherCurrency : currency }}</td></tr>
@@ -99,8 +100,9 @@ export const INVOICE_STYLES = `
 export class InvoiceDocumentComponent {
     @Input() invoice: SoftwareInvoiceDetail | null = null;
 
-    readonly currency = SUBSCRIPTION_BILLING_CURRENCY;
     readonly modeName = paymentModeName;
+
+    get currency(): string { return this.invoice?.currencyCode || DEFAULT_BILLING_CURRENCY; }
 
     constructor(private host: ElementRef<HTMLElement>) {}
 

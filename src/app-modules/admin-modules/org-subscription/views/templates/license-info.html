@@ -10,6 +10,54 @@
         </div>
 
         <ng-container *ngIf="overview">
+            <div class="light lt p-3 b-b" *ngIf="subscription as sub">
+                <div class="d-flex flex-wrap align-items-start">
+                    <div class="flex mb-2">
+                        <h6 class="_600 mb-1">
+                            {{ sub.planName || 'Subscription' }} plan
+                            <span class="badge ml-1" [ngClass]="subscriptionStatusClass">{{ subscriptionStatusText }}</span>
+                        </h6>
+                        <div class="text-xs text-muted">
+                            Paid period {{ sub.currentPeriodStart | dateFormat }} &ndash; {{ sub.currentPeriodEnd | dateFormat }}
+                            <ng-container *ngIf="sub.status === 'Active'">&middot; {{ sub.daysRemaining }} day(s) left</ng-container>
+                            <ng-container *ngIf="sub.status === 'Paused' && sub.pausedOn">&middot; paused since {{ sub.pausedOn | dateFormat }}</ng-container>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <a *ngIf="sub.canChangePlan" class="btn btn-xs white mr-1" [routerLink]="['../manage']" [queryParams]="{action: 'change'}">
+                            <i class="fa fa-exchange mr-1"></i>Change plan
+                        </a>
+                        <a *ngIf="sub.canPause" class="btn btn-xs white mr-1" [routerLink]="['../manage']" [queryParams]="{action: 'pause'}">
+                            <i class="fa fa-pause mr-1"></i>Pause
+                        </a>
+                        <a *ngIf="sub.canResume" class="btn btn-xs theme mr-1" [routerLink]="['../manage']" [queryParams]="{action: 'resume'}">
+                            <i class="fa fa-play mr-1"></i>Resume
+                        </a>
+                        <a *ngIf="sub.canCancel" class="btn btn-xs white text-danger" [routerLink]="['../manage']" [queryParams]="{action: 'cancel'}">
+                            Cancel subscription
+                        </a>
+                    </div>
+                </div>
+
+                <div *ngIf="sub.pendingChange as change" class="alert alert-info text-sm d-flex align-items-center mb-0">
+                    <i class="fa fa-clock-o mr-2"></i>
+                    <span class="flex">
+                        Scheduled: <span class="_600">{{ describeChange(change) }}</span> on {{ change.effectiveOn | dateFormat }}.
+                    </span>
+                    <button *ngIf="change.type !== 'Resume'" class="btn btn-xs white" [disabled]="withdrawing" (click)="withdraw(change)">Withdraw</button>
+                    <a *ngIf="change.type === 'Resume'" class="btn btn-xs white" [routerLink]="['../manage']" [queryParams]="{action: 'resume'}">Change date</a>
+                </div>
+                <div *ngIf="sub.status === 'PastDue'" class="alert alert-warning text-sm mb-0">
+                    Your paid period ended on {{ sub.currentPeriodEnd | dateFormat }}. Renew within the grace period to keep editing your data.
+                </div>
+                <div *ngIf="sub.status === 'Canceled' || sub.status === 'Expired'" class="alert alert-danger text-sm mb-0">
+                    Your subscription has ended and your data is read-only. Choose a plan to start again.
+                </div>
+                <div *ngIf="sub.status === 'Paused'" class="alert alert-info text-sm mb-0">
+                    While paused your data is read-only and your remaining days are kept; they are added back when you resume.
+                </div>
+            </div>
+
             <div class="row no-gutters">
                 <div class="col-md-6 light lt p-3">
                     <h6 class="_600 mb-3">{{ overview.software.name }} license</h6>
@@ -34,7 +82,7 @@
                             </tbody>
                         </table>
 
-                        <div *ngIf="purchaseBlocked" class="alert alert-danger text-sm mb-0">
+                        <div *ngIf="needsSupport" class="alert alert-danger text-sm mb-0">
                             Your license is {{ license.status | lowercase }}. Online renewal is not available; please contact support.
                         </div>
                         <ng-container *ngIf="!purchaseBlocked">
@@ -71,6 +119,40 @@
                 </div>
             </div>
 
+            <div class="light lt p-3" *ngIf="usage as u">
+                <h6 class="_600 mb-3">
+                    Plan usage
+                    <span *ngIf="u.entitlements.access === 'ReadOnly'" class="badge danger ml-1">Read-only until renewed</span>
+                </h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="text-xs text-muted mb-2">Users</div>
+                        <div *ngFor="let seat of u.seatUsage; trackBy: trackByCode" class="mb-2">
+                            <div class="d-flex text-xs">
+                                <span class="flex">{{ seat.name }}</span>
+                                <span class="_600">{{ seat.used }} / {{ seat.limit === null ? 'Unlimited' : seat.limit }}</span>
+                            </div>
+                            <div class="progress my-1" style="height: 6px" *ngIf="seat.limit !== null">
+                                <div class="progress-bar" [ngClass]="seatBarClass(seat)" [style.width.%]="seatPercent(seat)"></div>
+                            </div>
+                            <div *ngIf="seat.limit !== null && seat.used >= seat.limit" class="text-xs text-danger">
+                                Limit reached. Deactivate a user or upgrade the plan to add more.
+                            </div>
+                        </div>
+                        <p *ngIf="!u.seatUsage.length" class="text-xs text-muted mb-0">Your plan has no user limits.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-xs text-muted mb-2">Modules</div>
+                        <span *ngFor="let module of u.entitlements.modules; trackBy: trackByCode"
+                              class="badge mr-1 mb-1" [ngClass]="module.enabled ? 'success' : 'grey'"
+                              [title]="module.enabled ? 'Included in your plan' : 'Not included in your plan'">
+                            <i class="fa" [ngClass]="module.enabled ? 'fa-check' : 'fa-lock'"></i> {{ module.name }}
+                        </span>
+                        <p *ngIf="!u.entitlements.modules.length" class="text-xs text-muted mb-0">All modules are included.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="p-2">
                 <div class="box mb-0">
                     <div class="box-header p-2"><div class="item-title mb-0 _600">Plan comparison</div></div>
@@ -87,25 +169,43 @@
                                         </h6>
                                         <div *ngIf="plan.isRecommended" class="text-xs">Recommended</div>
                                         <h4 class="py-2 mb-0">{{ plan.netAmount | voucherCurrency : currency }}</h4>
-                                        <div class="text-xs">for {{ plan.validityInDays }} days, incl. tax</div>
+                                        <div class="text-xs">per {{ termLabel(plan) }}, incl. tax</div>
                                         <div *ngIf="plan.discountPercent > 0" class="text-xs">
                                             <s>{{ plan.rate | voucherCurrency : currency }}</s> &middot; {{ plan.discountPercent }}% off
                                         </div>
-                                        <a *ngIf="plan.isPurchasable && !purchaseBlocked"
+                                        <a *ngIf="isPayable(plan) && !purchaseBlocked"
                                            class="btn btn-sm btn-block mt-2" [ngClass]="plan.isRecommended ? 'white' : 'theme'"
                                            [routerLink]="['../payment']" [queryParams]="{planId: plan.id}">
-                                            {{ plan.isCurrent ? 'Renew' : 'Choose' }}
+                                            {{ planActionLabel(plan) }}
                                         </a>
-                                        <div *ngIf="!plan.isPurchasable" class="text-xs mt-2">Not available for purchase</div>
+                                        <a *ngIf="plan.action === 'Downgrade'"
+                                           class="btn btn-sm btn-block white mt-2"
+                                           [routerLink]="['../manage']" [queryParams]="{action: 'change', planId: plan.id}">
+                                            {{ planActionLabel(plan) }}
+                                        </a>
+                                        <div *ngIf="plan.action === 'Unavailable'" class="text-xs mt-2">{{ plan.unavailableReason || 'Not available for purchase' }}</div>
                                     </div>
                                 </th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr *ngFor="let feature of overview.features; trackBy: trackById">
+                            <tbody *ngIf="quantityFeatures.length">
+                            <tr><td [attr.colspan]="plans.length + 1" class="_600 text-muted">Users</td></tr>
+                            <tr *ngFor="let feature of quantityFeatures; trackBy: trackById">
                                 <td><span class="pl-2" [title]="feature.description || ''">{{ feature.name }}</span></td>
                                 <td *ngFor="let plan of plans; trackBy: trackById" class="text-center">
-                                    {{ featureValue(feature, plan) ?? '--' }}
+                                    <ng-container *ngIf="cell(feature, plan) as c">
+                                        <span [class.text-muted]="!c.included">{{ c.text }}</span>
+                                    </ng-container>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tbody *ngIf="moduleFeatures.length">
+                            <tr><td [attr.colspan]="plans.length + 1" class="_600 text-muted">Modules</td></tr>
+                            <tr *ngFor="let feature of moduleFeatures; trackBy: trackById">
+                                <td><span class="pl-2" [title]="feature.description || ''">{{ feature.name }}</span></td>
+                                <td *ngFor="let plan of plans; trackBy: trackById" class="text-center">
+                                    <i *ngIf="cell(feature, plan).included; else notIncluded" class="fa fa-check text-success" title="Included"></i>
+                                    <ng-template #notIncluded><i class="fa fa-minus text-muted" title="Not included"></i></ng-template>
                                 </td>
                             </tr>
                             </tbody>
