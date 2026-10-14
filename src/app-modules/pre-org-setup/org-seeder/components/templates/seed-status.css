@@ -1,0 +1,65 @@
+.seed-status {
+    padding: 12px 0;
+}
+
+.seed-stages {
+    display: flex;
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+}
+
+.seed-stages li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* connector line between dots */
+.seed-stages li + li::before {
+    content: '';
+    position: absolute;
+    top: 11px;
+    right: 50%;
+    width: 100%;
+    height: 2px;
+    background: #dee2e6;
+    z-index: 0;
+}
+
+.seed-stages li.done + li::before,
+.seed-stages li.done + li.active::before {
+    background: #28a745;
+}
+
+.seed-stages .dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dee2e6;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 4px;
+}
+
+.seed-stages li.done .dot { background: #28a745; }
+.seed-stages li.active .dot { background: #667eea; }
+.seed-stages li.active .label { color: #333; font-weight: 600; }
+
+.seed-error {
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 120px;
+    overflow-y: auto;
+}

@@ -126,25 +126,10 @@ export class AppSetupService {
     seederOrgBranchDemo = (orgBranchId) => this.applySeed(orgBranchId, 'demo');
 
     private applySeed = (orgBranchId, moduleMasterType): Observable<any> => {
-        const { id, businessMasterType, softwareCode, orgConfig} = this.appSetup;
-        const {
-            countryId, countryCode,
-            timeZone, ofcStartTime, ofcEndTime, fyStartDay, fyStartMonth,
-            currencyCode, cultureCode
-        } = orgConfig;
-
+        const { id} = this.appSetup;
         const reqBody = {
             orgBranchId: orgBranchId,
-            orgUnitId: id,
-            timeZone: timeZone, ofcStartTime, ofcEndTime, fyStartDay: fyStartDay, fyStartMonth: fyStartMonth,
-            countryCode: countryCode,
-            countryId: countryId,
-            currencyCode: currencyCode,
-            cultureCode: cultureCode,
-            module: moduleMasterType,
-            //sectorMasterType: sectorMasterType,
-            businessMasterType: businessMasterType,
-            SoftwareCode: softwareCode
+            orgUnitId: id
         };
         return this.httpClient.post(`${this.baseSectorAPIUrl}/seed/tenant`, reqBody).pipe();
     };

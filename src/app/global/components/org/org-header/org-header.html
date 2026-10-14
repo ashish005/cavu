@@ -119,7 +119,7 @@
             <div class="dropdown d-flex">
                 <a href="#" class="d-flex align-items-center theme text-theme dropdown-toggle" data-toggle="dropdown" data-pjax-state="">Modules</a>
                 <div class="dropdown-menu dropdown-menu-right w w-xxl animate fadeIn" style="width: 500px"
-                     [ngSwitch]="appSetup?.softwareCode">
+                     [ngSwitch]="appSetup?.software?.code">
                     <div *ngSwitchCase="'IMS'">
                         <ng-container *ngTemplateOutlet="educationModuleTemplate"></ng-container>
                     </div>

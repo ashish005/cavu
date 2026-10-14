@@ -1,0 +1,53 @@
+<div class="seed-status" aria-live="polite">
+    <div *ngIf="!status && !error" class="text-muted">
+        <i class="fa fa-circle-o-notch fa-spin"></i> Checking seed status...
+    </div>
+
+    <ng-container *ngIf="status">
+        <ol class="seed-stages" *ngIf="!isFailed && !notRequested">
+            <li *ngFor="let stage of stages; let i = index" [ngClass]="stageClass(i)">
+                <span class="dot">
+                    <i *ngIf="stageClass(i) === 'done'" class="fa fa-check"></i>
+                    <i *ngIf="stageClass(i) === 'active'" class="fa fa-circle-o-notch fa-spin"></i>
+                </span>
+                <span class="label">{{ stage.label }}</span>
+            </li>
+        </ol>
+
+        <div class="seed-status-text">
+            <ng-container [ngSwitch]="status.status">
+                <span *ngSwitchCase="'Pending'">
+                    <ng-container *ngIf="notRequested">Seed data has not been requested for this branch.</ng-container>
+                    <ng-container *ngIf="!notRequested">Waiting for the seed worker to pick up the request...</ng-container>
+                </span>
+                <span *ngSwitchCase="'Queued'">Queued. Seeding starts shortly...</span>
+                <span *ngSwitchCase="'Processing'">Seeding in progress. This can take a few minutes.</span>
+                <span *ngSwitchCase="'Completed'" class="text-success">
+                    <i class="fa fa-check-circle"></i>
+                    Seed data applied<span *ngIf="status.completedAt"> on {{ status.completedAt | date:'medium' }}</span>.
+                </span>
+                <span *ngSwitchCase="'Failed'" class="text-danger">
+                    <i class="fa fa-times-circle"></i> Seeding failed after {{ status.attemptCount }} attempt(s).
+                </span>
+            </ng-container>
+            <small class="text-muted d-block" *ngIf="!isCompleted && !notRequested">
+                Master: {{ status.applyMasterSeed ? 'Yes' : 'No' }} · Demo: {{ status.applyDemoSeed ? 'Yes' : 'No' }}
+                <span *ngIf="status.requestedAt"> · Requested {{ status.requestedAt | date:'short' }}</span>
+            </small>
+        </div>
+
+        <div *ngIf="isFailed" class="alert alert-danger mt-2 mb-0">
+            <div *ngIf="status.lastError" class="seed-error">{{ status.lastError }}</div>
+            <button *ngIf="allowRetry" type="button" class="btn btn-sm btn-danger mt-2"
+                    [disabled]="retrying" (click)="retry.emit()">
+                <i class="fa" [ngClass]="retrying ? 'fa-circle-o-notch fa-spin' : 'fa-refresh'"></i> Retry seeding
+            </button>
+        </div>
+    </ng-container>
+
+    <div *ngIf="error" class="text-warning small mt-1">
+        <i class="fa fa-exclamation-triangle"></i> {{ error }}
+        <span *ngIf="polling"> Retrying...</span>
+        <button *ngIf="!polling" type="button" class="btn btn-link btn-sm p-0" (click)="restart()">Check again</button>
+    </div>
+</div>

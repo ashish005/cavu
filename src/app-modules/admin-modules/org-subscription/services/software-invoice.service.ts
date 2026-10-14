@@ -1,4 +1,4 @@
-import { CoreResourceService } from "@app-global";
+import { OrgResourceService } from "@app-global";
 import {Injectable, Injector} from "@angular/core";
 import {
     OrgSoftwareInvoiceReceipt, OrgSoftwareInvoiceReceiptSerializer
@@ -6,7 +6,7 @@ import {
 import {catchError} from "rxjs";
 
 @Injectable()
-export class OrgSoftwareInvoiceService extends CoreResourceService<OrgSoftwareInvoiceReceipt>{
+export class OrgSoftwareInvoiceService extends OrgResourceService<OrgSoftwareInvoiceReceipt>{
     constructor(public override injector: Injector) { super(injector, 'softwareInvoice', new OrgSoftwareInvoiceReceiptSerializer()); }
 
     getVoucherHtml(invoiceId: number, licenseId: number){

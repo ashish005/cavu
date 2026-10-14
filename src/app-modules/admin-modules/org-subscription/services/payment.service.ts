@@ -16,7 +16,7 @@ export class PaymentService extends CoreEndpointBase {
     }
 
     public getPaymentLookup(){
-        const { businessMasterType, sectorMasterType, softwareId} = this.orgSetup;
+        const { softwareId} = this.orgSetup;
         return this.httpClient
             .get(`${this.baseAPIUrl}/subscription/payment/${softwareId}`, this.requestHeaders)
             .pipe(

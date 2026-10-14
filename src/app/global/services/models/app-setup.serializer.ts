@@ -1,9 +1,11 @@
 class OrgSoftware {
     name: string;
+    code: string;
     description: string;
     constructor(model: any = {}) {
-        const { name, description } = model;
+        const { name, code, description } = model;
         this.name = name;
+        this.code = code;
         this.description = description;
     }
 }
@@ -184,7 +186,6 @@ class Org {
     public countryName: string;
     public countryCode: string;
     public softwareId: number;
-    public softwareCode: string;
 
     public isUnderConstruction: boolean;
     public configId: number;
@@ -200,7 +201,7 @@ class Org {
             profileId, profileUrl, orgAddress, isHeadBranch,
             isUnderConstruction, branches,
             sectorMasterType, businessMasterType,
-            orgConfig, tenantPoint, softwareId, softwareCode, software
+            orgConfig, tenantPoint, softwareId, software
         } = model;
         this.id = id;
         this.name = name;
@@ -210,7 +211,6 @@ class Org {
         this.countryName = countryName;
         this.countryCode = countryCode;
         this.softwareId = softwareId;
-        this.softwareCode = softwareCode;
 
         this.isUnderConstruction = isUnderConstruction;
 
