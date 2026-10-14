@@ -1,0 +1,153 @@
+<div class="padding">
+    <div class="wizard-step-content">
+        <div class="step-header text-center">
+            <ng-container *ngIf="!wizardState.isCompleted; else doneHeader">
+                <i class="fa fa-list-alt fa-4x text-primary"></i>
+                <h3 class="mt-3">Review &amp; Finish</h3>
+                <p class="text-muted">Check the summary below, then launch the application.</p>
+            </ng-container>
+            <ng-template #doneHeader>
+                <div class="success-icon"><i class="fa fa-check-circle fa-5x text-success"></i></div>
+                <h3 class="mt-3">Setup Complete!</h3>
+                <p class="text-muted">Your organization has been configured.</p>
+            </ng-template>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-8 mx-auto">
+                <div class="box">
+                    <div class="box-header"><h4>Setup Summary</h4></div>
+                    <div class="box-body">
+                        <div class="progress-overview mb-4">
+                            <div class="progress">
+                                <div class="progress-bar bg-success"
+                                     [style.width.%]="(stepsDone / summarySteps.length) * 100"
+                                     role="progressbar"
+                                     [attr.aria-valuenow]="stepsDone"
+                                     aria-valuemin="0"
+                                     [attr.aria-valuemax]="summarySteps.length">
+                                    {{ stepsDone }} / {{ summarySteps.length }} steps done
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-summary">
+                            <!-- Org Config -->
+                            <div class="summary-item">
+                                <div class="summary-label"><i class="fa fa-cog"></i> Organization Configuration</div>
+                                <div class="summary-status">
+                                    <span class="badge" [ngClass]="badgeClass('config')">{{ statusOf('config') | titlecase }}</span>
+                                </div>
+                                <div class="summary-details">
+                                    <small class="text-muted">
+                                        Language: {{ orgConfig.languageName || '—' }} |
+                                        Currency: {{ orgConfig.currencyName || '—' }} |
+                                        Time zone: {{ orgConfig.timeZone || '—' }}
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Branch -->
+                            <div class="summary-item">
+                                <div class="summary-label"><i class="fa fa-building"></i> Branch</div>
+                                <div class="summary-status">
+                                    <span class="badge" [ngClass]="badgeClass('branch')">{{ statusOf('branch') | titlecase }}</span>
+                                    <button *ngIf="!wizardState.isCompleted" type="button" class="btn btn-link btn-sm" (click)="edit('branch')">Change</button>
+                                </div>
+                                <div class="summary-details">
+                                    <small class="text-muted">
+                                        {{ branch?.name || '—' }}<span *ngIf="branch?.branchCode"> ({{ branch.branchCode }})</span>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Seed -->
+                            <div class="summary-item">
+                                <div class="summary-label"><i class="fa fa-database"></i> Seed Data</div>
+                                <div class="summary-status">
+                                    <span class="badge" [ngClass]="seedBadgeClass">
+                                        {{ seedSkipped ? 'Skipped' : (seedStatus?.status || 'Checking') }}
+                                    </span>
+                                    <button *ngIf="!wizardState.isCompleted" type="button" class="btn btn-link btn-sm" (click)="edit('seed')">Change</button>
+                                </div>
+                                <div class="summary-details">
+                                    <small class="text-muted">
+                                        Master: {{ seedConfig.applyMasterSeed ? 'Yes' : 'No' }} |
+                                        Demo: {{ seedConfig.applyDemoSeed ? 'Yes' : 'No' }}
+                                        <span *ngIf="seedConfig.queuedAt"> | Queued {{ seedConfig.queuedAt | date:'short' }}</span>
+                                    </small>
+                                    <seed-status *ngIf="!seedSkipped && branch"
+                                                 [branchId]="branch.id"
+                                                 (statusChange)="onSeedStatus($event)"></seed-status>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div *ngIf="statusOf('seed') === 'skipped'" class="alert alert-warning mt-3 mb-0">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            Seed data was skipped. The branch will be marked as initialised without master data.
+                        </div>
+
+                        <div *ngIf="seedFailed && !wizardState.isCompleted" class="alert alert-danger mt-3 mb-0">
+                            <i class="fa fa-times-circle"></i>
+                            Seeding failed.
+                            <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="edit('seed')">Go to Seed Data to retry</button>.
+                        </div>
+
+                        <div *ngIf="!seedReady && !seedFailed && !wizardState.isCompleted" class="alert alert-info mt-3 mb-0">
+                            <i class="fa fa-hourglass-half"></i>
+                            Waiting for seeding to finish before launching. This page updates automatically.
+                        </div>
+
+                        <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0" role="alert">
+                            <i class="fa fa-times-circle"></i> {{ errorMessage }}
+                        </div>
+
+                        <div class="finalize-actions mt-4">
+                            <button *ngIf="!wizardState.isCompleted"
+                                    type="button"
+                                    class="btn btn-primary btn-lg w-100"
+                                    [disabled]="!canFinalize"
+                                    (click)="finalizeSetup()">
+                                <i *ngIf="isFinalizing" class='fa fa-circle-o-notch fa-spin'></i>
+                                {{ isFinalizing ? 'Finalizing...' : 'Finalize & Launch Application' }}
+                            </button>
+                            <div *ngIf="!seedReady && !wizardState.isCompleted" class="text-center mt-2">
+                                <label class="small text-muted mb-0">
+                                    <input type="checkbox" [(ngModel)]="launchAnyway">
+                                    Launch without waiting (the app may be missing master data until seeding completes)
+                                </label>
+                            </div>
+
+                            <div *ngIf="wizardState.isCompleted" class="text-center">
+                                <p class="text-muted" aria-live="polite">Redirecting to the application...</p>
+                                <button type="button" class="btn btn-success btn-lg" (click)="goToApp()">
+                                    <i class="fa fa-rocket"></i> Go to Application
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-8 mx-auto">
+                <div class="alert alert-info mb-0">
+                    <i class="fa fa-info-circle"></i>
+                    Organization settings, branches and roles can be changed later from the administration panel.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Finalize Setup</h6>
+        <small class="float-left">Review and complete organization setup</small>
+    </div>
+</ng-template>
+
+<ng-template #actionTemplate></ng-template>

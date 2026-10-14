@@ -1,118 +1,145 @@
 <div class="padding">
-    <form class="d-flex flex-column flex" [formGroup]="customForm">
-        <div class="no-border">
+    <div class="wizard-step-content">
+        <div class="step-header">
+            <h3>Organization Configuration</h3>
+            <p class="text-muted">Configure your organization's basic settings including language, currency, timezone, and operational parameters.</p>
+        </div>
+
+        <div *ngIf="lookupError || !hasLookups" class="alert alert-warning d-flex justify-content-between align-items-center">
+            <span>
+                <i class="fa fa-exclamation-triangle"></i>
+                {{ lookupError || 'Language and currency lists are empty for this country.' }}
+            </span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="reloadLookups()">
+                <i class="fa fa-refresh"></i> Retry
+            </button>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <i class="fa fa-times-circle"></i> {{ errorMessage }}
+        </div>
+
+        <form class="d-flex flex-column flex" [formGroup]="customForm" (ngSubmit)="onSubmit(customForm)">
+            <div class="box">
+                <div class="box-header"><h4>Locale</h4></div>
+                <div class="box-body py-0">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select-dropdown [items]="orgLookup.languages"
+                                             title="Language *"
+                                             (cb)="updateLanguageId($event)"
+                                             [control]="formLanguageId"></select-dropdown>
+                            <small *ngIf="isInvalid('languageId')" class="text-danger">Language is required.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <select-dropdown [items]="orgLookup.currencies"
+                                             title="Currency *"
+                                             (cb)="updateCurrencyId($event)"
+                                             [control]="formCurrencyId"></select-dropdown>
+                            <small *ngIf="isInvalid('currencyId')" class="text-danger">Currency is required.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <select-dropdown [items]="orgLookup.timeZones"
+                                             title="Time zone *"
+                                             (cb)="updateTimeZone($event)"
+                                             [control]="formTimeZone"></select-dropdown>
+                            <small *ngIf="isInvalid('timeZone')" class="text-danger">Time zone is required.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="md-form-group">
+                                <select id="startWeekDay" class="md-input" formControlName="startWeekDay">
+                                    <option *ngFor="let d of weekDays" [ngValue]="d.id">{{ d.name }}</option>
+                                </select>
+                                <label for="startWeekDay">Week starts on</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select-dropdown [items]="dateFormatList"
+                                             title="Date format"
+                                             (cb)="updateDateFormat($event)"
+                                             [control]="formDateFormat"></select-dropdown>
+                        </div>
+                        <div class="col-md-4">
+                            <select-dropdown [items]="dateSeparatorList"
+                                             title="Separator"
+                                             (cb)="updateDateSeperator($event)"
+                                             [control]="formDateSeperator"></select-dropdown>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="md-form-group">
+                                <div class="md-input text-muted">{{ formatInfo || '—' }}</div>
+                                <label>Preview pattern</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="box">
-                        <div class="box-header"><h4>Configuration</h4></div>
+                        <div class="box-header"><h4>Financial Year</h4></div>
                         <div class="box-body py-0">
                             <div class="row">
-                                <div class="col-12">
-                                    <select-dropdown [items]="orgLookup.languages"
-                                                     title="Language"
-                                                     (cb)="updateLanguageId($event)"
-                                                     [control]="formLanguageId"></select-dropdown>
-                                </div>
-                                <div class="col-12">
-                                    <select-dropdown [items]="orgLookup.currencies"
-                                                     title="Currency"
-                                                     (cb)="updateCurrencyId($event)"
-                                                     [control]="formCurrencyId"></select-dropdown>
-                                </div>
-                                <div class="col-12">
-                                    <select-dropdown [items]="orgLookup?.timeZones"
-                                                     title="Time zone"
-                                                     (cb)="updateTimeZone($event)"
-                                                     [control]="formTimeZone"></select-dropdown>
-                                </div>
                                 <div class="col-6">
-                                    <select-dropdown [items]="dateFormatList"
-                                                     title="Date Format"
-                                                     (cb)="updateDateFormat($event)"
-                                                     [control]="formDateFormat"></select-dropdown>
-                                </div>
-                                <div class="col-6">
-                                    <select-dropdown [items]="dateSeparatorList"
-                                                     title="Separator"
-                                                     (cb)="updateDateSeperator($event)"
-                                                     [control]="formDateSeperator"></select-dropdown>
-                                </div>
-                                <div class="col-12">
                                     <div class="md-form-group">
-                                        <select class="md-input" formControlName="startWeekDay">
-                                            <option *ngFor="let d of weekDays" [value]="d.id">{{d.name}}</option>
+                                        <input id="fyStartDay" class="md-input" type="number" min="1" max="31"
+                                               formControlName="fyStartDay">
+                                        <label for="fyStartDay">Start day</label>
+                                    </div>
+                                    <small *ngIf="isInvalid('fyStartDay')" class="text-danger">Enter a day between 1 and 31.</small>
+                                </div>
+                                <div class="col-6">
+                                    <div class="md-form-group">
+                                        <select id="fyStartMonth" class="md-input" formControlName="fyStartMonth">
+                                            <option *ngFor="let m of months" [ngValue]="m.id">{{ m.name }}</option>
                                         </select>
-                                        <label>Week starts on</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row text-xs">
-                                <div class="col-5">
-                                    <div class="box-header"><h4>Financial Year</h4></div>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend" style="max-width: 55px;">
-                                            <div class="md-form-group pb-0">
-                                                <input class="md-input" type="number"
-                                                       formControlName="fyStartDay">
-                                                <label>Start Day</label>
-                                            </div>
-                                        </div>
-                                        <div class="md-form-group">
-                                            <select class="md-input" formControlName="fyStartMonth"
-                                                    style="width: 65px;">
-                                                <option *ngFor="let m of months" [value]="m.id">{{m.name}}</option>
-                                            </select>
-                                            <label>Start Month</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-7">
-                                    <div class="box-header"><h4>Office Hours</h4></div>
-                                    <div class="row text-xs">
-                                        <div class="col-sm-6">
-                                            <div class="input-group">
-                                                <div class="md-form-group">
-                                                    <input class="md-input" style="width: 100px;" type="time"
-                                                           formControlName="ofcStartTime">
-                                                    <label>Start Time</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="input-group">
-                                                <div class="md-form-group">
-                                                    <input class="md-input" style="width: 100px;" type="time"
-                                                           formControlName="ofcEndTime">
-                                                    <label>End Time</label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <label for="fyStartMonth">Start month</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="no-border">
-            <div class="row">
-                <div class="col-sm-12 text-center">
-                    <button type="button" class="btn btn-sm primary m-2"
-                            [disabled]="!customForm.valid"
-                            (click)="onSubmit(customForm)">
-                        <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
-                        {{ submitted ? 'Submitting...' : 'Update' }}
-                    </button>
+                <div class="col-md-6">
+                    <div class="box">
+                        <div class="box-header"><h4>Office Hours</h4></div>
+                        <div class="box-body py-0">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="md-form-group">
+                                        <input id="ofcStartTime" class="md-input" type="time" formControlName="ofcStartTime">
+                                        <label for="ofcStartTime">Start time</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="md-form-group">
+                                        <input id="ofcEndTime" class="md-input" type="time" formControlName="ofcEndTime">
+                                        <label for="ofcEndTime">End time</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <small *ngIf="customForm.hasError('officeHours')" class="text-danger d-block pb-2">
+                                End time must be after start time.
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" [disabled]="submitted || !hasLookups">
+                    <i *ngIf="submitted" class='fa fa-circle-o-notch fa-spin'></i>
+                    {{ submitted ? 'Saving...' : 'Save & Continue' }}
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 <ng-template #pageTitleTemplate>
-    <!--<div class="no-shadow">
-        <h6 class="mb-0">config </h6>
-        <small class="float-left"></small>
-    </div>-->
+    <div class="no-shadow">
+        <h6 class="mb-0">Organization Configuration</h6>
+        <small class="float-left">Configure organization settings</small>
+    </div>
 </ng-template>
 <ng-template #actionTemplate></ng-template>

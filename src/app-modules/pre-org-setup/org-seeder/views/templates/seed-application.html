@@ -1,0 +1,122 @@
+<div class="padding">
+    <div class="wizard-step-content">
+        <div class="step-header">
+            <h3>Seed Data</h3>
+            <p class="text-muted">
+                Initialise <strong>{{ branch?.name || 'the selected branch' }}</strong> with default configuration and, optionally, sample data.
+            </p>
+        </div>
+
+        <div class="box" *ngIf="branch">
+            <div class="box-header"><h4>Seed Status</h4></div>
+            <div class="box-body py-0">
+                <seed-status [branchId]="branch.id"
+                             [allowRetry]="true"
+                             [retrying]="submitting"
+                             (statusChange)="onStatus($event)"
+                             (retry)="onSubmit()"></seed-status>
+            </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <i class="fa fa-times-circle"></i> {{ errorMessage }}
+        </div>
+
+        <div *ngIf="isSeeded" class="form-actions">
+            <button type="button" class="btn btn-success" (click)="continue()">
+                Continue <i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="box" *ngIf="!isSeeded">
+            <div class="box-header"><h4>Seed Options</h4></div>
+            <div class="box-body">
+                <form [formGroup]="customForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="seed-option-card"
+                                 role="checkbox" tabindex="0"
+                                 [attr.aria-checked]="customForm.value.applyMasterSeed"
+                                 [ngClass]="{'selected': customForm.value.applyMasterSeed}"
+                                 (click)="toggle('applyMasterSeed')"
+                                 (keydown.space)="$event.preventDefault(); toggle('applyMasterSeed')">
+                                <div class="seed-icon"><i class="fa fa-database fa-3x"></i></div>
+                                <div class="seed-content">
+                                    <h5>Master Seed <span class="badge badge-primary">Recommended</span></h5>
+                                    <p class="text-muted">
+                                        Essential master data: account groups, user types, permissions and system configuration.
+                                    </p>
+                                    <div class="seed-checkbox">
+                                        <i class="fa" [ngClass]="customForm.value.applyMasterSeed ? 'fa-check-square-o' : 'fa-square-o'"></i>
+                                        Apply Master Seed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="seed-option-card"
+                                 role="checkbox" tabindex="0"
+                                 [attr.aria-checked]="customForm.value.applyDemoSeed"
+                                 [ngClass]="{'selected': customForm.value.applyDemoSeed}"
+                                 (click)="toggle('applyDemoSeed')"
+                                 (keydown.space)="$event.preventDefault(); toggle('applyDemoSeed')">
+                                <div class="seed-icon"><i class="fa fa-flask fa-3x"></i></div>
+                                <div class="seed-content">
+                                    <h5>Demo Seed</h5>
+                                    <p class="text-muted">
+                                        Sample users, transactions and records for testing and training.
+                                    </p>
+                                    <div class="seed-checkbox">
+                                        <i class="fa" [ngClass]="customForm.value.applyDemoSeed ? 'fa-check-square-o' : 'fa-square-o'"></i>
+                                        Apply Demo Seed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="demoWithoutMaster" class="alert alert-warning mt-3">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        Demo data builds on master data. Only apply demo seed alone if master seed has already been applied to this branch.
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fa fa-info-circle"></i>
+                        Seeding is queued and processed in the background; you can continue setup while it runs.
+                        Avoid demo seed for production organizations.
+                    </div>
+
+                    <div class="form-actions">
+                        <!-- Skipping after queueing would let Finalize mark the seed complete before the worker runs it. -->
+                        <button type="button" class="btn btn-secondary" *ngIf="canSkip" (click)="skipStep()">
+                            Skip
+                        </button>
+                        <button type="submit" class="btn btn-primary" *ngIf="!inProgress" [disabled]="!canQueue">
+                            <i *ngIf="submitting" class='fa fa-circle-o-notch fa-spin'></i>
+                            {{ submitting ? 'Queuing...' : 'Queue Seed' }}
+                        </button>
+                        <button type="button" class="btn btn-success" *ngIf="stepDone" (click)="continue()">
+                            Continue <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <small *ngIf="inProgress" class="text-muted d-block text-center mt-2">
+                        Seeding runs in the background. You can continue while it finishes.
+                    </small>
+                    <small *ngIf="!hasSelection && !inProgress" class="text-muted d-block text-right mt-2">
+                        Select at least one option, or skip this step.
+                    </small>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Seed Data</h6>
+        <small class="float-left">Initialise organization data</small>
+    </div>
+</ng-template>
+
+<ng-template #actionTemplate></ng-template>

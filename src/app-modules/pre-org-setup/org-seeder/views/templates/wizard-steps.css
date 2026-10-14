@@ -1,0 +1,333 @@
+/* Wizard Step Content Styles */
+.wizard-step-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.step-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.step-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.step-header p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Branch Setup Styles */
+.branch-item {
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.branch-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.branch-item.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.branch-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.branch-details {
+    display: flex;
+    gap: 15px;
+}
+
+.branch-details small {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Seed Application Styles */
+.seed-option-card {
+    padding: 25px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    height: 100%;
+}
+
+.seed-option-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.seed-option-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.seed-icon {
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.seed-option-card.selected .seed-icon {
+    color: #667eea;
+}
+
+.seed-content h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.seed-content p {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.seed-checkbox {
+    margin-top: 15px;
+}
+
+/* Sync User Roles Styles */
+.sync-option-card {
+    padding: 30px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.sync-icon {
+    margin-bottom: 20px;
+    color: #667eea;
+}
+
+.sync-content h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.sync-content p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.sync-checkbox {
+    margin-top: 15px;
+}
+
+.roles-list h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.role-card {
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.role-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.role-type {
+    margin-top: 8px;
+}
+
+/* Finalize Setup Styles */
+.success-icon {
+    margin-bottom: 20px;
+}
+
+.success-icon i {
+    color: #28a745;
+}
+
+.progress-overview {
+    margin-bottom: 30px;
+}
+
+.progress-overview .progress {
+    height: 25px;
+    background: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress-overview .progress-bar {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 25px;
+}
+
+.step-summary h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.summary-item {
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.summary-label {
+    flex: 1;
+    min-width: 200px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-label i {
+    color: #667eea;
+}
+
+.summary-status {
+    flex-shrink: 0;
+}
+
+.summary-details {
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.summary-details small {
+    color: #666;
+    font-size: 12px;
+}
+
+.finalize-actions {
+    text-align: center;
+}
+
+.finalize-actions .btn {
+    min-width: 200px;
+}
+
+/* Progress Bars */
+.seeding-progress,
+.sync-progress {
+    margin-top: 20px;
+}
+
+.seeding-progress h5,
+.sync-progress h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.seeding-progress .progress,
+.sync-progress .progress {
+    height: 30px;
+    background: #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.seeding-progress .progress-bar,
+.sync-progress .progress-bar {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 30px;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.form-actions .btn {
+    min-width: 150px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wizard-step-content {
+        padding: 15px;
+    }
+    
+    .step-header h3 {
+        font-size: 20px;
+    }
+    
+    .summary-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .summary-status {
+        width: 100%;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Keyboard focus for the clickable cards */
+.branch-item:focus-visible,
+.seed-option-card:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}

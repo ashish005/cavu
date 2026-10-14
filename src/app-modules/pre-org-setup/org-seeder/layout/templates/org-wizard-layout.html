@@ -1,0 +1,81 @@
+<div class="org-wizard-container">
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+        <div class="wizard-progress">
+            <div class="progress">
+                <div class="progress-bar"
+                     [style.width.%]="progressPercentage"
+                     role="progressbar"
+                     aria-label="Setup progress"
+                     [attr.aria-valuenow]="progressPercentage"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+
+        <!-- Step Navigation -->
+        <ol class="wizard-steps" aria-label="Setup steps">
+            <li *ngFor="let step of steps; let i = index; trackBy: trackByKey"
+                class="wizard-step-item"
+                [ngClass]="getStepClass(step)"
+                [attr.aria-current]="step.key === wizardState.currentStep ? 'step' : null"
+                [attr.aria-disabled]="getStepClass(step) === 'disabled' ? true : null"
+                [attr.tabindex]="getStepClass(step) === 'disabled' ? -1 : 0"
+                (click)="navigateToStep(step.key)"
+                (keydown.enter)="navigateToStep(step.key)"
+                (keydown.space)="$event.preventDefault(); navigateToStep(step.key)">
+                <div class="step-number">
+                    <i *ngIf="wizardState.status[step.key] === 'completed'" class="fa fa-check" aria-hidden="true"></i>
+                    <i *ngIf="wizardState.status[step.key] === 'skipped'" class="fa fa-forward" aria-hidden="true"></i>
+                    <span *ngIf="wizardState.status[step.key] === 'pending'">{{ i + 1 }}</span>
+                </div>
+                <div class="step-content">
+                    <div class="step-title">
+                        {{ step.title }}
+                        <small *ngIf="step.optional" class="text-muted">(optional)</small>
+                    </div>
+                    <div class="step-description">{{ step.description }}</div>
+                </div>
+                <div class="step-icon">
+                    <i class="fa {{ step.icon }}" aria-hidden="true"></i>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <!-- Wizard Content -->
+    <div class="wizard-content">
+        <router-outlet></router-outlet>
+    </div>
+
+    <!-- Wizard Footer Navigation -->
+    <div class="wizard-footer" *ngIf="!wizardState.isCompleted">
+        <div class="footer-actions">
+            <button type="button"
+                    class="btn btn-secondary"
+                    [disabled]="!canGoPrevious()"
+                    (click)="goPrevious()">
+                <i class="fa fa-arrow-left"></i> Previous
+            </button>
+
+            <span class="text-muted">Step {{ currentIndex + 1 }} of {{ steps.length }}</span>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    [disabled]="!canGoNext()"
+                    (click)="goNext()">
+                Next <i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Organization Setup Wizard</h6>
+        <small class="float-left">Step {{ currentIndex + 1 }} of {{ steps.length }}</small>
+    </div>
+</ng-template>
+
+<ng-template #actionTemplate></ng-template>

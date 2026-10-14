@@ -1,0 +1,81 @@
+<div class="padding">
+    <div class="wizard-step-content">
+        <div class="step-header">
+            <h3>Branch</h3>
+            <p class="text-muted">Choose the branch to initialise. Seed data and user roles are applied to this branch.</p>
+        </div>
+
+        <div *ngIf="branches.length === 0" class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>No branch found for this organization.</strong>
+            A head branch is created during registration; please contact support before continuing.
+        </div>
+
+        <div class="row" *ngIf="branches.length > 0">
+            <div class="col-md-5">
+                <div class="box">
+                    <div class="box-header"><h4>Branches ({{ branches.length }})</h4></div>
+                    <div class="box-body" role="radiogroup" aria-label="Branches">
+                        <div *ngFor="let branch of branches; trackBy: trackById"
+                             class="branch-item"
+                             role="radio"
+                             tabindex="0"
+                             [attr.aria-checked]="branch.id === selectedBranchId"
+                             [ngClass]="{'active': branch.id === selectedBranchId}"
+                             (click)="select(branch)"
+                             (keydown.enter)="select(branch)"
+                             (keydown.space)="$event.preventDefault(); select(branch)">
+                            <div class="branch-name">
+                                <i class="fa" [ngClass]="branch.id === selectedBranchId ? 'fa-dot-circle-o' : 'fa-circle-o'"></i>
+                                {{ branch.name }}
+                                <span *ngIf="branch.isHeadBranch" class="badge badge-primary">Head</span>
+                            </div>
+                            <div class="branch-details">
+                                <small>{{ branch.branchCode || '—' }}</small>
+                                <small>{{ branch.contactNo1 || '' }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7" *ngIf="selectedBranch as b">
+                <div class="box">
+                    <div class="box-header"><h4>{{ b.name }}</h4></div>
+                    <div class="box-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Branch code</dt><dd class="col-sm-8">{{ b.branchCode || '—' }}</dd>
+                            <dt class="col-sm-4">Address</dt><dd class="col-sm-8">{{ b.address || '—' }}</dd>
+                            <dt class="col-sm-4">Contact</dt><dd class="col-sm-8">{{ b.contactNo1 || '—' }}<span *ngIf="b.contactNo2">, {{ b.contactNo2 }}</span></dd>
+                            <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ b.emailId1 || '—' }}<span *ngIf="b.emailId2">, {{ b.emailId2 }}</span></dd>
+                            <dt class="col-sm-4">Tax ID</dt><dd class="col-sm-8">{{ b.taxId || '—' }}</dd>
+                            <dt class="col-sm-4">Head branch</dt><dd class="col-sm-8">{{ b.isHeadBranch ? 'Yes' : 'No' }}</dd>
+                        </dl>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="fa fa-info-circle"></i>
+                            Branch details can be edited from the administration panel once setup is complete.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button"
+                    class="btn btn-primary"
+                    [disabled]="!selectedBranch"
+                    (click)="onContinue()">
+                Continue with {{ selectedBranch?.name || 'branch' }} <i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">Branch</h6>
+        <small class="float-left">Choose the branch to initialise</small>
+    </div>
+</ng-template>
+
+<ng-template #actionTemplate></ng-template>
