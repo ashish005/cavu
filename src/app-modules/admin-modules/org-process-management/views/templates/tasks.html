@@ -1,0 +1,62 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-3">
+            <div class="btn-group btn-group-sm mr-3 mb-2">
+                <button class="btn" [ngClass]="scope === 'Mine' ? 'theme' : 'white'" (click)="setScope('Mine')">Assigned to me</button>
+                <button class="btn" [ngClass]="scope === 'Queue' ? 'theme' : 'white'" (click)="setScope('Queue')">My team queues</button>
+                <button class="btn" [ngClass]="scope === 'All' ? 'theme' : 'white'" (click)="setScope('All')">All</button>
+            </div>
+            <input class="form-control form-control-sm mr-3 mb-2" style="max-width: 240px" placeholder="Search tasks" [(ngModel)]="search" (ngModelChange)="reload()">
+            <label class="text-sm mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="showClosed" (ngModelChange)="reload()">Show closed</label>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div *ngIf="!loading && !groups.length && !error" class="box p-4 text-center text-muted">
+            <i class="fa fa-check-circle text-success" style="font-size: 2rem"></i>
+            <p class="mt-2 mb-0" [ngSwitch]="scope">
+                <span *ngSwitchCase="'Queue'">No tasks waiting in your teams' queues.</span>
+                <span *ngSwitchDefault>Nothing to do. New tasks from processes and schedules show up here.</span>
+            </p>
+        </div>
+
+        <div *ngFor="let group of groups; trackBy: trackByKey" class="mb-3">
+            <div class="text-xs text-u-c _600 mb-1" [class.text-danger]="group.key === 'overdue'">{{ group.label }} ({{ group.tasks.length }})</div>
+            <div class="box mb-0">
+                <div class="list">
+                    <div *ngFor="let t of group.tasks; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="open(t)"
+                         [style.opacity]="isClosed(t) ? 0.6 : 1">
+                        <span class="badge mr-2" [ngClass]="priorityClass[t.priority]" [title]="t.priority + ' priority'">&nbsp;</span>
+                        <div class="flex" style="min-width: 0">
+                            <div class="_500 text-ellipsis" [style.text-decoration]="t.status === 'Done' ? 'line-through' : null">{{ t.name }}</div>
+                            <div class="text-xs text-muted text-ellipsis">
+                                <span *ngIf="t.processCode">{{ t.processName }} &middot; {{ t.stageName }} &middot; </span>
+                                <span *ngIf="t.fromSchedule">Scheduled &middot; </span>
+                                <span *ngIf="scope !== 'Mine'">{{ t.assignee?.name || (t.assigneeRoleName + ' queue') }} &middot; </span>
+                                <span [class.text-danger]="t.isOverdue">{{ t.dueAt ? ('Due ' + relative(t.dueAt)) : 'No due date' }}</span>
+                            </div>
+                        </div>
+                        <span class="badge mr-2" [ngClass]="statusClass[t.status]">{{ statusLabel[t.status] }}</span>
+                        <ng-container *ngIf="!isClosed(t)">
+                            <button *ngIf="!t.assignee && t.assigneeRoleId" class="btn btn-xs theme" [disabled]="busyId === t.id" (click)="take(t, $event)">Take</button>
+                            <ng-container *ngIf="t.assignee">
+                                <button *ngIf="t.status === 'Open'" class="btn btn-xs white mr-1" [disabled]="busyId === t.id" (click)="quick(t, 'InProgress', $event)">Start</button>
+                                <button class="btn btn-xs white" [disabled]="busyId === t.id" (click)="quick(t, 'Done', $event)" title="Mark done"><i class="fa fa-check"></i></button>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<process-task-panel *ngIf="panelTaskId !== undefined && lookups" [taskId]="panelTaskId" [lookups]="lookups" (closed)="onPanelClosed($event)"></process-task-panel>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">My tasks</h6><small class="text-muted">{{ total }} task(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm theme" (click)="panelTaskId = null"><i class="fa fa-plus mr-1"></i>New task</button>
+</ng-template>

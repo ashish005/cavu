@@ -1,0 +1,48 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-3">
+            <button class="btn btn-sm white mr-1" (click)="shift(-1)"><i class="fa fa-chevron-left"></i></button>
+            <button class="btn btn-sm white mr-1" (click)="today()">Today</button>
+            <button class="btn btn-sm white mr-3" (click)="shift(1)"><i class="fa fa-chevron-right"></i></button>
+            <h6 class="mb-0 mr-3 _600">{{ title }}</h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn" [ngClass]="scope === 'Mine' ? 'theme' : 'white'" (click)="setScope('Mine')">Mine</button>
+                <button class="btn" [ngClass]="scope === 'All' ? 'theme' : 'white'" (click)="setScope('All')">Everything I can see</button>
+            </div>
+            <span class="flex"></span>
+            <small class="text-muted">{{ lookups?.orgTimeZone }}</small>
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div class="box mb-0" style="overflow-x: auto">
+            <table class="table table-bordered mb-0" style="table-layout: fixed; min-width: 700px">
+                <thead><tr><th *ngFor="let w of weekdayLabels" class="text-xs text-center p-1">{{ w }}</th></tr></thead>
+                <tbody>
+                <tr *ngFor="let week of weeks">
+                    <td *ngFor="let d of week; trackBy: trackByDate" class="p-1 align-top" style="height: 104px"
+                        [style.background]="d.isToday ? 'rgba(59,130,246,.07)' : null" [style.opacity]="d.inMonth ? 1 : 0.5">
+                        <div class="text-xs" [class._600]="d.isToday">{{ d.day }}</div>
+                        <div *ngFor="let t of d.tasks.slice(0, 3)" role="button" class="text-xs text-ellipsis rounded px-1 mb-1"
+                             (click)="panelTaskId = t.id" [title]="t.name"
+                             [style.background]="isClosed(t.status) ? '#f1f5f9' : (t.isOverdue ? '#fee2e2' : '#e0ecff')"
+                             [style.text-decoration]="t.status === 'Done' ? 'line-through' : null">
+                            {{ t.name }}
+                        </div>
+                        <div *ngIf="d.tasks.length > 3" class="text-xs text-muted">+{{ d.tasks.length - 3 }} more</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<process-task-panel *ngIf="panelTaskId !== undefined && lookups" [taskId]="panelTaskId" [lookups]="lookups" (closed)="onPanelClosed($event)"></process-task-panel>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Calendar</h6><small class="text-muted">Tasks by due date</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm theme" (click)="panelTaskId = null"><i class="fa fa-plus mr-1"></i>New task</button>
+</ng-template>

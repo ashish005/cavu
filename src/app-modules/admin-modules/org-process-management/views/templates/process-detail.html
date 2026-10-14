@@ -1,0 +1,137 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading || acting"></loader>
+    <div class="p-3" *ngIf="detail as d">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <!-- Header -->
+        <div class="d-flex flex-wrap align-items-start mb-3">
+            <div class="flex mb-2">
+                <h5 class="mb-1">{{ d.process.name }} <span class="badge ml-1" [ngClass]="statusClass[d.process.status]">{{ statusLabel[d.process.status] }}</span></h5>
+                <div class="text-xs text-muted">
+                    {{ d.process.code }} &middot; {{ d.process.workflowName }} &middot; owner {{ d.process.owner?.name || '—' }}
+                    &middot; started {{ d.process.startedAt | zoned : tz }}
+                    <ng-container *ngIf="d.completedAt"> &middot; closed {{ d.completedAt | zoned : tz }}</ng-container>
+                </div>
+                <div class="text-sm mt-1" *ngIf="d.description" style="white-space: pre-wrap">{{ d.description }}</div>
+            </div>
+            <div class="mb-2">
+                <button *ngIf="d.canApprove" class="btn btn-sm theme mr-1" (click)="ask('approve')"><i class="fa fa-check mr-1"></i>Approve</button>
+                <ng-container *ngIf="d.canManage">
+                    <button *ngIf="d.process.status === 'Active'" class="btn btn-sm white mr-1" (click)="ask('move')">Move stage</button>
+                    <button *ngIf="d.process.status === 'Active'" class="btn btn-sm white mr-1" (click)="ask('hold')">Hold</button>
+                    <button *ngIf="d.process.status === 'OnHold'" class="btn btn-sm theme mr-1" (click)="ask('resume')">Resume</button>
+                    <button class="btn btn-sm white text-danger" (click)="ask('cancel')">Cancel</button>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- Stage stepper -->
+        <div class="box p-3 mb-3">
+            <div class="d-flex flex-wrap">
+                <div *ngFor="let s of d.stages; let i = index; trackBy: trackById" class="d-flex align-items-center mr-2 mb-2">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle mr-1 text-xs _600"
+                          style="width: 24px; height: 24px"
+                          [style.background]="s.state === 'upcoming' ? '#e5e7eb' : (s.color || '#3b82f6')"
+                          [style.color]="s.state === 'upcoming' ? '#6b7280' : '#fff'">
+                        <i *ngIf="s.state === 'done'" class="fa fa-check"></i><ng-container *ngIf="s.state !== 'done'">{{ i + 1 }}</ng-container>
+                    </span>
+                    <span class="text-sm" [class._600]="s.state === 'current'" [class.text-muted]="s.state === 'upcoming'">{{ s.name }}</span>
+                    <i *ngIf="s.advanceMode === 'Approval'" class="fa fa-gavel text-muted ml-1" title="Needs approval"></i>
+                    <span *ngIf="i < d.stages.length - 1" class="text-muted mx-2">&rsaquo;</span>
+                </div>
+            </div>
+            <div class="text-sm mt-1" *ngIf="d.process.status === 'Active'">
+                <span *ngIf="d.process.awaitingApproval" class="text-warning">
+                    All required tasks are done. Waiting for approval to move on{{ d.canApprove ? ' — you can approve it.' : '.' }}
+                </span>
+                <span *ngIf="d.process.stageDueAt && !d.process.awaitingApproval" [class.text-danger]="d.process.isOverdue">
+                    Stage due {{ d.process.stageDueAt | zoned : tz }} ({{ relative(d.process.stageDueAt) }})
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Tasks -->
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-1">
+                    <h6 class="_600 flex mb-0">Tasks</h6>
+                    <button *ngIf="d.canManage" class="btn btn-xs white" (click)="panelTaskId = null"><i class="fa fa-plus mr-1"></i>Add task</button>
+                </div>
+                <div *ngFor="let g of tasksByStage" class="mb-2">
+                    <div class="text-xs text-muted text-u-c mb-1">{{ g.stage }}</div>
+                    <div class="box mb-0"><div class="list">
+                        <div *ngFor="let t of g.tasks; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="panelTaskId = t.id"
+                             [style.opacity]="isClosed(t.status) ? 0.6 : 1">
+                            <span class="badge mr-2" [ngClass]="priorityClass[t.priority]">&nbsp;</span>
+                            <div class="flex" style="min-width: 0">
+                                <div class="text-ellipsis" [style.text-decoration]="t.status === 'Done' ? 'line-through' : null">
+                                    {{ t.name }} <span *ngIf="!t.isRequired" class="text-xs text-muted">(optional)</span>
+                                </div>
+                                <div class="text-xs text-muted">
+                                    {{ t.assignee?.name || (t.assigneeRoleName ? t.assigneeRoleName + ' queue' : 'Unassigned') }}
+                                    <ng-container *ngIf="t.dueAt"> &middot; <span [class.text-danger]="t.isOverdue">due {{ relative(t.dueAt) }}</span></ng-container>
+                                </div>
+                            </div>
+                            <span class="badge" [ngClass]="taskStatusClass[t.status]">{{ taskStatusLabel[t.status] }}</span>
+                        </div>
+                    </div></div>
+                </div>
+                <p *ngIf="!d.tasks.length" class="text-muted text-sm">No tasks.</p>
+            </div>
+
+            <!-- History -->
+            <div class="col-lg-4">
+                <h6 class="_600">History</h6>
+                <div class="box p-2">
+                    <div *ngFor="let h of d.history" class="mb-2 text-sm">
+                        <div class="_500">{{ h.stageName }} <span *ngIf="h.slaBreached" class="badge danger ml-1">Over SLA</span></div>
+                        <div class="text-xs text-muted">
+                            {{ h.enteredAt | zoned : tz }}
+                            <ng-container *ngIf="h.exitedAt"> → {{ h.exitedAt | zoned : tz }} &middot; {{ h.exitReason }}{{ h.exitedBy ? ' by ' + h.exitedBy.name : '' }}</ng-container>
+                            <ng-container *ngIf="!h.exitedAt"> &middot; current</ng-container>
+                        </div>
+                        <div class="text-xs" *ngIf="h.remark">“{{ h.remark }}”</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="p-3" *ngIf="!detail && error"><div class="alert alert-danger">{{ error }}</div><a routerLink="../">Back to processes</a></div>
+</div>
+
+<!-- Confirm action -->
+<div class="modal d-block" *ngIf="confirm && detail" style="background: rgba(0,0,0,.35)" (click)="confirm = null">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <form class="modal-content" (ngSubmit)="submitConfirm()">
+            <div class="modal-header"><h6 class="modal-title _600">{{ confirm.title }}</h6><button type="button" class="close" (click)="confirm = null">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group" *ngIf="confirm.action === 'move'">
+                    <label class="text-xs">Move to *</label>
+                    <select class="form-control form-control-sm" name="stage" [(ngModel)]="confirm.stageId" required>
+                        <option value="">Choose a stage</option>
+                        <option *ngFor="let s of detail.stages" [value]="s.id" [disabled]="s.state === 'current'">{{ s.name }}</option>
+                    </select>
+                    <small class="text-muted">Open tasks of the current stage are cancelled; the new stage's tasks are created.</small>
+                </div>
+                <p *ngIf="confirm.action === 'cancel'" class="text-sm">All open tasks of this process are cancelled. This cannot be undone.</p>
+                <div class="form-group mb-0">
+                    <label class="text-xs">Note</label>
+                    <textarea class="form-control form-control-sm" rows="2" name="remark" [(ngModel)]="confirm.remark" maxlength="1000"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm white" (click)="confirm = null">Back</button>
+                <button type="submit" class="btn btn-sm" [ngClass]="confirm.action === 'cancel' ? 'danger' : 'theme'" [disabled]="acting">{{ confirm.title }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<process-task-panel *ngIf="panelTaskId !== undefined && lookups" [taskId]="panelTaskId" [processId]="panelTaskId === null ? id : null" [lookups]="lookups" (closed)="onPanelClosed($event)"></process-task-panel>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">{{ detail?.process?.code || 'Process' }}</h6><small class="text-muted">{{ detail?.process?.workflowName }}</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a class="btn btn-sm white" routerLink="../">All processes</a>
+</ng-template>

@@ -1,0 +1,41 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <input class="form-control form-control-sm mb-3" style="max-width: 260px" placeholder="Search schedules" [(ngModel)]="search" (keyup.enter)="load()">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div *ngIf="!loading && !rows.length" class="box p-4 text-center text-muted">
+            No schedules yet. Schedules create a task or start a process on a repeating pattern, e.g. every Monday at 09:00.
+        </div>
+
+        <div class="box" *ngIf="rows.length">
+            <div class="list">
+                <a *ngFor="let s of rows; trackBy: trackById" class="list-item p-2 d-flex align-items-center" [routerLink]="lookups?.isAdmin ? [s.id] : null">
+                    <i class="fa mr-3 text-muted" [ngClass]="s.kind === 'StartProcess' ? 'fa-random' : 'fa-check-square-o'"></i>
+                    <div class="flex" style="min-width: 0">
+                        <div class="_500 text-ellipsis">{{ s.name }}</div>
+                        <div class="text-xs text-muted text-ellipsis">
+                            {{ s.kind === 'StartProcess' ? 'Starts ' + (s.workflowName || 'a process') : 'Creates a task' }}
+                            <ng-container *ngIf="s.assignee"> for {{ s.assignee.name }}</ng-container> &middot; {{ s.summary }}
+                        </div>
+                    </div>
+                    <div class="text-right ml-2" style="min-width: 190px">
+                        <span class="badge" [ngClass]="statusClass[s.status]">{{ s.status }}</span>
+                        <span *ngIf="s.failedRuns" class="badge danger ml-1" title="Failed runs">{{ s.failedRuns }} failed</span>
+                        <div class="text-xs text-muted" *ngIf="s.status === 'Active'">Next {{ s.nextDueAt | zoned : s.timeZoneId }} ({{ relative(s.nextDueAt) }})</div>
+                    </div>
+                    <button *ngIf="lookups?.isAdmin && (s.status === 'Active' || s.status === 'Paused')" class="btn btn-xs white ml-2" [disabled]="busyId === s.id" (click)="toggle(s, $event)">
+                        {{ s.status === 'Active' ? 'Pause' : 'Resume' }}
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Schedules</h6><small class="text-muted">Recurring tasks and processes</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a *ngIf="lookups?.isAdmin" class="btn btn-sm theme" routerLink="new"><i class="fa fa-plus mr-1"></i>New schedule</a>
+</ng-template>

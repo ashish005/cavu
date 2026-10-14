@@ -1,0 +1,31 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-3" *ngFor="let w of rows; trackBy: trackById">
+                <a class="box p-3 d-block h-100" [routerLink]="lookups?.isAdmin ? [w.id] : null" [style.opacity]="w.isActive ? 1 : 0.6">
+                    <div class="d-flex">
+                        <h6 class="_600 flex mb-1">{{ w.name }}</h6>
+                        <span *ngIf="!w.isActive" class="badge grey">Inactive</span>
+                    </div>
+                    <div class="text-xs text-muted mb-2">{{ w.code }}</div>
+                    <p class="text-sm text-muted mb-2" *ngIf="w.description">{{ w.description }}</p>
+                    <div class="text-xs">
+                        {{ w.stageCount }} stage(s) &middot; {{ w.taskCount }} task template(s) &middot;
+                        <span [class._600]="w.activeProcesses > 0">{{ w.activeProcesses }} running</span>
+                    </div>
+                    <button *ngIf="lookups?.isAdmin && !w.activeProcesses" class="btn btn-xs white text-danger mt-2" (click)="remove(w, $event)">Delete</button>
+                </a>
+            </div>
+        </div>
+        <div *ngIf="!loading && !rows.length" class="box p-4 text-center text-muted">No workflows yet.</div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Workflows</h6><small class="text-muted">Templates for processes</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a *ngIf="lookups?.isAdmin" class="btn btn-sm theme" routerLink="new"><i class="fa fa-plus mr-1"></i>New workflow</a>
+</ng-template>

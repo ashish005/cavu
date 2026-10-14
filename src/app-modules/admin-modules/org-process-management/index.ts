@@ -1,1 +1,1 @@
-export {ProcessManageModule} from "./manage";
+export {ProcessManageModule} from "./process.module";

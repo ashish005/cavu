@@ -1,0 +1,212 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="container p-3" style="max-width: 1100px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="row">
+            <div class="col-lg-7">
+                <!-- What -->
+                <div class="box p-3 mb-3">
+                    <h6 class="_600">What should happen</h6>
+                    <div class="form-group">
+                        <label class="text-xs">Schedule name *</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="def.name" (ngModelChange)="changed()" maxlength="250" placeholder="e.g. Weekly stock count">
+                    </div>
+                    <div class="btn-group btn-group-sm mb-3">
+                        <button type="button" class="btn" [ngClass]="def.kind === 'CreateTask' ? 'theme' : 'white'" (click)="def.kind = 'CreateTask'">Create a task</button>
+                        <button type="button" class="btn" [ngClass]="def.kind === 'StartProcess' ? 'theme' : 'white'" (click)="def.kind = 'StartProcess'">Start a process</button>
+                    </div>
+                    <div class="form-group" *ngIf="def.kind === 'StartProcess'">
+                        <label class="text-xs">Workflow *</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="def.workflowId">
+                            <option [ngValue]="null">Choose a workflow</option>
+                            <option *ngFor="let w of lookups?.workflows" [ngValue]="w.id">{{ w.name }}</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 form-group">
+                            <label class="text-xs">{{ def.kind === 'StartProcess' ? 'Process name' : 'Task name' }}</label>
+                            <input class="form-control form-control-sm" [(ngModel)]="def.taskName" maxlength="250" [placeholder]="def.name || 'Same as the schedule'">
+                        </div>
+                        <div class="col-md-4 form-group" *ngIf="def.kind === 'CreateTask'">
+                            <label class="text-xs">Priority</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="def.taskPriority">
+                                <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="text-xs">{{ def.kind === 'StartProcess' ? 'Process owner' : 'Assign to' }}</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="def.assigneeId">
+                                <option [ngValue]="null">{{ def.kind === 'StartProcess' ? 'Workflow default' : 'A team (choose below)' }}</option>
+                                <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group" *ngIf="!def.assigneeId && def.kind === 'CreateTask'">
+                            <label class="text-xs">Team (role queue)</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="def.assigneeRoleId">
+                                <option [ngValue]="null">Choose a role</option>
+                                <option *ngFor="let r of lookups?.roles" [ngValue]="r.id">{{ r.name }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group" *ngIf="def.kind === 'CreateTask'">
+                            <label class="text-xs">Due after each run (hours)</label>
+                            <input type="number" min="1" class="form-control form-control-sm" [ngModel]="def.dueAfterMinutes ? def.dueAfterMinutes / 60 : null"
+                                   (ngModelChange)="def.dueAfterMinutes = $event ? $event * 60 : null" placeholder="No due date">
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label class="text-xs">Instructions</label>
+                        <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="def.taskDescription" maxlength="4000"></textarea>
+                    </div>
+                </div>
+
+                <!-- When -->
+                <div class="box p-3 mb-3">
+                    <h6 class="_600">When</h6>
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label class="text-xs">Starts on</label>
+                            <input type="date" class="form-control form-control-sm" [(ngModel)]="def.startDate" (ngModelChange)="changed()">
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label class="text-xs">At</label>
+                            <input type="time" class="form-control form-control-sm" [(ngModel)]="def.startTime" (ngModelChange)="changed()">
+                        </div>
+                        <div class="col-md-5 form-group">
+                            <label class="text-xs">Timezone</label>
+                            <select *ngIf="timeZones.length" class="form-control form-control-sm" [(ngModel)]="def.timeZoneId" (ngModelChange)="changed()">
+                                <option *ngFor="let z of timeZones" [value]="z">{{ z }}{{ z === lookups?.orgTimeZone ? ' (organisation)' : '' }}</option>
+                            </select>
+                            <input *ngIf="!timeZones.length" class="form-control form-control-sm" [(ngModel)]="def.timeZoneId" (ngModelChange)="changed()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-xs">Repeat</label>
+                        <select class="form-control form-control-sm" [ngModel]="r.type" (ngModelChange)="setRepeat($event)">
+                            <option *ngFor="let o of repeatOptions" [value]="o.value">{{ o.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" *ngIf="intervalUnit">
+                        <label class="text-xs">Every</label>
+                        <div class="input-group input-group-sm" style="max-width: 200px">
+                            <input type="number" min="1" class="form-control" [(ngModel)]="r.interval" (ngModelChange)="changed()">
+                            <div class="input-group-append"><span class="input-group-text">{{ intervalUnit }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="r.type === 'Weekly' || (r.type === 'Monthly' && monthlyMode === 'weekday')">
+                        <label class="text-xs d-block">On</label>
+                        <div class="btn-group btn-group-sm flex-wrap">
+                            <button type="button" *ngFor="let d of weekdays" class="btn" [ngClass]="r.weekDays.includes(d.value) ? 'theme' : 'white'" (click)="toggle(r.weekDays, d.value)">{{ d.label }}</button>
+                        </div>
+                    </div>
+
+                    <ng-container *ngIf="r.type === 'Monthly'">
+                        <div class="btn-group btn-group-sm mb-2">
+                            <button type="button" class="btn" [ngClass]="monthlyMode === 'days' ? 'theme' : 'white'" (click)="setMonthlyMode('days')">On dates</button>
+                            <button type="button" class="btn" [ngClass]="monthlyMode === 'weekday' ? 'theme' : 'white'" (click)="setMonthlyMode('weekday')">On a weekday</button>
+                        </div>
+                        <div class="form-group" *ngIf="monthlyMode === 'weekday'">
+                            <label class="text-xs d-block">Which week</label>
+                            <div class="btn-group btn-group-sm flex-wrap">
+                                <button type="button" *ngFor="let n of weekNumbers" class="btn" [ngClass]="r.weekNumbers.includes(n.value) ? 'theme' : 'white'" (click)="toggle(r.weekNumbers, n.value)">{{ n.label }}</button>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <div class="form-group" *ngIf="r.type === 'Yearly'">
+                        <label class="text-xs d-block">In</label>
+                        <div class="btn-group btn-group-sm flex-wrap">
+                            <button type="button" *ngFor="let m of months" class="btn" [ngClass]="r.months.includes(m.value) ? 'theme' : 'white'" (click)="toggle(r.months, m.value)">{{ m.label }}</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="r.type === 'Yearly' || (r.type === 'Monthly' && monthlyMode === 'days')">
+                        <label class="text-xs d-block">On day(s)</label>
+                        <div class="d-flex flex-wrap">
+                            <button type="button" *ngFor="let d of monthDayOptions" class="btn btn-xs mr-1 mb-1" style="min-width: 32px"
+                                    [ngClass]="r.monthDays.includes(d.value) ? 'theme' : 'white'" (click)="toggle(r.monthDays, d.value)">{{ d.label }}</button>
+                        </div>
+                        <small class="text-muted">Days a month does not have (e.g. 31) run on its last day.</small>
+                    </div>
+
+                    <div class="form-group" *ngIf="r.type === 'Cron'">
+                        <label class="text-xs">Cron expression</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="r.cronExpression" (ngModelChange)="changed()" placeholder="minute hour day month weekday">
+                        <small class="text-muted">Example: <code>0 9 * * 1-5</code> = 09:00 on weekdays, in the timezone above.</small>
+                    </div>
+
+                    <div class="d-flex flex-wrap" *ngIf="r.type !== 'Once'">
+                        <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="r.skipWeekends" (ngModelChange)="changed()">Skip weekends</label>
+                        <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="r.skipHolidays" (ngModelChange)="changed()">Skip holidays</label>
+                    </div>
+
+                    <div class="form-group mb-0" *ngIf="r.type !== 'Once'" style="max-width: 220px">
+                        <label class="text-xs">Ends on (optional)</label>
+                        <input type="date" class="form-control form-control-sm" [(ngModel)]="def.endDate" (ngModelChange)="changed()">
+                    </div>
+                </div>
+
+                <!-- Reminders -->
+                <div class="box p-3 mb-3">
+                    <h6 class="_600">Reminders</h6>
+                    <p class="text-xs text-muted">Tasks also remind their assignee before they are due and when they become overdue.</p>
+                    <div *ngFor="let rem of def.reminders; let i = index; trackBy: trackByIndex" class="d-flex align-items-center mb-2">
+                        <select class="form-control form-control-sm mr-2" style="max-width: 230px" [(ngModel)]="rem.triggerType">
+                            <option value="BeforeOccurrence">Before each run</option>
+                            <option value="AfterOccurrence">After each run</option>
+                            <option value="OnFailure">When a run fails</option>
+                        </select>
+                        <div class="input-group input-group-sm mr-2" style="max-width: 160px" *ngIf="rem.triggerType !== 'OnFailure'">
+                            <input type="number" min="0" class="form-control" [(ngModel)]="rem.offsetMinutes">
+                            <div class="input-group-append"><span class="input-group-text">min</span></div>
+                        </div>
+                        <button class="btn btn-xs white text-danger" (click)="removeReminder(i)"><i class="fa fa-times"></i></button>
+                    </div>
+                    <button class="btn btn-xs white" [disabled]="def.reminders.length >= 5" (click)="addReminder()"><i class="fa fa-plus mr-1"></i>Add reminder</button>
+                </div>
+            </div>
+
+            <!-- Preview and history -->
+            <div class="col-lg-5">
+                <div class="box p-3 mb-3">
+                    <h6 class="_600 mb-1">Next runs</h6>
+                    <div class="text-xs text-muted mb-2">{{ previewSummary }}</div>
+                    <div *ngIf="previewError" class="alert alert-warning text-sm mb-0">{{ previewError }}</div>
+                    <ol class="text-sm pl-3 mb-0" *ngIf="!previewError">
+                        <li *ngFor="let run of previewRuns">{{ run | zoned : def.timeZoneId }}</li>
+                    </ol>
+                    <p *ngIf="!previewError && !previewRuns.length" class="text-sm text-muted mb-0">No upcoming runs with these settings.</p>
+                </div>
+
+                <div class="box p-3" *ngIf="id">
+                    <h6 class="_600">Recent runs</h6>
+                    <p *ngIf="!runs.length" class="text-sm text-muted mb-0">No runs yet.</p>
+                    <div *ngFor="let run of runs" class="d-flex align-items-start text-sm mb-1">
+                        <span class="badge mr-2" [ngClass]="runStatusClass[run.status]">{{ run.status }}</span>
+                        <div class="flex">
+                            {{ run.scheduledAt | zoned : def.timeZoneId }}
+                            <a *ngIf="run.processId" [routerLink]="['/admin', 'process', 'processes', run.processId]" class="ml-1">{{ run.processCode }}</a>
+                            <span *ngIf="run.taskCode" class="text-muted ml-1">{{ run.taskCode }}</span>
+                            <div *ngIf="run.error" class="text-xs text-danger">{{ run.error }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow">
+        <h6 class="mb-0">{{ id ? def.name : 'New schedule' }}</h6>
+        <small class="text-muted" *ngIf="detail">{{ detail.schedule.status }}</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button *ngIf="id" class="btn btn-sm white text-danger mr-1" (click)="remove()">Delete</button>
+    <a class="btn btn-sm white mr-1" routerLink="/admin/process/schedules">Back</a>
+    <button class="btn btn-sm white mr-1" [disabled]="saving" (click)="save(false)">Save as draft</button>
+    <button class="btn btn-sm theme" [disabled]="saving" (click)="save(true)">Save and activate</button>
+</ng-template>

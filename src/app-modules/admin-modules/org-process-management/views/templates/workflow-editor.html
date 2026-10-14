@@ -1,0 +1,111 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="container p-3" style="max-width: 980px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div class="box p-3 mb-3">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label class="text-xs">Name *</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="workflow.name" (ngModelChange)="nameChanged()" maxlength="200" placeholder="e.g. Vendor onboarding">
+                </div>
+                <div class="col-md-3 form-group">
+                    <label class="text-xs">Code *</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="workflow.code" maxlength="60">
+                </div>
+                <div class="col-md-3 form-group">
+                    <label class="text-xs">Default owner</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="workflow.defaultOwnerId">
+                        <option [ngValue]="null">Whoever starts it</option>
+                        <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-9 form-group mb-0">
+                    <label class="text-xs">Description</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="workflow.description" maxlength="2000">
+                </div>
+                <div class="col-md-3 form-group mb-0 d-flex align-items-end">
+                    <label class="text-sm mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="workflow.isActive">Active</label>
+                </div>
+            </div>
+        </div>
+
+        <div *ngFor="let stage of workflow.stages; let i = index; let last = last; trackBy: trackByIndex" class="box mb-3" [style.border-left]="'4px solid ' + (stage.color || '#3b82f6')">
+            <div class="p-3">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="text-xs text-muted mr-2">Stage {{ i + 1 }}</span>
+                    <input class="form-control form-control-sm _600 flex" [(ngModel)]="stage.name" maxlength="150" placeholder="Stage name">
+                    <div class="ml-2 d-flex">
+                        <span *ngFor="let c of colors" role="button" class="rounded-circle mr-1" style="width: 16px; height: 16px; display: inline-block"
+                              [style.background]="c" [style.outline]="stage.color === c ? '2px solid #111' : null" (click)="stage.color = c"></span>
+                    </div>
+                    <button class="btn btn-xs white ml-2" [disabled]="i === 0" (click)="moveStage(i, -1)" title="Move up"><i class="fa fa-arrow-up"></i></button>
+                    <button class="btn btn-xs white ml-1" [disabled]="last" (click)="moveStage(i, 1)" title="Move down"><i class="fa fa-arrow-down"></i></button>
+                    <button class="btn btn-xs white text-danger ml-1" [disabled]="workflow.stages.length === 1" (click)="removeStage(i)" title="Remove stage"><i class="fa fa-trash"></i></button>
+                </div>
+
+                <div class="row text-sm">
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">When its required tasks are done</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="stage.advanceMode">
+                            <option value="Automatic">Move on automatically</option>
+                            <option value="Approval">Wait for approval</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group" *ngIf="stage.advanceMode === 'Approval'">
+                        <label class="text-xs">Approved by</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="stage.approverRoleId">
+                            <option [ngValue]="null">Process owner</option>
+                            <option *ngFor="let r of lookups?.roles" [ngValue]="r.id">{{ r.name }} (or owner)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Time limit (hours)</label>
+                        <input type="number" min="1" class="form-control form-control-sm" [(ngModel)]="stage.slaHours" placeholder="No limit">
+                    </div>
+                </div>
+
+                <div class="text-xs text-muted mb-1">Tasks created when a process enters this stage</div>
+                <div *ngFor="let task of stage.tasks; let t = index; trackBy: trackByIndex" class="d-flex flex-wrap align-items-center mb-2 p-2 light lt rounded">
+                    <input class="form-control form-control-sm mr-2 mb-1" style="flex: 2 1 220px" [(ngModel)]="task.name" maxlength="250" placeholder="Task">
+                    <select class="form-control form-control-sm mr-2 mb-1" style="flex: 0 1 110px" [(ngModel)]="task.priority" title="Priority">
+                        <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+                    </select>
+                    <select class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 150px" [(ngModel)]="task.assigneeType" title="Assigned to">
+                        <option value="ProcessOwner">Process owner</option>
+                        <option value="User">A person</option>
+                        <option value="Role">A team (role queue)</option>
+                    </select>
+                    <select *ngIf="task.assigneeType === 'User'" class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 150px" [(ngModel)]="task.assigneeUserId">
+                        <option [ngValue]="null">Choose…</option>
+                        <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option>
+                    </select>
+                    <select *ngIf="task.assigneeType === 'Role'" class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 150px" [(ngModel)]="task.assigneeRoleId">
+                        <option [ngValue]="null">Choose…</option>
+                        <option *ngFor="let r of lookups?.roles" [ngValue]="r.id">{{ r.name }}</option>
+                    </select>
+                    <div class="input-group input-group-sm mr-2 mb-1" style="flex: 0 1 130px" title="Due after (hours)">
+                        <input type="number" min="1" class="form-control" [(ngModel)]="task.dueAfterHours" placeholder="Due in">
+                        <div class="input-group-append"><span class="input-group-text">h</span></div>
+                    </div>
+                    <label class="text-xs mr-2 mb-1" title="Required tasks must be closed before the stage completes">
+                        <input type="checkbox" class="mr-1" [(ngModel)]="task.isRequired">Required
+                    </label>
+                    <button class="btn btn-xs white text-danger mb-1" (click)="removeTask(stage, t)" title="Remove task"><i class="fa fa-times"></i></button>
+                </div>
+                <button class="btn btn-xs white" (click)="addTask(stage)"><i class="fa fa-plus mr-1"></i>Add task</button>
+            </div>
+        </div>
+
+        <button class="btn btn-sm white mb-3" (click)="addStage()"><i class="fa fa-plus mr-1"></i>Add stage</button>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">{{ isNew ? 'New workflow' : workflow.name }}</h6><small class="text-muted">{{ workflow.stages.length }} stage(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <span *ngIf="saved" class="text-success text-sm mr-2"><i class="fa fa-check mr-1"></i>Saved</span>
+    <a class="btn btn-sm white mr-1" routerLink="/admin/process/workflows">Back</a>
+    <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save workflow</button>
+</ng-template>

@@ -1,0 +1,104 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-3">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 160px" [(ngModel)]="status" (ngModelChange)="reload()">
+                <option value="">All statuses</option>
+                <option value="Active">Active</option>
+                <option value="OnHold">On hold</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="workflowId" (ngModelChange)="reload()">
+                <option value="">All workflows</option>
+                <option *ngFor="let w of lookups?.workflows" [value]="w.id">{{ w.name }}</option>
+            </select>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" placeholder="Search name or code" [(ngModel)]="search" (ngModelChange)="reload()">
+            <label class="text-sm mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="mine" (ngModelChange)="reload()">Only mine</label>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div *ngIf="!loading && !rows.length && !error" class="box p-4 text-center text-muted">
+            No processes here yet. <a href (click)="$event.preventDefault(); openStart()">Start one</a> from a workflow.
+        </div>
+
+        <div class="box mb-2" *ngIf="rows.length">
+            <div class="list">
+                <a *ngFor="let p of rows; trackBy: trackById" class="list-item p-2 d-flex align-items-center" [routerLink]="[p.id]">
+                    <div class="flex" style="min-width: 0">
+                        <div class="_500 text-ellipsis">{{ p.name }} <span class="text-xs text-muted">{{ p.code }}</span></div>
+                        <div class="text-xs text-muted text-ellipsis">
+                            {{ p.workflowName }} &middot; {{ p.owner?.name || 'No owner' }} &middot; started {{ relative(p.startedAt) }}
+                        </div>
+                        <div class="progress my-1" style="height: 5px; max-width: 320px">
+                            <div class="progress-bar" [style.width.%]="progress(p)" [style.background]="p.stageColor || null"></div>
+                        </div>
+                    </div>
+                    <div class="text-right ml-2" style="min-width: 170px">
+                        <div class="text-sm" *ngIf="p.status === 'Active' || p.status === 'OnHold'">
+                            <span class="badge mr-1" [style.background]="p.stageColor" style="color: #fff">{{ p.stageNumber }}/{{ p.stageCount }}</span>{{ p.stageName }}
+                        </div>
+                        <span *ngIf="p.awaitingApproval" class="badge warn">Awaiting approval</span>
+                        <span *ngIf="p.isOverdue" class="badge danger ml-1">Stage overdue</span>
+                        <span *ngIf="p.status !== 'Active'" class="badge" [ngClass]="statusClass[p.status]">{{ statusLabel[p.status] }}</span>
+                        <div class="text-xs text-muted">{{ p.openTasks }} open &middot; {{ p.doneTasks }} done</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center text-sm" *ngIf="total > pageSize">
+            <span class="flex text-muted">{{ skip + 1 }}–{{ skip + rows.length }} of {{ total }}</span>
+            <button class="btn btn-xs white mr-1" [disabled]="skip === 0" (click)="page(-1)">Previous</button>
+            <button class="btn btn-xs white" [disabled]="skip + pageSize >= total" (click)="page(1)">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Start process -->
+<div class="modal d-block" *ngIf="starting" style="background: rgba(0,0,0,.35)" (click)="starting = false">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <form class="modal-content" (ngSubmit)="start()">
+            <div class="modal-header"><h6 class="modal-title _600">Start a process</h6><button type="button" class="close" (click)="starting = false">&times;</button></div>
+            <div class="modal-body">
+                <div *ngIf="!lookups?.workflows?.length" class="alert alert-info text-sm">
+                    There are no workflows yet. <a routerLink="../workflows/new">Create one</a> first.
+                </div>
+                <div class="form-group">
+                    <label class="text-xs">Workflow *</label>
+                    <select class="form-control form-control-sm" name="wf" [(ngModel)]="startForm.workflowId" required>
+                        <option *ngFor="let w of lookups?.workflows" [value]="w.id">{{ w.name }} ({{ w.stageCount }} stages)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="text-xs">Name</label>
+                    <input class="form-control form-control-sm" name="name" [(ngModel)]="startForm.name" maxlength="250" placeholder="e.g. Onboard Priya Sharma">
+                </div>
+                <div class="form-group">
+                    <label class="text-xs">Owner</label>
+                    <select class="form-control form-control-sm" name="owner" [(ngModel)]="startForm.ownerId">
+                        <option *ngFor="let u of lookups?.users" [value]="u.id">{{ u.name }}</option>
+                    </select>
+                    <small class="text-muted">Receives approvals and owner-assigned tasks.</small>
+                </div>
+                <div class="form-group mb-0">
+                    <label class="text-xs">Notes</label>
+                    <textarea class="form-control form-control-sm" rows="2" name="desc" [(ngModel)]="startForm.description" maxlength="4000"></textarea>
+                </div>
+                <div *ngIf="startError" class="alert alert-danger text-sm mt-2 mb-0">{{ startError }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm white" (click)="starting = false">Cancel</button>
+                <button type="submit" class="btn btn-sm theme" [disabled]="startBusy || !startForm.workflowId">Start</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Processes</h6><small class="text-muted">{{ total }} process(es)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm theme" (click)="openStart()"><i class="fa fa-play mr-1"></i>Start process</button>
+</ng-template>
