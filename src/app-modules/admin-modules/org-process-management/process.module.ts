@@ -15,6 +15,9 @@ import {ScheduleEditorView} from "./views/schedule-editor.view";
 import {CalendarView} from "./views/calendar.view";
 import {TaskPanelComponent} from "./components/task-panel.component";
 import {ZonedPipe} from "./components/zoned.pipe";
+import {ConditionBuilderComponent} from "./components/condition-builder.component";
+import {TriggersView} from "./views/triggers.view";
+import {EventsView} from "./views/events.view";
 
 /** Processes, tasks, workflows and schedules. See README.md. */
 const routes: Routes = [
@@ -32,6 +35,8 @@ const routes: Routes = [
             {path: 'schedules', component: SchedulesView, data: {title: 'Schedules', key: 'schedules', header: 'Schedules'}},
             {path: 'schedules/new', component: ScheduleEditorView, data: {title: 'New schedule', key: 'schedule', header: 'Schedule'}},
             {path: 'schedules/:id', component: ScheduleEditorView, data: {title: 'Schedule', key: 'schedule', header: 'Schedule'}},
+            {path: 'triggers', component: TriggersView, data: {title: 'Triggers', key: 'triggers', header: 'Triggers'}},
+            {path: 'events', component: EventsView, data: {title: 'Event log', key: 'events', header: 'Event log'}},
             {path: '**', redirectTo: 'tasks'}
         ]
     }
@@ -42,7 +47,7 @@ const routes: Routes = [
     providers: [ProcessApiService],
     declarations: [
         ProcessLayout, TasksView, ProcessesView, ProcessDetailView, WorkflowsView, WorkflowEditorView,
-        SchedulesView, ScheduleEditorView, CalendarView, TaskPanelComponent, ZonedPipe
+        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TaskPanelComponent, ConditionBuilderComponent, ZonedPipe
     ]
 })
 export class ProcessManageModule {}

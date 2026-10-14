@@ -15,6 +15,7 @@
             </select>
             <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" placeholder="Search name or code" [(ngModel)]="search" (ngModelChange)="reload()">
             <label class="text-sm mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="mine" (ngModelChange)="reload()">Only mine</label>
+            <span *ngIf="entity" class="badge info ml-2 mb-2">{{ entity.type }} {{ entity.id }} <a role="button" class="ml-1" (click)="clearEntity()" title="Show all">&times;</a></span>
         </div>
 
         <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
@@ -30,6 +31,8 @@
                         <div class="_500 text-ellipsis">{{ p.name }} <span class="text-xs text-muted">{{ p.code }}</span></div>
                         <div class="text-xs text-muted text-ellipsis">
                             {{ p.workflowName }} &middot; {{ p.owner?.name || 'No owner' }} &middot; started {{ relative(p.startedAt) }}
+                            <span *ngIf="p.entity"> &middot; <i class="fa fa-link"></i> {{ entityLabel(p.entity) }}</span>
+                            <span *ngIf="p.triggerName" [title]="'Started by trigger ' + p.triggerName"> &middot; <i class="fa fa-bolt"></i></span>
                         </div>
                         <div class="progress my-1" style="height: 5px; max-width: 320px">
                             <div class="progress-bar" [style.width.%]="progress(p)" [style.background]="p.stageColor || null"></div>

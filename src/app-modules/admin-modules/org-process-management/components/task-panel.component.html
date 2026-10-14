@@ -27,6 +27,7 @@
                             <td><a [routerLink]="['/admin', 'process', 'processes', d.task.processId]" (click)="close()">{{ d.task.processCode }} {{ d.task.processName }}</a>
                                 <span class="text-muted"> &middot; {{ d.task.stageName }}</span>
                                 <span *ngIf="!d.task.isRequired" class="text-xs text-muted"> (optional)</span></td></tr>
+                        <tr *ngIf="d.task.entity"><td class="text-muted">About</td><td><i class="fa fa-link mr-1"></i>{{ entityLabel(d.task.entity) }}</td></tr>
                         <tr *ngIf="d.task.fromSchedule"><td class="text-muted">Source</td><td>Created by a schedule</td></tr>
                         <tr *ngIf="d.description"><td class="text-muted">Details</td><td style="white-space: pre-wrap">{{ d.description }}</td></tr>
                         <tr *ngIf="d.remark"><td class="text-muted">Note</td><td style="white-space: pre-wrap">{{ d.remark }}</td></tr>

@@ -94,8 +94,40 @@
                     <button class="btn btn-xs white text-danger mb-1" (click)="removeTask(stage, t)" title="Remove task"><i class="fa fa-times"></i></button>
                 </div>
                 <button class="btn btn-xs white" (click)="addTask(stage)"><i class="fa fa-plus mr-1"></i>Add task</button>
+
+                <div class="text-xs text-muted mt-3 mb-1">
+                    Switch automatically
+                    <i class="fa fa-question-circle ml-1" title="Move the process without waiting for its tasks: when an event about the process's record arrives (e.g. the purchase order is approved), or after some time in this stage. Open tasks of this stage are cancelled."></i>
+                </div>
+                <div *ngFor="let rule of stage.rules; let r = index; trackBy: trackByIndex" class="p-2 mb-2 rounded" style="border: 1px dashed #c7d2fe">
+                    <div class="d-flex flex-wrap align-items-center text-sm">
+                        <ng-container *ngIf="rule.kind === 'OnEvent'">
+                            <span class="mr-1 mb-1">When the record's</span>
+                            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 160px" [(ngModel)]="rule.eventName" [attr.list]="'wf-events'"
+                                   placeholder="event, e.g. approved" maxlength="60">
+                            <span class="mr-1 mb-1">event arrives,</span>
+                        </ng-container>
+                        <ng-container *ngIf="rule.kind === 'AfterHours'">
+                            <span class="mr-1 mb-1">After</span>
+                            <input type="number" min="1" class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 90px" [(ngModel)]="rule.afterHours">
+                            <span class="mr-1 mb-1">hours in this stage,</span>
+                        </ng-container>
+                        <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 200px" [(ngModel)]="rule.target" (ngModelChange)="targetChanged(rule, i)">
+                            <option *ngFor="let t of targets" [value]="t" [disabled]="t === 'Stage' && workflow.stages.length < 2">{{ targetLabel[t] }}</option>
+                        </select>
+                        <select *ngIf="rule.target === 'Stage'" class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 160px" [(ngModel)]="rule.targetStageIndex">
+                            <option *ngFor="let o of otherStages(i)" [ngValue]="o.i">{{ o.name }}</option>
+                        </select>
+                        <span class="flex"></span>
+                        <button class="btn btn-xs white text-danger mb-1" (click)="removeRule(stage, r)" title="Remove rule"><i class="fa fa-times"></i></button>
+                    </div>
+                    <process-condition-builder *ngIf="rule.kind === 'OnEvent' && rule.condition" [condition]="rule.condition" emptyText="Any data"></process-condition-builder>
+                </div>
+                <button class="btn btn-xs white mr-1" (click)="addRule(stage, 'OnEvent')"><i class="fa fa-bolt mr-1"></i>When an event arrives</button>
+                <button class="btn btn-xs white" (click)="addRule(stage, 'AfterHours')"><i class="fa fa-hourglass-half mr-1"></i>After a time</button>
             </div>
         </div>
+        <datalist id="wf-events"><option *ngFor="let e of eventNames" [value]="e"></option></datalist>
 
         <button class="btn btn-sm white mb-3" (click)="addStage()"><i class="fa fa-plus mr-1"></i>Add stage</button>
     </div>

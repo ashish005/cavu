@@ -1,43 +1,37 @@
 import {Injectable, Injector} from "@angular/core";
 import {SharedService} from "./shared.service";
-import {ACTION_ENUM, ASIDE_CLASS, ASIDE_SIZE} from "./popup-module/app-popup.enum";
-import {OrgWorkflowAPIResolver} from "./services";
-
-import {SchedulerInfoComponent} from "./modules/task-scheduler/schedular-info.component";
-import {MultiSchedulerInfoComponent} from "./modules/task-scheduler/multi-scheduler-info.component";
+import {ASIDE_CLASS, ASIDE_SIZE} from "./popup-module/app-popup.enum";
 import {TestSchedulerCalenderView} from "./modules/task-scheduler/test-scheduler-calender.view";
 import {TaskActivityComponent} from "./modules/task-scheduler/task-activity.component";
+import {EntityWorkflowPanelComponent} from "./modules/entity-workflow/entity-workflow-panel.component";
+import {EntityRef} from "./modules/entity-workflow/entity-workflow.service";
+
+/** Popups other modules use to attach processes, tasks and schedules to their records. */
 @Injectable()
 export class CoreProcessFactory {
     sharedService: SharedService;
-    constructor(public injector: Injector, private workflowResolver: OrgWorkflowAPIResolver) {
+    constructor(public injector: Injector) {
         this.sharedService = injector.get(SharedService);
     }
-    showSchedulerPopup(data: any, popupHeaderOptions: any, cb){
-        const popupOptions = { header: popupHeaderOptions, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
-        data = data || {
-            id: null, //Schedular ID
-            orgTaskId: null, //Org Task Id
-            isManual: null,
-            isFeeTask: null,
-            actionType: null, //ACTION_ENUM.ADD | ACTION_ENUM.UPDATE
-        };
-        const success = (resp: any) => { this.destroy(); cb(resp); };
-        const failure = (e) => { this.destroy(); };
-        //this.sharedService.showCustomPopup(SchedulerInfoComponent, popupOptions, data).then(success, failure);
-        this.wrapperResolver().then(()=> this.showPopup(SchedulerInfoComponent, popupOptions, data).then(success, failure));
+
+    /**
+     * Processes, open tasks and schedules of one record, with start-a-workflow / add-task / repeat actions.
+     * `entity.type` is a lowercase code (e.g. 'compliance', 'purchase_order'); triggers and stage rules use the same code.
+     */
+    showEntityWorkflow(entity: EntityRef, popupHeaderOptions: any = {text: 'Workflow', desc: entity?.name ?? ''}) {
+        const popupOptions = {header: popupHeaderOptions, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50};
+        return this.showPopup(EntityWorkflowPanelComponent, popupOptions, {entity})
+            .then(() => this.destroy(), () => this.destroy());
     }
 
-    private wrapperResolver = ()=> this.workflowResolver.lookupResolver({});
-
-    showMultiSchedulerPopup(data: any, popupHeaderOption: any, cb){
-        const popupOptions = { header: popupHeaderOption || { text: `Task Scheduler`, desc: `Schedule a tasks` }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
-        data = data || { actionType: ACTION_ENUM.SHOW };
-        const success = (resp: any) => { this.destroy(); cb(); };
-        const failure = (e) => { this.destroy(); };
-        //this.sharedService.showCustomPopup(MultiSchedulerInfoComponent, popupOptions, data).then(success, failure);
-        this.wrapperResolver().then(()=> this.showPopup(MultiSchedulerInfoComponent, popupOptions, data).then(success, failure));
+    /**
+     * @deprecated Schedules are now linked to the record itself; this opens {@link showEntityWorkflow}.
+     * `data` must carry `entity` ({type, id, name}); the callback runs when the popup closes.
+     */
+    showSchedulerPopup(data: {entity: EntityRef}, popupHeaderOptions: any, cb?: (resp?: any) => void) {
+        return this.showEntityWorkflow(data.entity, popupHeaderOptions).then(() => cb?.());
     }
+
     showFrequencyCalenderTestPopup(data: any, popupHeaderOption: any){
         const popupOptions = { header: popupHeaderOption, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_75 };
         const success = (resp: any) => { this.destroy(); };

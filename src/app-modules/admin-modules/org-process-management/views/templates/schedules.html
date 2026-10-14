@@ -17,6 +17,7 @@
                         <div class="text-xs text-muted text-ellipsis">
                             {{ s.kind === 'StartProcess' ? 'Starts ' + (s.workflowName || 'a process') : 'Creates a task' }}
                             <ng-container *ngIf="s.assignee"> for {{ s.assignee.name }}</ng-container> &middot; {{ s.summary }}
+                            <ng-container *ngIf="s.entity"> &middot; <i class="fa fa-link"></i> {{ entityLabel(s.entity) }}</ng-container>
                         </div>
                     </div>
                     <div class="text-right ml-2" style="min-width: 190px">

@@ -3,7 +3,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subject, catchError, debounceTime, finalize, of, switchMap} from "rxjs";
 import {
-    MONTHS, PRIORITIES, ProcessLookups, RUN_STATUS_CLASS, RecurrenceType, ScheduleDefinition, ScheduleDetail, ScheduleRun, WEEKDAYS, newScheduleDefinition
+    MONTHS, PRIORITIES, ProcessLookups, entityLabel, RUN_STATUS_CLASS, RecurrenceType, ScheduleDefinition, ScheduleDetail, ScheduleRun, WEEKDAYS, newScheduleDefinition
 } from "../domains/process.models";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 
@@ -25,6 +25,7 @@ export class ScheduleEditorView implements OnInit {
     readonly months = MONTHS;
     readonly weekNumbers = WEEK_NUMBERS;
     readonly priorities = PRIORITIES;
+    readonly entityLabel = entityLabel;
     readonly runStatusClass = RUN_STATUS_CLASS;
     readonly monthDayOptions = [...Array.from({length: 31}, (_, i) => ({value: i + 1, label: String(i + 1)})), {value: -1, label: 'Last day'}];
     readonly repeatOptions: {value: RecurrenceType; label: string}[] = [
@@ -78,6 +79,15 @@ export class ScheduleEditorView implements OnInit {
             if (!this.id) {
                 this.def = newScheduleDefinition(l.orgTimeZone);
                 this.def.assigneeId = l.currentUserId;
+                // Opened from a record (e.g. a compliance item): the schedule's tasks and processes link to it.
+                const q = this.route.snapshot.queryParamMap;
+                if (q.get('entityType') && q.get('entityId')) {
+                    this.def.entityType = q.get('entityType');
+                    this.def.entityId = q.get('entityId');
+                    this.def.entityName = q.get('entityName');
+                    this.def.name = q.get('entityName') ? `Review ${q.get('entityName')}` : '';
+                    this.def.taskName = this.def.name;
+                }
                 this.changed();
             }
         });

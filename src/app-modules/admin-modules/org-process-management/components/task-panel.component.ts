@@ -2,7 +2,7 @@ import {Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject} from
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {finalize} from "rxjs";
 import {
-    PRIORITIES, PRIORITY_CLASS, ProcessLookups, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskDetail, TaskPriority, TaskSave, TaskStatus, isClosed
+    EntityLink, PRIORITIES, PRIORITY_CLASS, ProcessLookups, entityLabel, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskDetail, TaskPriority, TaskSave, TaskStatus, isClosed
 } from "../domains/process.models";
 import {isoToZonedLocal, relative, zonedLocalToIso} from "../domains/zoned-time";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
@@ -21,6 +21,8 @@ export class TaskPanelComponent implements OnInit {
     @Input() taskId: string | null = null;
     /** When creating: add the task to this process's current stage. */
     @Input() processId: string | null = null;
+    /** When creating: the record the task is about (e.g. from another module's entity panel). */
+    @Input() entity: EntityLink | null = null;
     @Input({required: true}) lookups!: ProcessLookups;
     @Output() closed = new EventEmitter<boolean>();
 
@@ -31,6 +33,7 @@ export class TaskPanelComponent implements OnInit {
     readonly priorityClass = PRIORITY_CLASS;
     readonly relative = relative;
     readonly isClosed = isClosed;
+    readonly entityLabel = entityLabel;
 
     detail: TaskDetail | null = null;
     editing = false;
@@ -88,7 +91,10 @@ export class TaskPanelComponent implements OnInit {
             assigneeRoleId: f.assignTo === 'role' ? (f.assigneeRoleId || null) : null,
             dueAt: f.dueLocal ? zonedLocalToIso(f.dueLocal, this.tz) : null,
             processId: this.processId,
-            isRequired: f.isRequired
+            isRequired: f.isRequired,
+            entityType: this.entity?.type ?? null,
+            entityId: this.entity?.id ?? null,
+            entityName: this.entity?.name ?? null
         };
 
         this.run(this.isNew ? this.api.createTask(body) : this.api.updateTask(this.taskId!, body), d => {

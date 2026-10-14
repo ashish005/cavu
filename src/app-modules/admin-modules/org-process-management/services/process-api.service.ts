@@ -3,8 +3,9 @@ import {HttpParams} from "@angular/common/http";
 import {Observable, catchError, map, shareReplay} from "rxjs";
 import {CoreEndpointBase} from "@app-global";
 import {
-    Page, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail, SchedulePreview,
-    ScheduleRow, ScheduleRun, TaskDetail, TaskQuery, TaskRow, TaskSave, TaskStatus, Workflow, WorkflowSummary
+    EntityType, EventQuery, Page, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
+    SchedulePreview, ScheduleRow, ScheduleRun, StartProcess, TaskDetail, TaskQuery, TaskRow, TaskSave, TaskStatus, Trigger,
+    TriggerTestResult, Workflow, WorkflowEvent, WorkflowSummary
 } from "../domains/process.models";
 
 /** The API reports failures as `{isSuccess:false,message}`, ProblemDetails (`detail`) or validation problems (`errors`). */
@@ -74,7 +75,7 @@ export class ProcessApiService extends CoreEndpointBase {
     // Processes
     processes(query: ProcessQuery) { return this.get<Page<ProcessRow>>('processes', query); }
     process(id: string) { return this.get<ProcessDetail>(`processes/${id}`); }
-    startProcess(body: {workflowId: string; name?: string | null; description?: string | null; ownerId?: string | null}) { return this.send<ProcessDetail>('POST', 'processes', body); }
+    startProcess(body: StartProcess) { return this.send<ProcessDetail>('POST', 'processes', body); }
     processAction(id: string, action: 'approve' | 'move' | 'hold' | 'resume' | 'cancel', body: {remark?: string | null; stageId?: string | null} = {}) {
         return this.send<ProcessDetail>('POST', `processes/${id}/${action}`, body);
     }
@@ -89,7 +90,7 @@ export class ProcessApiService extends CoreEndpointBase {
     deleteWorkflow(id: string) { this.lookups$ = null; return this.send<void>('DELETE', `workflows/${id}`); }
 
     // Schedules
-    schedules(query: {search?: string | null; skip?: number; take?: number} = {}) { return this.get<Page<ScheduleRow>>('schedules', query); }
+    schedules(query: {search?: string | null; entityType?: string | null; entityId?: string | null; skip?: number; take?: number} = {}) { return this.get<Page<ScheduleRow>>('schedules', query); }
     schedule(id: string) { return this.get<ScheduleDetail>(`schedules/${id}`); }
     previewSchedule(definition: ScheduleDefinition) { return this.send<SchedulePreview>('POST', 'schedules/preview', definition); }
     saveSchedule(id: string | null, definition: ScheduleDefinition) {
@@ -98,4 +99,20 @@ export class ProcessApiService extends CoreEndpointBase {
     scheduleAction(id: string, action: 'pause' | 'resume') { return this.send<ScheduleDetail>('POST', `schedules/${id}/${action}`); }
     deleteSchedule(id: string) { return this.send<void>('DELETE', `schedules/${id}`); }
     scheduleRuns(id: string, skip = 0, take = 25) { return this.get<Page<ScheduleRun>>(`schedules/${id}/runs`, {skip, take}); }
+
+    // Triggers and events
+    triggers() { return this.get<Trigger[]>('triggers'); }
+    saveTrigger(trigger: Trigger) {
+        return trigger.id ? this.send<Trigger>('PUT', `triggers/${trigger.id}`, trigger) : this.send<Trigger>('POST', 'triggers', trigger);
+    }
+    deleteTrigger(id: string) { return this.send<void>('DELETE', `triggers/${id}`); }
+    entityTypes() { return this.get<{types: EntityType[]}>('triggers/entity-types').pipe(map(r => r.types)); }
+    testTrigger(body: {entityType: string; eventName: string; payload: any; condition?: any; nameTemplate?: string | null}) {
+        return this.send<TriggerTestResult>('POST', 'triggers/test', body);
+    }
+    events(query: EventQuery) { return this.get<Page<WorkflowEvent>>('events', query); }
+    retryEvent(id: string) { return this.send<WorkflowEvent>('POST', `events/${id}/retry`); }
+    publishEvent(body: {entityType: string; entityId: string; entityName?: string | null; eventName: string; payload?: any; idempotencyKey?: string | null}) {
+        return this.send<{id: string | null; duplicate: boolean}>('POST', 'events', body);
+    }
 }

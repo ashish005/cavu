@@ -3,6 +3,7 @@ import { moduleGuard } from "./services/orgwise/entitlement/module.guard";
 import {Routes} from "@angular/router";
 export * from "./layouts";
 export {CoreProcessFactory} from "./pluginFactory";
+export * from "./modules/entity-workflow";
 
 export {GlobalModule} from "./library.module";
 

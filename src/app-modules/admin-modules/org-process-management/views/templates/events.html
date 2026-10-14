@@ -1,0 +1,60 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container-fluid p-3">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div class="d-flex flex-wrap mb-2">
+            <input class="form-control form-control-sm mr-2 mb-1" style="max-width: 170px" [(ngModel)]="filter.entityType" (ngModelChange)="reload()" placeholder="Record type">
+            <input class="form-control form-control-sm mr-2 mb-1" style="max-width: 220px" [(ngModel)]="filter.entityId" (ngModelChange)="reload()" placeholder="Record id">
+            <input class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="filter.eventName" (ngModelChange)="reload()" placeholder="Event">
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="filter.status" (ngModelChange)="reload()">
+                <option value="">Any status</option>
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+        </div>
+
+        <div class="box">
+            <table class="table small-table text-sm mb-0">
+                <thead><tr><th>When</th><th>Record</th><th>Event</th><th>Status</th><th>What happened</th><th></th></tr></thead>
+                <tbody>
+                <ng-container *ngFor="let e of rows">
+                    <tr role="button" (click)="expanded = expanded === e.id ? null : e.id">
+                        <td class="text-nowrap" [title]="e.occurredAt | zoned : (lookups?.orgTimeZone || 'UTC')">{{ relative(e.occurredAt) }}</td>
+                        <td><span class="text-muted">{{ e.entityType }}</span> {{ e.entityName || e.entityId }}</td>
+                        <td>{{ e.eventName }}</td>
+                        <td><span class="badge" [ngClass]="statusClass[e.status]">{{ e.status }}</span><span *ngIf="e.attempts > 1" class="text-xs text-muted ml-1">×{{ e.attempts }}</span></td>
+                        <td class="text-xs">{{ e.error || e.outcome }}</td>
+                        <td class="text-right">
+                            <button *ngIf="e.status === 'Failed' || e.status === 'Ignored'" class="btn btn-xs white" (click)="retry(e); $event.stopPropagation()" title="Run again, e.g. after fixing a trigger">Run again</button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="expanded === e.id">
+                        <td colspan="6" class="light lt">
+                            <div class="text-xs text-muted mb-1">
+                                Id {{ e.entityId }} · {{ e.occurredAt | zoned : (lookups?.orgTimeZone || 'UTC') }}{{ e.actor ? ' · by ' + e.actor.name : '' }}
+                                <a class="ml-2" [routerLink]="['/admin', 'process', 'processes']" [queryParams]="{entityType: e.entityType, entityId: e.entityId}">Processes for this record</a>
+                            </div>
+                            <pre class="text-xs mb-0" style="max-height: 240px; overflow: auto">{{ json(e.payload) }}</pre>
+                        </td>
+                    </tr>
+                </ng-container>
+                <tr *ngIf="!loading && !rows.length"><td colspan="6" class="text-center text-muted p-4">No events.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex align-items-center mt-2 text-sm" *ngIf="total > pageSize">
+            <span class="text-muted">{{ skip + 1 }}–{{ skip + rows.length }} of {{ total }}</span>
+            <span class="flex"></span>
+            <button class="btn btn-xs white mr-1" [disabled]="skip === 0" (click)="page(-1)">Previous</button>
+            <button class="btn btn-xs white" [disabled]="skip + pageSize >= total" (click)="page(1)">Next</button>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Event log</h6><small class="text-muted">{{ total }} event(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="reload(false)"><i class="fa fa-refresh"></i></button>
+    <a class="btn btn-sm white" routerLink="/admin/process/triggers">Triggers</a>
+</ng-template>

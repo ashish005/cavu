@@ -111,23 +111,15 @@ export class ComplianceSchedulerCellComponent extends DynamicComponent {
         super();
     }
 
+    /**
+     * Processes, tasks and schedules of this compliance item. They are linked by entity type 'compliance' and the
+     * item's id, so triggers and stage rules can react to compliance events too.
+     */
     showScheduler(row: Compliance){
-        const { id: complianceId, taskId, orgTaskScheduleId, name, regulatoryName, taskName } = row;
-        const inputData: any = {
-            id: orgTaskScheduleId, //Schedular ID
-            taskId: taskId, //Org Task Id
-            isManual: true,
-            isFeeTask: false,
-            addManually: true,
-        };
-        const failure = (err) => {};// this.plugin.destroy();
-        const schedulerSuccess = (resp: any) => {};// this.plugin.destroy();
-        const success = (resp: any) => this.lookupResolver
-            .updateComplianceScheduler(complianceId, resp).toPromise()
-            .then(schedulerSuccess, failure);
-        this.plugin.showSchedulerPopup(inputData,
-            { text: `${taskName}: ${name}`, desc: `${regulatoryName}` },
-            success);
+        const { id, name, regulatoryName, taskName } = row;
+        this.plugin.showEntityWorkflow(
+            { type: 'compliance', id: String(id), name },
+            { text: taskName ? `${taskName}: ${name}` : name, desc: `${regulatoryName ?? ''}` });
     }
 }
 @Component({

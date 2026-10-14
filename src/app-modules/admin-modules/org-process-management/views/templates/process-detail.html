@@ -9,6 +9,8 @@
                 <h5 class="mb-1">{{ d.process.name }} <span class="badge ml-1" [ngClass]="statusClass[d.process.status]">{{ statusLabel[d.process.status] }}</span></h5>
                 <div class="text-xs text-muted">
                     {{ d.process.code }} &middot; {{ d.process.workflowName }} &middot; owner {{ d.process.owner?.name || '—' }}
+                    <span *ngIf="d.process.entity"> &middot; <i class="fa fa-link"></i> {{ entityLabel(d.process.entity) }}</span>
+                    <span *ngIf="d.process.triggerName"> &middot; <i class="fa fa-bolt"></i> started by “{{ d.process.triggerName }}”</span>
                     &middot; started {{ d.process.startedAt | zoned : tz }}
                     <ng-container *ngIf="d.completedAt"> &middot; closed {{ d.completedAt | zoned : tz }}</ng-container>
                 </div>

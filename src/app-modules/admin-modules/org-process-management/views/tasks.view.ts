@@ -2,7 +2,7 @@ import {Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject} from "@an
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subject, debounceTime, finalize, switchMap, tap} from "rxjs";
-import {PRIORITY_CLASS, ProcessLookups, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskRow, TaskScope, TaskStatus, isClosed} from "../domains/process.models";
+import {PRIORITY_CLASS, ProcessLookups, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskRow, TaskScope, TaskStatus, entityLabel, isClosed} from "../domains/process.models";
 import {relative, zonedDay} from "../domains/zoned-time";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 
@@ -17,6 +17,7 @@ export class TasksView implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly reload$ = new Subject<void>();
     readonly statusLabel = TASK_STATUS_LABEL;
+    readonly entityLabel = entityLabel;
     readonly statusClass = TASK_STATUS_CLASS;
     readonly priorityClass = PRIORITY_CLASS;
     readonly relative = relative;

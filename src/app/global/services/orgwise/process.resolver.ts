@@ -120,18 +120,14 @@ class WorkflowPluginLookupSerializer {
     fromJson(json: any): WorkflowPluginLookup { return new WorkflowPluginLookup(json); }
     toJson(data: any): any { return {}; }
 }
+/**
+ * @deprecated The legacy `orgWorkflowLookup` endpoint was replaced by `api/v1/process/lookups` (process module) and
+ * {@link EntityWorkflowService}. Kept so old scheduler components still compile; it no longer calls the server.
+ */
 @Injectable({ providedIn: 'root' })
 export class OrgWorkflowAPIResolver extends OrgResourceService<WorkflowPluginLookup> implements Resolve<any>{
-    masterType: WorkflowPluginLookup;
+    masterType: WorkflowPluginLookup = new WorkflowPluginLookup({});
     constructor(public override injector: Injector) { super(injector, `orgWorkflowLookup`, new WorkflowPluginLookupSerializer()); }
     resolve(route: ActivatedRouteSnapshot) { return this.lookupResolver(route.data); }
-    lookupResolver(route) {
-        return new Promise((resolve, reject) => {
-            if(this.masterType) { return resolve(true); }
-            const failure = (err: any) => { return reject(err); };
-            const success = (results) => { this.masterType = new WorkflowPluginLookup(results.data); return resolve(true); };
-            const setup = super.readLookup(super.apiVersion);
-            return this.performRouteResolver(route.data, setup, success, failure);
-        });
-    }
+    lookupResolver(route) { return Promise.resolve(true); }
 }

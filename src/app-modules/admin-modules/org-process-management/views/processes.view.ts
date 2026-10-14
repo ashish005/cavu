@@ -1,8 +1,8 @@
 import {Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Subject, debounceTime, finalize, switchMap, tap} from "rxjs";
-import {PROCESS_STATUS_CLASS, PROCESS_STATUS_LABEL, ProcessLookups, ProcessRow, ProcessStatus} from "../domains/process.models";
+import {EntityLink, PROCESS_STATUS_CLASS, PROCESS_STATUS_LABEL, ProcessLookups, ProcessRow, ProcessStatus, entityLabel} from "../domains/process.models";
 import {relative} from "../domains/zoned-time";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 
@@ -17,7 +17,10 @@ export class ProcessesView implements OnInit {
     readonly statusLabel = PROCESS_STATUS_LABEL;
     readonly statusClass = PROCESS_STATUS_CLASS;
     readonly relative = relative;
+    readonly entityLabel = entityLabel;
     readonly pageSize = 25;
+    /** Set from ?entityType=&entityId= (e.g. the event log): only processes about that record. */
+    entity: EntityLink | null = null;
 
     lookups: ProcessLookups | null = null;
     rows: ProcessRow[] = [];
@@ -35,9 +38,15 @@ export class ProcessesView implements OnInit {
     startError: string | null = null;
     startBusy = false;
 
-    constructor(private api: ProcessApiService, private router: Router) {}
+    constructor(private api: ProcessApiService, private router: Router, private route: ActivatedRoute) {}
 
     ngOnInit() {
+        const query = this.route.snapshot.queryParamMap;
+        if (query.get('entityType') && query.get('entityId')) {
+            this.entity = {type: query.get('entityType')!, id: query.get('entityId')!, name: null};
+            this.status = '';
+        }
+
         this.api.lookups().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: l => this.lookups = l,
             error: e => this.error = errorMessageOf(e, 'Could not load.')
@@ -48,7 +57,7 @@ export class ProcessesView implements OnInit {
             tap(() => { this.loading = true; this.error = null; }),
             switchMap(() => this.api.processes({
                 status: this.status || null, workflowId: this.workflowId || null, mine: this.mine, search: this.search || null,
-                skip: this.skip, take: this.pageSize
+                entityType: this.entity?.type ?? null, entityId: this.entity?.id ?? null, skip: this.skip, take: this.pageSize
             }).pipe(finalize(() => this.loading = false))),
             takeUntilDestroyed(this.destroyRef)
         ).subscribe({
@@ -56,6 +65,12 @@ export class ProcessesView implements OnInit {
             error: e => this.error = errorMessageOf(e, 'Could not load processes.')
         });
         this.reload$.next();
+    }
+
+    clearEntity() {
+        this.entity = null;
+        this.router.navigate([], {relativeTo: this.route, queryParams: {}, replaceUrl: true});
+        this.reload();
     }
 
     reload(resetPage = true) {

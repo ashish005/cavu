@@ -1,7 +1,7 @@
 import {Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {finalize} from "rxjs";
-import {ProcessLookups, SCHEDULE_STATUS_CLASS, ScheduleRow} from "../domains/process.models";
+import {ProcessLookups, SCHEDULE_STATUS_CLASS, ScheduleRow, entityLabel} from "../domains/process.models";
 import {relative} from "../domains/zoned-time";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 
@@ -14,6 +14,7 @@ export class SchedulesView implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     readonly statusClass = SCHEDULE_STATUS_CLASS;
     readonly relative = relative;
+    readonly entityLabel = entityLabel;
 
     lookups: ProcessLookups | null = null;
     rows: ScheduleRow[] = [];

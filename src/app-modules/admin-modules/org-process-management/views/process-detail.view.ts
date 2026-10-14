@@ -3,7 +3,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ActivatedRoute} from "@angular/router";
 import {Observable, finalize} from "rxjs";
 import {
-    PRIORITY_CLASS, PROCESS_STATUS_CLASS, PROCESS_STATUS_LABEL, ProcessDetail, ProcessLookups, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskRow, isClosed
+    PRIORITY_CLASS, PROCESS_STATUS_CLASS, PROCESS_STATUS_LABEL, ProcessDetail, ProcessLookups, TASK_STATUS_CLASS, TASK_STATUS_LABEL, TaskRow, entityLabel, isClosed
 } from "../domains/process.models";
 import {relative} from "../domains/zoned-time";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
@@ -24,6 +24,7 @@ export class ProcessDetailView implements OnInit {
     readonly priorityClass = PRIORITY_CLASS;
     readonly relative = relative;
     readonly isClosed = isClosed;
+    readonly entityLabel = entityLabel;
 
     id!: string;
     lookups: ProcessLookups | null = null;

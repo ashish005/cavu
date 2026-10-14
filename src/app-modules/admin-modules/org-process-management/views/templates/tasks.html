@@ -32,6 +32,7 @@
                             <div class="_500 text-ellipsis" [style.text-decoration]="t.status === 'Done' ? 'line-through' : null">{{ t.name }}</div>
                             <div class="text-xs text-muted text-ellipsis">
                                 <span *ngIf="t.processCode">{{ t.processName }} &middot; {{ t.stageName }} &middot; </span>
+                                <span *ngIf="t.entity && !t.processCode"><i class="fa fa-link"></i> {{ entityLabel(t.entity) }} &middot; </span>
                                 <span *ngIf="t.fromSchedule">Scheduled &middot; </span>
                                 <span *ngIf="scope !== 'Mine'">{{ t.assignee?.name || (t.assigneeRoleName + ' queue') }} &middot; </span>
                                 <span [class.text-danger]="t.isOverdue">{{ t.dueAt ? ('Due ' + relative(t.dueAt)) : 'No due date' }}</span>

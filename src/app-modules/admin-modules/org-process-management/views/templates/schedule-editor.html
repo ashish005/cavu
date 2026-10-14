@@ -7,6 +7,11 @@
                 <!-- What -->
                 <div class="box p-3 mb-3">
                     <h6 class="_600">What should happen</h6>
+                    <div *ngIf="def.entityType && def.entityId" class="alert alert-info text-sm py-1 px-2 d-flex align-items-center">
+                        <i class="fa fa-link mr-2"></i>
+                        <span class="flex">About {{ entityLabel({type: def.entityType, id: def.entityId, name: def.entityName ?? null}) }}: its tasks and processes are linked to it.</span>
+                        <a role="button" class="ml-2" (click)="def.entityType = null; def.entityId = null; def.entityName = null" title="Unlink">&times;</a>
+                    </div>
                     <div class="form-group">
                         <label class="text-xs">Schedule name *</label>
                         <input class="form-control form-control-sm" [(ngModel)]="def.name" (ngModelChange)="changed()" maxlength="250" placeholder="e.g. Weekly stock count">
@@ -165,6 +170,14 @@
                         <button class="btn btn-xs white text-danger" (click)="removeReminder(i)"><i class="fa fa-times"></i></button>
                     </div>
                     <button class="btn btn-xs white" [disabled]="def.reminders.length >= 5" (click)="addReminder()"><i class="fa fa-plus mr-1"></i>Add reminder</button>
+
+                    <div class="form-group mt-3 mb-0" style="max-width: 320px">
+                        <label class="text-xs">If a run fails</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="def.retryPolicyId">
+                            <option [ngValue]="null">Retry 3 times (default)</option>
+                            <option *ngFor="let p of lookups?.retryPolicies" [ngValue]="p.id">{{ p.name }} ({{ p.maxAttempts }} attempts)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
