@@ -1,0 +1,115 @@
+/* Process dashboard. Colours are roles from the validated reference palette (light and dark steps);
+   chart text always uses ink tokens, never series colours. */
+:host { display: contents; }
+
+.dash-root {
+    color-scheme: light;
+    --dash-surface: #fcfcfb;
+    --dash-plane: #f9f9f7;
+    --dash-ink: #0b0b0b;
+    --dash-ink-2: #52514e;
+    --dash-muted: #898781;
+    --dash-grid: #e1e0d9;
+    --dash-axis: #c3c2b7;
+    --dash-border: rgba(11, 11, 11, 0.10);
+    --dash-s1: #2a78d6;      /* categorical slot 1 (blue) */
+    --dash-s2: #eb6834;      /* categorical slot 2 (orange) */
+    --dash-seq: #2a78d6;     /* sequential blue, step 450 */
+    --dash-seq-2: #eb6834;   /* second sequential context */
+    --dash-good: #0ca30c;
+    --dash-good-text: #006300;
+    --dash-warning: #fab219;
+    --dash-critical: #d03b3b;
+    background: var(--dash-plane);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .dash-root {
+        color-scheme: dark;
+        --dash-surface: #1a1a19; --dash-plane: #0d0d0d; --dash-ink: #f0efec; --dash-ink-2: #c3c2b7; --dash-muted: #898781;
+        --dash-grid: #2c2c2a; --dash-axis: #383835; --dash-border: rgba(255, 255, 255, 0.10);
+        --dash-s1: #3987e5; --dash-s2: #d95926; --dash-seq: #3987e5; --dash-seq-2: #d95926; --dash-good-text: #0ca30c;
+    }
+}
+:root[data-theme="dark"] .dash-root {
+    color-scheme: dark;
+    --dash-surface: #1a1a19; --dash-plane: #0d0d0d; --dash-ink: #f0efec; --dash-ink-2: #c3c2b7; --dash-muted: #898781;
+    --dash-grid: #2c2c2a; --dash-axis: #383835; --dash-border: rgba(255, 255, 255, 0.10);
+    --dash-s1: #3987e5; --dash-s2: #d95926; --dash-seq: #3987e5; --dash-seq-2: #d95926; --dash-good-text: #0ca30c;
+}
+
+.dash-page { box-sizing: border-box; padding: 16px; max-width: 1440px; width: 100%; margin: 0 auto; color: var(--dash-ink); }
+.dash-page *, .dash-page *::before, .dash-page *::after { box-sizing: border-box; }
+.dash-filters { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.dash-scope { font-size: 12px; color: var(--dash-ink-2); margin-left: auto; }
+.dash-refetching { opacity: .55; transition: opacity .15s; }
+.dash-empty { color: var(--dash-muted); font-size: 13px; text-align: center; padding: 16px 8px; }
+
+/* KPI row */
+.dash-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+::ng-deep .dash-stat { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: 8px; padding: 12px 14px; height: 100%; }
+::ng-deep .dash-stat-label { font-size: 12px; color: var(--dash-ink-2); }
+::ng-deep .dash-stat-value { font-size: 26px; font-weight: 600; color: var(--dash-ink); line-height: 1.2; margin-top: 4px; }
+::ng-deep .dash-hero .dash-stat-value { font-size: 48px; line-height: 1.05; }
+::ng-deep .dash-stat-delta, ::ng-deep .dash-stat-hint { font-size: 12px; margin-top: 2px; }
+::ng-deep .dash-stat-hint { color: var(--dash-ink-2); }
+
+/* Cards */
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 12px; }
+.dash-card { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: 8px; padding: 14px 16px; margin: 0; min-width: 0; }
+.dash-card-wide { grid-column: 1 / -1; }
+.dash-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.dash-card-head h3 { font-size: 14px; font-weight: 600; margin: 0; color: var(--dash-ink); }
+.dash-card-head p { font-size: 12px; margin: 2px 0 0; color: var(--dash-ink-2); }
+
+/* Tables (the accessible twin of every chart) */
+.dash-table-wrap { max-height: 260px; overflow: auto; }
+.dash-table { width: 100%; font-size: 13px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.dash-table th { font-weight: 600; color: var(--dash-ink-2); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--dash-grid); position: sticky; top: 0; background: var(--dash-surface); }
+.dash-table td { padding: 6px 8px; border-bottom: 1px solid var(--dash-grid); color: var(--dash-ink); }
+
+/* Legend and tooltips */
+::ng-deep .dash-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--dash-ink-2); margin-bottom: 6px; }
+::ng-deep .dash-legend-item { display: inline-flex; align-items: center; }
+::ng-deep .dash-key-line { display: inline-block; width: 14px; height: 2px; border-radius: 1px; margin-right: 6px; }
+::ng-deep .dash-key-rect { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+::ng-deep .dash-tooltip { position: absolute; z-index: 5; min-width: 160px; pointer-events: none; background: var(--dash-surface); border: 1px solid var(--dash-border);
+    border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, .12); padding: 8px 10px; font-size: 12px; color: var(--dash-ink-2); }
+::ng-deep .dash-tooltip-title { color: var(--dash-ink-2); margin-bottom: 4px; }
+::ng-deep .dash-tooltip-row { display: flex; align-items: center; gap: 6px; }
+::ng-deep .dash-tooltip-row b { color: var(--dash-ink); font-weight: 600; min-width: 28px; }
+::ng-deep .dash-tooltip-sub { margin-top: 4px; color: var(--dash-muted); }
+
+/* Line chart */
+::ng-deep .dash-plot { position: relative; width: 100%; }
+::ng-deep .dash-gridline { stroke: var(--dash-grid); stroke-width: 1; }
+::ng-deep .dash-baseline { stroke: var(--dash-axis); stroke-width: 1; }
+::ng-deep .dash-crosshair { stroke: var(--dash-muted); stroke-width: 1; }
+::ng-deep .dash-tick { fill: var(--dash-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+::ng-deep .dash-end-label { fill: var(--dash-ink); font-size: 12px; font-weight: 600; }
+::ng-deep .dash-dot { stroke: var(--dash-surface); stroke-width: 2; }
+
+/* Bar list */
+::ng-deep .dash-bars { position: relative; }
+::ng-deep .dash-bar-row { display: grid; grid-template-columns: minmax(110px, 38%) 1fr; align-items: center; gap: 10px; padding: 5px 2px; border-radius: 4px; outline: none; }
+::ng-deep .dash-bar-row:hover, ::ng-deep .dash-bar-row:focus-visible { background: color-mix(in srgb, var(--dash-ink) 4%, transparent); }
+::ng-deep .dash-bar-label { font-size: 13px; color: var(--dash-ink); }
+::ng-deep .dash-bar-sub { display: block; font-size: 11px; color: var(--dash-muted); }
+::ng-deep .dash-bar-track { display: flex; align-items: center; min-width: 0; }
+::ng-deep .dash-bar-fill { display: inline-block; height: 14px; min-width: 2px; gap: 2px; }
+::ng-deep .dash-seg { display: inline-block; height: 14px; min-width: 2px; }
+::ng-deep .dash-seg-end { border-radius: 0 4px 4px 0; }
+::ng-deep .dash-bar-value { font-size: 12px; font-weight: 600; color: var(--dash-ink); margin-left: 8px; font-variant-numeric: tabular-nums; }
+
+/* Automation */
+.dash-automation { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.dash-mini-kpis { display: grid; grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 12px 24px; }
+.dash-mini-kpis > div { display: flex; flex-direction: column; }
+.dash-mini-value { font-size: 22px; font-weight: 600; color: var(--dash-ink); }
+.dash-mini-label { font-size: 12px; color: var(--dash-ink-2); }
+
+@media (max-width: 600px) {
+    .dash-page { padding: 12px 16px; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .dash-scope { margin-left: 0; width: 100%; }
+}

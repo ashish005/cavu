@@ -1,4 +1,4 @@
-<process-aside [title]="isNew ? 'New task' : (detail?.task?.name || 'Task')" [subtitle]="detail?.task?.code || null" (closed)="close()">
+<app-aside [title]="isNew ? 'New task' : (detail?.task?.name || 'Task')" [subtitle]="detail?.task?.code || null" (closed)="close()">
         <div>
             <div>
                 <loader [isLoading]="busy"></loader>
@@ -20,7 +20,7 @@
                         <tr><td class="text-muted">Due</td>
                             <td>{{ d.task.dueAt | zoned : tz }} <span class="text-xs text-muted" *ngIf="d.task.dueAt">({{ relative(d.task.dueAt) }})</span></td></tr>
                         <tr *ngIf="d.task.processId"><td class="text-muted">Process</td>
-                            <td><a [routerLink]="['/admin', 'process', 'processes', d.task.processId]" (click)="close()">{{ d.task.processCode }} {{ d.task.processName }}</a>
+                            <td><a [routerLink]="['/app', 'admin', 'process', 'processes', d.task.processId]" (click)="close()">{{ d.task.processCode }} {{ d.task.processName }}</a>
                                 <span class="text-muted"> &middot; {{ d.task.stageName }}</span>
                                 <span *ngIf="!d.task.isRequired" class="text-xs text-muted"> (optional)</span></td></tr>
                         <tr *ngIf="d.task.entity"><td class="text-muted">About</td><td><i class="fa fa-link mr-1"></i>{{ entityLabel(d.task.entity) }}</td></tr>
@@ -105,4 +105,4 @@
             <button *ngIf="!editing && detail?.canEdit && !isClosed(detail!.task.status)" class="btn btn-sm white mr-1" (click)="edit()"><i class="fa fa-pencil mr-1"></i>Edit</button>
             <button class="btn btn-sm white" (click)="close()">Close</button>
         </div>
-</process-aside>
+</app-aside>

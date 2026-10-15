@@ -200,7 +200,7 @@
                         <span class="badge mr-2" [ngClass]="runStatusClass[run.status]">{{ run.status }}</span>
                         <div class="flex">
                             {{ run.scheduledAt | zoned : def.timeZoneId }}
-                            <a *ngIf="run.processId" [routerLink]="['/admin', 'process', 'processes', run.processId]" class="ml-1">{{ run.processCode }}</a>
+                            <a *ngIf="run.processId" [routerLink]="['/app', 'admin', 'process', 'processes', run.processId]" class="ml-1">{{ run.processCode }}</a>
                             <span *ngIf="run.taskCode" class="text-muted ml-1">{{ run.taskCode }}</span>
                             <div *ngIf="run.error" class="text-xs text-danger">{{ run.error }}</div>
                         </div>
@@ -219,7 +219,7 @@
 </ng-template>
 <ng-template #actionTemplate>
     <button *ngIf="id" class="btn btn-sm white text-danger mr-1" (click)="remove()">Delete</button>
-    <a class="btn btn-sm white mr-1" routerLink="/admin/process/schedules">Back</a>
+    <a class="btn btn-sm white mr-1" routerLink="/app/admin/process/schedules">Back</a>
     <button class="btn btn-sm white mr-1" [disabled]="saving" (click)="save(false)">Save as draft</button>
     <button class="btn btn-sm theme" [disabled]="saving" (click)="save(true)">Save and activate</button>
 </ng-template>

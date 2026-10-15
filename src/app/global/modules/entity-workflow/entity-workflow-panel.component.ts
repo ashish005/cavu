@@ -36,7 +36,7 @@ import {
             <h6 class="_600 text-xs text-muted text-uppercase">Processes</h6>
             <div *ngIf="!processes.length" class="text-muted mb-3">None yet.</div>
             <div *ngFor="let p of processes" class="d-flex align-items-center mb-1">
-                <a role="button" class="flex _500" (click)="go(['/admin', 'process', 'processes', p.id])">{{ p.name }}</a>
+                <a role="button" class="flex _500" (click)="go(['/app', 'admin', 'process', 'processes', p.id])">{{ p.name }}</a>
                 <span *ngIf="p.triggerName" class="text-muted mr-2" [title]="'Started by ' + p.triggerName"><i class="fa fa-bolt"></i></span>
                 <span class="badge mr-1" [style.background]="p.stageColor" style="color: #fff" *ngIf="p.status === 'Active' && p.stageName">{{ p.stageName }}</span>
                 <span class="badge grey" *ngIf="p.status !== 'Active'">{{ p.status }}</span>
@@ -58,7 +58,7 @@ import {
             <ng-container *ngIf="schedules.length">
                 <h6 class="_600 text-xs text-muted text-uppercase">Schedules</h6>
                 <div *ngFor="let s of schedules" class="d-flex align-items-center mb-1">
-                    <a role="button" class="flex" (click)="go(['/admin', 'process', 'schedules', s.id])">{{ s.name }}</a>
+                    <a role="button" class="flex" (click)="go(['/app', 'admin', 'process', 'schedules', s.id])">{{ s.name }}</a>
                     <span class="text-xs text-muted mr-2">{{ s.summary }}</span>
                     <span class="badge" [ngClass]="s.status === 'Active' ? 'success' : 'grey'">{{ s.status }}</span>
                 </div>
@@ -128,7 +128,7 @@ export class EntityWorkflowPanelComponent implements OnInit {
     }
 
     addSchedule() {
-        this.go(['/admin', 'process', 'schedules', 'new'], {entityType: this.entity.type, entityId: this.entity.id, entityName: this.entity.name ?? ''});
+        this.go(['/app', 'admin', 'process', 'schedules', 'new'], {entityType: this.entity.type, entityId: this.entity.id, entityName: this.entity.name ?? ''});
     }
 
     go(commands: any[], queryParams?: Record<string, string>) {

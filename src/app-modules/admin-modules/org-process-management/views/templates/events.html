@@ -32,7 +32,7 @@
                         <td colspan="6" class="light lt">
                             <div class="text-xs text-muted mb-1">
                                 Id {{ e.entityId }} · {{ e.occurredAt | zoned : (lookups?.orgTimeZone || 'UTC') }}{{ e.actor ? ' · by ' + e.actor.name : '' }}
-                                <a class="ml-2" [routerLink]="['/admin', 'process', 'processes']" [queryParams]="{entityType: e.entityType, entityId: e.entityId}">Processes for this record</a>
+                                <a class="ml-2" [routerLink]="['/app', 'admin', 'process', 'processes']" [queryParams]="{entityType: e.entityType, entityId: e.entityId}">Processes for this record</a>
                             </div>
                             <pre class="text-xs mb-0" style="max-height: 240px; overflow: auto">{{ json(e.payload) }}</pre>
                         </td>
@@ -56,5 +56,5 @@
 </ng-template>
 <ng-template #actionTemplate>
     <button class="btn btn-sm white mr-1" (click)="reload(false)"><i class="fa fa-refresh"></i></button>
-    <a class="btn btn-sm white" routerLink="/admin/process/triggers">Triggers</a>
+    <a class="btn btn-sm white" routerLink="/app/admin/process/triggers">Triggers</a>
 </ng-template>

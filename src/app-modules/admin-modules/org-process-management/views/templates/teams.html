@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<process-aside *ngIf="editing as t" size="xl" [title]="t.id ? t.name : 'New team'" [subtitle]="t.id ? t.code : 'Who belongs, how work reaches them, who leads them'" (closed)="editing = null">
+<app-aside *ngIf="editing as t" size="xl" [title]="t.id ? t.name : 'New team'" [subtitle]="t.id ? t.code : 'Who belongs, how work reaches them, who leads them'" (closed)="editing = null">
     <loader [isLoading]="saving"></loader>
     <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
 
@@ -177,12 +177,12 @@
         <button class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
         <button class="btn btn-sm theme" [disabled]="saving || !lookups?.isAdmin" (click)="save()">Save team</button>
     </div>
-</process-aside>
+</app-aside>
 
 <ng-template #pageTitleTemplate>
     <div class="no-shadow"><h6 class="mb-0">Teams</h6><small class="text-muted">{{ teams.length }} team(s)</small></div>
 </ng-template>
 <ng-template #actionTemplate>
-    <a class="btn btn-sm white mr-1" routerLink="/admin/process/triggers">Rules</a>
+    <a class="btn btn-sm white mr-1" routerLink="/app/admin/process/triggers">Rules</a>
     <button class="btn btn-sm theme" [disabled]="!lookups?.isAdmin" (click)="open()"><i class="fa fa-plus mr-1"></i>New team</button>
 </ng-template>

@@ -4,6 +4,7 @@ import {Routes} from "@angular/router";
 export * from "./layouts";
 export {CoreProcessFactory} from "./pluginFactory";
 export * from "./modules/entity-workflow";
+export * from "./components/aside-panel";
 
 export {GlobalModule} from "./library.module";
 
@@ -30,6 +31,7 @@ export const ADMIN_SETUP_ROUES: Routes = [
         children: [
             { path: 'setup', loadChildren: () => import('app-modules/admin-modules/app-identity/index').then(m => m.OrgIdentitySetupModule), data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'} },
             { path: 'process', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-process-management/index').then(m => m.ProcessManageModule), data: {code: "ACCESS_TASK_MGT", module: "PROCESS_MGT", title: 'Process', key: 'process', header: 'process'} },
+            { path: 'parties', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyManageModule), data: {module: "FIN", title: 'Customers, vendors & employees', key: 'parties', header: 'Parties'} },
             { path: 'compliance', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/index').then(m => m.ComplianceManageModule), data: {title: 'Compliance', header: 'Compliance'} },
             { path: 'org-log', loadChildren: () => import('app-modules/admin-modules/org-log-management/index').then(m => m.OrgLogModule), data: {title: 'Log', header: 'Log'} },
             { path: 'accounting', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN", module: "FIN" } },

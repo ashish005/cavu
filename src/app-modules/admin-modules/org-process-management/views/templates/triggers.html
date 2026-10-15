@@ -45,7 +45,7 @@
     </div>
 </div>
 
-<process-aside *ngIf="editing as t" size="lg" [title]="(t.id ? 'Edit rule' : 'New rule') + ' · ' + (t.action === 'Notify' ? 'send a notification' : 'start a workflow')"
+<app-aside *ngIf="editing as t" size="lg" [title]="(t.id ? 'Edit rule' : 'New rule') + ' · ' + (t.action === 'Notify' ? 'send a notification' : 'start a workflow')"
                [subtitle]="t.name || null" (closed)="editing = null">
         <div>
             <div class="text-sm">
@@ -155,13 +155,13 @@
             <button class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
             <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save rule</button>
         </div>
-</process-aside>
+</app-aside>
 
 <ng-template #pageTitleTemplate>
     <div class="no-shadow"><h6 class="mb-0">Automation rules</h6><small class="text-muted">Start workflows and send notifications when records change</small></div>
 </ng-template>
 <ng-template #actionTemplate>
-    <a class="btn btn-sm white mr-1" routerLink="/admin/process/events">Event log</a>
+    <a class="btn btn-sm white mr-1" routerLink="/app/admin/process/events">Event log</a>
     <button class="btn btn-sm white mr-1" [disabled]="!lookups?.isAdmin" (click)="open(undefined, 'Notify')"><i class="fa fa-bell mr-1"></i>Notification rule</button>
     <button class="btn btn-sm theme" [disabled]="!lookups?.isAdmin" (click)="open(undefined, 'StartWorkflow')"><i class="fa fa-play mr-1"></i>Workflow rule</button>
 </ng-template>

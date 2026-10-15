@@ -152,7 +152,7 @@ export class ScheduleEditorView implements OnInit {
 
         this.saving = true;
         this.api.saveSchedule(this.id, {...this.payload(), active}).pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: d => this.router.navigate(['/admin', 'process', 'schedules']),
+            next: d => this.router.navigate(['/app', 'admin', 'process', 'schedules']),
             error: e => this.error = errorMessageOf(e, 'The schedule could not be saved.')
         });
     }
@@ -160,7 +160,7 @@ export class ScheduleEditorView implements OnInit {
     remove() {
         if (!this.id || !confirm('Delete this schedule? Runs already made stay; no new ones are created.')) { return; }
         this.api.deleteSchedule(this.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: () => this.router.navigate(['/admin', 'process', 'schedules']),
+            next: () => this.router.navigate(['/app', 'admin', 'process', 'schedules']),
             error: e => this.error = errorMessageOf(e, 'The schedule could not be deleted.')
         });
     }

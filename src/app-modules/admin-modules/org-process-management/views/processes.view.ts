@@ -104,7 +104,7 @@ export class ProcessesView implements OnInit {
             description: this.startForm.description.trim() || null,
             ownerId: this.startForm.ownerId || null
         }).pipe(finalize(() => this.startBusy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: d => this.router.navigate(['/admin', 'process', 'processes', d.process.id]),
+            next: d => this.router.navigate(['/app', 'admin', 'process', 'processes', d.process.id]),
             error: e => this.startError = errorMessageOf(e, 'The process could not be started.')
         });
     }

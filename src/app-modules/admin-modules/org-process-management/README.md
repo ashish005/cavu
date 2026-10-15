@@ -45,7 +45,7 @@ Link work to your records instead of storing process or schedule ids:
 
 ## Popups
 
-Every editor in this module opens in `AsidePanelComponent` (`<process-aside>`): the app's right-aligned, full-height
+Every editor in this module opens in `AsidePanelComponent` (`<app-aside>`): the app's right-aligned, full-height
 `modal-right` panel with a scrolling body and a fixed footer (`<div aside-footer>`). Put long lists in a
 `cdk-virtual-scroll-viewport` inside it (see the team member preview). It closes on Escape or a backdrop click.
 

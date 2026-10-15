@@ -61,7 +61,7 @@
                         <option [ngValue]="null">Choose a team…</option>
                         <option *ngFor="let t of lookups.teams" [ngValue]="t.id">{{ t.name }}{{ t.category ? ' · ' + t.category : '' }}</option>
                     </select>
-                    <a class="text-xs mr-1 mb-1" routerLink="/admin/process/teams" target="_blank">Manage teams</a>
+                    <a class="text-xs mr-1 mb-1" routerLink="/app/admin/process/teams" target="_blank">Manage teams</a>
                 </ng-container>
                 <input *ngSwitchCase="'UserField'" class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.field" [attr.list]="'notify-fields'" placeholder="field, e.g. managerId" maxlength="100">
                 <input *ngSwitchCase="'ContactField'" class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.field" [attr.list]="'notify-fields'" placeholder="field, e.g. email" maxlength="100">

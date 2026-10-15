@@ -102,7 +102,7 @@
 </div>
 
 <!-- Confirm action -->
-<process-aside *ngIf="confirm && detail" [title]="confirm.title" [subtitle]="detail.process.name" (closed)="confirm = null">
+<app-aside *ngIf="confirm && detail" [title]="confirm.title" [subtitle]="detail.process.name" (closed)="confirm = null">
         <form id="process-confirm-form" (ngSubmit)="submitConfirm()">
             <div>
                 <div class="form-group" *ngIf="confirm.action === 'move'">
@@ -124,7 +124,7 @@
             <button type="button" class="btn btn-sm white mr-1" (click)="confirm = null">Back</button>
             <button type="submit" form="process-confirm-form" class="btn btn-sm" [ngClass]="confirm.action === 'cancel' ? 'danger' : 'theme'" [disabled]="acting">{{ confirm.title }}</button>
         </div>
-</process-aside>
+</app-aside>
 
 <process-task-panel *ngIf="panelTaskId !== undefined && lookups" [taskId]="panelTaskId" [processId]="panelTaskId === null ? id : null" [lookups]="lookups" (closed)="onPanelClosed($event)"></process-task-panel>
 

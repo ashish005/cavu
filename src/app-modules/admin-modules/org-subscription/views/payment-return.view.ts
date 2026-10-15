@@ -67,7 +67,7 @@ export class PaymentReturnView implements OnInit {
 
     /** A full reload so the portal picks up the new license (routes and menus depend on it). */
     continueToApp() {
-        window.location.assign('/admin/subscription/info');
+        window.location.assign('/app/admin/subscription/info');
     }
 
     viewInvoice() {

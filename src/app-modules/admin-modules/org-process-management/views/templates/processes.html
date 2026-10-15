@@ -60,7 +60,7 @@
 </div>
 
 <!-- Start process -->
-<process-aside *ngIf="starting" title="Start a process" subtitle="Choose a workflow; its first stage's tasks are created at once" (closed)="starting = false">
+<app-aside *ngIf="starting" title="Start a process" subtitle="Choose a workflow; its first stage's tasks are created at once" (closed)="starting = false">
         <form id="process-start-form" (ngSubmit)="start()">
             <div>
                 <div *ngIf="!lookups?.workflows?.length" class="alert alert-info text-sm">
@@ -94,7 +94,7 @@
             <button type="button" class="btn btn-sm white mr-1" (click)="starting = false">Cancel</button>
             <button type="submit" form="process-start-form" class="btn btn-sm theme" [disabled]="startBusy || !startForm.workflowId">Start</button>
         </div>
-</process-aside>
+</app-aside>
 
 <ng-template #pageTitleTemplate>
     <div class="no-shadow"><h6 class="mb-0">Processes</h6><small class="text-muted">{{ total }} process(es)</small></div>

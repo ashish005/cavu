@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {RouterModule, Routes} from "@angular/router";
-import {GlobalModule} from "@app-global";
+import {AsidePanelComponent, GlobalModule} from "@app-global";
 import {ProcessLayout} from "./layout/layout";
 import {ProcessApiService} from "./services/process-api.service";
 import {TasksView} from "./views/tasks.view";
@@ -20,7 +20,6 @@ import {TriggersView} from "./views/triggers.view";
 import {EventsView} from "./views/events.view";
 import {TeamsView} from "./views/teams.view";
 import {NotifyEditorComponent} from "./components/notify-editor.component";
-import {AsidePanelComponent} from "./components/aside-panel.component";
 import {DashBarListComponent, DashLineChartComponent, DashStatComponent} from "./components/dashboard-charts";
 import {DashboardView} from "./views/dashboard.view";
 
@@ -50,11 +49,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, RouterModule.forChild(routes), GlobalModule],
+    imports: [CommonModule, FormsModule, RouterModule.forChild(routes), GlobalModule, AsidePanelComponent],
     providers: [ProcessApiService],
     declarations: [
         ProcessLayout, TasksView, ProcessesView, ProcessDetailView, WorkflowsView, WorkflowEditorView,
-        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TeamsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, AsidePanelComponent, DashboardView, DashLineChartComponent, DashBarListComponent, DashStatComponent, ZonedPipe
+        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TeamsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, DashboardView, DashLineChartComponent, DashBarListComponent, DashStatComponent, ZonedPipe
     ]
 })
 export class ProcessManageModule {}

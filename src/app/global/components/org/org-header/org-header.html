@@ -71,7 +71,7 @@
     </div>
     <ul class="nav flex-row order-lg-2">
         <li class="nav-item" *ngIf="appSetup?.license?.showExpiryWarning">
-            <a class="btn btn-xs text-xs text-danger" [routerLink]="['/admin', 'subscription', 'payment']">
+            <a class="btn btn-xs text-xs text-danger" [routerLink]="['/app', 'admin', 'subscription', 'payment']">
                 @if (appSetup?.license?.inGracePeriod) {
                     License expired, renew now
                 } @else {
@@ -236,6 +236,12 @@
     </div>
     <div class="row no-gutters px-2 pb-2">
         <div class="col-12 px-1 text-muted text-sm b-b b-theme">Finance & Regulation</div>
+        <div class="col-4 dropdown-item">
+            <a (click)="routeToModulePath('parties')" class="d-block text-center">
+                <i class="fa text-sm fa-address-book text-muted"></i>
+                <small class="d-block _500 title">Customers, Vendors & Employees</small>
+            </a>
+        </div>
         <div class="col-4 dropdown-item">
             <a (click)="routeToModulePath('accounting')" class="d-block text-center">
                 <i class="fa text-sm fa-institution text-muted"></i>

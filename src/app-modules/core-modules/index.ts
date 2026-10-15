@@ -1,3 +1,5 @@
+import {moduleGuard} from "app/global/services/orgwise/entitlement/module.guard";
+
 export const PortalCommonModuleRoutes = [
     { path: 'profile', loadChildren: () => import('app-modules/core-modules/profile').then(m => m.ProfileModule), data: { title: 'Profile', header:'Profile'} },
     { path: 'support', loadChildren: () => import('app-modules/core-modules/service-request').then(m => m.ServiceRequestModule), data: {title: 'Support', header: 'Support'} },
@@ -12,9 +14,11 @@ export const CoreCommonModuleRoutes = [
   { path: 'org-invoice', loadChildren: () => import('app-modules/app-admin/org-invoice/index').then(m => m.ManageMoneyModule), data: {icon:"fa fa-money", name: "Money", key: 'layout.money', title: 'Invoices', header:'Invoices' } },
     { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 
-    { path: 'org-emp', loadChildren: () => import('app-modules/core-modules/org-employee/manage').then(m => m.OrgEmployeeManageModule), data: { code: "EMP", title: 'Employee', header:'Employee'} },
-    { path: 'client', loadChildren: () => import('app-modules/core-modules/org-client').then(m => m.OrgClientModule) },
-    { path: 'supplier', loadChildren: () => import('app-modules/core-modules/org-supplier').then(m => m.OrgSupplierModule) },
+    // Employees, clients / customers and suppliers: the party screens on api/v1/parties (org-party-management).
+    // Gated by module (EMP / FIN / VEN); titles use the organisation's own name for the role (Patient, Student…).
+    { path: 'org-emp', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyPortalModule), data: { role: 'employee', module: 'EMP', embedded: true, code: "EMP", title: 'Employees', header: 'Employees'} },
+    { path: 'client', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyPortalModule), data: { role: 'customer', module: 'FIN', embedded: true, title: 'Clients', header: 'Clients'} },
+    { path: 'supplier', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyPortalModule), data: { role: 'vendor', module: 'VEN', embedded: true, title: 'Suppliers', header: 'Suppliers'} },
 
     { path: 'my-task', loadChildren: () => import('app-modules/core-modules/my-task').then(m => m.MyTaskModule), data: {code: "ACCESS_TASK_MGT", title: 'Task', header:'Task'}  },//, canActivate:[ModuleGuard]
     { path: 'conversation', loadChildren: () => import('app-modules/core-modules/conversation').then(m => m.CommunicationModule), data: { code: "ACCESS_NOTIFY_MGT"} },//, canActivate:[ModuleGuard]

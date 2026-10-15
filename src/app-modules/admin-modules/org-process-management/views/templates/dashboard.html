@@ -1,0 +1,152 @@
+<div class="dash-root d-flex flex-column flex scroll-y">
+    <div class="dash-page">
+        <!-- Filters: one row, scoping everything below -->
+        <div class="dash-filters">
+            <div class="btn-group btn-group-sm mr-2 mb-1" role="group" aria-label="Period">
+                <button *ngFor="let d of periods" type="button" class="btn" [ngClass]="days === d ? 'primary' : 'white'" (click)="setDays(d)"
+                        [attr.aria-pressed]="days === d">Last {{ d }} days</button>
+            </div>
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 220px" [(ngModel)]="workflowId" (ngModelChange)="reload()" aria-label="Workflow">
+                <option value="">All workflows</option>
+                <option *ngFor="let w of lookups?.workflows" [value]="w.id">{{ w.name }}</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 200px" [(ngModel)]="teamId" (ngModelChange)="reload()" aria-label="Team">
+                <option value="">All teams</option>
+                <option *ngFor="let t of lookups?.teams" [value]="t.id">{{ t.name }}</option>
+            </select>
+            <span class="dash-scope mb-1" *ngIf="data">
+                {{ data.organisationWide ? 'Whole branch' : 'Your processes and tasks' }} · {{ data.from | date:'d MMM' }} – {{ data.to | date:'d MMM y' }} · {{ data.timeZone }}
+            </span>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div *ngIf="!data && loading" class="dash-empty p-4">Loading…</div>
+
+        <div *ngIf="data as d" [class.dash-refetching]="loading">
+            <!-- KPI row: one hero figure, then tiles -->
+            <div class="dash-kpis">
+                <dash-stat [hero]="true" label="Active processes" [value]="d.kpis.activeProcesses"
+                           [hint]="d.kpis.onHoldProcesses ? d.kpis.onHoldProcesses + ' on hold' : null"></dash-stat>
+                <dash-stat label="Completed" [value]="d.kpis.processesCompleted.value" [previous]="d.kpis.processesCompleted.previous" [periodLabel]="periodLabel"></dash-stat>
+                <dash-stat label="Average cycle time" format="hours" [upIsGood]="false" [value]="d.kpis.avgCycleHours.value" [previous]="d.kpis.avgCycleHours.previous" [periodLabel]="periodLabel"></dash-stat>
+                <dash-stat label="Tasks done on time" format="percent" [value]="d.kpis.onTimeRate.value" [previous]="d.kpis.onTimeRate.previous" [periodLabel]="periodLabel"></dash-stat>
+                <dash-stat label="Overdue tasks" [upIsGood]="false" [value]="d.kpis.overdueTasks" [status]="d.kpis.overdueTasks ? 'critical' : null"
+                           [hint]="d.kpis.openTasks + ' open in total'"></dash-stat>
+                <dash-stat label="Stage time limits missed" [upIsGood]="false" [value]="d.kpis.slaBreaches.value" [previous]="d.kpis.slaBreaches.previous" [periodLabel]="periodLabel"></dash-stat>
+                <dash-stat label="Waiting in team queues" [value]="d.kpis.queuedTasks" [status]="d.kpis.queuedTasks ? 'warning' : null"></dash-stat>
+            </div>
+
+            <div class="dash-grid">
+                <!-- Throughput -->
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Processes started and completed</h3><p>Per day · {{ d.kpis.processesStarted.value | number }} started this period</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('processes')" [attr.aria-pressed]="!!tableView.processes">{{ tableView.processes ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-line-chart *ngIf="!tableView.processes" [series]="processSeries" [points]="processPoints" ariaLabel="Processes started and completed per day"></dash-line-chart>
+                    <div *ngIf="tableView.processes" class="dash-table-wrap">
+                        <table class="dash-table"><thead><tr><th>Day</th><th>Started</th><th>Completed</th></tr></thead>
+                            <tbody><tr *ngFor="let p of d.daily"><td>{{ p.date | date:'d MMM' }}</td><td>{{ p.processesStarted }}</td><td>{{ p.processesCompleted }}</td></tr></tbody></table>
+                    </div>
+                </figure>
+
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Tasks created and completed</h3><p>Per day · {{ d.kpis.tasksCompleted.value | number }} completed this period</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('tasks')" [attr.aria-pressed]="!!tableView.tasks">{{ tableView.tasks ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-line-chart *ngIf="!tableView.tasks" [series]="taskSeries" [points]="taskPoints" ariaLabel="Tasks created and completed per day"></dash-line-chart>
+                    <div *ngIf="tableView.tasks" class="dash-table-wrap">
+                        <table class="dash-table"><thead><tr><th>Day</th><th>Created</th><th>Completed</th></tr></thead>
+                            <tbody><tr *ngFor="let p of d.daily"><td>{{ p.date | date:'d MMM' }}</td><td>{{ p.tasksCreated }}</td><td>{{ p.tasksCompleted }}</td></tr></tbody></table>
+                    </div>
+                </figure>
+
+                <!-- Bottlenecks -->
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>{{ selectedWorkflow ? 'Where ' + selectedWorkflow + ' processes are' : 'Busiest stages' }}</h3><p>Active processes by current stage</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('stages')">{{ tableView.stages ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-bar-list *ngIf="!tableView.stages" [rows]="stageRows" valueLabel="active processes" empty="No active processes."></dash-bar-list>
+                    <table *ngIf="tableView.stages" class="dash-table"><thead><tr><th>Stage</th><th>Active</th><th>Past limit</th></tr></thead>
+                        <tbody><tr *ngFor="let s of d.stages"><td>{{ s.workflowName }} · {{ s.stageName }}</td><td>{{ s.active }}</td><td>{{ s.overdue }}</td></tr></tbody></table>
+                </figure>
+
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Stage time limits missed</h3><p>Stages entered this period that ran past their limit</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('sla')">{{ tableView.sla ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-bar-list *ngIf="!tableView.sla" [rows]="slaRows" color="var(--dash-seq-2)" valueLabel="missed limits" empty="No stage missed its time limit."></dash-bar-list>
+                    <table *ngIf="tableView.sla" class="dash-table"><thead><tr><th>Stage</th><th>Missed</th><th>Entered</th></tr></thead>
+                        <tbody><tr *ngFor="let h of d.slaHotspots"><td>{{ h.workflowName }} · {{ h.stageName }}</td><td>{{ h.breaches }}</td><td>{{ h.entered }}</td></tr></tbody></table>
+                </figure>
+
+                <!-- Workload -->
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Team workload</h3><p>Open tasks routed to each team</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('teams')">{{ tableView.teams ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-bar-list *ngIf="!tableView.teams" [rows]="teamRows" [series]="workloadSeries" empty="No open team tasks."></dash-bar-list>
+                    <table *ngIf="tableView.teams" class="dash-table"><thead><tr><th>Team</th><th>On track</th><th>Overdue</th><th>Queued</th></tr></thead>
+                        <tbody><tr *ngFor="let t of d.teams"><td>{{ t.name }}</td><td>{{ t.onTrack }}</td><td>{{ t.overdue }}</td><td>{{ t.queued }}</td></tr></tbody></table>
+                </figure>
+
+                <figure class="dash-card">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Busiest people</h3><p>Open tasks per assignee (top 10)</p></div>
+                        <button class="btn btn-xs white" (click)="toggle('people')">{{ tableView.people ? 'Chart' : 'Table' }}</button>
+                    </figcaption>
+                    <dash-bar-list *ngIf="!tableView.people" [rows]="peopleRows" valueLabel="open tasks" empty="Nobody has open tasks."></dash-bar-list>
+                    <table *ngIf="tableView.people" class="dash-table"><thead><tr><th>Person</th><th>Open</th><th>Overdue</th></tr></thead>
+                        <tbody><tr *ngFor="let a of d.assignees"><td>{{ a.name }}</td><td>{{ a.open }}</td><td>{{ a.overdue }}</td></tr></tbody></table>
+                </figure>
+
+                <!-- Workflows: several measures per row, so a table -->
+                <figure class="dash-card dash-card-wide">
+                    <figcaption class="dash-card-head"><div><h3>Workflows</h3><p>Most active first</p></div></figcaption>
+                    <table class="dash-table">
+                        <thead><tr><th>Workflow</th><th class="text-right">Active</th><th class="text-right">Completed</th><th class="text-right">Average cycle time</th></tr></thead>
+                        <tbody>
+                        <tr *ngFor="let w of d.workflows"><td>{{ w.name }}</td><td class="text-right">{{ w.active }}</td><td class="text-right">{{ w.completed }}</td><td class="text-right">{{ hours(w.avgCycleHours) }}</td></tr>
+                        <tr *ngIf="!d.workflows.length"><td colspan="4" class="dash-empty">No workflow activity in this period.</td></tr>
+                        </tbody>
+                    </table>
+                </figure>
+
+                <!-- Automation health (administrators) -->
+                <figure class="dash-card dash-card-wide" *ngIf="d.organisationWide">
+                    <figcaption class="dash-card-head">
+                        <div><h3>Automation</h3><p>Rule events and notification deliveries this period</p></div>
+                        <div>
+                            <a class="btn btn-xs white mr-1" routerLink="/app/admin/process/events">Event log</a>
+                            <button class="btn btn-xs white" (click)="toggle('notifications')">{{ tableView.notifications ? 'Chart' : 'Table' }}</button>
+                        </div>
+                    </figcaption>
+                    <div class="dash-automation">
+                        <div class="dash-mini-kpis">
+                            <div><span class="dash-mini-value">{{ eventCount('Processed') | number }}</span><span class="dash-mini-label">events acted on</span></div>
+                            <div><span class="dash-mini-value">{{ eventCount('Ignored') | number }}</span><span class="dash-mini-label">no rule matched</span></div>
+                            <div><span class="dash-mini-value"><i *ngIf="eventCount('Pending')" class="fa fa-clock-o mr-1" style="color: var(--dash-warning)"></i>{{ eventCount('Pending') | number }}</span><span class="dash-mini-label">waiting</span></div>
+                            <div><span class="dash-mini-value"><i *ngIf="eventCount('Failed')" class="fa fa-exclamation-circle mr-1" style="color: var(--dash-critical)"></i>{{ eventCount('Failed') | number }}</span><span class="dash-mini-label">failed</span></div>
+                        </div>
+                        <div class="flex">
+                            <dash-bar-list *ngIf="!tableView.notifications" [rows]="deliveryRows" [series]="deliverySeries" empty="No notifications sent in this period."></dash-bar-list>
+                            <table *ngIf="tableView.notifications" class="dash-table"><thead><tr><th>Channel</th><th>Sent</th><th>Retrying</th><th>Failed</th></tr></thead>
+                                <tbody><tr *ngFor="let n of d.notifications"><td>{{ n.channel }}</td><td>{{ n.sent }}</td><td>{{ n.pending }}</td><td>{{ n.failed }}</td></tr></tbody></table>
+                        </div>
+                    </div>
+                </figure>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Dashboard</h6><small class="text-muted">Processes, tasks, teams and automation</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" (click)="reload()" [disabled]="loading" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="loading"></i></button>
+</ng-template>

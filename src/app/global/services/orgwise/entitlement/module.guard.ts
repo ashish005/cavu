@@ -17,6 +17,6 @@ export const moduleGuard: CanMatchFn = (route: Route) => {
     const router = inject(Router);
     return inject(EntitlementService).load().pipe(
         map(result => isModuleEnabled(result?.entitlements ?? null, moduleCode)
-            || router.createUrlTree(['/admin', 'subscription', 'payment'], {queryParams: {module: moduleCode}}))
+            || router.createUrlTree(['/app', 'admin', 'subscription', 'payment'], {queryParams: {module: moduleCode}}))
     );
 };
