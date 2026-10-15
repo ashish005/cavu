@@ -59,7 +59,7 @@
                 <ng-container *ngSwitchCase="'Team'">
                     <select class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.teamId">
                         <option [ngValue]="null">Choose a team…</option>
-                        <option *ngFor="let t of lookups.teams" [ngValue]="t.id">{{ t.name }} ({{ t.memberCount }})</option>
+                        <option *ngFor="let t of lookups.teams" [ngValue]="t.id">{{ t.name }}{{ t.category ? ' · ' + t.category : '' }}</option>
                     </select>
                     <a class="text-xs mr-1 mb-1" routerLink="/admin/process/teams" target="_blank">Manage teams</a>
                 </ng-container>

@@ -34,7 +34,7 @@
                                 <span *ngIf="t.processCode">{{ t.processName }} &middot; {{ t.stageName }} &middot; </span>
                                 <span *ngIf="t.entity && !t.processCode"><i class="fa fa-link"></i> {{ entityLabel(t.entity) }} &middot; </span>
                                 <span *ngIf="t.fromSchedule">Scheduled &middot; </span>
-                                <span *ngIf="scope !== 'Mine'">{{ t.assignee?.name || (t.assigneeRoleName + ' queue') }} &middot; </span>
+                                <span *ngIf="scope !== 'Mine'">{{ t.assignee?.name || ((t.assigneeTeamName || t.assigneeRoleName) + ' queue') }} &middot; </span>
                                 <span [class.text-danger]="t.isOverdue">{{ t.dueAt ? ('Due ' + relative(t.dueAt)) : 'No due date' }}</span>
                             </div>
                         </div>

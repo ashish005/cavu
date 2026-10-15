@@ -60,11 +60,9 @@
 </div>
 
 <!-- Start process -->
-<div class="modal d-block" *ngIf="starting" style="background: rgba(0,0,0,.35)" (click)="starting = false">
-    <div class="modal-dialog" (click)="$event.stopPropagation()">
-        <form class="modal-content" (ngSubmit)="start()">
-            <div class="modal-header"><h6 class="modal-title _600">Start a process</h6><button type="button" class="close" (click)="starting = false">&times;</button></div>
-            <div class="modal-body">
+<process-aside *ngIf="starting" title="Start a process" subtitle="Choose a workflow; its first stage's tasks are created at once" (closed)="starting = false">
+        <form id="process-start-form" (ngSubmit)="start()">
+            <div>
                 <div *ngIf="!lookups?.workflows?.length" class="alert alert-info text-sm">
                     There are no workflows yet. <a routerLink="../workflows/new">Create one</a> first.
                 </div>
@@ -91,13 +89,12 @@
                 </div>
                 <div *ngIf="startError" class="alert alert-danger text-sm mt-2 mb-0">{{ startError }}</div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm white" (click)="starting = false">Cancel</button>
-                <button type="submit" class="btn btn-sm theme" [disabled]="startBusy || !startForm.workflowId">Start</button>
-            </div>
         </form>
-    </div>
-</div>
+        <div aside-footer>
+            <button type="button" class="btn btn-sm white mr-1" (click)="starting = false">Cancel</button>
+            <button type="submit" form="process-start-form" class="btn btn-sm theme" [disabled]="startBusy || !startForm.workflowId">Start</button>
+        </div>
+</process-aside>
 
 <ng-template #pageTitleTemplate>
     <div class="no-shadow"><h6 class="mb-0">Processes</h6><small class="text-muted">{{ total }} process(es)</small></div>

@@ -102,11 +102,9 @@
 </div>
 
 <!-- Confirm action -->
-<div class="modal d-block" *ngIf="confirm && detail" style="background: rgba(0,0,0,.35)" (click)="confirm = null">
-    <div class="modal-dialog" (click)="$event.stopPropagation()">
-        <form class="modal-content" (ngSubmit)="submitConfirm()">
-            <div class="modal-header"><h6 class="modal-title _600">{{ confirm.title }}</h6><button type="button" class="close" (click)="confirm = null">&times;</button></div>
-            <div class="modal-body">
+<process-aside *ngIf="confirm && detail" [title]="confirm.title" [subtitle]="detail.process.name" (closed)="confirm = null">
+        <form id="process-confirm-form" (ngSubmit)="submitConfirm()">
+            <div>
                 <div class="form-group" *ngIf="confirm.action === 'move'">
                     <label class="text-xs">Move to *</label>
                     <select class="form-control form-control-sm" name="stage" [(ngModel)]="confirm.stageId" required>
@@ -121,13 +119,12 @@
                     <textarea class="form-control form-control-sm" rows="2" name="remark" [(ngModel)]="confirm.remark" maxlength="1000"></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm white" (click)="confirm = null">Back</button>
-                <button type="submit" class="btn btn-sm" [ngClass]="confirm.action === 'cancel' ? 'danger' : 'theme'" [disabled]="acting">{{ confirm.title }}</button>
-            </div>
         </form>
-    </div>
-</div>
+        <div aside-footer>
+            <button type="button" class="btn btn-sm white mr-1" (click)="confirm = null">Back</button>
+            <button type="submit" form="process-confirm-form" class="btn btn-sm" [ngClass]="confirm.action === 'cancel' ? 'danger' : 'theme'" [disabled]="acting">{{ confirm.title }}</button>
+        </div>
+</process-aside>
 
 <process-task-panel *ngIf="panelTaskId !== undefined && lookups" [taskId]="panelTaskId" [processId]="panelTaskId === null ? id : null" [lookups]="lookups" (closed)="onPanelClosed($event)"></process-task-panel>
 

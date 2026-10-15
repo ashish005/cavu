@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {finalize} from "rxjs";
 import {
     PRIORITIES, ProcessLookups, STAGE_COLORS, STAGE_RULE_TARGET_LABEL, StageRule, StageRuleKind, StageRuleTarget, Workflow, WorkflowStage,
-    newWorkflow, newWorkflowTask, toCode
+    TEAM_STRATEGIES, newWorkflow, newWorkflowTask, toCode
 } from "../domains/process.models";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 import {cleanCondition} from "../components/condition-builder.component";
@@ -106,6 +106,15 @@ export class WorkflowEditorView implements OnInit {
     }
 
     private allRules(): StageRule[] { return this.workflow.stages.flatMap(s => s.rules ?? []); }
+
+    get activeTeams() { return this.lookups?.teams.filter(t => t.isActive) ?? []; }
+
+    strategyLabel(strategy: string) { return TEAM_STRATEGIES.find(s => s.value === strategy)?.label ?? strategy; }
+
+    teamHint(teamId: string | null | undefined) {
+        const team = this.lookups?.teams.find(t => t.id === teamId);
+        return team ? TEAM_STRATEGIES.find(s => s.value === team.strategy)?.hint ?? '' : '';
+    }
 
     /** Fills the optional parts the editor binds to. */
     private prepare(w: Workflow): Workflow {

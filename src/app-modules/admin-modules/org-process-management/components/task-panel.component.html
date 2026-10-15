@@ -1,11 +1,6 @@
-<div class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,.35)" (click)="close()">
-    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title _600">{{ isNew ? 'New task' : (detail?.task?.name || 'Task') }}</h6>
-                <button type="button" class="close" (click)="close()">&times;</button>
-            </div>
-            <div class="modal-body">
+<process-aside [title]="isNew ? 'New task' : (detail?.task?.name || 'Task')" [subtitle]="detail?.task?.code || null" (closed)="close()">
+        <div>
+            <div>
                 <loader [isLoading]="busy"></loader>
                 <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
 
@@ -20,7 +15,8 @@
                     <table class="table small-table text-sm mb-2">
                         <tbody>
                         <tr><td class="text-muted" style="width: 30%">Assigned to</td>
-                            <td>{{ d.task.assignee?.name || (d.task.assigneeRoleName ? d.task.assigneeRoleName + ' queue' : 'Nobody') }}</td></tr>
+                            <td>{{ d.task.assignee?.name || (d.task.assigneeTeamName ? d.task.assigneeTeamName + ' queue' : d.task.assigneeRoleName ? d.task.assigneeRoleName + ' queue' : 'Nobody') }}
+                                <span *ngIf="d.task.assignee && d.task.assigneeTeamName" class="text-xs text-muted"> · via team {{ d.task.assigneeTeamName }}</span></td></tr>
                         <tr><td class="text-muted">Due</td>
                             <td>{{ d.task.dueAt | zoned : tz }} <span class="text-xs text-muted" *ngIf="d.task.dueAt">({{ relative(d.task.dueAt) }})</span></td></tr>
                         <tr *ngIf="d.task.processId"><td class="text-muted">Process</td>
@@ -78,7 +74,7 @@
                     <div class="form-group">
                         <label class="text-xs d-block">Assign to</label>
                         <div class="btn-group btn-group-sm mb-2">
-                            <button type="button" *ngFor="let o of [{v:'me',l:'Me'},{v:'user',l:'Someone'},{v:'role',l:'A team (role queue)'}]"
+                            <button type="button" *ngFor="let o of [{v:'me',l:'Me'},{v:'user',l:'Someone'},{v:'team',l:'A team'},{v:'role',l:'A role queue'}]"
                                     class="btn" [ngClass]="form.assignTo === o.v ? 'theme' : 'white'" (click)="form.assignTo = o.v">{{ o.l }}</button>
                         </div>
                         <select *ngIf="form.assignTo === 'user'" class="form-control form-control-sm" name="assignee" [(ngModel)]="form.assigneeId">
@@ -89,6 +85,13 @@
                             <option value="">Choose a role</option>
                             <option *ngFor="let r of lookups.roles" [value]="r.id">{{ r.name }}</option>
                         </select>
+                        <ng-container *ngIf="form.assignTo === 'team'">
+                            <select class="form-control form-control-sm" name="team" [(ngModel)]="form.assigneeTeamId">
+                                <option value="">Choose a team</option>
+                                <option *ngFor="let t of activeTeams" [value]="t.id">{{ t.name }}{{ t.category ? ' · ' + t.category : '' }}</option>
+                            </select>
+                            <small class="text-muted" *ngIf="teamStrategy as s">{{ s }}</small>
+                        </ng-container>
                     </div>
                     <div class="form-group" *ngIf="processId">
                         <label class="text-sm"><input type="checkbox" name="req" [(ngModel)]="form.isRequired" class="mr-1">Required to finish the stage</label>
@@ -97,9 +100,9 @@
                     <button type="button" class="btn btn-sm white" (click)="isNew ? close() : editing = false">Cancel</button>
                 </form>
             </div>
-            <div class="modal-footer" *ngIf="!editing && detail?.canEdit && !isClosed(detail!.task.status)">
-                <button class="btn btn-sm white" (click)="edit()"><i class="fa fa-pencil mr-1"></i>Edit</button>
-            </div>
         </div>
-    </div>
-</div>
+        <div aside-footer>
+            <button *ngIf="!editing && detail?.canEdit && !isClosed(detail!.task.status)" class="btn btn-sm white mr-1" (click)="edit()"><i class="fa fa-pencil mr-1"></i>Edit</button>
+            <button class="btn btn-sm white" (click)="close()">Close</button>
+        </div>
+</process-aside>

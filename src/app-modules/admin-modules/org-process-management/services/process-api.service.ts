@@ -3,7 +3,7 @@ import {HttpParams} from "@angular/common/http";
 import {Observable, catchError, map, of, shareReplay} from "rxjs";
 import {CoreEndpointBase} from "@app-global";
 import {
-    Attachment, EntityType, EventQuery, Page, Team, TeamSummary, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
+    Attachment, Dashboard, EntityType, EventQuery, Page, Team, TeamMemberRow, TeamSummary, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
     SchedulePreview, ScheduleRow, ScheduleRun, StartProcess, TaskDetail, TaskQuery, TaskRow, TaskSave, TaskStatus, Trigger,
     TriggerTestResult, Workflow, WorkflowEvent, WorkflowSummary
 } from "../domains/process.models";
@@ -64,6 +64,8 @@ export class ProcessApiService extends CoreEndpointBase {
         return this.lookups$;
     }
 
+    dashboard(query: {days: number; workflowId?: string | null; teamId?: string | null}) { return this.get<Dashboard>('dashboard', query); }
+
     // Tasks
     tasks(query: TaskQuery) { return this.get<Page<TaskRow>>('tasks', query); }
     task(id: string) { return this.get<TaskDetail>(`tasks/${id}`); }
@@ -118,6 +120,12 @@ export class ProcessApiService extends CoreEndpointBase {
         return team.id ? this.send<Team>('PUT', `teams/${team.id}`, team) : this.send<Team>('POST', 'teams', team);
     }
     deleteTeam(id: string) { this.lookups$ = null; return this.send<void>('DELETE', `teams/${id}`); }
+    teamMembers(id: string, query: {skip?: number; take?: number; search?: string | null}) { return this.get<Page<TeamMemberRow>>(`teams/${id}/members`, query); }
+    /** Members an unsaved definition would include. */
+    previewTeam(team: Team, query: {skip?: number; take?: number; search?: string | null}) {
+        const params = new URLSearchParams(Object.entries(query).filter(([, v]) => v !== null && v !== undefined && v !== '').map(([k, v]) => [k, String(v)])).toString();
+        return this.send<Page<TeamMemberRow>>('POST', `teams/preview${params ? '?' + params : ''}`, team);
+    }
 
     uploadAttachment(file: File): Observable<Attachment> {
         const form = new FormData();

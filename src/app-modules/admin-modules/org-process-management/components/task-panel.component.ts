@@ -42,7 +42,16 @@ export class TaskPanelComponent implements OnInit {
     changed = false;
     remark = '';
 
-    form = {name: '', description: '', priority: 'Normal' as TaskPriority, assignTo: 'me', assigneeId: '', assigneeRoleId: '', dueLocal: '', isRequired: false};
+    form = {name: '', description: '', priority: 'Normal' as TaskPriority, assignTo: 'me', assigneeId: '', assigneeRoleId: '', assigneeTeamId: '', dueLocal: '', isRequired: false};
+
+    get activeTeams() { return this.lookups.teams.filter(t => t.isActive); }
+
+    /** How the chosen team will route the task. */
+    get teamStrategy(): string | null {
+        const team = this.lookups.teams.find(t => t.id === this.form.assigneeTeamId);
+        if (!team) { return null; }
+        return {Queue: 'Waits in the team queue until a member takes it.', RoundRobin: 'Goes to the next member in turn.', LeastBusy: 'Goes to the member with the fewest open tasks.'}[team.strategy];
+    }
 
     constructor(private api: ProcessApiService) {}
 
@@ -71,9 +80,10 @@ export class TaskPanelComponent implements OnInit {
             name: t.name,
             description: this.detail!.description ?? '',
             priority: t.priority,
-            assignTo: t.assignee ? (t.assignee.id === this.lookups.currentUserId ? 'me' : 'user') : t.assigneeRoleId ? 'role' : 'me',
+            assignTo: t.assigneeTeamId && !t.assignee ? 'team' : t.assignee ? (t.assignee.id === this.lookups.currentUserId ? 'me' : 'user') : t.assigneeRoleId ? 'role' : 'me',
             assigneeId: t.assignee?.id ?? '',
             assigneeRoleId: t.assigneeRoleId ?? '',
+            assigneeTeamId: t.assigneeTeamId ?? '',
             dueLocal: isoToZonedLocal(t.dueAt, this.tz),
             isRequired: t.isRequired
         };
@@ -89,6 +99,7 @@ export class TaskPanelComponent implements OnInit {
             priority: f.priority,
             assigneeId: f.assignTo === 'me' ? this.lookups.currentUserId : f.assignTo === 'user' ? (f.assigneeId || null) : null,
             assigneeRoleId: f.assignTo === 'role' ? (f.assigneeRoleId || null) : null,
+            assigneeTeamId: f.assignTo === 'team' ? (f.assigneeTeamId || null) : null,
             dueAt: f.dueLocal ? zonedLocalToIso(f.dueLocal, this.tz) : null,
             processId: this.processId,
             isRequired: f.isRequired,

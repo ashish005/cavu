@@ -45,14 +45,10 @@
     </div>
 </div>
 
-<div *ngIf="editing as t" class="modal d-block" tabindex="-1" style="background: rgba(0,0,0,.35)" (click)="editing = null">
-    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title _600">{{ t.id ? 'Edit rule' : 'New rule' }} · {{ t.action === 'Notify' ? 'send a notification' : 'start a workflow' }}</h6>
-                <button type="button" class="close" (click)="editing = null">&times;</button>
-            </div>
-            <div class="modal-body text-sm">
+<process-aside *ngIf="editing as t" size="lg" [title]="(t.id ? 'Edit rule' : 'New rule') + ' · ' + (t.action === 'Notify' ? 'send a notification' : 'start a workflow')"
+               [subtitle]="t.name || null" (closed)="editing = null">
+        <div>
+            <div class="text-sm">
                 <loader [isLoading]="saving"></loader>
                 <div *ngIf="editError" class="alert alert-danger">{{ editError }}</div>
 
@@ -154,13 +150,12 @@
                     </div>
                 </details>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-sm white" (click)="editing = null">Cancel</button>
-                <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save rule</button>
-            </div>
         </div>
-    </div>
-</div>
+        <div aside-footer>
+            <button class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+            <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save rule</button>
+        </div>
+</process-aside>
 
 <ng-template #pageTitleTemplate>
     <div class="no-shadow"><h6 class="mb-0">Automation rules</h6><small class="text-muted">Start workflows and send notifications when records change</small></div>

@@ -1,0 +1,188 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container-fluid p-3" style="max-width: 1200px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <p class="text-sm text-muted mb-1 flex">
+                Teams receive tasks (shared queue, round-robin or least busy), approve stages, get escalations through their lead
+                and are notification recipients. Membership can follow rules, so new people join automatically.
+            </p>
+            <input class="form-control form-control-sm mb-1" style="max-width: 240px" [(ngModel)]="filter" placeholder="Search teams">
+        </div>
+
+        <div *ngFor="let g of groups" class="mb-3">
+            <div class="text-xs text-muted text-uppercase _600 mb-1">{{ g.category }}</div>
+            <div class="box">
+                <table class="table table-hover small-table text-sm mb-0">
+                    <thead><tr><th>Team</th><th>Members</th><th>Routing</th><th>Lead</th><th class="text-right">Queue / open</th><th style="width: 120px"></th></tr></thead>
+                    <tbody>
+                    <tr *ngFor="let t of g.teams" [class.text-muted]="!t.isActive">
+                        <td><a role="button" class="_600" (click)="open(t)">{{ t.name }}</a>
+                            <span *ngIf="!t.isActive" class="badge grey ml-1">inactive</span>
+                            <div class="text-xs text-muted">{{ t.code }}{{ t.description ? ' · ' + t.description : '' }}</div></td>
+                        <td>{{ t.memberCount }}<span *ngIf="t.externalCount" class="text-muted"> + {{ t.externalCount }} external</span>
+                            <div class="text-xs text-muted">{{ modeLabel(t.membershipMode) }}{{ t.ruleCount ? ' · ' + t.ruleCount + ' rule(s)' : '' }}</div></td>
+                        <td>{{ strategyLabel(t.assignmentStrategy) }}</td>
+                        <td>{{ t.lead?.name || '—' }}</td>
+                        <td class="text-right"><span [class.text-warning]="t.queuedTasks > 0">{{ t.queuedTasks }}</span> / {{ t.openTasks }}</td>
+                        <td class="text-right text-nowrap">
+                            <button class="btn btn-xs white mr-1" (click)="open(t)">Open</button>
+                            <button class="btn btn-xs white text-danger" [disabled]="!lookups?.isAdmin" (click)="delete(t)" title="Delete"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div *ngIf="!loading && !groups.length" class="box p-4 text-center text-muted">No teams yet.</div>
+    </div>
+</div>
+
+<process-aside *ngIf="editing as t" size="xl" [title]="t.id ? t.name : 'New team'" [subtitle]="t.id ? t.code : 'Who belongs, how work reaches them, who leads them'" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+
+    <div class="row text-sm">
+        <!-- Definition -->
+        <div class="col-lg-7">
+            <div class="row">
+                <div class="col-md-7 form-group">
+                    <label class="text-xs">Name *</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="t.name" (ngModelChange)="nameChanged()" maxlength="150" placeholder="e.g. Finance approvers" appAutofocus>
+                </div>
+                <div class="col-md-5 form-group">
+                    <label class="text-xs">Code *</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="t.code" maxlength="60">
+                </div>
+                <div class="col-md-5 form-group">
+                    <label class="text-xs">Category</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="t.category" list="team-categories" maxlength="60" placeholder="e.g. Approvers">
+                    <datalist id="team-categories"><option *ngFor="let c of categories" [value]="c"></option></datalist>
+                </div>
+                <div class="col-md-7 form-group">
+                    <label class="text-xs">Lead <span class="text-muted">(receives escalations of overdue team tasks)</span></label>
+                    <select class="form-control form-control-sm" [(ngModel)]="t.leadUserId">
+                        <option [ngValue]="null">No lead</option>
+                        <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option>
+                    </select>
+                </div>
+                <div class="col-12 form-group">
+                    <label class="text-xs">Description</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="t.description" maxlength="1000">
+                </div>
+            </div>
+
+            <label class="text-xs d-block">How tasks reach the team</label>
+            <div class="d-flex flex-wrap mb-3">
+                <label *ngFor="let s of strategies" class="p-2 mr-2 mb-1 rounded" role="button" style="flex: 1 1 150px; border: 1px solid rgba(0,0,0,.1)"
+                       [style.border-color]="t.assignmentStrategy === s.value ? '#6366f1' : null">
+                    <input type="radio" class="mr-1" name="strategy" [value]="s.value" [(ngModel)]="t.assignmentStrategy">
+                    <b>{{ s.label }}</b><div class="text-xs text-muted">{{ s.hint }}</div>
+                </label>
+            </div>
+
+            <label class="text-xs d-block">Who belongs</label>
+            <div class="btn-group btn-group-sm mb-1">
+                <button *ngFor="let m of modes" type="button" class="btn" [ngClass]="t.membershipMode === m.value ? 'primary' : 'white'" (click)="setMode(m.value)">{{ m.label }}</button>
+            </div>
+            <div class="text-xs text-muted mb-2">{{ modeHint }}</div>
+
+            <!-- Rules -->
+            <div *ngIf="usesRules" class="mb-3">
+                <div class="text-xs text-muted mb-1">Everyone who matches <b>all</b> of these (any value within a rule):</div>
+                <div *ngFor="let r of t.rules; let i = index" class="p-2 mb-1 rounded" style="border: 1px dashed #c7d2fe">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 140px" [(ngModel)]="r.kind" (ngModelChange)="kindChanged(r)">
+                            <option *ngFor="let k of ruleKinds" [value]="k.value">{{ k.label }}</option>
+                        </select>
+                        <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 120px" [(ngModel)]="r.operator" (ngModelChange)="refreshPreview()">
+                            <option value="In">is one of</option>
+                            <option value="NotIn">is not</option>
+                        </select>
+                        <select #valuePick class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" (change)="addValue(r, valuePick.value); valuePick.value = ''">
+                            <option value="">Add…</option>
+                            <option *ngFor="let o of options(r.kind)" [value]="o.id" [disabled]="r.values.includes(o.id)">{{ o.name }}</option>
+                        </select>
+                        <button type="button" class="btn btn-xs white text-danger mb-1" (click)="removeRule(i)"><i class="fa fa-times"></i></button>
+                    </div>
+                    <span *ngFor="let v of r.values; let j = index" class="badge mr-1" [ngClass]="r.operator === 'In' ? 'info' : 'warn'">
+                        {{ optionName(r.kind, v) }} <a role="button" class="ml-1" (click)="removeValue(r, j)">&times;</a></span>
+                    <span *ngIf="!r.values.length" class="text-xs text-danger">Add at least one value</span>
+                </div>
+                <button type="button" class="btn btn-xs white" [disabled]="t.rules.length >= 10" (click)="addRule()"><i class="fa fa-plus mr-1"></i>Add rule</button>
+            </div>
+
+            <!-- Chosen and excluded people -->
+            <div *ngIf="usesChosen" class="mb-2">
+                <div class="text-xs text-muted mb-1">{{ t.membershipMode === 'Mixed' ? 'Also include' : 'Members' }}</div>
+                <span *ngFor="let m of chosen" class="badge info mr-1 mb-1">{{ userName(m.userId) }} <a role="button" class="ml-1" (click)="remove(m)">&times;</a></span>
+                <select #pick class="form-control form-control-sm mt-1" style="max-width: 320px" (change)="addPerson(pick.value, false); pick.value = ''">
+                    <option value="">Add a member…</option>
+                    <option *ngFor="let u of lookups?.users" [value]="u.id">{{ u.name }}</option>
+                </select>
+            </div>
+            <div *ngIf="usesRules" class="mb-3">
+                <div class="text-xs text-muted mb-1">Never include</div>
+                <span *ngFor="let m of excluded" class="badge warn mr-1 mb-1">{{ userName(m.userId) }} <a role="button" class="ml-1" (click)="remove(m)">&times;</a></span>
+                <select #ex class="form-control form-control-sm mt-1" style="max-width: 320px" (change)="addPerson(ex.value, true); ex.value = ''">
+                    <option value="">Exclude someone…</option>
+                    <option *ngFor="let u of lookups?.users" [value]="u.id">{{ u.name }}</option>
+                </select>
+            </div>
+
+            <!-- External contacts -->
+            <label class="text-xs d-block">External contacts <span class="text-muted">(notifications only)</span></label>
+            <div *ngFor="let c of contacts" class="d-flex align-items-center mb-1">
+                <i class="fa fa-user-o text-muted mr-2"></i>
+                <span class="flex">{{ c.name }} <span class="text-muted">{{ c.email }} {{ c.phone }}</span></span>
+                <button class="btn btn-xs white text-danger" (click)="remove(c)"><i class="fa fa-times"></i></button>
+            </div>
+            <div class="d-flex flex-wrap">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 120px" [(ngModel)]="contact.name" placeholder="Name" maxlength="150">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="contact.email" placeholder="email@example.com" maxlength="254">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 130px" [(ngModel)]="contact.phone" placeholder="+919876543210" maxlength="32">
+                <button class="btn btn-sm white mb-1" (click)="addContact()"><i class="fa fa-plus mr-1"></i>Add</button>
+            </div>
+        </div>
+
+        <!-- Live members (virtual scroll) -->
+        <div class="col-lg-5">
+            <div class="box p-2 h-100 d-flex flex-column">
+                <div class="d-flex align-items-center mb-1">
+                    <b class="flex">Members now</b>
+                    <span class="badge info">{{ previewTotal }}</span>
+                    <i *ngIf="previewLoading" class="fa fa-spinner fa-spin ml-2 text-muted"></i>
+                </div>
+                <input class="form-control form-control-sm mb-1" [(ngModel)]="previewSearch" (ngModelChange)="refreshPreview()" placeholder="Search members">
+                <div *ngIf="previewError" class="text-danger text-xs">{{ previewError }}</div>
+                <cdk-virtual-scroll-viewport itemSize="44" style="height: 420px" (scrolledIndexChange)="onScrolled($event)">
+                    <div *cdkVirtualFor="let m of preview; trackBy: trackByUser" class="d-flex align-items-center px-1" style="height: 44px; border-bottom: 1px solid rgba(0,0,0,.05)">
+                        <div class="flex text-ellipsis">
+                            <div class="text-ellipsis">{{ m.name }} <span *ngIf="m.chosen" class="badge light">chosen</span></div>
+                            <div class="text-xs text-muted text-ellipsis">{{ m.email }}</div>
+                        </div>
+                        <span class="text-xs text-muted mr-2" title="Open tasks">{{ m.openTasks }} open</span>
+                        <button *ngIf="usesRules" type="button" class="btn btn-xs white" title="Never include" (click)="addPerson(m.userId, true)"><i class="fa fa-user-times"></i></button>
+                    </div>
+                </cdk-virtual-scroll-viewport>
+                <div *ngIf="!previewLoading && !preview.length" class="text-xs text-muted text-center p-3">
+                    {{ usesRules ? 'Nobody matches these rules yet.' : 'Add members to see them here.' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div aside-footer>
+        <label class="mb-0 mr-auto text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="t.isActive">Active</label>
+        <button class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="saving || !lookups?.isAdmin" (click)="save()">Save team</button>
+    </div>
+</process-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Teams</h6><small class="text-muted">{{ teams.length }} team(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a class="btn btn-sm white mr-1" routerLink="/admin/process/triggers">Rules</a>
+    <button class="btn btn-sm theme" [disabled]="!lookups?.isAdmin" (click)="open()"><i class="fa fa-plus mr-1"></i>New team</button>
+</ng-template>

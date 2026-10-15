@@ -13,6 +13,7 @@ export class ProcessLayout {
         {
             isFLatChildren: true, key: 'Work',
             children: [
+                {routeTo: ['dashboard'], icon: 'fa fa-line-chart', key: 'Dashboard'},
                 {routeTo: ['tasks'], icon: 'fa fa-check-square-o', key: 'My tasks'},
                 {routeTo: ['processes'], icon: 'fa fa-random', key: 'Processes'},
                 {routeTo: ['calendar'], icon: 'fa fa-calendar', key: 'Calendar'}

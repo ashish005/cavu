@@ -20,6 +20,9 @@ import {TriggersView} from "./views/triggers.view";
 import {EventsView} from "./views/events.view";
 import {TeamsView} from "./views/teams.view";
 import {NotifyEditorComponent} from "./components/notify-editor.component";
+import {AsidePanelComponent} from "./components/aside-panel.component";
+import {DashBarListComponent, DashLineChartComponent, DashStatComponent} from "./components/dashboard-charts";
+import {DashboardView} from "./views/dashboard.view";
 
 /** Processes, tasks, workflows and schedules. See README.md. */
 const routes: Routes = [
@@ -27,6 +30,7 @@ const routes: Routes = [
         path: '', component: ProcessLayout,
         children: [
             {path: '', pathMatch: 'full', redirectTo: 'tasks'},
+            {path: 'dashboard', component: DashboardView, data: {title: 'Dashboard', key: 'dashboard', header: 'Dashboard'}},
             {path: 'tasks', component: TasksView, data: {title: 'My tasks', key: 'tasks', header: 'My tasks'}},
             {path: 'processes', component: ProcessesView, data: {title: 'Processes', key: 'processes', header: 'Processes'}},
             {path: 'processes/:id', component: ProcessDetailView, data: {title: 'Process', key: 'process', header: 'Process'}},
@@ -50,7 +54,7 @@ const routes: Routes = [
     providers: [ProcessApiService],
     declarations: [
         ProcessLayout, TasksView, ProcessesView, ProcessDetailView, WorkflowsView, WorkflowEditorView,
-        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TeamsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, ZonedPipe
+        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TeamsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, AsidePanelComponent, DashboardView, DashLineChartComponent, DashBarListComponent, DashStatComponent, ZonedPipe
     ]
 })
 export class ProcessManageModule {}

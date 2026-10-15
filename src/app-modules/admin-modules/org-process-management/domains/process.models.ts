@@ -8,7 +8,10 @@ export type TaskPriority = 'Low' | 'Normal' | 'High' | 'Urgent';
 export type TaskScope = 'Mine' | 'Queue' | 'All';
 export type ProcessStatus = 'Active' | 'OnHold' | 'Completed' | 'Cancelled';
 export type StageAdvanceMode = 'Automatic' | 'Approval';
-export type AssigneeType = 'ProcessOwner' | 'User' | 'Role';
+export type AssigneeType = 'ProcessOwner' | 'User' | 'Role' | 'Team';
+export type TeamMembershipMode = 'Static' | 'Dynamic' | 'Mixed';
+export type TeamAssignmentStrategy = 'Queue' | 'RoundRobin' | 'LeastBusy';
+export type TeamRuleKind = 'UserType' | 'Role' | 'Branch';
 export type ScheduleKind = 'CreateTask' | 'StartProcess' | 'RunActions';
 export type ScheduleStatus = 'Draft' | 'Active' | 'Paused' | 'Expired' | 'Disabled';
 export type RecurrenceType = 'Once' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'Fiscal' | 'Cron' | 'BusinessDay' | 'Minutely' | 'Hourly';
@@ -43,9 +46,12 @@ export interface ProcessLookups {
     workflows: WorkflowRef[];
     retryPolicies: RetryPolicyRef[];
     teams: TeamRef[];
+    userTypes: NamedRef[];
+    branches: NamedRef[];
 }
 
-export interface TeamRef { id: string; name: string; memberCount: number; }
+export interface TeamRef { id: string; name: string; category: string | null; strategy: TeamAssignmentStrategy; isActive: boolean; }
+export interface NamedRef { id: string; name: string; }
 
 // ---------- Tasks ----------
 export interface TaskRow {
@@ -57,6 +63,8 @@ export interface TaskRow {
     assignee: UserRef | null;
     assigneeRoleId: string | null;
     assigneeRoleName: string | null;
+    assigneeTeamId: string | null;
+    assigneeTeamName: string | null;
     dueAt: string | null;
     isOverdue: boolean;
     isRequired: boolean;
@@ -100,6 +108,7 @@ export interface TaskSave {
     priority: TaskPriority;
     assigneeId: string | null;
     assigneeRoleId: string | null;
+    assigneeTeamId?: string | null;
     dueAt: string | null;
     processId?: string | null;
     isRequired: boolean;
@@ -162,6 +171,7 @@ export interface WorkflowTask {
     assigneeType: AssigneeType;
     assigneeUserId?: string | null;
     assigneeRoleId?: string | null;
+    assigneeTeamId?: string | null;
     dueAfterHours?: number | null;
 }
 
@@ -172,6 +182,7 @@ export interface WorkflowStage {
     slaHours?: number | null;
     advanceMode: StageAdvanceMode;
     approverRoleId?: string | null;
+    approverTeamId?: string | null;
     tasks: WorkflowTask[];
     /** Automatic stage switches. */
     rules?: StageRule[];
@@ -223,9 +234,42 @@ export interface Attachment { id: string; fileName: string; contentType: string;
 export interface ResolvedRecipient { userId: string | null; name: string; email: string | null; phone: string | null; source: string; }
 export interface NotifyPreview { recipients: ResolvedRecipient[]; subject: string; body: string; attachments: string[]; notes: string[]; }
 
-export interface TeamMember { id?: string | null; userId?: string | null; name?: string | null; email?: string | null; phone?: string | null; }
-export interface Team { id?: string | null; code: string; name: string; description?: string | null; members: TeamMember[]; }
-export interface TeamSummary { id: string; code: string; name: string; description: string | null; memberCount: number; externalCount: number; }
+export interface TeamMember { id?: string | null; userId?: string | null; name?: string | null; email?: string | null; phone?: string | null; isExcluded?: boolean; }
+export interface TeamRule { id?: string | null; kind: TeamRuleKind; operator: 'In' | 'NotIn'; values: string[]; }
+export interface Team {
+    id?: string | null;
+    code: string;
+    name: string;
+    description?: string | null;
+    category?: string | null;
+    membershipMode: TeamMembershipMode;
+    assignmentStrategy: TeamAssignmentStrategy;
+    leadUserId?: string | null;
+    isActive: boolean;
+    rules: TeamRule[];
+    members: TeamMember[];
+}
+export interface TeamSummary {
+    id: string; code: string; name: string; description: string | null; category: string | null;
+    membershipMode: TeamMembershipMode; assignmentStrategy: TeamAssignmentStrategy; lead: UserRef | null; isActive: boolean;
+    memberCount: number; externalCount: number; ruleCount: number; queuedTasks: number; openTasks: number;
+}
+export interface TeamMemberRow { userId: string; name: string; email: string; openTasks: number; chosen: boolean; }
+
+export const TEAM_STRATEGIES: {value: TeamAssignmentStrategy; label: string; hint: string}[] = [
+    {value: 'Queue', label: 'Shared queue', hint: 'Tasks wait in the team queue until a member takes them.'},
+    {value: 'RoundRobin', label: 'Round-robin', hint: 'Each task goes to the next member in turn.'},
+    {value: 'LeastBusy', label: 'Least busy', hint: 'Each task goes to the member with the fewest open tasks.'}
+];
+export const TEAM_MODES: {value: TeamMembershipMode; label: string; hint: string}[] = [
+    {value: 'Static', label: 'Chosen people', hint: 'Only the people you add.'},
+    {value: 'Dynamic', label: 'By rules', hint: 'Everyone matching the rules, now and later.'},
+    {value: 'Mixed', label: 'Rules + chosen', hint: 'Rule matches plus the people you add.'}
+];
+export const TEAM_RULE_KINDS: {value: TeamRuleKind; label: string}[] = [
+    {value: 'UserType', label: 'User type'}, {value: 'Role', label: 'Role'}, {value: 'Branch', label: 'Branch access'}
+];
+export const newTeam = (): Team => ({code: '', name: '', description: '', category: '', membershipMode: 'Static', assignmentStrategy: 'Queue', leadUserId: null, isActive: true, rules: [], members: []});
 
 export interface Trigger {
     id?: string | null;
@@ -442,3 +486,23 @@ export const newWorkflow = (): Workflow => ({
 });
 
 export const newWorkflowTask = (): WorkflowTask => ({name: '', priority: 'Normal', isRequired: true, assigneeType: 'ProcessOwner', dueAfterHours: 24});
+
+// ---------- Dashboard ----------
+export interface Kpi { value: number | null; previous: number | null; }
+export interface DashboardKpis {
+    activeProcesses: number; onHoldProcesses: number; processesStarted: Kpi; processesCompleted: Kpi; avgCycleHours: Kpi;
+    openTasks: number; overdueTasks: number; queuedTasks: number; tasksCompleted: Kpi; onTimeRate: Kpi; slaBreaches: Kpi;
+}
+export interface DailyPoint { date: string; processesStarted: number; processesCompleted: number; tasksCreated: number; tasksCompleted: number; }
+export interface Dashboard {
+    from: string; to: string; timeZone: string; organisationWide: boolean;
+    kpis: DashboardKpis;
+    daily: DailyPoint[];
+    stages: {workflowName: string; stageName: string; color: string | null; active: number; overdue: number}[];
+    workflows: {id: string; name: string; active: number; completed: number; avgCycleHours: number | null}[];
+    teams: {id: string; name: string; onTrack: number; overdue: number; queued: number}[];
+    assignees: {userId: string; name: string; open: number; overdue: number}[];
+    slaHotspots: {workflowName: string; stageName: string; breaches: number; entered: number}[];
+    events: Record<string, number>;
+    notifications: {channel: string; sent: number; pending: number; failed: number}[];
+}

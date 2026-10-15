@@ -58,6 +58,10 @@
                             <option [ngValue]="null">Process owner</option>
                             <option *ngFor="let r of lookups?.roles" [ngValue]="r.id">{{ r.name }} (or owner)</option>
                         </select>
+                        <select class="form-control form-control-sm mt-1" [(ngModel)]="stage.approverTeamId" title="Members of this team may also approve">
+                            <option [ngValue]="null">No approver team</option>
+                            <option *ngFor="let t of activeTeams" [ngValue]="t.id">Team: {{ t.name }}</option>
+                        </select>
                     </div>
                     <div class="col-md-4 form-group">
                         <label class="text-xs">Time limit (hours)</label>
@@ -74,7 +78,13 @@
                     <select class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 150px" [(ngModel)]="task.assigneeType" title="Assigned to">
                         <option value="ProcessOwner">Process owner</option>
                         <option value="User">A person</option>
-                        <option value="Role">A team (role queue)</option>
+                        <option value="Team">A team</option>
+                        <option value="Role">A role queue</option>
+                    </select>
+                    <select *ngIf="task.assigneeType === 'Team'" class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 170px" [(ngModel)]="task.assigneeTeamId"
+                            [title]="teamHint(task.assigneeTeamId)">
+                        <option [ngValue]="null">Choose…</option>
+                        <option *ngFor="let t of activeTeams" [ngValue]="t.id">{{ t.name }} · {{ strategyLabel(t.strategy) }}</option>
                     </select>
                     <select *ngIf="task.assigneeType === 'User'" class="form-control form-control-sm mr-2 mb-1" style="flex: 1 1 150px" [(ngModel)]="task.assigneeUserId">
                         <option [ngValue]="null">Choose…</option>
