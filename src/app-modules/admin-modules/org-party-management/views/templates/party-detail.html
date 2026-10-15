@@ -1,0 +1,151 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || busy"></loader>
+    <div class="container-fluid p-3" style="max-width: 1300px" *ngIf="party as p">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <!-- Account summary -->
+        <div class="row" *ngIf="summary as s">
+            <div class="col-sm-6 col-lg-3 mb-3">
+                <div class="box p-3 h-100">
+                    <div class="text-xs text-muted">{{ meta.balanceLabel }}</div>
+                    <div class="h3 _600 mb-0" [class.text-danger]="s.overCreditLimit">{{ fmt(s.balance) }}</div>
+                    <div class="text-xs text-muted">{{ s.paymentTerm || 'Due on demand' }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mb-3" *ngIf="role === 'customer'">
+                <div class="box p-3 h-100">
+                    <div class="text-xs text-muted">Available credit</div>
+                    <div class="h4 _600 mb-0" [class.text-danger]="s.overCreditLimit">{{ s.creditLimit === null ? 'No limit' : fmt(s.availableCredit) }}</div>
+                    <div class="text-xs" [class.text-danger]="s.overCreditLimit">
+                        <i *ngIf="s.overCreditLimit" class="fa fa-exclamation-circle mr-1"></i>{{ s.creditLimit !== null ? 'Limit ' + fmt(s.creditLimit) : '' }}{{ s.overCreditLimit ? ' — over limit' : '' }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mb-3">
+                <div class="box p-3 h-100">
+                    <div class="text-xs text-muted">This year</div>
+                    <div class="text-sm">{{ role === 'vendor' ? 'Billed' : role === 'customer' ? 'Invoiced' : 'Advanced' }} <b>{{ fmt(s.chargedThisYear) }}</b></div>
+                    <div class="text-sm">{{ role === 'vendor' ? 'Paid' : role === 'customer' ? 'Received' : 'Settled' }} <b>{{ fmt(s.settledThisYear) }}</b></div>
+                    <div class="text-xs text-muted">Last activity {{ s.lastActivity ? (s.lastActivity | date:'mediumDate') : '—' }}</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mb-3" *ngIf="(p.roles?.length ?? 0) > 1">
+                <div class="box p-3 h-100">
+                    <div class="text-xs text-muted">Net position (all roles)</div>
+                    <div class="h4 _600 mb-0">{{ fmt(s.netPosition) }}</div>
+                    <div class="text-xs text-muted">{{ s.netPosition >= 0 ? 'Owes you overall' : 'You owe overall' }} · {{ p.roles?.join(', ') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aging -->
+        <div class="box p-3 mb-3" *ngIf="summary as s">
+            <div class="d-flex align-items-center mb-2">
+                <h6 class="_600 mb-0 flex">Aging</h6>
+                <span class="text-xs text-muted">Past due {{ fmt(s.aging.pastDue) }}</span>
+            </div>
+            <div class="row text-sm">
+                <div class="col" *ngFor="let b of buckets">
+                    <div class="text-xs text-muted">{{ b.label }}</div>
+                    <div class="_600">{{ fmt($any(s.aging)[b.key]) }}</div>
+                    <div class="progress mt-1" style="height: 6px" [title]="b.label">
+                        <div class="progress-bar" [style.width.%]="bucketShare($any(s.aging)[b.key])"
+                             [style.background]="b.key === 'current' ? '#2a78d6' : b.key === 'days1To30' ? '#fab219' : '#d03b3b'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Statement -->
+            <div class="col-lg-8 mb-3">
+                <div class="box p-3 h-100">
+                    <div class="d-flex flex-wrap align-items-center mb-2">
+                        <h6 class="_600 mb-0 mr-auto">Statement</h6>
+                        <input type="date" class="form-control form-control-sm mr-1" style="max-width: 150px" [(ngModel)]="from" (change)="loadStatement()">
+                        <input type="date" class="form-control form-control-sm mr-1" style="max-width: 150px" [(ngModel)]="to" (change)="loadStatement()">
+                        <button class="btn btn-xs white" (click)="exportCsv()" [disabled]="!statement"><i class="fa fa-download mr-1"></i>CSV</button>
+                    </div>
+                    <div style="max-height: 460px; overflow: auto" *ngIf="statement as st">
+                        <table class="table small-table text-sm mb-0" style="font-variant-numeric: tabular-nums">
+                            <thead><tr><th>Date</th><th>Entry</th><th>Description</th><th class="text-right">Charge</th><th class="text-right">Payment / credit</th><th class="text-right">Balance</th></tr></thead>
+                            <tbody>
+                            <tr class="text-muted"><td>{{ st.from | date:'mediumDate' }}</td><td></td><td>Opening balance</td><td></td><td></td><td class="text-right">{{ fmt(st.opening) }}</td></tr>
+                            <tr *ngFor="let l of st.lines">
+                                <td class="text-nowrap">{{ l.date | date:'mediumDate' }}</td>
+                                <td class="text-xs">{{ l.entryNumber }}<div class="text-muted">{{ l.documentType }}</div></td>
+                                <td class="text-xs">{{ l.description }}<div class="text-muted">{{ l.reference }}</div></td>
+                                <td class="text-right">{{ l.charge ? fmt(l.charge) : '' }}</td>
+                                <td class="text-right">{{ l.settlement ? fmt(l.settlement) : '' }}</td>
+                                <td class="text-right">{{ fmt(l.balance) }}</td>
+                            </tr>
+                            <tr *ngIf="!st.lines.length"><td colspan="6" class="text-center text-muted">No activity in this period.</td></tr>
+                            <tr class="_600"><td>{{ st.to | date:'mediumDate' }}</td><td></td><td>Closing balance</td>
+                                <td class="text-right">{{ fmt(st.totalCharges) }}</td><td class="text-right">{{ fmt(st.totalSettlements) }}</td><td class="text-right">{{ fmt(st.closing) }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="col-lg-4 mb-3">
+                <div class="box p-3 h-100 text-sm">
+                    <h6 class="_600">Details</h6>
+                    <div *ngIf="p.legalName" class="mb-1"><span class="text-muted">Legal name</span> {{ p.legalName }}</div>
+                    <div *ngIf="p.email"><i class="fa fa-envelope-o text-muted mr-1"></i>{{ p.email }}</div>
+                    <div *ngIf="p.phone"><i class="fa fa-phone text-muted mr-1"></i>{{ p.phone }}</div>
+                    <div *ngFor="let a of p.addresses" class="mt-2">
+                        <div class="text-xs text-muted">{{ a.type === 'RemitTo' ? 'Remit to' : a.type }}{{ a.isPrimary ? ' · primary' : '' }}</div>
+                        {{ a.line1 }}{{ a.line2 ? ', ' + a.line2 : '' }}<br>{{ a.city }}{{ a.region ? ', ' + a.region : '' }} {{ a.postalCode }}
+                    </div>
+                    <div *ngIf="p.taxIds.length" class="mt-2"><span class="text-xs text-muted d-block">Tax ids</span>
+                        <span *ngFor="let t of p.taxIds" class="mr-2">{{ t.type }} {{ t.masked }}</span></div>
+                    <div *ngIf="p.bankAccounts.length" class="mt-2"><span class="text-xs text-muted d-block">Bank</span>
+                        <div *ngFor="let b of p.bankAccounts">{{ b.bankName || 'Account' }} {{ b.masked }}</div></div>
+                    <div *ngIf="p.contacts.length" class="mt-2"><span class="text-xs text-muted d-block">Contacts</span>
+                        <div *ngFor="let c of p.contacts">{{ c.name }} <span class="text-muted">{{ c.jobTitle }}</span><div class="text-xs text-muted">{{ c.email }} {{ c.phone }}</div></div></div>
+                    <div *ngIf="p.relationships.length" class="mt-2"><span class="text-xs text-muted d-block">Related</span>
+                        <div *ngFor="let r of p.relationships">{{ r.relatedName }} <span class="text-muted">({{ r.type.replace('_', ' ') }})</span></div></div>
+                    <ng-container *ngIf="p.vendor as v">
+                        <div class="mt-2"><span class="text-xs text-muted d-block">1099</span>
+                            {{ v.is1099 ? (v.form1099 === 'Misc' ? '1099-MISC' : '1099-NEC') : 'Not a 1099 vendor' }}
+                            <span *ngIf="v.is1099 && !v.w9ReceivedOn" class="badge warn ml-1"><i class="fa fa-exclamation-triangle mr-1"></i>No W-9</span></div>
+                    </ng-container>
+                    <ng-container *ngIf="p.employee as e">
+                        <div class="mt-2"><span class="text-xs text-muted d-block">Employment</span>
+                            Hired {{ e.hireDate | date:'mediumDate' }} · {{ e.employmentType }} · {{ e.flsaStatus === 'Exempt' ? 'Exempt' : 'Non-exempt' }}
+                            <div *ngIf="e.terminationDate">Terminated {{ e.terminationDate | date:'mediumDate' }}</div></div>
+                    </ng-container>
+                    <div class="mt-2 text-xs text-muted" *ngIf="p.notes" style="white-space: pre-wrap">{{ p.notes }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="p-3" *ngIf="!party && error"><div class="alert alert-danger">{{ error }}</div><a routerLink="../">Back</a></div>
+</div>
+
+<party-editor *ngIf="editing && lookups" [role]="role" [partyId]="id" [lookups]="lookups" (closed)="onEditorClosed($event)"></party-editor>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow" *ngIf="party as p">
+        <h6 class="mb-0">{{ p.displayName }}
+            <span class="badge ml-1" *ngIf="p.status !== 'Active'" [ngClass]="p.status === 'Blocked' ? 'danger' : 'grey'">{{ p.status }}</span></h6>
+        <small class="text-muted">{{ section?.number }} · {{ p.roles?.join(', ') }}</small>
+    </div>
+</ng-template>
+<ng-template #actionTemplate>
+    <ng-container *ngIf="party as p">
+        <a class="btn btn-sm white mr-1" routerLink="../">Back</a>
+        <div class="btn-group mr-1" *ngIf="lookups?.canManage">
+            <button class="btn btn-sm white dropdown-toggle" data-toggle="dropdown">More</button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" *ngIf="p.status !== 'Active'" (click)="setStatus('Active')">Mark active</a>
+                <a class="dropdown-item" *ngIf="p.status !== 'Inactive'" (click)="setStatus('Inactive')">Mark inactive</a>
+                <a class="dropdown-item" *ngIf="p.status !== 'Blocked'" (click)="setStatus('Blocked')">Block new transactions</a>
+                <a class="dropdown-item" *ngIf="!p.hasPortalAccess && p.email" (click)="grantPortal()">Give portal access</a>
+            </div>
+        </div>
+        <button class="btn btn-sm theme" [disabled]="!lookups?.canManage" (click)="editing = true"><i class="fa fa-pencil mr-1"></i>Edit</button>
+    </ng-container>
+</ng-template>

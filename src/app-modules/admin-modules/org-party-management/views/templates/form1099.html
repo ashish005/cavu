@@ -1,0 +1,38 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container-fluid p-3" style="max-width: 1200px">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 120px" [(ngModel)]="year" (ngModelChange)="load()">
+                <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+            </select>
+            <label class="text-sm mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="onlyReportable">Only reportable</label>
+            <span class="flex"></span>
+            <span *ngIf="report as r" class="text-sm mb-1">{{ r.reportable }} reportable · threshold {{ fmt(r.threshold) }}
+                <span *ngIf="r.withIssues" class="badge warn ml-1"><i class="fa fa-exclamation-triangle mr-1"></i>{{ r.withIssues }} need attention</span></span>
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="box">
+            <table class="table small-table text-sm mb-0" style="font-variant-numeric: tabular-nums">
+                <thead><tr><th>Vendor</th><th>TIN</th><th>W-9</th><th>Form</th><th class="text-right">Paid in {{ year }}</th><th>Status</th></tr></thead>
+                <tbody>
+                <tr *ngFor="let x of rows">
+                    <td><a [routerLink]="['../vendors', x.partyId]">{{ x.name }}</a> <span class="text-xs text-muted">{{ x.number }}</span></td>
+                    <td>{{ x.tinMasked || '—' }}</td>
+                    <td>{{ x.w9OnFile ? 'On file' : 'Missing' }}</td>
+                    <td>{{ x.form === 'Misc' ? '1099-MISC' : x.form === 'Nec' ? '1099-NEC' : '—' }}</td>
+                    <td class="text-right">{{ fmt(x.paid) }}</td>
+                    <td>
+                        <span *ngIf="x.issue" class="text-warning"><i class="fa fa-exclamation-triangle mr-1"></i>{{ x.issue }}</span>
+                        <span *ngIf="!x.issue && x.reportable" class="text-success"><i class="fa fa-check mr-1"></i>Ready</span>
+                        <span *ngIf="!x.reportable" class="text-muted">Below threshold</span>
+                    </td>
+                </tr>
+                <tr *ngIf="!rows.length"><td colspan="6" class="text-center text-muted p-4">No 1099 vendors {{ onlyReportable ? 'above the threshold ' : '' }}for {{ year }}.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-xs text-muted mt-2">Counts payments (not bills) to vendors marked as 1099 vendors, by payment date. The IRS threshold is $600 for payments through 2025 and $2,000 from 2026. Check with your tax advisor before filing.</p>
+    </div>
+</div>
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">1099 summary</h6><small class="text-muted">US contractor reporting</small></div></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm white" (click)="export()" [disabled]="!report"><i class="fa fa-download mr-1"></i>CSV</button></ng-template>

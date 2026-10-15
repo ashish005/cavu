@@ -1,0 +1,44 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container-fluid p-3" style="max-width: 1300px">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div class="btn-group btn-group-sm mr-2 mb-1">
+                <button class="btn" [ngClass]="role === 'customer' ? 'primary' : 'white'" (click)="setRole('customer')">Receivables</button>
+                <button class="btn" [ngClass]="role === 'vendor' ? 'primary' : 'white'" (click)="setRole('vendor')">Payables</button>
+                <button class="btn" [ngClass]="role === 'employee' ? 'primary' : 'white'" (click)="setRole('employee')">Employee advances</button>
+            </div>
+            <label class="text-sm mb-1 mr-1">As of</label>
+            <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="asOf" (change)="load()">
+            <input class="form-control form-control-sm mr-2 mb-1" style="max-width: 220px" [(ngModel)]="search" (keyup.enter)="load()" placeholder="Name (Enter)">
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div class="box" *ngIf="report as r">
+            <table class="table table-hover small-table text-sm mb-0" style="font-variant-numeric: tabular-nums">
+                <thead><tr><th>{{ role === 'vendor' ? 'Vendor' : role === 'employee' ? 'Employee' : 'Customer' }}</th><th>Terms</th>
+                    <th class="text-right">Not yet due</th><th class="text-right">1–30</th><th class="text-right">31–60</th><th class="text-right">61–90</th><th class="text-right">Over 90</th><th class="text-right">Total</th></tr></thead>
+                <tbody>
+                <tr *ngFor="let x of r.rows" role="button" (click)="open(x.partyId)">
+                    <td><span class="_600">{{ x.name }}</span> <span class="text-xs text-muted">{{ x.number }}</span></td>
+                    <td class="text-xs">{{ x.paymentTerm || '—' }}</td>
+                    <td class="text-right">{{ fmt(x.buckets.current) }}</td>
+                    <td class="text-right">{{ fmt(x.buckets.days1To30) }}</td>
+                    <td class="text-right">{{ fmt(x.buckets.days31To60) }}</td>
+                    <td class="text-right" [class.text-danger]="x.buckets.days61To90">{{ fmt(x.buckets.days61To90) }}</td>
+                    <td class="text-right" [class.text-danger]="x.buckets.over90">{{ fmt(x.buckets.over90) }}</td>
+                    <td class="text-right _600">{{ fmt(x.buckets.total) }}</td>
+                </tr>
+                <tr *ngIf="!r.rows.length"><td colspan="8" class="text-center text-muted p-4">Nothing outstanding as of {{ r.asOf | date:'mediumDate' }}.</td></tr>
+                </tbody>
+                <tfoot *ngIf="r.rows.length"><tr class="_600">
+                    <td>Total ({{ r.parties }})</td><td></td>
+                    <td class="text-right">{{ fmt(r.totals.current) }}</td><td class="text-right">{{ fmt(r.totals.days1To30) }}</td>
+                    <td class="text-right">{{ fmt(r.totals.days31To60) }}</td><td class="text-right">{{ fmt(r.totals.days61To90) }}</td>
+                    <td class="text-right">{{ fmt(r.totals.over90) }}</td><td class="text-right">{{ fmt(r.totals.total) }}</td></tr></tfoot>
+            </table>
+        </div>
+        <p class="text-xs text-muted mt-2">Payments are applied to the oldest charges first; each charge is due by the party's payment terms. Amounts in {{ report?.currencyCode }}, all branches.</p>
+    </div>
+</div>
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Aging</h6><small class="text-muted">Outstanding balances by days past due</small></div></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm white" (click)="export()" [disabled]="!report"><i class="fa fa-download mr-1"></i>CSV</button></ng-template>

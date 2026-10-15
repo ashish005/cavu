@@ -1,0 +1,71 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container-fluid p-3" style="max-width: 1300px">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <input class="form-control form-control-sm mr-2 mb-1" style="max-width: 260px" [(ngModel)]="search" (ngModelChange)="reload()" placeholder="Search name, number, email">
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 140px" [(ngModel)]="status" (ngModelChange)="reload()">
+                <option value="">All statuses</option><option value="Active">Active</option><option value="Inactive">Inactive</option><option value="Blocked">Blocked</option>
+            </select>
+            <select *ngIf="role === 'employee'" class="form-control form-control-sm mr-2 mb-1" style="max-width: 180px" [(ngModel)]="departmentId" (ngModelChange)="reload()">
+                <option value="">All departments</option>
+                <option *ngFor="let d of lookups?.departments" [value]="d.id">{{ d.name }}</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 170px" [(ngModel)]="sort" (ngModelChange)="reload()">
+                <option value="name">Sort by name</option><option value="number">Sort by number</option><option value="balance">Largest balance first</option>
+            </select>
+            <label class="text-sm mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="withBalance" (ngModelChange)="reload()">With a balance</label>
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <div class="box">
+            <table class="table table-hover small-table text-sm mb-0">
+                <thead>
+                <tr>
+                    <th>Number</th><th>Name</th><th>Contact</th><th>Location</th>
+                    <th *ngIf="role === 'employee'">Department</th>
+                    <th class="text-right">{{ meta.balanceLabel }}</th><th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let r of rows; trackBy: trackById" role="button" (click)="open(r)">
+                    <td class="text-muted text-nowrap">{{ r.number }}</td>
+                    <td>
+                        <span class="_600">{{ r.displayName }}</span>
+                        <span *ngIf="r.status !== 'Active'" class="badge ml-1" [ngClass]="r.status === 'Blocked' ? 'danger' : 'grey'">{{ r.status }}</span>
+                        <span *ngIf="r.onHold" class="badge warn ml-1"><i class="fa fa-pause mr-1"></i>Credit hold</span>
+                        <span *ngIf="r.is1099" class="badge info ml-1">1099</span>
+                        <span *ngIf="r.missingW9" class="badge warn ml-1" title="No W-9 on file"><i class="fa fa-exclamation-triangle mr-1"></i>W-9</span>
+                        <span *ngIf="r.employmentStatus && r.employmentStatus !== 'Active'" class="badge grey ml-1">{{ r.employmentStatus === 'OnLeave' ? 'On leave' : r.employmentStatus }}</span>
+                        <i *ngIf="r.hasPortalAccess" class="fa fa-key text-muted ml-1" title="Has portal access"></i>
+                    </td>
+                    <td class="text-xs">{{ r.email }}<div class="text-muted">{{ r.phone }}</div></td>
+                    <td class="text-xs">{{ r.city }}{{ r.region ? ', ' + r.region : '' }}</td>
+                    <td *ngIf="role === 'employee'" class="text-xs">{{ r.department }}<div class="text-muted">{{ r.designation }}</div></td>
+                    <td class="text-right text-nowrap" [class.text-danger]="r.creditLimit !== null && r.balance > r.creditLimit">
+                        {{ fmt(r.balance) }}
+                        <div *ngIf="r.creditLimit !== null" class="text-xs text-muted">limit {{ fmt(r.creditLimit) }}</div>
+                    </td>
+                    <td class="text-right"><button class="btn btn-xs white" (click)="editing = r.id; $event.stopPropagation()">Edit</button></td>
+                </tr>
+                <tr *ngIf="!loading && !rows.length"><td colspan="7" class="text-center text-muted p-4">No {{ label.plural.toLowerCase() }} match.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex align-items-center mt-2 text-sm" *ngIf="total > pageSize">
+            <span class="text-muted">{{ skip + 1 }}–{{ skip + rows.length }} of {{ total }}</span>
+            <span class="flex"></span>
+            <button class="btn btn-xs white mr-1" [disabled]="skip === 0" (click)="page(-1)">Previous</button>
+            <button class="btn btn-xs white" [disabled]="skip + pageSize >= total" (click)="page(1)">Next</button>
+        </div>
+    </div>
+</div>
+
+<party-editor *ngIf="editing !== undefined && lookups" [role]="role" [partyId]="editing" [lookups]="lookups" (closed)="onEditorClosed($event)"></party-editor>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">{{ label.plural }}</h6><small class="text-muted">{{ total }} {{ total === 1 ? label.singular.toLowerCase() : label.plural.toLowerCase() }}</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <a class="btn btn-sm white mr-1" [routerLink]="['../aging']" [queryParams]="{role: role}" *ngIf="role !== 'employee' && !embedded">Aging</a>
+    <button class="btn btn-sm theme" [disabled]="!lookups?.canManage" (click)="editing = null"><i class="fa fa-plus mr-1"></i>New {{ label.singular.toLowerCase() }}</button>
+</ng-template>

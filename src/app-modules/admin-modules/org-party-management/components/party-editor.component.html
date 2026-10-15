@@ -1,0 +1,339 @@
+<app-aside size="lg" [title]="title" [subtitle]="number ? number + ' · ' + noun : 'New ' + noun" (closed)="close()">
+    <loader [isLoading]="loading || saving"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+    <ng-container *ngIf="party as p">
+        <!-- Possible duplicates -->
+        <div *ngIf="isNew && duplicates.length" class="alert alert-warning text-sm">
+            <b>This may already exist:</b>
+            <div *ngFor="let d of duplicates" class="d-flex align-items-center mt-1">
+                <span class="flex">{{ d.displayName }} <span class="text-muted">({{ d.reason }}{{ d.roles.length ? '; ' + d.roles.join(', ') : '' }})</span></span>
+                <button *ngIf="!d.roles.includes(role)" type="button" class="btn btn-xs white ml-2" (click)="useExisting(d)"
+                        [ngClass]="attachTo?.partyId === d.partyId ? 'primary' : 'white'">Add as {{ noun }}</button>
+            </div>
+            <label class="mb-0 mt-1 text-xs"><input type="checkbox" class="mr-1" [(ngModel)]="allowDuplicate" (ngModelChange)="attachTo = null">It is a different party; save anyway</label>
+        </div>
+        <div *ngIf="attachTo" class="alert alert-info text-sm">
+            {{ attachTo.displayName }} will become a {{ noun }} too. Their existing details are kept; only the {{ noun }} settings below are added.
+            <a role="button" class="ml-1" (click)="attachTo = null">Undo</a>
+        </div>
+
+        <!-- Basics -->
+        <h6 class="_600 text-sm">Details</h6>
+        <div class="row text-sm">
+            <div class="col-12 mb-2" *ngIf="role !== 'employee'">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn" [ngClass]="p.kind === 'Organization' ? 'primary' : 'white'" (click)="p.kind = 'Organization'">Company</button>
+                    <button type="button" class="btn" [ngClass]="p.kind === 'Person' ? 'primary' : 'white'" (click)="p.kind = 'Person'; nameChanged()">Individual</button>
+                </div>
+            </div>
+            <ng-container *ngIf="p.kind === 'Person'">
+                <div class="col-md-6 form-group">
+                    <label class="text-xs">First name *</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="p.firstName" (ngModelChange)="nameChanged()" maxlength="100" appAutofocus>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="text-xs">Last name</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="p.lastName" (ngModelChange)="nameChanged()" maxlength="100">
+                </div>
+            </ng-container>
+            <div class="col-md-6 form-group">
+                <label class="text-xs">{{ p.kind === 'Person' ? 'Display name *' : 'Company name *' }}</label>
+                <input class="form-control form-control-sm" [(ngModel)]="p.displayName" maxlength="250">
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="text-xs">Legal name <span class="text-muted">(for tax forms)</span></label>
+                <input class="form-control form-control-sm" [(ngModel)]="p.legalName" maxlength="250">
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="text-xs">Email</label>
+                <input type="email" class="form-control form-control-sm" [(ngModel)]="p.email" (blur)="checkDuplicates()" maxlength="254">
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="text-xs">Phone <span class="text-muted">(+country code)</span></label>
+                <input class="form-control form-control-sm" [(ngModel)]="p.phone" placeholder="+14155550123" maxlength="32">
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="text-xs">Country</label>
+                <input class="form-control form-control-sm text-uppercase" [(ngModel)]="p.countryCode" (ngModelChange)="countryChanged()" maxlength="2">
+            </div>
+            <div class="col-md-3 form-group">
+                <label class="text-xs">Currency</label>
+                <input class="form-control form-control-sm text-uppercase" [(ngModel)]="p.currencyCode" [placeholder]="lookups.currencyCode" maxlength="3">
+            </div>
+            <div class="col-md-6 form-group" *ngIf="p.kind === 'Organization'">
+                <label class="text-xs">Website</label>
+                <input class="form-control form-control-sm" [(ngModel)]="p.website" maxlength="250">
+            </div>
+        </div>
+
+        <!-- Customer -->
+        <ng-container *ngIf="role === 'customer' && p.customer as c">
+            <h6 class="_600 text-sm mt-2">Credit and sales tax</h6>
+            <div class="row text-sm">
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Payment terms</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="c.paymentTermId">
+                        <option [ngValue]="null">Organisation default</option>
+                        <option *ngFor="let t of lookups.paymentTerms" [ngValue]="t.id">{{ t.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Credit limit ({{ lookups.currencyCode }})</label>
+                    <input type="number" min="0" class="form-control form-control-sm" [(ngModel)]="c.creditLimit" placeholder="No limit">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Sales rep</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="c.salesRepUserId">
+                        <option [ngValue]="null">None</option>
+                        <option *ngFor="let u of lookups.users" [ngValue]="u.id">{{ u.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="c.onHold">On credit hold</label>
+                    <input *ngIf="c.onHold" class="form-control form-control-sm mt-1" [(ngModel)]="c.holdReason" placeholder="Reason *" maxlength="500">
+                </div>
+                <div class="col-md-8 form-group">
+                    <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="c.taxExempt">Sales-tax exempt</label>
+                    <div *ngIf="c.taxExempt" class="d-flex flex-wrap mt-1">
+                        <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 140px" [(ngModel)]="c.exemptionCertificateNo" placeholder="Certificate no. *" maxlength="60">
+                        <select *ngIf="rules?.regions?.length; else freeRegion" class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 120px" [(ngModel)]="c.exemptionRegion">
+                            <option [ngValue]="null">State…</option>
+                            <option *ngFor="let r of rules!.regions" [value]="r.code">{{ r.code }}</option>
+                        </select>
+                        <ng-template #freeRegion><input class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 120px" [(ngModel)]="c.exemptionRegion" placeholder="Region" maxlength="10"></ng-template>
+                        <input type="date" class="form-control form-control-sm mb-1" style="flex: 0 1 150px" [(ngModel)]="c.exemptionExpiresOn" title="Expires on">
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Vendor -->
+        <ng-container *ngIf="role === 'vendor' && p.vendor as v">
+            <h6 class="_600 text-sm mt-2">Payments and 1099</h6>
+            <div class="row text-sm">
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Payment terms</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="v.paymentTermId">
+                        <option [ngValue]="null">Organisation default</option>
+                        <option *ngFor="let t of lookups.paymentTerms" [ngValue]="t.id">{{ t.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Pay by</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="v.paymentMethod">
+                        <option value="Ach">ACH</option><option value="Check">Check</option><option value="Wire">Wire</option><option value="Card">Card</option><option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">DBA name</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="v.dbaName" maxlength="250">
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="text-xs">Default expense account</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="v.defaultExpenseAccountId">
+                        <option [ngValue]="null">None</option>
+                        <option *ngFor="let a of lookups.expenseAccounts" [ngValue]="a.id">{{ a.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="v.is1099">1099 vendor (US)</label>
+                    <div *ngIf="v.is1099" class="d-flex flex-wrap mt-1">
+                        <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 120px" [(ngModel)]="v.form1099">
+                            <option [ngValue]="null">Form…</option><option value="Nec">1099-NEC</option><option value="Misc">1099-MISC</option>
+                        </select>
+                        <input type="date" class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 150px" [(ngModel)]="v.w9ReceivedOn" title="W-9 received on">
+                        <label class="mb-1 text-xs"><input type="checkbox" class="mr-1" [(ngModel)]="v.backupWithholding">Backup withholding</label>
+                    </div>
+                    <small *ngIf="v.is1099 && !v.w9ReceivedOn" class="text-warning">No W-9 on file.</small>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Employee -->
+        <ng-container *ngIf="role === 'employee' && p.employee as e">
+            <h6 class="_600 text-sm mt-2">Employment</h6>
+            <div class="row text-sm">
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Hire date *</label>
+                    <input type="date" class="form-control form-control-sm" [(ngModel)]="e.hireDate">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Status</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.employmentStatus">
+                        <option value="Active">Active</option><option value="OnLeave">On leave</option><option value="Terminated">Terminated</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group" *ngIf="e.employmentStatus === 'Terminated' || e.terminationDate">
+                    <label class="text-xs">Termination date</label>
+                    <input type="date" class="form-control form-control-sm" [(ngModel)]="e.terminationDate">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Type</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.employmentType">
+                        <option value="FullTime">Full-time</option><option value="PartTime">Part-time</option><option value="Contract">Contract</option>
+                        <option value="Intern">Intern</option><option value="Seasonal">Seasonal</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Department</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.departmentId">
+                        <option [ngValue]="null">None</option>
+                        <option *ngFor="let d of lookups.departments" [ngValue]="d.id">{{ d.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Designation</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.designationId">
+                        <option [ngValue]="null">None</option>
+                        <option *ngFor="let d of lookups.designations" [ngValue]="d.id">{{ d.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">FLSA</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.flsaStatus">
+                        <option value="NonExempt">Non-exempt</option><option value="Exempt">Exempt</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Pay</label>
+                    <div class="d-flex">
+                        <select class="form-control form-control-sm mr-1" [(ngModel)]="e.payType">
+                            <option value="Hourly">Hourly</option><option value="Salary">Salary</option>
+                        </select>
+                        <select class="form-control form-control-sm" [(ngModel)]="e.payFrequency">
+                            <option value="Weekly">Weekly</option><option value="Biweekly">Biweekly</option><option value="Semimonthly">Semimonthly</option><option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4 form-group" *ngIf="lookups.canSeeSensitive">
+                    <label class="text-xs">{{ e.payType === 'Salary' ? 'Annual salary' : 'Hourly rate' }} ({{ lookups.currencyCode }})</label>
+                    <input type="number" min="0" class="form-control form-control-sm" [(ngModel)]="e.payRate">
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Work state / region</label>
+                    <select *ngIf="rules?.regions?.length; else freeWork" class="form-control form-control-sm" [(ngModel)]="e.workRegion">
+                        <option [ngValue]="null">—</option>
+                        <option *ngFor="let r of rules!.regions" [value]="r.code">{{ r.name }}</option>
+                    </select>
+                    <ng-template #freeWork><input class="form-control form-control-sm" [(ngModel)]="e.workRegion" maxlength="10"></ng-template>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label class="text-xs">Work branch</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="e.workBranchId">
+                        <option [ngValue]="null">—</option>
+                        <option *ngFor="let b of lookups.branches" [ngValue]="b.id">{{ b.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group" *ngIf="lookups.canSeeSensitive">
+                    <label class="text-xs">Date of birth</label>
+                    <input type="date" class="form-control form-control-sm" [(ngModel)]="e.birthDate">
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Addresses -->
+        <h6 class="_600 text-sm mt-2">Addresses</h6>
+        <div *ngFor="let a of p.addresses; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(0,0,0,.08)">
+            <div class="d-flex flex-wrap align-items-center">
+                <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 130px" [(ngModel)]="a.type">
+                    <option value="Billing">Billing</option><option value="Shipping">Shipping</option><option value="RemitTo">Remit to</option>
+                    <option value="Home">Home</option><option value="Work">Work</option>
+                </select>
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 2 1 220px" [(ngModel)]="a.line1" placeholder="Street *" maxlength="200">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 120px" [(ngModel)]="a.line2" placeholder="Suite / unit" maxlength="200">
+            </div>
+            <div class="d-flex flex-wrap align-items-center">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 140px" [(ngModel)]="a.city" placeholder="City *" maxlength="100">
+                <select *ngIf="rules?.regions?.length && (a.countryCode || p.countryCode) === rules?.countryCode; else freeAddrRegion" class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 140px" [(ngModel)]="a.region">
+                    <option [ngValue]="null">State…</option>
+                    <option *ngFor="let r of rules!.regions" [value]="r.code">{{ r.name }}</option>
+                </select>
+                <ng-template #freeAddrRegion><input class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 120px" [(ngModel)]="a.region" placeholder="Region" maxlength="10"></ng-template>
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 110px" [(ngModel)]="a.postalCode" [placeholder]="rules?.countryCode === 'US' ? 'ZIP' : 'Postal code'" maxlength="20">
+                <label class="mb-1 mr-2 text-xs"><input type="radio" class="mr-1" [checked]="a.isPrimary" (change)="primary(p.addresses, a)">Primary</label>
+                <button type="button" class="btn btn-xs white text-danger mb-1" (click)="remove(p.addresses, i)"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-xs white mb-2" (click)="addAddress()"><i class="fa fa-plus mr-1"></i>Add address</button>
+
+        <!-- Tax ids -->
+        <h6 class="_600 text-sm mt-2">Tax identifiers</h6>
+        <div *ngFor="let t of p.taxIds; let i = index; trackBy: trackByIndex" class="d-flex flex-wrap align-items-center mb-1 text-sm">
+            <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 110px" [(ngModel)]="t.type" [disabled]="!!t.id">
+                <option *ngFor="let x of taxTypes" [value]="x.code" [title]="x.name">{{ x.code }}</option>
+            </select>
+            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="t.value" (blur)="checkDuplicates()" autocomplete="off"
+                   [placeholder]="t.id ? (revealed[t.id] || t.masked) + ' (type to replace)' : (t.type + ' *')" maxlength="40">
+            <button *ngIf="t.id && lookups.canSeeSensitive && !revealed[t.id]" type="button" class="btn btn-xs white mr-1 mb-1" (click)="reveal('taxId', t.id)" title="Reveal (logged)"><i class="fa fa-eye"></i></button>
+            <span *ngIf="t.verifiedAt" class="badge success mr-1 mb-1">verified</span>
+            <button type="button" class="btn btn-xs white text-danger mb-1" (click)="remove(p.taxIds, i)"><i class="fa fa-times"></i></button>
+        </div>
+        <button type="button" class="btn btn-xs white mb-2" (click)="addTaxId()" [disabled]="!taxTypes.length"><i class="fa fa-plus mr-1"></i>Add tax id</button>
+
+        <!-- Bank accounts -->
+        <h6 class="_600 text-sm mt-2">Bank accounts <span class="text-muted text-xs">(for payments and refunds)</span></h6>
+        <div *ngFor="let b of p.bankAccounts; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(0,0,0,.08)">
+            <div class="d-flex flex-wrap align-items-center">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="b.accountHolderName" placeholder="Account holder *" maxlength="150">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 140px" [(ngModel)]="b.bankName" placeholder="Bank" maxlength="150">
+                <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 110px" [(ngModel)]="b.accountKind">
+                    <option value="Checking">Checking</option><option value="Savings">Savings</option><option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="d-flex flex-wrap align-items-center">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 150px" [(ngModel)]="b.routingCode" [placeholder]="rules?.routingCodeLabel || 'Routing code'" maxlength="40">
+                <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 170px" [(ngModel)]="b.accountNumber" autocomplete="off"
+                       [placeholder]="b.id ? (revealed[b.id] || b.masked) + ' (type to replace)' : 'Account number *'" maxlength="40">
+                <button *ngIf="b.id && lookups.canSeeSensitive && !revealed[b.id]" type="button" class="btn btn-xs white mr-1 mb-1" (click)="reveal('bankAccount', b.id)" title="Reveal (logged)"><i class="fa fa-eye"></i></button>
+                <label class="mb-1 mr-2 text-xs"><input type="radio" class="mr-1" [checked]="b.isPrimary" (change)="primary(p.bankAccounts, b)">Primary</label>
+                <button type="button" class="btn btn-xs white text-danger mb-1" (click)="remove(p.bankAccounts, i)"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-xs white mb-2" (click)="addBank()"><i class="fa fa-plus mr-1"></i>Add bank account</button>
+
+        <!-- Contacts -->
+        <h6 class="_600 text-sm mt-2">Contact people</h6>
+        <div *ngFor="let c of p.contacts; let i = index; trackBy: trackByIndex" class="d-flex flex-wrap align-items-center mb-1 text-sm">
+            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 140px" [(ngModel)]="c.name" placeholder="Name *" maxlength="150">
+            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 110px" [(ngModel)]="c.jobTitle" placeholder="Role" maxlength="100">
+            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="c.email" placeholder="Email" maxlength="254">
+            <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 120px" [(ngModel)]="c.phone" placeholder="Phone" maxlength="32">
+            <button type="button" class="btn btn-xs white text-danger mb-1" (click)="remove(p.contacts, i)"><i class="fa fa-times"></i></button>
+        </div>
+        <button type="button" class="btn btn-xs white mb-2" (click)="addContact()"><i class="fa fa-plus mr-1"></i>Add contact</button>
+
+        <!-- Relationships -->
+        <h6 class="_600 text-sm mt-2">Related parties</h6>
+        <div *ngFor="let r of p.relationships; let i = index; trackBy: trackByIndex" class="d-flex flex-wrap align-items-center mb-1 text-sm">
+            <span class="flex">{{ r.relatedName }}</span>
+            <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 170px" [(ngModel)]="r.type">
+                <option *ngFor="let t of relationTypes" [value]="t.value">{{ t.label }}</option>
+            </select>
+            <button type="button" class="btn btn-xs white text-danger mb-1" (click)="remove(p.relationships, i)"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="position-relative mb-2" style="max-width: 360px">
+            <input class="form-control form-control-sm" [ngModel]="relationQuery" (ngModelChange)="searchRelations($event)" placeholder="Link a customer, vendor or employee…">
+            <div *ngIf="relationResults.length" class="dropdown-menu d-block w-100">
+                <a *ngFor="let r of relationResults" class="dropdown-item text-sm" role="button" (click)="addRelation(r)">{{ r.displayName }} <span class="text-muted text-xs">{{ r.roles.join(', ') }}</span></a>
+            </div>
+        </div>
+
+        <!-- Branches -->
+        <h6 class="_600 text-sm mt-2">Branches <span class="text-muted text-xs">(none selected = all branches)</span></h6>
+        <div class="d-flex flex-wrap mb-2">
+            <label *ngFor="let b of lookups.branches" class="mr-3 text-sm mb-1">
+                <input type="checkbox" class="mr-1" [checked]="p.branchIds.includes(b.id)" (change)="toggleBranch(b.id)">{{ b.name }}
+            </label>
+        </div>
+
+        <h6 class="_600 text-sm mt-2">Notes</h6>
+        <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="p.notes" maxlength="4000"></textarea>
+    </ng-container>
+
+    <div aside-footer>
+        <span *ngIf="!lookups.canManage" class="text-muted text-xs mr-auto">Read only</span>
+        <button class="btn btn-sm white mr-1" (click)="close()">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="saving || !party || !lookups.canManage" (click)="save()">{{ attachTo ? 'Add as ' + noun : 'Save' }}</button>
+    </div>
+</app-aside>

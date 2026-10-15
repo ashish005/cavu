@@ -1,0 +1,59 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container p-3" style="max-width: 1100px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="row">
+            <div class="col-lg-6 mb-3">
+                <div class="box p-3 h-100">
+                    <div class="d-flex align-items-center mb-2"><h6 class="_600 mb-0 flex">Payment terms</h6>
+                        <button class="btn btn-xs white" [disabled]="!canManage" (click)="editTerm()"><i class="fa fa-plus mr-1"></i>Add</button></div>
+                    <table class="table small-table text-sm mb-0">
+                        <thead><tr><th>Name</th><th class="text-right">Due</th><th>Early-payment discount</th><th></th></tr></thead>
+                        <tbody>
+                        <tr *ngFor="let t of terms">
+                            <td>{{ t.name }} <span *ngIf="t.isDefault" class="badge info ml-1">default</span></td>
+                            <td class="text-right">{{ t.dueDays }} days</td>
+                            <td>{{ t.discountPercent ? t.discountPercent + '% within ' + t.discountDays + ' days' : '—' }}</td>
+                            <td class="text-right text-nowrap">
+                                <button class="btn btn-xs white mr-1" [disabled]="!canManage" (click)="editTerm(t)">Edit</button>
+                                <button class="btn btn-xs white text-danger" [disabled]="!canManage" (click)="deleteTerm(t)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-3 mb-3" *ngFor="let c of categories">
+                <div class="box p-3 h-100">
+                    <h6 class="_600">{{ c.label }}</h6>
+                    <div *ngFor="let row of lists[c.key]" class="d-flex align-items-center mb-1">
+                        <input #nameInput class="form-control form-control-sm mr-1" [value]="row.name" [disabled]="!canManage" (blur)="rename(c.key, row, nameInput.value)">
+                        <button class="btn btn-xs white text-danger" [disabled]="!canManage" (click)="deleteItem(c.key, row)"><i class="fa fa-times"></i></button>
+                    </div>
+                    <div class="d-flex mt-2">
+                        <input class="form-control form-control-sm mr-1" [(ngModel)]="newItem[c.key]" (keyup.enter)="addItem(c.key)" [placeholder]="'New ' + c.label.toLowerCase().slice(0, -1)" [disabled]="!canManage">
+                        <button class="btn btn-xs white" [disabled]="!canManage" (click)="addItem(c.key)">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="term as t" title="Payment term" [subtitle]="t.id ? t.name : 'New payment term'" (closed)="term = null">
+    <div class="form-group"><label class="text-xs">Name *</label><input class="form-control form-control-sm" [(ngModel)]="t.name" placeholder="e.g. Net 30" maxlength="100" appAutofocus></div>
+    <div class="form-group"><label class="text-xs">Code</label><input class="form-control form-control-sm" [(ngModel)]="t.code" placeholder="NET_30" maxlength="40"></div>
+    <div class="form-group"><label class="text-xs">Due after (days)</label><input type="number" min="0" max="365" class="form-control form-control-sm" [(ngModel)]="t.dueDays"></div>
+    <div class="row">
+        <div class="col-6 form-group"><label class="text-xs">Discount %</label><input type="number" min="0" max="100" class="form-control form-control-sm" [(ngModel)]="t.discountPercent"></div>
+        <div class="col-6 form-group"><label class="text-xs">If paid within (days)</label><input type="number" min="0" class="form-control form-control-sm" [(ngModel)]="t.discountDays"></div>
+    </div>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="t.isDefault">Default for new customers and vendors</label>
+    <div aside-footer>
+        <button class="btn btn-sm white mr-1" (click)="term = null">Cancel</button>
+        <button class="btn btn-sm theme" (click)="saveTerm()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Settings</h6><small class="text-muted">Payment terms, departments, designations</small></div></ng-template>
+<ng-template #actionTemplate></ng-template>
