@@ -11,7 +11,8 @@ API (`baseSectorAPIUrl`); behaviour and operations are documented in the backend
 | `calendar` | `CalendarView` | Month grid of tasks by due day |
 | `workflows`, `workflows/:id`, `workflows/new` | `WorkflowsView`, `WorkflowEditorView` | Stages (order, colour, time limit, auto vs approval) and the tasks each stage creates |
 | `schedules`, `schedules/:id`, `schedules/new` | `SchedulesView`, `ScheduleEditorView` | Create a task or start a process on a repeat pattern; live preview of the next runs; retry policy; run history. `new?entityType=&entityId=&entityName=` links it to a record |
-| `triggers` | `TriggersView` | "When a record … happens, start workflow X": record type + event, condition builder, process name template, owner, one-per-record; dry run against sample data |
+| `triggers` | `TriggersView` | Rules: "when a record … happens, start workflow X" or "send a notification" (`NotifyEditorComponent`: channels, subject/message with field placeholders, dynamic recipients with per-recipient conditions, attachments). For workflow rules: record type + event, condition builder, process name template, owner, one-per-record; dry run against sample data |
+| `teams` | `TeamsView` | Teams of members and external contacts (email / +phone) that notification rules send to |
 | `events` | `EventsView` | Event log: what each record event did (started, switched, ignored, failed), payload, run again |
 
 The workflow editor also edits each stage's **automatic switches** ("when the record's `approved` event arrives → next

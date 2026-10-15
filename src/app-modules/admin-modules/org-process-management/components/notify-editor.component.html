@@ -1,0 +1,110 @@
+<div class="text-sm">
+    <!-- Channels and priority -->
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <span class="text-xs text-muted mr-2">Send by</span>
+        <button *ngFor="let c of channels" type="button" class="btn btn-xs mr-1 mb-1" [ngClass]="hasChannel(c.value) ? 'primary' : 'white'" (click)="toggleChannel(c.value)">
+            <i class="mr-1" [ngClass]="c.icon"></i>{{ c.label }}
+        </button>
+        <span class="flex"></span>
+        <select class="form-control form-control-sm w-auto mb-1" [(ngModel)]="config.priority" title="Priority">
+            <option value="Low">Low priority</option>
+            <option value="Normal">Normal priority</option>
+            <option value="High">High priority</option>
+            <option value="Critical">Critical</option>
+        </select>
+    </div>
+    <div *ngIf="!config.channels.length" class="text-danger text-xs mb-2">Choose at least one channel.</div>
+
+    <!-- Content -->
+    <div class="form-group mb-2">
+        <label class="text-xs mb-0">Subject *</label>
+        <input class="form-control form-control-sm" [(ngModel)]="config.subject" maxlength="200" [placeholder]="subjectPlaceholder"
+               (focus)="focus('subject', $event)" (click)="focus('subject', $event)" (keyup)="focus('subject', $event)">
+    </div>
+    <div class="form-group mb-1">
+        <label class="text-xs mb-0">Message *</label>
+        <textarea class="form-control form-control-sm" rows="5" [(ngModel)]="config.body" maxlength="4000"
+                  (focus)="focus('body', $event)" (click)="focus('body', $event)" (keyup)="focus('body', $event)"></textarea>
+    </div>
+    <div class="form-group mb-1" *ngIf="shortChannel">
+        <label class="text-xs mb-0">SMS / push text <span class="text-muted">(defaults to the subject)</span></label>
+        <input class="form-control form-control-sm" [(ngModel)]="config.shortText" maxlength="480"
+               (focus)="focus('shortText', $event)" (click)="focus('shortText', $event)" (keyup)="focus('shortText', $event)">
+    </div>
+    <div class="mb-3">
+        <span class="text-xs text-muted mr-1">Insert:</span>
+        <a *ngFor="let f of fields" role="button" class="badge white mr-1 mb-1" (click)="insert(f.name)" [title]="f.label">{{ f.name }}</a>
+        <a *ngFor="let f of standardFields" role="button" class="badge light mr-1 mb-1" (click)="insert(f)">{{ f }}</a>
+    </div>
+
+    <!-- Recipients -->
+    <label class="text-xs mb-1">Send to</label>
+    <div *ngFor="let r of config.recipients; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded" style="border: 1px solid rgba(0,0,0,.08)">
+        <div class="d-flex flex-wrap align-items-center">
+            <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 200px" [(ngModel)]="r.kind" (ngModelChange)="kindChanged(r)">
+                <option *ngFor="let k of kinds" [value]="k.value">{{ k.label }}</option>
+            </select>
+
+            <ng-container [ngSwitch]="r.kind">
+                <ng-container *ngSwitchCase="'Users'">
+                    <select #userPick class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" (change)="addUser(r, userPick.value); userPick.value = ''">
+                        <option value="">Add a person…</option>
+                        <option *ngFor="let u of lookups.users" [value]="u.id">{{ u.name }}</option>
+                    </select>
+                </ng-container>
+                <select *ngSwitchCase="'Role'" class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.roleId">
+                    <option [ngValue]="null">Choose a role…</option>
+                    <option *ngFor="let role of lookups.roles" [ngValue]="role.id">{{ role.name }}</option>
+                </select>
+                <ng-container *ngSwitchCase="'Team'">
+                    <select class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.teamId">
+                        <option [ngValue]="null">Choose a team…</option>
+                        <option *ngFor="let t of lookups.teams" [ngValue]="t.id">{{ t.name }} ({{ t.memberCount }})</option>
+                    </select>
+                    <a class="text-xs mr-1 mb-1" routerLink="/admin/process/teams" target="_blank">Manage teams</a>
+                </ng-container>
+                <input *ngSwitchCase="'UserField'" class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.field" [attr.list]="'notify-fields'" placeholder="field, e.g. managerId" maxlength="100">
+                <input *ngSwitchCase="'ContactField'" class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="r.field" [attr.list]="'notify-fields'" placeholder="field, e.g. email" maxlength="100">
+                <textarea *ngSwitchCase="'Contacts'" class="form-control form-control-sm mr-1 mb-1" rows="1" style="flex: 1 1 220px"
+                          [ngModel]="contactsText(r)" (ngModelChange)="setContacts(r, $event)" placeholder="a@example.com, +919876543210"></textarea>
+                <span *ngSwitchDefault class="text-xs text-muted mr-1 mb-1" style="flex: 1 1 160px">{{ hint(r.kind) }}</span>
+            </ng-container>
+
+            <button type="button" class="btn btn-xs mb-1 mr-1" [ngClass]="r.condition ? 'info' : 'white'" (click)="toggleCondition(r)" title="Only send to these when a condition holds">
+                <i class="fa fa-filter"></i>
+            </button>
+            <button type="button" class="btn btn-xs white text-danger mb-1" (click)="removeRecipient(i)" title="Remove"><i class="fa fa-times"></i></button>
+        </div>
+        <div *ngIf="r.kind === 'Users' && r.userIds?.length" class="mt-1">
+            <span *ngFor="let id of r.userIds; let j = index" class="badge info mr-1">{{ userName(id) }}
+                <a role="button" class="ml-1 text-white" (click)="r.userIds!.splice(j, 1)">&times;</a></span>
+        </div>
+        <div *ngIf="r.condition" class="mt-1 pl-2" style="border-left: 2px solid #c7d2fe">
+            <div class="text-xs text-muted">Only if</div>
+            <process-condition-builder [condition]="r.condition" [fields]="fields"></process-condition-builder>
+        </div>
+    </div>
+    <button type="button" class="btn btn-xs white mb-3" [disabled]="config.recipients.length >= 20" (click)="addRecipient()"><i class="fa fa-plus mr-1"></i>Add recipients</button>
+    <datalist id="notify-fields"><option *ngFor="let f of fields" [value]="f.name">{{ f.label }}</option></datalist>
+
+    <!-- Attachments (email) -->
+    <label class="text-xs mb-1 d-block">Attachments <span class="text-muted">(email only; up to 5 files, 10 MB each)</span></label>
+    <div *ngFor="let a of attachments" class="d-flex align-items-center mb-1">
+        <i class="fa fa-paperclip mr-2 text-muted"></i>
+        <a role="button" class="flex" (click)="download(a)">{{ a.fileName }}</a>
+        <span class="text-xs text-muted mr-2">{{ size(a.sizeBytes) }}</span>
+        <button type="button" class="btn btn-xs white text-danger" (click)="removeAttachment(a)"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="d-flex flex-wrap align-items-center">
+        <label class="btn btn-xs white mb-1 mr-2" [class.disabled]="uploading || config.attachmentIds.length >= 5">
+            <i class="fa mr-1" [ngClass]="uploading ? 'fa-spinner fa-spin' : 'fa-upload'"></i>Upload files
+            <input #fileInput type="file" multiple hidden [disabled]="uploading || config.attachmentIds.length >= 5"
+                   accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.rtf,.odt,.ods,.zip" (change)="upload(fileInput)">
+        </label>
+        <label class="mb-1 mr-2"><input type="checkbox" class="mr-1" [(ngModel)]="config.attachRecordDocument">
+            Attach the record's document{{ entityType === 'document' ? '' : ' from field' }}</label>
+        <input *ngIf="config.attachRecordDocument && entityType !== 'document'" class="form-control form-control-sm mb-1" style="max-width: 200px"
+               [(ngModel)]="config.attachmentField" [attr.list]="'notify-fields'" placeholder="document id field, e.g. documentId" maxlength="100">
+    </div>
+    <div *ngIf="uploadError" class="text-danger text-xs">{{ uploadError }}</div>
+</div>

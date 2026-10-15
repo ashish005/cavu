@@ -23,7 +23,8 @@ export class ProcessLayout {
             children: [
                 {routeTo: ['workflows'], icon: 'fa fa-sitemap', key: 'Workflows'},
                 {routeTo: ['schedules'], icon: 'fa fa-clock-o', key: 'Schedules'},
-                {routeTo: ['triggers'], icon: 'fa fa-bolt', key: 'Triggers'},
+                {routeTo: ['triggers'], icon: 'fa fa-bolt', key: 'Rules'},
+                {routeTo: ['teams'], icon: 'fa fa-users', key: 'Teams'},
                 {routeTo: ['events'], icon: 'fa fa-list-alt', key: 'Event log'}
             ]
         }

@@ -1,12 +1,13 @@
 import {Component, DestroyRef, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {finalize, forkJoin} from "rxjs";
-import {EntityField, EntityType, ProcessLookups, Trigger, TriggerTestResult, newTrigger, toCode} from "../domains/process.models";
+import {EntityField, EntityType, NotifyConfig, ProcessLookups, Trigger, TriggerAction, TriggerTestResult, newTrigger, toCode} from "../domains/process.models";
 import {ProcessApiService, errorMessageOf} from "../services/process-api.service";
 import {cleanCondition} from "../components/condition-builder.component";
 
 /**
- * "When something happens to a record, start a workflow." Works for any record type: the built-in ones (members,
+ * Automation rules: "when something happens to a record, start a workflow" or "… send a notification" (email, in-app,
+ * SMS, push; dynamic recipients; attachments). Works for any record type: the built-in ones (members,
  * documents, OCR jobs, processes, tasks, subscriptions, compliance) and the organisation's own types, whose events
  * arrive through `POST api/v1/process/events`. Defaults are seeded switched off.
  */
@@ -53,10 +54,11 @@ export class TriggersView implements OnInit {
     get fields(): EntityField[] { return this.selectedType?.fields ?? []; }
     get events(): string[] { return this.selectedType?.events ?? []; }
 
-    open(trigger?: Trigger) {
+    open(trigger?: Trigger, action: TriggerAction = 'StartWorkflow') {
+        // Deep copy, so cancelling leaves the list untouched.
         this.editing = trigger
-            ? {...trigger, condition: trigger.condition ? {...trigger.condition, rules: trigger.condition.rules.map(r => ({...r}))} : {match: 'all', rules: []}}
-            : {...newTrigger(), workflowId: this.lookups?.workflows[0]?.id ?? null};
+            ? JSON.parse(JSON.stringify({...trigger, condition: trigger.condition ?? {match: 'all', rules: []}}))
+            : {...newTrigger(action), workflowId: action === 'StartWorkflow' ? this.lookups?.workflows[0]?.id ?? null : null};
         this.editError = null;
         this.testResult = null;
         this.testError = null;
@@ -76,12 +78,23 @@ export class TriggersView implements OnInit {
         const eventName = toCode(t.eventName);
         if (!t.name.trim()) { this.editError = 'Give the trigger a name.'; return; }
         if (!entityType || !eventName) { this.editError = 'Choose the record type and the event.'; return; }
-        if (!t.workflowId) { this.editError = 'Choose the workflow to start.'; return; }
-        if (t.ownerSource === 'User' && !t.ownerUserId) { this.editError = 'Choose the owner.'; return; }
-        if (t.ownerSource === 'PayloadField' && !t.ownerField?.trim()) { this.editError = 'Name the field holding the owner\'s user id.'; return; }
+        if (t.action === 'Notify') {
+            const n = t.notify!;
+            if (!n.channels.length) { this.editError = 'Choose at least one channel.'; return; }
+            if (!n.subject.trim() || !n.body.trim()) { this.editError = 'Write the subject and the message.'; return; }
+            if (!n.recipients.length) { this.editError = 'Add who should receive it.'; return; }
+        } else {
+            if (!t.workflowId) { this.editError = 'Choose the workflow to start.'; return; }
+            if (t.ownerSource === 'User' && !t.ownerUserId) { this.editError = 'Choose the owner.'; return; }
+            if (t.ownerSource === 'PayloadField' && !t.ownerField?.trim()) { this.editError = 'Name the field holding the owner\'s user id.'; return; }
+        }
 
         this.saving = true;
-        this.api.saveTrigger({...t, entityType, eventName, condition: cleanCondition(t.condition), nameTemplate: t.nameTemplate?.trim() || null})
+        this.api.saveTrigger({
+            ...t, entityType, eventName, condition: cleanCondition(t.condition), nameTemplate: t.nameTemplate?.trim() || null,
+            workflowId: t.action === 'StartWorkflow' ? t.workflowId : null,
+            notify: t.action === 'Notify' ? this.cleanNotify(t.notify!) : null
+        })
             .pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 next: () => { this.editing = null; this.load(); },
@@ -114,12 +127,28 @@ export class TriggersView implements OnInit {
         try { payload = JSON.parse(this.sample || '{}'); }
         catch { this.testError = 'The sample data is not valid JSON.'; return; }
 
-        this.api.testTrigger({entityType: toCode(t.entityType), eventName: toCode(t.eventName), payload, condition: cleanCondition(t.condition), nameTemplate: t.nameTemplate})
+        this.api.testTrigger({
+            entityType: toCode(t.entityType), eventName: toCode(t.eventName), payload, condition: cleanCondition(t.condition), nameTemplate: t.nameTemplate,
+            notify: t.action === 'Notify' ? this.cleanNotify(t.notify!) : null
+        })
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 next: r => this.testResult = r,
                 error: e => this.testError = errorMessageOf(e, 'The test failed.')
             });
+    }
+
+    /** Drops incomplete recipient conditions before sending. */
+    private cleanNotify(n: NotifyConfig): NotifyConfig {
+        return {...n, recipients: n.recipients.map(r => ({...r, condition: cleanCondition(r.condition)}))};
+    }
+
+    recipientsSummary(t: Trigger): string {
+        const labels: Record<string, string> = {
+            Users: 'people', Role: 'a role', Team: 'a team', ProcessOwner: 'process owner', TaskAssignee: 'assignee',
+            EventActor: 'whoever caused it', UserField: 'member in data', ContactField: 'contact in data', Contacts: 'external contacts'
+        };
+        return (t.notify?.recipients ?? []).map(r => labels[r.kind] + (r.condition ? '*' : '')).join(', ');
     }
 
     describe(t: Trigger): string {

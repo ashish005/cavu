@@ -4,15 +4,16 @@
         <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
 
         <p class="text-sm text-muted">
-            A trigger starts a workflow when something happens to a record, e.g. <i>a member is created as a vendor</i> → <i>Vendor onboarding</i>.
-            The process is linked to the record, so its stages can also switch on that record's later events.
+            A rule reacts when something happens to a record: it <b>starts a workflow</b> (e.g. <i>a vendor member is created</i> → <i>Vendor onboarding</i>)
+            or <b>sends a notification</b> by email, in-app, SMS or push to people chosen by rules, with attachments.
+            Processes are linked to their record, so their stages can also switch on that record's later events.
             Your own record types work too: send their events to <code>POST /api/v1/process/events</code>.
         </p>
 
         <div class="box">
             <table class="table table-hover small-table text-sm mb-0">
                 <thead>
-                <tr><th>Trigger</th><th>When</th><th>Starts</th><th class="text-right">Started</th><th style="width: 160px"></th></tr>
+                <tr><th>Rule</th><th>When</th><th>Then</th><th class="text-right">Started</th><th style="width: 160px"></th></tr>
                 </thead>
                 <tbody>
                 <tr *ngFor="let t of triggers" [class.text-muted]="!t.isActive">
@@ -24,8 +25,11 @@
                         <span class="badge info">{{ typeName(t.entityType) }} · {{ t.eventName }}</span>
                         <div class="text-xs text-muted">if {{ describe(t) }}</div>
                     </td>
-                    <td>{{ t.workflowName }}<div class="text-xs text-muted">{{ t.dedupe === 'OnePerRecord' ? 'one open process per record' : 'every time' }}</div></td>
-                    <td class="text-right">{{ t.processesStarted }}</td>
+                    <td *ngIf="t.action === 'StartWorkflow'"><i class="fa fa-play text-muted mr-1"></i>{{ t.workflowName }}
+                        <div class="text-xs text-muted">{{ t.dedupe === 'OnePerRecord' ? 'one open process per record' : 'every time' }}</div></td>
+                    <td *ngIf="t.action === 'Notify'"><i class="fa fa-bell text-muted mr-1"></i>Notify {{ recipientsSummary(t) }}
+                        <div class="text-xs text-muted">{{ t.notify?.channels?.join(', ') }}{{ t.notify?.attachmentIds?.length || t.notify?.attachRecordDocument ? ' · attachments' : '' }}</div></td>
+                    <td class="text-right">{{ t.action === 'StartWorkflow' ? t.processesStarted : '' }}</td>
                     <td class="text-right text-nowrap">
                         <button class="btn btn-xs mr-1" [ngClass]="t.isActive ? 'success' : 'white'" (click)="toggle(t)" [title]="t.isActive ? 'Turn off' : 'Turn on'">
                             {{ t.isActive ? 'On' : 'Off' }}
@@ -45,7 +49,7 @@
     <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title _600">{{ t.id ? 'Edit trigger' : 'New trigger' }}</h6>
+                <h6 class="modal-title _600">{{ t.id ? 'Edit rule' : 'New rule' }} · {{ t.action === 'Notify' ? 'send a notification' : 'start a workflow' }}</h6>
                 <button type="button" class="close" (click)="editing = null">&times;</button>
             </div>
             <div class="modal-body text-sm">
@@ -69,7 +73,7 @@
                         <input class="form-control form-control-sm" [(ngModel)]="t.eventName" list="trigger-events" placeholder="event, e.g. created" maxlength="60">
                         <datalist id="trigger-events"><option *ngFor="let e of events" [value]="e"></option></datalist>
                     </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-4 form-group" *ngIf="t.action === 'StartWorkflow'">
                         <label class="text-xs">start workflow *</label>
                         <select class="form-control form-control-sm" [(ngModel)]="t.workflowId">
                             <option [ngValue]="null">Choose…</option>
@@ -83,7 +87,11 @@
                     <process-condition-builder *ngIf="t.condition" [condition]="t.condition" [fields]="fields" emptyText="Every such event starts it"></process-condition-builder>
                 </div>
 
-                <div class="row">
+                <div class="mb-3 p-2 rounded" style="background: rgba(99,102,241,.04)" *ngIf="t.action === 'Notify' && t.notify && lookups">
+                    <process-notify-editor [config]="t.notify" [lookups]="lookups" [fields]="fields" [entityType]="t.entityType"></process-notify-editor>
+                </div>
+
+                <div class="row" *ngIf="t.action === 'StartWorkflow'">
                     <div class="col-md-6 form-group">
                         <label class="text-xs">Process name</label>
                         <input class="form-control form-control-sm" [(ngModel)]="t.nameTemplate" maxlength="250" [placeholder]="namePlaceholder">
@@ -106,8 +114,10 @@
                 </div>
 
                 <div class="d-flex flex-wrap align-items-center mb-3">
-                    <label class="mr-3 mb-0"><input type="radio" class="mr-1" name="dedupe" value="OnePerRecord" [(ngModel)]="t.dedupe">One open process per record</label>
-                    <label class="mr-3 mb-0"><input type="radio" class="mr-1" name="dedupe" value="Always" [(ngModel)]="t.dedupe">Start every time</label>
+                    <ng-container *ngIf="t.action === 'StartWorkflow'">
+                        <label class="mr-3 mb-0"><input type="radio" class="mr-1" name="dedupe" value="OnePerRecord" [(ngModel)]="t.dedupe">One open process per record</label>
+                        <label class="mr-3 mb-0"><input type="radio" class="mr-1" name="dedupe" value="Always" [(ngModel)]="t.dedupe">Start every time</label>
+                    </ng-container>
                     <span class="flex"></span>
                     <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="t.isActive">Active</label>
                 </div>
@@ -126,7 +136,15 @@
                                     <i class="fa mr-1" [ngClass]="r.conditionMatches ? 'fa-check' : 'fa-times'"></i>
                                     {{ r.conditionMatches ? 'This condition matches' : 'This condition does not match' }}
                                 </div>
-                                <div *ngIf="r.renderedName" class="text-muted">Process name: <b>{{ r.renderedName }}</b></div>
+                                <div *ngIf="r.renderedName && t.action === 'StartWorkflow'" class="text-muted">Process name: <b>{{ r.renderedName }}</b></div>
+                                <ng-container *ngIf="r.notification as n">
+                                    <div class="mt-1"><b>{{ n.subject }}</b></div>
+                                    <div class="text-xs text-muted" style="white-space: pre-wrap; max-height: 90px; overflow: auto">{{ n.body }}</div>
+                                    <div class="text-xs mt-1"><b>{{ n.recipients.length }}</b> recipient(s):</div>
+                                    <div *ngFor="let p of n.recipients" class="text-xs">{{ p.name }} <span class="text-muted">{{ p.email || p.phone }} · {{ p.source }}</span></div>
+                                    <div *ngIf="n.attachments.length" class="text-xs"><i class="fa fa-paperclip mr-1"></i>{{ n.attachments.join(', ') }}</div>
+                                    <div *ngFor="let note of n.notes" class="text-xs text-warning">{{ note }}</div>
+                                </ng-container>
                                 <div *ngIf="r.triggers.length" class="text-xs text-muted mt-2">Saved triggers for this event:</div>
                                 <div *ngFor="let m of r.triggers" class="text-xs">
                                     <i class="fa mr-1" [ngClass]="m.matches ? 'fa-check text-success' : 'fa-minus text-muted'"></i>{{ m.name }} → {{ m.workflowName }}
@@ -138,16 +156,17 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-sm white" (click)="editing = null">Cancel</button>
-                <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save trigger</button>
+                <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save rule</button>
             </div>
         </div>
     </div>
 </div>
 
 <ng-template #pageTitleTemplate>
-    <div class="no-shadow"><h6 class="mb-0">Triggers</h6><small class="text-muted">Start workflows when records change</small></div>
+    <div class="no-shadow"><h6 class="mb-0">Automation rules</h6><small class="text-muted">Start workflows and send notifications when records change</small></div>
 </ng-template>
 <ng-template #actionTemplate>
     <a class="btn btn-sm white mr-1" routerLink="/admin/process/events">Event log</a>
-    <button class="btn btn-sm theme" [disabled]="!lookups?.isAdmin" (click)="open()"><i class="fa fa-plus mr-1"></i>New trigger</button>
+    <button class="btn btn-sm white mr-1" [disabled]="!lookups?.isAdmin" (click)="open(undefined, 'Notify')"><i class="fa fa-bell mr-1"></i>Notification rule</button>
+    <button class="btn btn-sm theme" [disabled]="!lookups?.isAdmin" (click)="open(undefined, 'StartWorkflow')"><i class="fa fa-play mr-1"></i>Workflow rule</button>
 </ng-template>

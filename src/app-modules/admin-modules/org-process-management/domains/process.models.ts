@@ -20,6 +20,10 @@ export type StageRuleTarget = 'NextStage' | 'Stage' | 'Complete' | 'Cancel';
 export type TriggerOwnerSource = 'WorkflowDefault' | 'User' | 'PayloadField' | 'EventActor';
 export type TriggerDedupe = 'OnePerRecord' | 'Always';
 export type EventStatus = 'Pending' | 'Processed' | 'Ignored' | 'Failed';
+export type TriggerAction = 'StartWorkflow' | 'Notify';
+export type NotifyChannel = 'Email' | 'InApp' | 'Sms' | 'Push';
+export type NotifyPriority = 'Low' | 'Normal' | 'High' | 'Critical';
+export type RecipientKind = 'Users' | 'Role' | 'Team' | 'ProcessOwner' | 'TaskAssignee' | 'EventActor' | 'UserField' | 'ContactField' | 'Contacts';
 export type ConditionOp = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'startswith' | 'in' | 'exists' | 'notexists';
 
 export interface Page<T> { items: T[]; total: number; }
@@ -38,7 +42,10 @@ export interface ProcessLookups {
     roles: RoleRef[];
     workflows: WorkflowRef[];
     retryPolicies: RetryPolicyRef[];
+    teams: TeamRef[];
 }
+
+export interface TeamRef { id: string; name: string; memberCount: number; }
 
 // ---------- Tasks ----------
 export interface TaskRow {
@@ -189,8 +196,41 @@ export interface ConditionSet { match: 'all' | 'any'; rules: ConditionRule[]; }
 export interface EntityField { name: string; label: string; type: 'text' | 'number' | 'date' | 'choice'; values: string[] | null; }
 export interface EntityType { code: string; name: string; events: string[]; fields: EntityField[]; builtIn: boolean; }
 
+/** Who receives a rule's notification; `condition` makes the rule apply only when it holds. */
+export interface RecipientRule {
+    kind: RecipientKind;
+    userIds?: string[];
+    roleId?: string | null;
+    teamId?: string | null;
+    field?: string | null;
+    contacts?: string[];
+    condition?: ConditionSet | null;
+}
+
+export interface NotifyConfig {
+    channels: NotifyChannel[];
+    subject: string;
+    body: string;
+    shortText?: string | null;
+    priority: NotifyPriority;
+    recipients: RecipientRule[];
+    attachmentIds: string[];
+    attachRecordDocument: boolean;
+    attachmentField?: string | null;
+}
+
+export interface Attachment { id: string; fileName: string; contentType: string; sizeBytes: number; }
+export interface ResolvedRecipient { userId: string | null; name: string; email: string | null; phone: string | null; source: string; }
+export interface NotifyPreview { recipients: ResolvedRecipient[]; subject: string; body: string; attachments: string[]; notes: string[]; }
+
+export interface TeamMember { id?: string | null; userId?: string | null; name?: string | null; email?: string | null; phone?: string | null; }
+export interface Team { id?: string | null; code: string; name: string; description?: string | null; members: TeamMember[]; }
+export interface TeamSummary { id: string; code: string; name: string; description: string | null; memberCount: number; externalCount: number; }
+
 export interface Trigger {
     id?: string | null;
+    action: TriggerAction;
+    notify?: NotifyConfig | null;
     workflowId: string | null;
     name: string;
     entityType: string;
@@ -207,7 +247,12 @@ export interface Trigger {
     processesStarted?: number;
 }
 
-export interface TriggerTestResult { conditionMatches: boolean; renderedName: string | null; triggers: {id: string; name: string; workflowName: string; matches: boolean; processName: string | null}[]; }
+export interface TriggerTestResult {
+    conditionMatches: boolean;
+    renderedName: string | null;
+    triggers: {id: string; name: string; workflowName: string; matches: boolean; processName: string | null}[];
+    notification: NotifyPreview | null;
+}
 
 export interface WorkflowEvent {
     id: string;
@@ -340,10 +385,35 @@ export const toCode = (text: string | null | undefined): string =>
 export const entityLabel = (entity: EntityLink | null | undefined): string =>
     entity ? `${entity.type.replace(/_/g, ' ')}: ${entity.name || entity.id}` : '';
 
-export const newTrigger = (): Trigger => ({
-    workflowId: null, name: '', entityType: '', eventName: '', condition: {match: 'all', rules: []},
-    nameTemplate: '', ownerSource: 'WorkflowDefault', dedupe: 'OnePerRecord', isActive: true
+export const newTrigger = (action: TriggerAction = 'StartWorkflow'): Trigger => ({
+    action, workflowId: null, name: '', entityType: '', eventName: '', condition: {match: 'all', rules: []},
+    nameTemplate: '', ownerSource: 'WorkflowDefault', dedupe: action === 'Notify' ? 'Always' : 'OnePerRecord', isActive: true,
+    notify: action === 'Notify' ? newNotifyConfig() : null
 });
+
+export const newNotifyConfig = (): NotifyConfig => ({
+    channels: ['Email', 'InApp'], subject: '', body: 'Hi {{recipientName}},\n\n', shortText: null, priority: 'Normal',
+    recipients: [{kind: 'ProcessOwner'}], attachmentIds: [], attachRecordDocument: false, attachmentField: null
+});
+
+export const NOTIFY_CHANNELS: {value: NotifyChannel; label: string; icon: string}[] = [
+    {value: 'Email', label: 'Email', icon: 'fa fa-envelope'},
+    {value: 'InApp', label: 'In-app', icon: 'fa fa-bell'},
+    {value: 'Sms', label: 'SMS', icon: 'fa fa-mobile'},
+    {value: 'Push', label: 'Push', icon: 'fa fa-paper-plane'}
+];
+
+export const RECIPIENT_KINDS: {value: RecipientKind; label: string; hint: string}[] = [
+    {value: 'Users', label: 'People', hint: 'Chosen members'},
+    {value: 'Role', label: 'Everyone with a role', hint: 'Role holders at the time of sending'},
+    {value: 'Team', label: 'A team', hint: 'Members and external contacts of a team'},
+    {value: 'ProcessOwner', label: 'Process owner', hint: 'Owner of the process (or of open processes about the record)'},
+    {value: 'TaskAssignee', label: 'Task assignee', hint: 'Assignee or role queue of the task (or of open tasks about the record)'},
+    {value: 'EventActor', label: 'Whoever caused it', hint: 'The user who triggered the event'},
+    {value: 'UserField', label: 'Member in the data', hint: 'A field holding member id(s), e.g. managerId'},
+    {value: 'ContactField', label: 'Email/phone in the data', hint: 'A field holding email(s) or phone(s), e.g. email'},
+    {value: 'Contacts', label: 'External contacts', hint: 'Fixed email addresses or +phone numbers'}
+];
 
 export const isClosed = (s: TaskStatus) => s === 'Done' || s === 'Cancelled';
 

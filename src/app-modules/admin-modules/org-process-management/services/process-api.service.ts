@@ -1,9 +1,9 @@
 import {Injectable, Injector} from "@angular/core";
 import {HttpParams} from "@angular/common/http";
-import {Observable, catchError, map, shareReplay} from "rxjs";
+import {Observable, catchError, map, of, shareReplay} from "rxjs";
 import {CoreEndpointBase} from "@app-global";
 import {
-    EntityType, EventQuery, Page, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
+    Attachment, EntityType, EventQuery, Page, Team, TeamSummary, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
     SchedulePreview, ScheduleRow, ScheduleRun, StartProcess, TaskDetail, TaskQuery, TaskRow, TaskSave, TaskStatus, Trigger,
     TriggerTestResult, Workflow, WorkflowEvent, WorkflowSummary
 } from "../domains/process.models";
@@ -107,9 +107,41 @@ export class ProcessApiService extends CoreEndpointBase {
     }
     deleteTrigger(id: string) { return this.send<void>('DELETE', `triggers/${id}`); }
     entityTypes() { return this.get<{types: EntityType[]}>('triggers/entity-types').pipe(map(r => r.types)); }
-    testTrigger(body: {entityType: string; eventName: string; payload: any; condition?: any; nameTemplate?: string | null}) {
+    testTrigger(body: {entityType: string; eventName: string; payload: any; condition?: any; nameTemplate?: string | null; notify?: any; entityId?: string | null}) {
         return this.send<TriggerTestResult>('POST', 'triggers/test', body);
     }
+    // Teams and attachments
+    teams() { return this.get<TeamSummary[]>('teams'); }
+    team(id: string) { return this.get<Team>(`teams/${id}`); }
+    saveTeam(team: Team) {
+        this.lookups$ = null;
+        return team.id ? this.send<Team>('PUT', `teams/${team.id}`, team) : this.send<Team>('POST', 'teams', team);
+    }
+    deleteTeam(id: string) { this.lookups$ = null; return this.send<void>('DELETE', `teams/${id}`); }
+
+    uploadAttachment(file: File): Observable<Attachment> {
+        const form = new FormData();
+        form.append('file', file, file.name);
+        return this.httpClient.post(`${this.url}/attachments`, form, this.getMultipartFileUploadRequestHeaders).pipe(
+            map(r => unwrap<Attachment>(r)),
+            catchError(e => this.handleError(e, () => this.uploadAttachment(file)))
+        );
+    }
+    attachments(ids: string[]) { return ids.length ? this.get<Attachment[]>('attachments', {ids: ids.join(',')}) : of([] as Attachment[]); }
+    /** Downloads with the user's credentials (a plain link would lack the auth and tenant headers). */
+    downloadAttachment(a: Attachment) {
+        return this.httpClient.get(`${this.url}/attachments/${a.id}/content`, {...this.getMultipartFileUploadRequestHeaders, responseType: 'blob'} as any).pipe(
+            map((blob: any) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = a.fileName;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            })
+        );
+    }
+
     events(query: EventQuery) { return this.get<Page<WorkflowEvent>>('events', query); }
     retryEvent(id: string) { return this.send<WorkflowEvent>('POST', `events/${id}/retry`); }
     publishEvent(body: {entityType: string; entityId: string; entityName?: string | null; eventName: string; payload?: any; idempotencyKey?: string | null}) {
