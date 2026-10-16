@@ -28,9 +28,9 @@ class VoucherFormExtender {
         this.orgConfig = orgConfig;
 
         this.orgLookup = orgLookupService.getOrgLookup();
-        this.systemCurrency = this.orgLookup.getOrgCurrency(orgConfig.currencyCode);
+        this.systemCurrency = orgConfig.currencyCode;
+        //this.systemCurrency = this.orgLookup.getOrgCurrency(orgConfig.currencyCode);
         //this.orgActiveBranch = this.orgLookup.getActiveBranch();
-
     }
 
     /*private addUpdateByTaxMapperSundry(vMasterType, mapperId, value) {
@@ -216,13 +216,13 @@ export class VoucherForm extends VoucherFormExtender {
         const currencyCodeChange = ([prev, next]: [string, string]) => {
             if(prev != next)
             {
-                const currency = this.orgLookup.getOrgCurrency(next);
-                if(currency) {
-                    const { id, symbol, currencyCode } = currency;
-                    this.formCurrencyId.setValue(<any>id);
-                    this.formCurrencySymbol.setValue(<any>symbol);
-                    this.formCurrencyCode.setValue(<any>currencyCode);
-                }
+                // const currency = this.orgLookup.getOrgCurrency(next);
+                // if(currency) {
+                //     const { id, symbol, currencyCode } = currency;
+                //     this.formCurrencyId.setValue(<any>id);
+                //     this.formCurrencySymbol.setValue(<any>symbol);
+                //     this.formCurrencyCode.setValue(<any>currencyCode);
+                // }
             }
         };
 

@@ -28,19 +28,19 @@ export class VoucherLayout extends FinancialVoucherExtension {
 
     onCurrencyChange(event: any) {
         const currencyCode = event.target.value;
-        const currency = this.orgLookup.getOrgCurrency(currencyCode);
-        if (currency) {
-            this.customForm.patchValue({
-                currencyId: currency.id,
-                currencySymbol: currency.symbol,
-                currencyCode: currency.currencyCode
-            });
-            
-            // If it's system currency, rate is 1
-            if (currency.id === this.systemCurrency?.id) {
-                 this.customForm.patchValue({ currencyRate: 1 });
-            }
-        }
+        // const currency = this.orgLookup.getOrgCurrency(currencyCode);
+        // if (currency) {
+        //     this.customForm.patchValue({
+        //         currencyId: currency.id,
+        //         currencySymbol: currency.symbol,
+        //         currencyCode: currency.currencyCode
+        //     });
+        //
+        //     // If it's system currency, rate is 1
+        //     if (currency.id === this.systemCurrency?.id) {
+        //          this.customForm.patchValue({ currencyRate: 1 });
+        //     }
+        // }
     }
     
     get hasForeignCurrency() {

@@ -46,7 +46,9 @@ export class VoucherCommonFormExtender extends VoucherForm {
         const orgLookup = orgLookupService.getOrgLookup();
         const { getSearchAccounts, getOrgCurrency, getVoucherTypeByMasterType, getVoucherSubItemsByMasterType, isVendorVoucher } = orgLookup;
         this.orgLookup = orgLookup;
-        this.systemCurrency = orgLookup.getOrgCurrency(orgConfig.currencyCode);
+
+        this.systemCurrency = orgConfig.currencyCode;
+        //this.systemCurrency = orgLookup.getOrgCurrency(orgConfig.currencyCode);
 
         const isItemInvoiceChange = ([prev, next]: [boolean, boolean]) => {
             if (prev != next) {

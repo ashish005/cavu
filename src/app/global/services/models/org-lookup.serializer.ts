@@ -1,19 +1,6 @@
 import {VOUCHER_TYPES} from "../../enums/voucher-type";
 import {FREQUENCY_TYPE} from "../../enums";
 
-class Status {
-    id: any;
-    name: string;
-    isDefault: boolean;
-
-    constructor(model: any = {}) {
-        const {id, name, isDefault} = model;
-        this.id = id;
-        this.name = name;
-        this.isDefault = isDefault;
-    }
-}
-
 export class PurchaseOrderType {
     id: any;
     name: string;
@@ -101,69 +88,6 @@ export class StockTransferType {
         this.name = name;
         this.isDefault = isDefault;
         this.sortOrder = sortOrder;
-    }
-}
-
-export class CurrencyMapper {
-    id: number;
-    currencyId: number;
-    name: string;
-    currencyCode: string;
-    symbol: string;
-    isEnabled: boolean;
-    isDisplayed: boolean;
-    isDefault: boolean;
-
-    constructor(model: any = <any>{}) {
-        const {id, currencyId, name, currencyCode, symbol, isEnabled, isDisplayed, isDefault} = model;
-        this.id = id;
-        this.currencyId = currencyId;
-        this.name = name;
-        this.currencyCode = currencyCode;
-        this.symbol = symbol;
-        this.isEnabled = isEnabled;
-        this.isDisplayed = isDisplayed;
-        this.isDefault = isDefault;
-    }
-
-    get currencyName() {
-        return `${this.name} ( ${this.symbol} )`;
-    }
-}
-
-export class LanguageMapper {
-    id: number;
-    languageId: number;
-    name: string;
-    cultureCode: string;
-    isEnabled: boolean;
-    isDefault: boolean;
-
-    constructor(model: any = <any>{}) {
-        const {id, languageId, name, cultureCode, isEnabled, isDefault} = model;
-        this.id = id;
-        this.languageId = languageId;
-        this.name = name;
-        this.cultureCode = cultureCode;
-        this.isEnabled = isEnabled;
-        this.isDefault = isDefault;
-    }
-}
-
-export class OrgSession {
-    id: number;
-    name: string;
-    startDate: string;
-    fromYear: string;
-    toYear: string;
-
-    constructor(model: any = {}) {
-        const {id, name, startDate, fromYear, toYear} = model;
-        this.id = id;
-        this.name = name;
-        this.startDate = startDate;
-        this.fromYear = fromYear;
-        this.toYear = toYear;
     }
 }
 
@@ -289,20 +213,6 @@ export class LookupFrequencyType {
     get isFixedTime(){ return this.masterType == FREQUENCY_TYPE.FIXED_TIME;}
 }
 
-export class LookupVoucherStatus {
-    id: number;
-    name: string;
-    masterType: string;
-    sortOrder: number;
-    constructor(model: any = <any>{}) {
-        const { id, name, masterType, sortOrder } = model;
-        this.id = id;
-        this.name = name;
-        this.masterType = masterType;
-        this.sortOrder = sortOrder;
-    }
-}
-
 class OrgBranch {
     id: number;
     name: string;
@@ -384,12 +294,9 @@ class VoucherCommonLookup {
     voucherSubTypes: any;
     groupedVoucherTypes: GroupedVoucherType;
     voucherTypeDictionary: object;
-    voucherProcessStatuses: Array<LookupVoucherStatus> = [];
-
-    taxMappers: Array<any> = [];
     constructor(model: any = <any>{}) {
         const {
-            purchaseOrderTypes, purchaseTypes, quotationTypes, saleOrderTypes, saleTypes, voucherTypes, voucherSubTypes, voucherProcessStatuses
+            purchaseOrderTypes, purchaseTypes, quotationTypes, saleOrderTypes, saleTypes, voucherTypes, voucherSubTypes
         } = model;
 
         this.voucherTypes = (voucherTypes || []).map(r => new LookupVoucherType(r));
@@ -399,7 +306,6 @@ class VoucherCommonLookup {
         this.quotationTypes = (quotationTypes || []).map(r => new QuotationType(r));
         this.saleOrderTypes = (saleOrderTypes || []).map(r => new SaleOrderType(r));
         this.saleTypes = (saleTypes || []).map(r => new SaleType(r));
-        this.voucherProcessStatuses = (voucherProcessStatuses || []).map(r => new LookupVoucherStatus(r));
 
         this.voucherTypeDictionary = this.voucherTypes.reduce((res, curr) => {
             res[curr.masterType] = curr;
@@ -508,14 +414,11 @@ export class OrgLookup extends VoucherCommonLookup {
     orgBranch: OrgBranch;
     loginUser: OrgLoginUser;
     roles: Array<any>;
-    currencies: Array<CurrencyMapper>;
-    languages: Array<LanguageMapper>;
-    orgSessions: Array<OrgSession>;
     frequencyTypes: Array<LookupFrequencyType> = [];
 
     constructor(model: any = <any>{}) {
         super(model);
-        const { currencies, languages, orgSessions, frequencyTypes, orgBranch, loginUser, roles } = model;
+        const { frequencyTypes, orgBranch, loginUser, roles } = model;
         this.date = model.date;
         this.orgBranch = orgBranch ? new OrgBranch(orgBranch): null;
         this.loginUser = loginUser ? new OrgLoginUser(loginUser): null;
@@ -524,31 +427,10 @@ export class OrgLookup extends VoucherCommonLookup {
             orgUserRoleId: r.orgUserRoleId,
             name: r.name,
         });
-        this.currencies = (currencies || []).map(r => new CurrencyMapper(r));
-        this.languages = (languages || []).map(r => new LanguageMapper(r));
-        this.orgSessions = (orgSessions || []).map(r => new OrgSession(r));
         this.frequencyTypes = (frequencyTypes || []).map(r => new LookupFrequencyType(r));
     }
     public defaultFrequency=()=> (this.frequencyTypes || []).find(r => r.isDefault);
     public getFeeFrequencies=()=> (this.frequencyTypes || []).filter(r => r.isFeeType);
-
-    getDefaultOrgCurrency = () => this.getOrgCurrency(this.orgBranch?.currencyCode);
-    getDefaultOrgLanguage = () => this.getOrgLanguage(this.orgBranch?.cultureCode);
-
-    getOrgCurrency = (currencyCode: string) => (this.currencies || []).find(r => r.currencyCode == currencyCode);
-    getOrgLanguage = (cultureCode: string) => (this.languages || []).find(r => r.cultureCode == cultureCode);
-
-    isSoftwareSeeded = () => (this.currencies?.length && this.languages?.length);
-
-    hasValidSetup = () => {
-        const systemCurrency = this.getDefaultOrgCurrency();
-        const language = this.getDefaultOrgLanguage();
-
-        if (!(this.orgBranch && systemCurrency && language && this.loginUser)) {
-            return false;
-        }
-        return true;
-    }
 }
 
 export class OrgLookupSerializer {
