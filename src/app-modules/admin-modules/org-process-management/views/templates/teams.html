@@ -1,4 +1,4 @@
-<div class="d-flex flex-column flex scroll-y bg-light">
+<div class="d-flex flex-column flex scroll-y">
     <loader [isLoading]="loading"></loader>
     <div class="container-fluid p-3" style="max-width: 1200px">
         <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
@@ -74,7 +74,7 @@
 
             <label class="text-xs d-block">How tasks reach the team</label>
             <div class="d-flex flex-wrap mb-3">
-                <label *ngFor="let s of strategies" class="p-2 mr-2 mb-1 rounded" role="button" style="flex: 1 1 150px; border: 1px solid rgba(0,0,0,.1)"
+                <label *ngFor="let s of strategies" class="p-2 mr-2 mb-1 rounded" role="button" style="flex: 1 1 150px; border: 1px solid rgba(120,130,140,.2)"
                        [style.border-color]="t.assignmentStrategy === s.value ? '#6366f1' : null">
                     <input type="radio" class="mr-1" name="strategy" [value]="s.value" [(ngModel)]="t.assignmentStrategy">
                     <b>{{ s.label }}</b><div class="text-xs text-muted">{{ s.hint }}</div>
@@ -83,7 +83,7 @@
 
             <label class="text-xs d-block">Who belongs</label>
             <div class="btn-group btn-group-sm mb-1">
-                <button *ngFor="let m of modes" type="button" class="btn" [ngClass]="t.membershipMode === m.value ? 'primary' : 'white'" (click)="setMode(m.value)">{{ m.label }}</button>
+                <button *ngFor="let m of modes" type="button" class="btn" [ngClass]="t.membershipMode === m.value ? 'theme' : 'white'" (click)="setMode(m.value)">{{ m.label }}</button>
             </div>
             <div class="text-xs text-muted mb-2">{{ modeHint }}</div>
 
@@ -156,7 +156,7 @@
                 <input class="form-control form-control-sm mb-1" [(ngModel)]="previewSearch" (ngModelChange)="refreshPreview()" placeholder="Search members">
                 <div *ngIf="previewError" class="text-danger text-xs">{{ previewError }}</div>
                 <cdk-virtual-scroll-viewport itemSize="44" style="height: 420px" (scrolledIndexChange)="onScrolled($event)">
-                    <div *cdkVirtualFor="let m of preview; trackBy: trackByUser" class="d-flex align-items-center px-1" style="height: 44px; border-bottom: 1px solid rgba(0,0,0,.05)">
+                    <div *cdkVirtualFor="let m of preview; trackBy: trackByUser" class="d-flex align-items-center px-1" style="height: 44px; border-bottom: 1px solid rgba(120,130,140,.2)">
                         <div class="flex text-ellipsis">
                             <div class="text-ellipsis">{{ m.name }} <span *ngIf="m.chosen" class="badge light">chosen</span></div>
                             <div class="text-xs text-muted text-ellipsis">{{ m.email }}</div>

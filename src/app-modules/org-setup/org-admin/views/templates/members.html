@@ -34,7 +34,7 @@
     <loader [isLoading]="saving"></loader>
     <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
     <p class="text-sm text-muted">Roles for {{ m.userTypeName | lowercase }} members. Permissions add up across roles.</p>
-    <div *ngFor="let r of memberRoles" class="d-flex align-items-start p-2 mb-1 rounded" style="border: 1px solid rgba(0,0,0,.08)">
+    <div *ngFor="let r of memberRoles" class="d-flex align-items-start p-2 mb-1 rounded" style="border: 1px solid rgba(120,130,140,.2)">
         <input type="checkbox" class="mr-2 mt-1" [id]="'role-' + r.id" [checked]="chosen.has(r.id)" (change)="flip(r.id)">
         <label class="mb-0 flex text-sm" [for]="'role-' + r.id">
             <span class="_600">{{ r.name }}</span>

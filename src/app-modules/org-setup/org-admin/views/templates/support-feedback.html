@@ -1,0 +1,60 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="row no-gutters px-2 pt-2" *ngIf="stats?.feedback as f">
+            <div class="col-6 col-md-3 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Average rating (30 d)</div>
+                <div class="h5 mb-0 _600">{{ f.avgRating !== null ? f.avgRating + ' / 5' : '—' }}</div></div></div>
+            <div class="col-6 col-md-3 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Received (30 d)</div><div class="h5 mb-0 _600">{{ f.last30Days }}</div></div></div>
+            <div class="col-6 col-md-3 p-1"><a role="button" class="box p-2 mb-0 d-block" (click)="coreState.status = 'New'; applyFilter()">
+                <div class="text-xs text-muted">Not reviewed</div><div class="h5 mb-0 _600" [class.text-warning]="f.unreviewed">{{ f.unreviewed }}</div></a></div>
+            <div class="col-6 col-md-3 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Lowest-rated areas</div>
+                <div class="text-sm"><a *ngFor="let m of f.lowestModules" role="button" class="mr-2" (click)="coreState.module = m.module; applyFilter()">{{ m.module }} {{ m.avgRating }}</a>
+                    <span *ngIf="!f.lowestModules.length" class="text-muted">—</span></div></div></div>
+        </div>
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 140px" [(ngModel)]="coreState.status" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any status</option><option *ngFor="let s of statuses" [ngValue]="s">{{ s }}</option></select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 150px" [(ngModel)]="coreState.maxRating" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any rating</option><option [ngValue]="2">2 stars or less</option><option [ngValue]="3">3 stars or less</option></select>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 160px" [(ngModel)]="coreState.module" (keyup.enter)="applyFilter()" placeholder="Area, e.g. parties">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search comments">
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" title="Feedback" [subtitle]="(e.row.userName || 'Member') + ' · ' + (e.row.createdAt | date:'medium')" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div class="text-warning h5">{{ e.row.stars }}</div>
+    <div class="text-sm mb-2" style="white-space: pre-wrap">{{ e.row.message || '(no comment)' }}</div>
+    <div class="text-xs text-muted mb-3">{{ e.row.kind }} · {{ e.row.module || 'app' }} · <code>{{ e.row.pageUrl }}</code></div>
+    <div class="form-group text-sm">
+        <label class="text-xs">Status</label>
+        <select class="form-control form-control-sm" [(ngModel)]="e.status"><option *ngFor="let s of statuses" [value]="s">{{ s }}</option></select>
+    </div>
+    <div class="form-group text-sm">
+        <label class="text-xs">Note</label>
+        <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="e.note" maxlength="1000" placeholder="What will be done about it"></textarea>
+    </div>
+    <div aside-footer>
+        <button type="button" class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Feedback</h6><small class="text-muted">What members think of the app</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

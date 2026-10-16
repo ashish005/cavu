@@ -2,7 +2,7 @@
     <div class="d-flex flex-column flex">
         <div class="d-flex flex-wrap align-items-center px-2 pt-2">
             <div class="btn-group btn-group-sm mr-2 mb-2">
-                <button *ngFor="let k of kinds" type="button" class="btn" [ngClass]="coreState.kind === k.kind ? 'primary' : 'white'" (click)="showKind(k.kind)">{{ k.name }}</button>
+                <button *ngFor="let k of kinds" type="button" class="btn" [ngClass]="coreState.kind === k.kind ? 'theme' : 'white'" (click)="showKind(k.kind)">{{ k.name }}</button>
             </div>
             <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search">
         </div>

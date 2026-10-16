@@ -35,7 +35,7 @@ export class MemberNameCell extends DynamicComponent {}
     standalone: true,
     imports: [CommonModule],
     template: `
-        <span *ngFor="let r of context.roles" class="badge mr-1 mb-1" [ngClass]="r.code === 'super_admin' || r.code === 'admin' ? 'primary' : 'info'">{{ r.name }}</span>
+        <span *ngFor="let r of context.roles" class="badge mr-1 mb-1" [ngClass]="r.code === 'super_admin' || r.code === 'admin' ? 'theme' : 'info'">{{ r.name }}</span>
         <span *ngIf="!context.roles?.length" class="text-muted text-xs">No role</span>
         <button type="button" class="btn btn-xs white ml-1" (click)="events.emit('roles', context)" title="Change roles"><i class="fa fa-pencil"></i></button>`
 })
@@ -49,7 +49,7 @@ export class MemberRolesCell extends DynamicComponent {
     imports: [CommonModule],
     template: `
         <a role="button" class="_600" (click)="events.emit('open', context)">{{ context.name }}</a>
-        <span *ngIf="context.isDefault" class="badge primary ml-1" title="Used for this kind of message">default</span>
+        <span *ngIf="context.isDefault" class="badge theme ml-1" title="Used for this kind of message">default</span>
         <span *ngIf="!context.isEnabled" class="badge grey ml-1">off</span>
         <div class="text-xs text-muted">{{ context.providerName }}<ng-container *ngIf="context.eventCount"> · {{ context.eventCount }} event pattern(s)</ng-container></div>`
 })
@@ -119,7 +119,7 @@ export class IntegrationLogActionsCell extends DynamicComponent {
     imports: [CommonModule],
     template: `
         <a role="button" class="_600" (click)="events.emit('open', context)">{{ context.name }}</a>
-        <span *ngIf="context.isHeadBranch" class="badge primary ml-1">head</span>
+        <span *ngIf="context.isHeadBranch" class="badge theme ml-1">head</span>
         <span *ngIf="!context.isActive" class="badge grey ml-1">closed</span>
         <div *ngIf="context.address" class="text-xs text-muted text-truncate" style="max-width: 320px">{{ context.address }}</div>`
 })
@@ -219,3 +219,45 @@ export class PortletNameCell extends DynamicComponent {
         <div class="text-xs text-muted">{{ context.permissionName ? 'needs "' + context.permissionName + '"' : 'own data, no permission needed' }}</div>`
 })
 export class PortletAudienceCell extends DynamicComponent {}
+
+/** Ticket subject with number, type, area and reporter. */
+@Component({
+    standalone: true,
+    imports: [CommonModule],
+    template: `
+        <a role="button" class="_600" (click)="events.emit('open', context)">{{ context.subject }}</a>
+        <span *ngIf="context.fingerprint" class="badge grey ml-1" role="button" title="Show reports of the same failure" (click)="events.emit('similar', context)"><i class="fa fa-clone"></i></span>
+        <div class="text-xs text-muted">{{ context.number }} · {{ context.type }}{{ context.module ? ' · ' + context.module : '' }} · {{ context.reporterName }}</div>`
+})
+export class TicketSubjectCell extends DynamicComponent {
+    constructor(public events: OrgAdminGridEvents) { super(); }
+}
+
+/** Severity and status badges, with the response target. */
+@Component({
+    standalone: true,
+    imports: [CommonModule],
+    template: `
+        <span class="badge mr-1" [ngClass]="severityTone[context.severity]">{{ context.severity }}</span>
+        <span class="badge" [ngClass]="statusTone[context.status]">{{ statusLabel[context.status] }}</span>
+        <div class="text-xs" [class.text-danger]="context.isOverdue" [class.text-muted]="!context.isOverdue">
+            {{ context.isOverdue ? 'reply overdue since' : 'reply by' }} {{ context.dueAt | date:'MMM d, h:mm a' }}</div>`
+})
+export class TicketStatusCell extends DynamicComponent {
+    readonly severityTone: Record<string, string> = {Low: 'grey', Normal: 'info', High: 'warn', Critical: 'danger'};
+    readonly statusTone: Record<string, string> = {Open: 'info', InProgress: 'primary', WaitingOnReporter: 'warn', Resolved: 'success', Closed: 'grey'};
+    readonly statusLabel: Record<string, string> = {Open: 'Open', InProgress: 'In progress', WaitingOnReporter: 'Waiting on reporter', Resolved: 'Resolved', Closed: 'Closed'};
+}
+
+/** Feedback rating, kind and message. */
+@Component({
+    standalone: true,
+    imports: [CommonModule],
+    template: `
+        <a role="button" class="text-warning" (click)="events.emit('open', context)" style="letter-spacing: 1px">{{ context.stars }}</a>
+        <span class="badge grey ml-1">{{ context.kind }}</span>
+        <div class="text-sm text-truncate" style="max-width: 420px" [title]="context.message || ''">{{ context.message || '(no comment)' }}</div>`
+})
+export class FeedbackMessageCell extends DynamicComponent {
+    constructor(public events: OrgAdminGridEvents) { super(); }
+}

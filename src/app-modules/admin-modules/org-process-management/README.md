@@ -56,4 +56,4 @@ Every editor in this module opens in `AsidePanelComponent` (`<app-aside>`): the 
 4px rounded end and 2px gaps between stacked segments, values only at line ends and bar tips, hairline grid, legends
 for two or more series. Colours are role tokens in `views/templates/dashboard.css` (validated light and dark steps:
 series blue/orange, sequential blue, status good/warning/critical always with an icon and label); chart text uses ink
-tokens only. Dark mode follows the OS setting or `data-theme="dark"`.
+tokens only. Surfaces follow the app's base theme (`body.dark` via `:host-context`), like the rest of the app.

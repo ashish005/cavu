@@ -1,9 +1,10 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {AlertService} from "../alert/index";
+import {DiagnosticsService} from "../../components/support-center/diagnostics.service";
 
 @Injectable()
 export class AppErrorHandler extends ErrorHandler {
-    constructor(private alertService: AlertService) {
+    constructor(private alertService: AlertService, private diagnostics: DiagnosticsService) {
         super();
     }
 
@@ -12,6 +13,8 @@ export class AppErrorHandler extends ErrorHandler {
         /*if (confirm('Fatal Error!\nAn unresolved error has occured. Do you want to reload the page to correct this?\n\nError: ' + error.message))       {
             window.location.reload();
         }*/
+        // Kept for support tickets ("what else is sent with your report").
+        try { this.diagnostics.recordError(error); } catch { /* never fail error handling */ }
         super.handleError(error);
     }
 }

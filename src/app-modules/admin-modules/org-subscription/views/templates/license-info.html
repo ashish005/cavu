@@ -162,7 +162,7 @@
                             <tr>
                                 <th></th>
                                 <th *ngFor="let plan of plans; trackBy: trackById" class="text-center">
-                                    <div class="box-body text-center r-t" [ngClass]="plan.isRecommended ? 'primary' : 'light lt'">
+                                    <div class="box-body text-center r-t" [ngClass]="plan.isRecommended ? 'theme' : 'light lt'">
                                         <h6 class="text-u-c mb-1">
                                             {{ plan.name }}
                                             <span *ngIf="plan.isCurrent" class="badge success ml-1">Current</span>

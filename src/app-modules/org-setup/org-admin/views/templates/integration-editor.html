@@ -65,7 +65,7 @@
                 <a role="button" class="ml-1 text-white" (click)="flipEvent(e)">&times;</a></span>
             <span *ngIf="!model.events.length" class="text-danger text-xs">Choose at least one event.</span>
         </div>
-        <div style="max-height: 220px; overflow: auto; border: 1px solid rgba(0,0,0,.08)" class="rounded p-2">
+        <div style="max-height: 220px; overflow: auto; border: 1px solid rgba(120,130,140,.2)" class="rounded p-2">
             <label *ngFor="let e of events" class="d-block mb-1 text-sm" [class._600]="e === '*' || e.endsWith('.*')">
                 <input type="checkbox" class="mr-1" [checked]="hasEvent(e)" (change)="flipEvent(e)">{{ e === '*' ? 'Every event' : e }}
             </label>

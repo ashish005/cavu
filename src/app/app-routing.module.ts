@@ -7,6 +7,7 @@ import {THIRD_PARTY_ROUTES, THIRD_PARTY_SERVICES, THIRD_PARTY_VIEWS, AuthGuard, 
 import {NotFoundComponent} from "./not-found.component";
 import {AppSetup, AppSetupService, ORG_SECTOR} from "@app-global";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {DiagnosticsInterceptor} from "./global/components/support-center/diagnostics.service";
 import {AuthInterceptor} from "./auth.interceptor";
 import {map, take} from "rxjs";
 
@@ -66,7 +67,9 @@ const routes: Routes = [
     THIRD_PARTY_SERVICES,
     { provide: APP_INITIALIZER, useFactory: StartupServiceFactory, deps: [AppSetupService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true   // ✅ ensures multiple interceptors can coexist
-    }
+    },
+    // Remembers failed API calls (with their correlation ids) for support tickets.
+    { provide: HTTP_INTERCEPTORS, useClass: DiagnosticsInterceptor, multi: true }
   ]
 })
 export class AppRoutingModule {

@@ -75,14 +75,14 @@ const messageOf = (e: any, fallback: string) => e?.error?.message || e?.error?.d
                     <div *ngIf="d.bars.length && hasBarValues(d)" class="mt-1 mb-2">
                         <div *ngFor="let b of d.bars" class="d-flex align-items-center mb-1 text-xs">
                             <span class="text-truncate" style="width: 34%" [title]="b.label">{{ b.label }}</span>
-                            <div class="flex mx-2 rounded" style="height: 8px; background: rgba(0,0,0,.06)">
+                            <div class="flex mx-2 rounded" style="height: 8px; background: rgba(120,130,140,.2)">
                                 <div class="rounded h-100" [style.width.%]="barWidth(b, d)" [ngClass]="toneBg(b.tone)"></div>
                             </div>
                             <span class="text-right" style="min-width: 64px">{{ format(b.value, d.currencyCode ? 'money' : 'number', d.currencyCode) }}</span>
                         </div>
                     </div>
 
-                    <div *ngFor="let i of d.items" class="d-flex align-items-center py-1 text-sm" style="border-top: 1px solid rgba(0,0,0,.05)">
+                    <div *ngFor="let i of d.items" class="d-flex align-items-center py-1 text-sm" style="border-top: 1px solid rgba(120,130,140,.2)">
                         <div class="flex text-truncate">
                             <a *ngIf="i.link; else title" [routerLink]="i.link" class="_500" [ngClass]="toneText(i.tone)">{{ i.title }}</a>
                             <ng-template #title><span class="_500" [ngClass]="toneText(i.tone)">{{ i.title }}</span></ng-template>
@@ -140,7 +140,7 @@ export class OrgPortletComponent implements OnInit {
     isEmpty(d: PortletData) { return !d.items.length && (!!d.emptyText || (!d.stats.length && !this.hasBarValues(d))); }
 
     toneText(tone: string | null) { return tone ? `text-${tone === 'warn' ? 'warning' : tone}` : ''; }
-    toneBg(tone: string | null) { return tone === 'danger' ? 'danger' : tone === 'warn' ? 'warning' : tone === 'success' ? 'success' : 'primary'; }
+    toneBg(tone: string | null) { return tone === 'danger' ? 'danger' : tone === 'warn' ? 'warning' : tone === 'success' ? 'success' : 'theme'; }
 }
 
 /**

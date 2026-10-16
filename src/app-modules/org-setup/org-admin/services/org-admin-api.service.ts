@@ -6,7 +6,8 @@ import {
     IntegrationLogRes, IntegrationLogRow, IntegrationRes, IntegrationRow, IntegrationSavedRes, IntegrationTestRes, MEMBER_SERIALIZER,
     MemberRow, OrgProfile, OrgProfileRes, OrgSettings, OrgSettingsRes, ROLE_SERIALIZER, RoleDto, RoleLookups, RoleRes, RoleRow,
     BRANCH_SERIALIZER, BranchDto, BranchRow, HOST_SERIALIZER, HostDto, HostRow, MEMBER_TYPE_SERIALIZER, MemberTypeRow,
-    REQUIREMENT_SERIALIZER, RequirementDto, RequirementRow, PORTLET_SERIALIZER, PortletRow, PortletSettings
+    REQUIREMENT_SERIALIZER, RequirementDto, RequirementRow, PORTLET_SERIALIZER, PortletRow, PortletSettings,
+    SUPPORT_TICKET_SERIALIZER, SupportTicketRow, FEEDBACK_SERIALIZER, FeedbackRow, SupportStats
 } from "../domains/org-admin.models";
 
 /** The API's message (validation, 403 "you need … permission", 409 conflicts) or a fallback. */
@@ -104,6 +105,15 @@ export class OrgAdminApiService extends CoreEndpointBase {
 
     savePortlet(code: string, body: PortletSettings) { return this.send<PortletRow>('PUT', `portlets/${encodeURIComponent(code)}`, body); }
 
+    supportStats() {
+        return this.httpClient.get(`${this.baseSectorAPIUrl}/v1/support/stats`, this.requestHeaders).pipe(
+            map(r => unwrap<SupportStats>(r)), catchError(e => this.handleError(e, () => this.supportStats())));
+    }
+    reviewFeedback(id: string, status: string, reviewNote: string | null) {
+        return this.httpClient.put(`${this.baseSectorAPIUrl}/v1/support/feedback/${id}`, {status, reviewNote}, this.requestHeaders).pipe(
+            map(r => unwrap<FeedbackRow>(r)), catchError(e => this.handleError(e, () => this.reviewFeedback(id, status, reviewNote))));
+    }
+
     /** The page's absolute inbound webhook URL from the API's relative route. */
     absoluteApiUrl(relative: string) { return `${this.baseSectorAPIUrl}/${relative.replace(/^api\//, '')}`; }
 }
@@ -162,6 +172,18 @@ export class PortletGridService extends OrgResourceService<PortletRow> {
     constructor(public override injector: Injector) { super(injector, 'v1/org-admin/portlets', PORTLET_SERIALIZER); }
 }
 
+/** Paged `GET v1/support/tickets?scope=all` (support managers) for ViewExtender grids. */
+@Injectable()
+export class SupportTicketGridService extends OrgResourceService<SupportTicketRow> {
+    constructor(public override injector: Injector) { super(injector, 'v1/support/tickets', SUPPORT_TICKET_SERIALIZER); }
+}
+
+/** Paged `GET v1/support/feedback` for ViewExtender grids. */
+@Injectable()
+export class FeedbackGridService extends OrgResourceService<FeedbackRow> {
+    constructor(public override injector: Injector) { super(injector, 'v1/support/feedback', FEEDBACK_SERIALIZER); }
+}
+
 /** A button pressed inside a grid cell (org-grid has no output for cells, so cells report here and the view listens). */
 export interface GridCellAction { action: string; row: any; }
 
@@ -173,5 +195,6 @@ export class OrgAdminGridEvents {
 
 export const ORG_ADMIN_SERVICES = [
     OrgAdminApiService, RoleGridService, MemberGridService, IntegrationGridService, IntegrationLogGridService, OrgAdminGridEvents,
-    BranchGridService, HostGridService, MemberTypeGridService, RequirementGridService, PortletGridService
+    BranchGridService, HostGridService, MemberTypeGridService, RequirementGridService, PortletGridService,
+    SupportTicketGridService, FeedbackGridService
 ];

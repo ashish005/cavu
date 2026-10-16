@@ -42,6 +42,13 @@ class Layout {
                 { routeTo: ['integrations', 'webhooks'], icon: 'fa fa-plug', key: 'Webhooks' },
                 { routeTo: ['integrations', 'activity'], icon: 'fa fa-history', key: 'Activity' }
             ]
+        },
+        {
+            isFLatChildren: true, key: 'Support',
+            children: [
+                { routeTo: ['support', 'tickets'], icon: 'fa fa-life-ring', key: 'Tickets' },
+                { routeTo: ['support', 'feedback'], icon: 'fa fa-star-half-o', key: 'Feedback' }
+            ]
         }
     ];
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}

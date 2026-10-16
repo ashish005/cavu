@@ -143,13 +143,17 @@
           <a class="btn btn-xs text-xs theme text-theme" (click)="logout()"><i class="fa fa-power-off px-1"></i>Sign Out</a>
         </li>-->
         <li class="nav-item">
-            <a class="btn btn-xs theme text-theme" (click)="showBellPopup()">
-                <i class="fa fa-bell text-muted"></i>
-                <!--<span class="badge badge-pill up danger" style="left: -0.3rem;top: -0.5rem;" *ngIf="newNotificationCount > 0">{{newNotificationCount}}</span>-->
+            <a class="btn btn-xs theme text-theme pos-rlt" (click)="showBellPopup()" title="Notifications">
+                <i class="fa fa-bell" [class.text-muted]="!(support.summary$ | async)?.badgeCount"></i>
+                <span class="badge badge-pill danger" style="position: absolute; top: -0.35rem; right: -0.4rem; font-size: .6rem"
+                      *ngIf="(support.summary$ | async)?.badgeCount as count">{{ count > 99 ? '99+' : count }}</span>
             </a>
         </li>
         <li class="nav-item align-items-center">
-            <a title="Support Ticket?" class="btn btn-xs btn-icon btn-rounded" (click)="createSupportTicket()"><i class="fa fa-support"></i></a>
+            <a title="Help & support: report a problem" class="btn btn-xs btn-icon btn-rounded" (click)="createSupportTicket()"><i class="fa fa-support"></i></a>
+        </li>
+        <li class="nav-item align-items-center">
+            <a title="Send feedback" class="btn btn-xs btn-icon btn-rounded" (click)="showSurveyPopup()"><i class="fa fa-commenting-o"></i></a>
         </li>
         <li class="nav-item align-items-center">
             <a class="btn btn-xs theme text-theme" (click)="toggleThemeSwitcher()" title="Theme Switcher"><i class="fa fa-wrench"></i></a>

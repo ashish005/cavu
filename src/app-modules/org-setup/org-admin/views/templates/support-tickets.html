@@ -1,0 +1,151 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <!-- Overview -->
+        <div class="row no-gutters px-2 pt-2" *ngIf="stats as s">
+            <div class="col-6 col-md-2 p-1" *ngFor="let k of [
+                {label: 'Open', value: s.open, tone: '', f: 'open'}, {label: 'Reply overdue', value: s.overdue, tone: s.overdue ? 'text-danger' : '', f: 'overdue'},
+                {label: 'Unassigned', value: s.unassigned, tone: s.unassigned ? 'text-warning' : '', f: 'open'}, {label: 'Critical open', value: s.criticalOpen, tone: s.criticalOpen ? 'text-danger' : '', f: 'open'}]">
+                <a role="button" class="box p-2 mb-0 d-block" (click)="quick($any(k.f))">
+                    <div class="text-xs text-muted">{{ k.label }}</div><div class="h5 mb-0 _600" [ngClass]="k.tone">{{ k.value }}</div></a>
+            </div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">First reply (30 d avg)</div>
+                <div class="h5 mb-0 _600">{{ s.avgFirstResponseHours !== null ? s.avgFirstResponseHours + ' h' : '—' }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Satisfaction</div>
+                <div class="h5 mb-0 _600">{{ s.avgRating !== null ? s.avgRating + ' / 5' : '—' }}</div></div></div>
+        </div>
+        <div class="px-3 pt-1" *ngIf="stats?.recurring?.length">
+            <div class="text-xs text-muted mb-1"><i class="fa fa-repeat mr-1"></i>Reported more than once (30 days) — likeliest root causes to fix first:</div>
+            <a *ngFor="let r of stats?.recurring" role="button" class="badge white mr-1 mb-1" (click)="showSimilar(r.fingerprint)" [title]="'Last reported ' + (r.lastReportedAt | date:'medium')">
+                {{ r.subject }} <b class="ml-1">×{{ r.reports }}</b><span *ngIf="r.open" class="text-danger ml-1">{{ r.open }} open</span></a>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button type="button" class="btn" [ngClass]="coreState.openOnly && !coreState.overdue && !coreState.assignedToMe && !coreState.fingerprint ? 'theme' : 'white'" (click)="quick('open')">Open</button>
+                <button type="button" class="btn" [ngClass]="coreState.overdue ? 'theme' : 'white'" (click)="quick('overdue')">Overdue</button>
+                <button type="button" class="btn" [ngClass]="coreState.assignedToMe ? 'theme' : 'white'" (click)="quick('mine')">Mine</button>
+                <button type="button" class="btn" [ngClass]="!coreState.openOnly && !coreState.fingerprint ? 'theme' : 'white'" (click)="quick('all')">All</button>
+            </div>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 130px" [(ngModel)]="coreState.severity" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any severity</option>
+                <option *ngFor="let s of ['Critical','High','Normal','Low']" [ngValue]="s">{{ s }}</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 150px" [(ngModel)]="coreState.type" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any type</option>
+                <option *ngFor="let t of lookups?.types" [ngValue]="t.id">{{ t.name }}</option>
+            </select>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Subject, number, reporter or correlation id">
+            <span *ngIf="coreState.fingerprint" class="badge info mb-2">Same failure <a role="button" class="ml-1 text-white" (click)="quick('open')">&times;</a></span>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="detail as d" size="xl" [title]="d.ticket.number + ' · ' + d.ticket.subject" [subtitle]="d.ticket.reporterName + ' · ' + (d.ticket.createdAt | date:'medium')" (closed)="detail = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div class="row">
+        <!-- Conversation -->
+        <div class="col-lg-7">
+            <div class="text-sm p-2 rounded light lt mb-2" style="white-space: pre-wrap">{{ d.description }}</div>
+            <div *ngIf="d.stepsToReproduce" class="text-sm mb-2"><b class="text-xs text-muted d-block">Steps</b><span style="white-space: pre-wrap">{{ d.stepsToReproduce }}</span></div>
+            <div class="mb-2">
+                <a *ngFor="let a of d.attachments" role="button" class="badge white mr-1" (click)="download(a)">
+                    <i class="fa mr-1" [ngClass]="a.isScreenshot ? 'fa-picture-o' : 'fa-paperclip'"></i>{{ a.fileName }}</a>
+            </div>
+            <div *ngFor="let c of d.comments" class="mb-2">
+                <div *ngIf="c.kind === 'System'" class="text-xs text-muted text-center">{{ c.body }} · {{ c.authorName }} · {{ c.createdAt | date:'short' }}</div>
+                <div *ngIf="c.kind !== 'System'" class="p-2 rounded text-sm"
+                     [style.background]="c.kind === 'Internal' ? 'rgba(245,158,11,.10)' : c.authorId === d.ticket.reporterId ? 'rgba(37,99,235,.06)' : 'rgba(16,185,129,.07)'">
+                    <div class="text-xs"><b>{{ c.authorName }}</b> <span *ngIf="c.kind === 'Internal'" class="badge warn ml-1">internal</span>
+                        <span class="text-muted ml-1">{{ c.createdAt | date:'short' }}</span></div>
+                    <div style="white-space: pre-wrap">{{ c.body }}</div>
+                    <a *ngFor="let a of c.attachments" role="button" class="badge white mr-1" (click)="download(a)"><i class="fa fa-paperclip mr-1"></i>{{ a.fileName }}</a>
+                </div>
+            </div>
+            <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="reply" maxlength="8000"
+                      [placeholder]="internal ? 'Internal note (only support sees it)…' : 'Reply to ' + d.ticket.reporterName + '…'"></textarea>
+            <div class="d-flex align-items-center mt-1">
+                <label class="mb-0 text-sm flex"><input type="checkbox" class="mr-1" [(ngModel)]="internal">Internal note</label>
+                <button type="button" class="btn btn-sm" [ngClass]="internal ? 'white' : 'theme'" [disabled]="saving || !reply.trim()" (click)="sendReply()">{{ internal ? 'Add note' : 'Send reply' }}</button>
+            </div>
+        </div>
+
+        <!-- Handling and diagnostics -->
+        <div class="col-lg-5">
+            <div class="box p-2 mb-2">
+                <div class="row text-sm">
+                    <div class="col-6 form-group mb-2"><label class="text-xs">Status</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="form.status"><option *ngFor="let s of lookups?.statuses" [value]="s.id">{{ s.name }}</option></select></div>
+                    <div class="col-6 form-group mb-2"><label class="text-xs">Severity</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="form.severity"><option *ngFor="let s of ['Low','Normal','High','Critical']" [value]="s">{{ s }}</option></select></div>
+                    <div class="col-12 form-group mb-2"><label class="text-xs">Assigned to</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="form.assigneeId">
+                            <option value="">— unassigned</option><option *ngFor="let a of lookups?.assignees" [value]="a.id">{{ a.name }}</option></select></div>
+                    <div class="col-12 form-group mb-2"><label class="text-xs">Root cause {{ d.ticket.type === 'Bug' ? '(needed to resolve a bug)' : '' }}</label>
+                        <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="form.rootCause" maxlength="4000" placeholder="Why it happened"></textarea></div>
+                    <div class="col-12 form-group mb-2"><label class="text-xs">Resolution (shown to the reporter)</label>
+                        <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="form.resolution" maxlength="4000" placeholder="What was done"></textarea></div>
+                </div>
+                <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save changes</button>
+                <span class="text-xs text-muted ml-2" [class.text-danger]="d.ticket.isOverdue">reply {{ d.ticket.isOverdue ? 'overdue since' : 'by' }} {{ d.ticket.dueAt | date:'short' }}</span>
+                <div *ngIf="d.ticket.rating" class="text-sm mt-2">Rated <span class="text-warning">{{ '★'.repeat(d.ticket.rating) }}</span> {{ d.ratingComment }}</div>
+            </div>
+
+            <div class="box p-2 mb-2 text-xs" *ngIf="diagnostics as g">
+                <h6 class="_600 text-sm mb-2">Diagnostics</h6>
+                <div *ngIf="d.correlationIds" class="mb-2">
+                    <div class="text-muted">Correlation ids — search the API logs for these:</div>
+                    <a *ngFor="let c of d.correlationIds.split(',')" role="button" class="badge white mr-1" (click)="copy(c)" title="Copy"><code>{{ c }}</code></a>
+                </div>
+                <div *ngIf="g.client?.requests?.length" class="mb-2">
+                    <div class="text-muted mb-1">Failed requests</div>
+                    <div *ngFor="let r of g.client?.requests" class="mb-1">
+                        <span class="badge" [ngClass]="r.status >= 500 || r.status === 0 ? 'danger' : 'warn'">{{ r.status || 'no response' }}</span>
+                        <code class="ml-1">{{ r.method }} {{ path(r.url) }}</code>
+                        <div class="text-muted">{{ r.message }}{{ r.durationMs ? ' · ' + r.durationMs + ' ms' : '' }}{{ r.at ? ' · ' + (r.at | date:'mediumTime') : '' }}</div>
+                    </div>
+                </div>
+                <div *ngIf="g.client?.errors?.length" class="mb-2">
+                    <div class="text-muted mb-1">Client errors</div>
+                    <details *ngFor="let e of g.client?.errors" class="mb-1"><summary role="button" class="text-danger">{{ e.message }}</summary>
+                        <pre class="mb-0" style="white-space: pre-wrap; max-height: 160px; overflow: auto">{{ e.stack }}</pre></details>
+                </div>
+                <div *ngIf="g.client?.navigation?.length" class="mb-2">
+                    <div class="text-muted mb-1">Pages before the report</div>
+                    <div *ngFor="let n of g.client?.navigation"><code>{{ n }}</code></div>
+                </div>
+                <table class="table table-sm mb-0">
+                    <tr><td class="text-muted">Page</td><td class="text-break">{{ d.pageUrl }}</td></tr>
+                    <tr><td class="text-muted">App</td><td>{{ d.appVersion || '—' }}</td></tr>
+                    <tr><td class="text-muted">Browser</td><td class="text-break">{{ d.userAgent }}</td></tr>
+                    <tr><td class="text-muted">Screen</td><td>{{ g.client?.screen }} (window {{ g.client?.viewport }})</td></tr>
+                    <tr><td class="text-muted">Locale</td><td>{{ g.client?.language }} · {{ g.client?.timeZone }}{{ g.client?.online === false ? ' · offline' : '' }}</td></tr>
+                    <tr><td class="text-muted">Member</td><td>{{ g.server?.userType }} · {{ g.server?.roles?.join(', ') }}</td></tr>
+                    <tr><td class="text-muted">IP</td><td>{{ d.clientIp }}</td></tr>
+                </table>
+            </div>
+
+            <div class="box p-2 text-sm" *ngIf="d.similar.length">
+                <h6 class="_600 text-sm mb-1">Same failure reported {{ d.similar.length }} more time(s)</h6>
+                <a *ngFor="let s of d.similar" role="button" class="d-block text-xs" (click)="openTicket(s.id)">{{ s.number }} · {{ s.reporterName }} · {{ s.status }} · {{ s.createdAt | date:'shortDate' }}</a>
+            </div>
+        </div>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Support tickets</h6><small class="text-muted">{{ gridOptions?.total || 0 }} ticket(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid(); loadStats()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

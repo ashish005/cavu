@@ -3,6 +3,8 @@ import {AlertCommand, AlertDialog, AlertService, AppSetupService, DialogType, Me
 import {ToastaConfig, ToastaService, ToastData, ToastOptions} from "ngx-toasta";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {SetupFactory} from "@app-lib";
+import {AuthService} from "@app-third-party";
+import {Observable} from "rxjs";
 
 declare var alertify: any;
 class ToastaSpecific
@@ -122,13 +124,16 @@ class ToastaSpecific
 
 @Component({
     selector: 'app-body',
-    template: `<router-outlet></router-outlet><ngx-toasta></ngx-toasta>`,
+    // The support panels (bell, help, feedback) live here, outside any themed header, so they keep the page's colours.
+    template: `<router-outlet></router-outlet><ngx-toasta></ngx-toasta><support-center *ngIf="signedIn$ | async"></support-center>`,
     standalone: false
 })
 export class AppComponent extends ToastaSpecific {
   title = 'Enrator';
-  constructor(public override injector: Injector, private setupService: AppSetupService, private setupFactory: SetupFactory) {
+  readonly signedIn$: Observable<boolean>;
+  constructor(public override injector: Injector, private setupService: AppSetupService, private setupFactory: SetupFactory, authService: AuthService) {
     super(injector);
+    this.signedIn$ = authService.isAuthenticated$;
     this.setupService.showGlobalFilterPopup = () => this.setupFactory.showGlobalFilterPopup();
 
     this.setupService.showBellPopup = () => this.setupFactory.showBellPopup();

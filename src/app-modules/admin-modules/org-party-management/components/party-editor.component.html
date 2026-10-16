@@ -9,7 +9,7 @@
             <div *ngFor="let d of duplicates" class="d-flex align-items-center mt-1">
                 <span class="flex">{{ d.displayName }} <span class="text-muted">({{ d.reason }}{{ d.roles.length ? '; ' + d.roles.join(', ') : '' }})</span></span>
                 <button *ngIf="!d.roles.includes(role)" type="button" class="btn btn-xs white ml-2" (click)="useExisting(d)"
-                        [ngClass]="attachTo?.partyId === d.partyId ? 'primary' : 'white'">Add as {{ noun }}</button>
+                        [ngClass]="attachTo?.partyId === d.partyId ? 'theme' : 'white'">Add as {{ noun }}</button>
             </div>
             <label class="mb-0 mt-1 text-xs"><input type="checkbox" class="mr-1" [(ngModel)]="allowDuplicate" (ngModelChange)="attachTo = null">It is a different party; save anyway</label>
         </div>
@@ -23,8 +23,8 @@
         <div class="row text-sm">
             <div class="col-12 mb-2" *ngIf="role !== 'employee'">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn" [ngClass]="p.kind === 'Organization' ? 'primary' : 'white'" (click)="p.kind = 'Organization'">Company</button>
-                    <button type="button" class="btn" [ngClass]="p.kind === 'Person' ? 'primary' : 'white'" (click)="p.kind = 'Person'; nameChanged()">Individual</button>
+                    <button type="button" class="btn" [ngClass]="p.kind === 'Organization' ? 'theme' : 'white'" (click)="p.kind = 'Organization'">Company</button>
+                    <button type="button" class="btn" [ngClass]="p.kind === 'Person' ? 'theme' : 'white'" (click)="p.kind = 'Person'; nameChanged()">Individual</button>
                 </div>
             </div>
             <ng-container *ngIf="p.kind === 'Person'">
@@ -234,7 +234,7 @@
 
         <!-- Addresses -->
         <h6 class="_600 text-sm mt-2">Addresses</h6>
-        <div *ngFor="let a of p.addresses; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(0,0,0,.08)">
+        <div *ngFor="let a of p.addresses; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(120,130,140,.2)">
             <div class="d-flex flex-wrap align-items-center">
                 <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 130px" [(ngModel)]="a.type">
                     <option value="Billing">Billing</option><option value="Shipping">Shipping</option><option value="RemitTo">Remit to</option>
@@ -273,7 +273,7 @@
 
         <!-- Bank accounts -->
         <h6 class="_600 text-sm mt-2">Bank accounts <span class="text-muted text-xs">(for payments and refunds)</span></h6>
-        <div *ngFor="let b of p.bankAccounts; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(0,0,0,.08)">
+        <div *ngFor="let b of p.bankAccounts; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded text-sm" style="border: 1px solid rgba(120,130,140,.2)">
             <div class="d-flex flex-wrap align-items-center">
                 <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 160px" [(ngModel)]="b.accountHolderName" placeholder="Account holder *" maxlength="150">
                 <input class="form-control form-control-sm mr-1 mb-1" style="flex: 1 1 140px" [(ngModel)]="b.bankName" placeholder="Bank" maxlength="150">

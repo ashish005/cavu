@@ -2,16 +2,17 @@
    chart text always uses ink tokens, never series colours. */
 :host { display: contents; }
 
+/* Surfaces and text follow the app's base theme (body.light / body.dark), not the operating system. */
 .dash-root {
     color-scheme: light;
-    --dash-surface: #fcfcfb;
-    --dash-plane: #f9f9f7;
-    --dash-ink: #0b0b0b;
-    --dash-ink-2: #52514e;
-    --dash-muted: #898781;
-    --dash-grid: #e1e0d9;
-    --dash-axis: #c3c2b7;
-    --dash-border: rgba(11, 11, 11, 0.10);
+    --dash-surface: #fff;
+    --dash-plane: transparent;
+    --dash-ink: rgba(33, 43, 54, .92);
+    --dash-ink-2: rgba(70, 90, 110, .85);
+    --dash-muted: rgba(70, 90, 110, .6);
+    --dash-grid: rgba(120, 130, 140, .18);
+    --dash-axis: rgba(120, 130, 140, .35);
+    --dash-border: rgba(120, 130, 140, .2);
     --dash-s1: #2a78d6;      /* categorical slot 1 (blue) */
     --dash-s2: #eb6834;      /* categorical slot 2 (orange) */
     --dash-seq: #2a78d6;     /* sequential blue, step 450 */
@@ -21,23 +22,14 @@
     --dash-warning: #fab219;
     --dash-critical: #d03b3b;
     background: var(--dash-plane);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: inherit;
 }
-@media (prefers-color-scheme: dark) {
-    :root:where(:not([data-theme="light"])) .dash-root {
-        color-scheme: dark;
-        --dash-surface: #1a1a19; --dash-plane: #0d0d0d; --dash-ink: #f0efec; --dash-ink-2: #c3c2b7; --dash-muted: #898781;
-        --dash-grid: #2c2c2a; --dash-axis: #383835; --dash-border: rgba(255, 255, 255, 0.10);
-        --dash-s1: #3987e5; --dash-s2: #d95926; --dash-seq: #3987e5; --dash-seq-2: #d95926; --dash-good-text: #0ca30c;
-    }
-}
-:root[data-theme="dark"] .dash-root {
+:host-context(body.dark) .dash-root {
     color-scheme: dark;
-    --dash-surface: #1a1a19; --dash-plane: #0d0d0d; --dash-ink: #f0efec; --dash-ink-2: #c3c2b7; --dash-muted: #898781;
-    --dash-grid: #2c2c2a; --dash-axis: #383835; --dash-border: rgba(255, 255, 255, 0.10);
-    --dash-s1: #3987e5; --dash-s2: #d95926; --dash-seq: #3987e5; --dash-seq-2: #d95926; --dash-good-text: #0ca30c;
+    --dash-surface: #243140; --dash-plane: transparent; --dash-ink: rgba(225, 233, 241, .95); --dash-ink-2: rgba(160, 180, 200, .85);
+    --dash-muted: rgba(160, 180, 200, .6); --dash-grid: rgba(120, 130, 140, .22); --dash-axis: rgba(120, 130, 140, .4); --dash-border: rgba(120, 130, 140, .25);
+    --dash-s1: #3987e5; --dash-s2: #d95926; --dash-seq: #3987e5; --dash-seq-2: #d95926; --dash-good-text: #4cc94c;
 }
-
 .dash-page { box-sizing: border-box; padding: 16px; max-width: 1440px; width: 100%; margin: 0 auto; color: var(--dash-ink); }
 .dash-page *, .dash-page *::before, .dash-page *::after { box-sizing: border-box; }
 .dash-filters { display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
@@ -74,7 +66,7 @@
 ::ng-deep .dash-key-line { display: inline-block; width: 14px; height: 2px; border-radius: 1px; margin-right: 6px; }
 ::ng-deep .dash-key-rect { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
 ::ng-deep .dash-tooltip { position: absolute; z-index: 5; min-width: 160px; pointer-events: none; background: var(--dash-surface); border: 1px solid var(--dash-border);
-    border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, .12); padding: 8px 10px; font-size: 12px; color: var(--dash-ink-2); }
+    border-radius: 6px; box-shadow: 0 4px 16px rgba(120,130,140,.2); padding: 8px 10px; font-size: 12px; color: var(--dash-ink-2); }
 ::ng-deep .dash-tooltip-title { color: var(--dash-ink-2); margin-bottom: 4px; }
 ::ng-deep .dash-tooltip-row { display: flex; align-items: center; gap: 6px; }
 ::ng-deep .dash-tooltip-row b { color: var(--dash-ink); font-weight: 600; min-width: 28px; }

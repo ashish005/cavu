@@ -1,5 +1,5 @@
 <div class="d-flex flex">
-    <div class="d-flex flex-column flex scroll-y bg-light">
+    <div class="d-flex flex-column flex scroll-y">
         <loader [isLoading]="isLoading"></loader>
 
         <div *ngIf="loadError" class="p-3">
@@ -44,7 +44,7 @@
                                 <div class="list-body">
                                     <div class="item-title _500">
                                         {{ plan.name }}
-                                        <span *ngIf="plan.isRecommended" class="badge primary ml-1">Recommended</span>
+                                        <span *ngIf="plan.isRecommended" class="badge theme ml-1">Recommended</span>
                                         <span *ngIf="plan.isCurrent" class="badge success ml-1">Current</span>
                                         <span *ngIf="plan.action === 'Upgrade'" class="badge info ml-1">Upgrade</span>
                                     </div>

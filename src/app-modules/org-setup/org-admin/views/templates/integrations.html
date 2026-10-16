@@ -3,8 +3,8 @@
         <div class="px-3 pt-2 text-sm text-muted">{{ page.description }}</div>
         <div class="d-flex flex-wrap align-items-center px-2 pt-2">
             <ng-container *ngIf="categories.length > 1">
-                <button type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === null ? 'primary' : 'white'" (click)="filterCategory(null)">All</button>
-                <button *ngFor="let c of categories" type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === c.category ? 'primary' : 'white'"
+                <button type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === null ? 'theme' : 'white'" (click)="filterCategory(null)">All</button>
+                <button *ngFor="let c of categories" type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === c.category ? 'theme' : 'white'"
                         (click)="filterCategory(c.category)">{{ c.name }}</button>
                 <span class="mr-2"></span>
             </ng-container>
@@ -29,7 +29,7 @@
         <h6 class="_600 text-sm mt-2 mb-1">{{ c.name }}</h6>
         <div class="text-xs text-muted mb-2">{{ c.description }}</div>
         <a *ngFor="let p of providers" [hidden]="p.category !== c.category" role="button" class="d-block p-2 mb-2 rounded text-sm"
-           style="border: 1px solid rgba(0,0,0,.1)" (click)="add(p)">
+           style="border: 1px solid rgba(120,130,140,.2)" (click)="add(p)">
             <div class="_600">{{ p.name }}</div>
             <div class="text-xs text-muted">{{ p.description }}</div>
         </a>

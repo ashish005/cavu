@@ -4,8 +4,8 @@
             they hold its permission, its module is in your plan, and at least one of their roles is ticked.</div>
         <div class="d-flex flex-wrap align-items-center px-2 pt-2">
             <div class="btn-group btn-group-sm mr-2 mb-2">
-                <button type="button" class="btn" [ngClass]="!coreState.userType ? 'primary' : 'white'" (click)="coreState.userType = null; applyFilter()">All</button>
-                <button *ngFor="let a of audiences" type="button" class="btn" [ngClass]="coreState.userType === a.code ? 'primary' : 'white'"
+                <button type="button" class="btn" [ngClass]="!coreState.userType ? 'theme' : 'white'" (click)="coreState.userType = null; applyFilter()">All</button>
+                <button *ngFor="let a of audiences" type="button" class="btn" [ngClass]="coreState.userType === a.code ? 'theme' : 'white'"
                         (click)="coreState.userType = a.code; applyFilter()">{{ a.name }}</button>
             </div>
             <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search portlets">

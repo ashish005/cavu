@@ -2,7 +2,7 @@
     <!-- Channels and priority -->
     <div class="d-flex flex-wrap align-items-center mb-2">
         <span class="text-xs text-muted mr-2">Send by</span>
-        <button *ngFor="let c of channels" type="button" class="btn btn-xs mr-1 mb-1" [ngClass]="hasChannel(c.value) ? 'primary' : 'white'" (click)="toggleChannel(c.value)">
+        <button *ngFor="let c of channels" type="button" class="btn btn-xs mr-1 mb-1" [ngClass]="hasChannel(c.value) ? 'theme' : 'white'" (click)="toggleChannel(c.value)">
             <i class="mr-1" [ngClass]="c.icon"></i>{{ c.label }}
         </button>
         <span class="flex"></span>
@@ -43,7 +43,7 @@
 
     <!-- Recipients -->
     <label class="text-xs mb-1">Send to</label>
-    <div *ngFor="let r of config.recipients; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded" style="border: 1px solid rgba(0,0,0,.08)">
+    <div *ngFor="let r of config.recipients; let i = index; trackBy: trackByIndex" class="p-2 mb-2 rounded" style="border: 1px solid rgba(120,130,140,.2)">
         <div class="d-flex flex-wrap align-items-center">
             <select class="form-control form-control-sm mr-1 mb-1" style="flex: 0 1 200px" [(ngModel)]="r.kind" (ngModelChange)="kindChanged(r)">
                 <option *ngFor="let k of kinds" [value]="k.value">{{ k.label }}</option>

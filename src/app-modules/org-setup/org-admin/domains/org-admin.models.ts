@@ -451,3 +451,80 @@ export class PortletQueryOptions extends CoreQueryOptions {
     userType: string | null = null;
     override toQueryString() { return super.getParamByObject({search: this.search, userType: this.userType}); }
 }
+
+// ---------- Support console ----------
+
+/** Row of `GET v1/support/tickets?scope=all`. */
+export class SupportTicketRow extends CoreResource {
+    declare number: string;
+    declare type: string;
+    declare severity: 'Low' | 'Normal' | 'High' | 'Critical';
+    declare status: 'Open' | 'InProgress' | 'WaitingOnReporter' | 'Resolved' | 'Closed';
+    declare subject: string;
+    declare module: string | null;
+    declare reporterName: string;
+    declare assigneeName: string | null;
+    declare createdAt: string;
+    declare dueAt: string;
+    declare isOverdue: boolean;
+    declare lastActivityAt: string | null;
+    declare replies: number;
+    declare fingerprint: string | null;
+    declare rating: number | null;
+    constructor(json: any = {}) { super(); Object.assign(this, json); }
+}
+export const SUPPORT_TICKET_SERIALIZER = readOnlySerializer(SupportTicketRow);
+
+export class SupportTicketQueryOptions extends CoreQueryOptions {
+    search: string | null = null;
+    status: string | null = null;
+    severity: string | null = null;
+    type: string | null = null;
+    openOnly = true;
+    assignedToMe = false;
+    overdue = false;
+    fingerprint: string | null = null;
+    override toQueryString() {
+        return super.getParamByObject({
+            scope: 'all', search: this.search, status: this.status, severity: this.severity, type: this.type,
+            openOnly: this.openOnly && !this.status ? 'true' : null, assignedToMe: this.assignedToMe ? 'true' : null,
+            overdue: this.overdue ? 'true' : null, fingerprint: this.fingerprint
+        });
+    }
+}
+
+/** Row of `GET v1/support/feedback`. */
+export class FeedbackRow extends CoreResource {
+    declare kind: string;
+    declare rating: number | null;
+    declare message: string | null;
+    declare userName: string | null;
+    declare module: string | null;
+    declare pageUrl: string | null;
+    declare status: 'New' | 'Reviewed' | 'Planned' | 'Done' | 'Dismissed';
+    declare reviewNote: string | null;
+    declare createdAt: string;
+    constructor(json: any = {}) { super(); Object.assign(this, json); }
+    get stars(): string { return this.rating ? '★'.repeat(this.rating) + '☆'.repeat(5 - this.rating) : '—'; }
+}
+export const FEEDBACK_SERIALIZER = readOnlySerializer(FeedbackRow);
+
+export class FeedbackQueryOptions extends CoreQueryOptions {
+    search: string | null = null;
+    status: string | null = null;
+    kind: string | null = null;
+    maxRating: number | null = null;
+    module: string | null = null;
+    override toQueryString() {
+        return super.getParamByObject({search: this.search, status: this.status, kind: this.kind, maxRating: this.maxRating, module: this.module});
+    }
+}
+
+export interface CountByKey { key: string; count: number; }
+export interface SupportStats {
+    open: number; overdue: number; unassigned: number; criticalOpen: number; createdLast7Days: number; resolvedLast7Days: number;
+    avgFirstResponseHours: number | null; avgResolutionHours: number | null; avgRating: number | null;
+    openBySeverity: CountByKey[]; openByModule: CountByKey[];
+    recurring: {fingerprint: string; subject: string; module: string | null; reports: number; open: number; lastReportedAt: string}[];
+    feedback: {last30Days: number; avgRating: number | null; unreviewed: number; byRating: CountByKey[]; lowestModules: {module: string; avgRating: number; count: number}[]};
+}

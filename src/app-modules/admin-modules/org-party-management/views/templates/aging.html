@@ -1,11 +1,11 @@
-<div class="d-flex flex-column flex scroll-y bg-light">
+<div class="d-flex flex-column flex scroll-y">
     <loader [isLoading]="loading"></loader>
     <div class="container-fluid p-3" style="max-width: 1300px">
         <div class="d-flex flex-wrap align-items-center mb-2">
             <div class="btn-group btn-group-sm mr-2 mb-1">
-                <button class="btn" [ngClass]="role === 'customer' ? 'primary' : 'white'" (click)="setRole('customer')">Receivables</button>
-                <button class="btn" [ngClass]="role === 'vendor' ? 'primary' : 'white'" (click)="setRole('vendor')">Payables</button>
-                <button class="btn" [ngClass]="role === 'employee' ? 'primary' : 'white'" (click)="setRole('employee')">Employee advances</button>
+                <button class="btn" [ngClass]="role === 'customer' ? 'theme' : 'white'" (click)="setRole('customer')">Receivables</button>
+                <button class="btn" [ngClass]="role === 'vendor' ? 'theme' : 'white'" (click)="setRole('vendor')">Payables</button>
+                <button class="btn" [ngClass]="role === 'employee' ? 'theme' : 'white'" (click)="setRole('employee')">Employee advances</button>
             </div>
             <label class="text-sm mb-1 mr-1">As of</label>
             <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="asOf" (change)="load()">

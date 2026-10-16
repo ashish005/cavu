@@ -1,4 +1,4 @@
-<div class="d-flex flex-column flex scroll-y bg-light">
+<div class="d-flex flex-column flex scroll-y">
     <loader [isLoading]="loading || saving"></loader>
     <div class="container p-3" style="max-width: 980px">
         <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
@@ -10,7 +10,7 @@
                         <div class="box-header"><h6 class="mb-0">{{ def.title }}</h6></div>
                         <div class="box-body text-sm d-flex flex-column flex">
                             <div class="d-flex align-items-center justify-content-center rounded mb-2"
-                                 style="height: 120px; background: repeating-conic-gradient(#f1f5f9 0 25%, #fff 0 50%) 0 0 / 16px 16px; border: 1px dashed rgba(0,0,0,.12)">
+                                 style="height: 120px; background: repeating-conic-gradient(#f1f5f9 0 25%, #fff 0 50%) 0 0 / 16px 16px; border: 1px dashed rgba(120,130,140,.2)">
                                 <img *ngIf="url(def) as src" [src]="src" [alt]="def.title" style="max-height: 104px; max-width: 90%; object-fit: contain">
                                 <span *ngIf="!image(def)" class="text-muted text-xs">No image</span>
                             </div>

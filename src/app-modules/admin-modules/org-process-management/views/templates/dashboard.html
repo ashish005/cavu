@@ -3,7 +3,7 @@
         <!-- Filters: one row, scoping everything below -->
         <div class="dash-filters">
             <div class="btn-group btn-group-sm mr-2 mb-1" role="group" aria-label="Period">
-                <button *ngFor="let d of periods" type="button" class="btn" [ngClass]="days === d ? 'primary' : 'white'" (click)="setDays(d)"
+                <button *ngFor="let d of periods" type="button" class="btn" [ngClass]="days === d ? 'theme' : 'white'" (click)="setDays(d)"
                         [attr.aria-pressed]="days === d">Last {{ d }} days</button>
             </div>
             <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 220px" [(ngModel)]="workflowId" (ngModelChange)="reload()" aria-label="Workflow">

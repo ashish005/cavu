@@ -6,6 +6,7 @@ import {CommonModule} from "@angular/common";
 import {AppSetupService} from "../../../services";
 import {AppSetup} from "../../../services/models";
 import {OrgLogoComponent} from "../org-logo/org-logo.component";
+import {SupportUiService} from "../../support-center/support.service";
 
 @Component({
     selector: 'org-header',
@@ -21,7 +22,7 @@ export class OrgHeaderComponent implements OnInit {
   @Input() isAdminView: boolean = false;
     constructor(public injector: Injector, public appSetupService: AppSetupService,
                 public router: Router, public activatedRoute: ActivatedRoute,
-                private authService: AuthService) {
+                private authService: AuthService, public support: SupportUiService) {
       this.isAuthenticated$ = authService.isAuthenticated$;
     }
 
@@ -59,9 +60,9 @@ export class OrgHeaderComponent implements OnInit {
 
   routeToUrl=(path)=> this.router.navigate([path], {relativeTo: this.activatedRoute});
 
-  showBellPopup = () => this.appSetupService.showBellPopup();
-  createSupportTicket = () => this.appSetupService.createSupportTicket();
-  showSurveyPopup = () => this.appSetupService.showSurveyPopup();
+  showBellPopup = () => this.support.open('bell');
+  createSupportTicket = () => this.support.open('report');
+  showSurveyPopup = () => this.support.open('feedback');
   showGlobalFilterPopup = () => this.appSetupService.showGlobalFilterPopup();
     updateLanguage = (lan) => null;
     // updateAppSession = (session) => this.coreService.updateAppSession(session);

@@ -12,3 +12,8 @@ export {DualListfilterButtonsDomain} from "./dual-listbox/basic-list.domain";
 export {LoaderComponent} from "./loader/loader.component";
 
 export {OrgDashboardComponent, OrgPortletComponent, OrgDashboardService} from "./org-dashboard/org-dashboard.component";
+
+export {SupportCenterComponent} from "./support-center/support-center.component";
+export {SupportApiService, SupportUiService, supportErrorOf} from "./support-center/support.service";
+export {DiagnosticsService, DiagnosticsInterceptor} from "./support-center/diagnostics.service";
+export * from "./support-center/support.models";
