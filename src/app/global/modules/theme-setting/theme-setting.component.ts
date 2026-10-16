@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Inject, OnInit, Output, ViewChild} 
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {OrgThemeSettingService} from "./services/org-theme-setting.service";
 import {ThemeManagerService} from "./services/theme-manager.service";
+import {AlertService, MessageSeverity} from "../alert";
 @Component({
     selector: 'theme-setting',
     templateUrl: './templates/theme-setting.html',
@@ -15,7 +16,7 @@ export class ThemeSettingComponent implements OnInit {
 
   @Output() onOk: EventEmitter<any> = new EventEmitter<any>();
   constructor(public fb: FormBuilder, public settingService: OrgThemeSettingService,
-              public themeManager: ThemeManagerService) {
+              public themeManager: ThemeManagerService, private alertService: AlertService) {
       this.customForm = this.fb.group({
           id: [null],
           isFixedAside: [true],
@@ -31,8 +32,8 @@ export class ThemeSettingComponent implements OnInit {
   }
 
   ngOnInit(){
-    // this.id = this.configurationService.uiSetting?.id;
-    // this.updateData(this.configurationService.uiSetting);
+      // Start from the organisation's saved theme.
+      this.settingService.read().subscribe({ next: theme => this.updateData(theme), error: () => {} });
 
       this.customForm.valueChanges.subscribe(r=> {
           this.themeManager.applySetting(r);
@@ -47,7 +48,7 @@ export class ThemeSettingComponent implements OnInit {
     this.customForm.get('isFoldedAside').setValue(value.isFoldedAside);
     this.customForm.get('isBoxedLayout').setValue(value.isBoxedLayout);
     this.customForm.get('isFullscreen').setValue(value.isFullscreen);
-    this.customForm.get('language').setValue(value.language);
+    this.customForm.get('language').setValue(value.language || 'en');
     this.customForm.get('code').setValue(value.code || null);
     this.customForm.get('name').setValue(value.name || '1');
     this.customForm.get('fontId').setValue(value.fontId || 'verd');
@@ -76,11 +77,19 @@ export class ThemeSettingComponent implements OnInit {
       this.submitted = false;
     };
 
-    if(this.id) {
-      this.settingService.update(this.id, formData.value).subscribe(success, error);
-    }
-    // else {
-    //   this.settingService.create(formData.value).subscribe(success, error);
-    // }
+    this.settingService.save(formData.value).subscribe({
+      next: (theme) => {
+        success(theme);
+        this.alertService.showMessage('Saved', 'This is now the theme for everyone in your organisation.', MessageSeverity.success);
+        this.onOk.emit(theme);
+      },
+      error: (e) => {
+        error(e);
+        // Members without the permission still see their choice for this session.
+        const message = e?.status === 403 ? 'Only administrators can change the organisation\'s theme. Your choice applies until you reload.'
+          : (e?.error?.message || 'The theme could not be saved.');
+        this.alertService.showMessage('Not saved', message, MessageSeverity.warn);
+      }
+    });
   }
 }

@@ -5,8 +5,8 @@ import {LoaderService} from "./loader.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AppSetup} from "./models/app-setup.serializer";
 import {ThemeManagerService} from "../modules/theme-setting/services/theme-manager.service";
-import {catchError, finalize, forkJoin, map, Observable} from "rxjs";
-import {AlertService} from "../modules/alert";
+import {finalize, last, map, Observable, switchMap, take, takeWhile, timer} from "rxjs";
+import {AlertService, MessageSeverity} from "../modules/alert";
 
 @Injectable({ providedIn: 'root' })
 export class AppSetupService {
@@ -69,68 +69,62 @@ export class AppSetupService {
 
   hasAppSetup =()=> (this.appSetup);
 
-  /*public getBusinessSetupModules(sectorMasterType: string, businessMasterType: string): Observable<any> {
-    return this.httpClient
-      .get(`${this.baseAPIUrl}tenantSeeder/${sectorMasterType}/${businessMasterType}/modules`, this.requestHeaders)
-      .pipe(
-        catchError(error => this.handleError(error, () => this.getBusinessSetupModules(sectorMasterType, businessMasterType)))
-      );
-  }*/
+    /** Seed states that end the wait. */
+    private static readonly SEED_DONE = ['Completed', 'Failed'];
 
+    /**
+     * Sets up a branch that has not been seeded: queues the seed on the tenant API (`POST v1/seed/tenant`), then polls
+     * `GET v1/seed/{branchId}/status` every 3 seconds (for up to 10 minutes) and reloads the app once it is Completed.
+     */
     public onFinalizeSetup(branch: any) {
-        this.alertService.startLoadingMessage('Branch Setup sync started...', 'Sync Initiated...');
+        this.alertService.startLoadingMessage('Setting up your branch. This takes a minute or two…', 'Setting up');
         branch.syncInitiated = true;
-
         const branchId = branch.id;
 
-        const error = () => {
+        const stop = (message?: string) => {
             branch.syncInitiated = false;
-            branch.isMasterSeedApplied = false;
-            branch.isDemoSeedApplied = false;
-
-            setTimeout(() => { this.alertService.stopLoadingMessage(); }, 500);
+            setTimeout(() => this.alertService.stopLoadingMessage(), 300);
+            if (message) { this.alertService.showMessage('Setup not finished', message, MessageSeverity.error); }
         };
 
-        const success = () => {
-            branch.syncInitiated = false;
-            branch.isMasterSeedApplied = true;
-            branch.isDemoSeedApplied = true;
-
-            var q = this.httpClient.put(this.baseAPIUrl+`/tenantSeeder/success`, {orgBranchId: branchId}).toPromise();
-            q.then(()=>{
-                location.href = "/app";
-            });
-        };
-
-        const setup= forkJoin([
-            this.seederOrgBranchAsync(branchId)
-        ]);
-        setup.pipe(
-            map((results) => results)
-        ).subscribe(success, error);
+        this.applySeed(branchId, true, false).pipe(
+            switchMap(() => timer(0, 3000).pipe(take(200))),
+            switchMap(() => this.seedStatus(branchId)),
+            takeWhile((s: any) => !AppSetupService.SEED_DONE.includes(s?.status), true),
+            last(),
+            finalize(() => branch.syncInitiated = false)
+        ).subscribe({
+            next: (s: any) => {
+                if (s?.status === 'Completed') {
+                    branch.isMasterSeedApplied = true;
+                    stop();
+                    location.href = '/app';
+                } else {
+                    stop(s?.status === 'Failed' ? (s?.lastError || 'The branch setup failed. Try again from Settings › Branches.') : 'The branch setup is taking longer than expected. It continues in the background.');
+                }
+            },
+            error: (e) => stop(e?.error?.message || 'The branch setup could not start.')
+        });
     }
 
     public synchBranch(){
         const branch = this.appSetup?.getDefaultHeadBranch();
-        const hasOrgBranchSeededSetup= this.appSetup.hasOrgBranchSeededSetup(branch);
-        if(!hasOrgBranchSeededSetup) {
+        if (branch && !this.appSetup.hasOrgBranchSeededSetup(branch) && !branch.syncInitiated) {
             this.onFinalizeSetup(branch);
-            // const accept = ()=> { this.onFinalizeSetup(branch); };
-            // const message = `Tax implication in Fee Structure will Change Automatically. Do you want to update student's existing fee record of current session`;
-            // this.alertService.showDialog(message, DialogType.confirm, accept, refused);
         }
     }
 
-    seederOrgBranchAsync = (orgBranchId) => this.applySeed(orgBranchId, 'master');
-    seederOrgBranchDemo = (orgBranchId) => this.applySeed(orgBranchId, 'demo');
+    seederOrgBranchAsync = (orgBranchId) => this.applySeed(orgBranchId, true, false);
+    seederOrgBranchDemo = (orgBranchId) => this.applySeed(orgBranchId, true, true);
 
-    private applySeed = (orgBranchId, moduleMasterType): Observable<any> => {
-        debugger
-        const { id} = this.appSetup;
-        const reqBody = {
-            orgBranchId: orgBranchId,
-            orgUnitId: id
-        };
-        return this.httpClient.post(`${this.baseSectorAPIUrl}/seed/tenant`, reqBody).pipe();
-    };
+    private applySeed(orgBranchId: string, master: boolean, demo: boolean): Observable<any> {
+        const reqBody = {orgId: this.appSetup?.id, orgBranchId, applyMasterSeed: master, applyDemoSeed: demo};
+        return this.httpClient.post(`${this.baseSectorAPIUrl}/v1/seed/tenant`, reqBody).pipe(
+            map((r: any) => { if (r?.isSuccess === false) { throw {error: r}; } return r; })
+        );
+    }
+
+    private seedStatus(orgBranchId: string): Observable<any> {
+        return this.httpClient.get(`${this.baseSectorAPIUrl}/v1/seed/${orgBranchId}/status`).pipe(map((r: any) => r?.data));
+    }
 }

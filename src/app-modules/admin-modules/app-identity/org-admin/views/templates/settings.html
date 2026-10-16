@@ -1,0 +1,104 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="container p-3" style="max-width: 980px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <ng-container *ngIf="model as m">
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Language and currency</h6></div>
+                <div class="box-body row text-sm">
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Language</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="m.languageId">
+                            <option [ngValue]="null">Not set</option>
+                            <option *ngFor="let l of res?.languages" [ngValue]="+l.id">{{ l.name }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Base currency</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="m.currencyId">
+                            <option [ngValue]="null">Not set</option>
+                            <option *ngFor="let c of res?.currencies" [ngValue]="+c.id">{{ c.name }}</option>
+                        </select>
+                        <small class="text-muted">Your books are kept in it; it cannot change once transactions are posted.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Time and dates</h6></div>
+                <div class="box-body row text-sm">
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Time zone</label>
+                        <input class="form-control form-control-sm mb-1" [(ngModel)]="zoneFilter" placeholder="Filter, e.g. New York, Kolkata, London">
+                        <select class="form-control form-control-sm" [(ngModel)]="m.timeZone" size="6">
+                            <option *ngFor="let z of zones" [value]="z.id">{{ z.name }}</option>
+                        </select>
+                        <small class="text-muted">Due dates, schedules and reports use it. Chosen: <b>{{ m.timeZone }}</b></small>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="text-xs">Date format</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="m.dateFormat">
+                                <option *ngFor="let f of res?.dateFormats" [value]="f">{{ f }}</option>
+                            </select>
+                            <small class="text-muted">Today: <b>{{ preview }}</b></small>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-xs">Date separator</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="m.dateSeparator">
+                                <option *ngFor="let s of separators" [ngValue]="s.value">{{ s.name }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-xs">Week starts on</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="m.startWeekDay">
+                                <option *ngFor="let d of weekDays; let i = index" [ngValue]="i">{{ d }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Financial year and office hours</h6></div>
+                <div class="box-body row text-sm">
+                    <div class="col-md-3 form-group">
+                        <label class="text-xs">Year starts</label>
+                        <div class="d-flex">
+                            <input type="number" min="1" max="31" class="form-control form-control-sm mr-1" style="max-width: 70px" [(ngModel)]="m.fyStartDay">
+                            <select class="form-control form-control-sm" [(ngModel)]="m.fyStartMonth">
+                                <option *ngFor="let mo of months; let i = index" [ngValue]="i + 1">{{ mo }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="text-xs">Year ends</label>
+                        <div class="d-flex">
+                            <input type="number" min="1" max="31" class="form-control form-control-sm mr-1" style="max-width: 70px" [(ngModel)]="m.fyCloseDay">
+                            <select class="form-control form-control-sm" [(ngModel)]="m.fyCloseMonth">
+                                <option *ngFor="let mo of months; let i = index" [ngValue]="i + 1">{{ mo }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="text-xs">Office opens</label>
+                        <input type="time" class="form-control form-control-sm" [(ngModel)]="m.officeStart">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="text-xs">Office closes</label>
+                        <input type="time" class="form-control form-control-sm" [(ngModel)]="m.officeEnd">
+                    </div>
+                    <div class="col-12"><small class="text-muted">The US standard is a calendar year (1 January to 31 December); India uses 1 April to 31 March.</small></div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Regional settings</h6><small class="text-muted">Language, currency, time zone, dates, financial year</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm theme" [disabled]="saving || !model" (click)="save()"><i *ngIf="saving" class="fa fa-spinner fa-spin mr-1"></i>Save</button>
+</ng-template>

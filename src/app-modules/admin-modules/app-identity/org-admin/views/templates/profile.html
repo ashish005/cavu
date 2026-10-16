@@ -1,0 +1,95 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="container p-3" style="max-width: 980px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <ng-container *ngIf="model as m">
+            <div class="box">
+                <div class="box-header d-flex align-items-center">
+                    <h6 class="mb-0 flex">Organisation</h6>
+                    <span class="text-xs text-muted" *ngIf="res as r">Code {{ r.orgCode }}<ng-container *ngIf="r.countryName"> · {{ r.countryName }}</ng-container><ng-container *ngIf="r.businessType"> · {{ r.businessType }}</ng-container></span>
+                </div>
+                <div class="box-body row text-sm">
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Display name *</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.name" maxlength="150" appAutofocus>
+                        <small class="text-muted">Shown across the app and to your members.</small>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Legal name</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.legalName" maxlength="250" placeholder="As registered, e.g. Acme Holdings LLC">
+                        <small class="text-muted">Printed on invoices and tax forms.</small>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Tax registration</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.taxRegistrationNo" maxlength="50" placeholder="EIN, VAT, GSTIN…">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Established</label>
+                        <input type="date" class="form-control form-control-sm" [(ngModel)]="m.establishedDate">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Website</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.website" maxlength="250" placeholder="www.example.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Address and contact</h6></div>
+                <div class="box-body row text-sm">
+                    <div class="col-12 form-group">
+                        <label class="text-xs">Street address</label>
+                        <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="m.address" maxlength="500"></textarea>
+                    </div>
+                    <div class="col-md-5 form-group">
+                        <label class="text-xs">City</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.city" maxlength="100">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">State / region</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.region" maxlength="100">
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label class="text-xs">Postal code</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.postalCode" maxlength="20">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Phone</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.contactNo" maxlength="32" placeholder="+1 555 123 4567">
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="text-xs">Email</label>
+                        <input type="email" class="form-control form-control-sm" [(ngModel)]="m.contactEmail" maxlength="254">
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Account contact</h6><small class="text-muted">Who we contact about your subscription.</small></div>
+                <div class="box-body row text-sm">
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Name</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.contactPersonName" maxlength="150">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Email</label>
+                        <input type="email" class="form-control form-control-sm" [(ngModel)]="m.contactPersonEmail" maxlength="254">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label class="text-xs">Mobile</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="m.contactPersonMobile" maxlength="32">
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-muted" *ngIf="res?.modifiedAt">Last changed {{ res!.modifiedAt | date:'medium' }}</div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Organisation profile</h6><small class="text-muted">Name, address and contacts</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm theme" [disabled]="saving || !model" (click)="save()"><i *ngIf="saving" class="fa fa-spinner fa-spin mr-1"></i>Save</button>
+</ng-template>

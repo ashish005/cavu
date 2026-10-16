@@ -1,0 +1,79 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button *ngFor="let k of kinds" type="button" class="btn" [ngClass]="coreState.kind === k.kind ? 'primary' : 'white'" (click)="showKind(k.kind)">{{ k.name }}</button>
+            </div>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search">
+        </div>
+        <div class="px-3 text-xs text-muted">{{ kindHint }}</div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" [title]="e.id ? e.model.name : 'New requirement'" [subtitle]="e.model.kind" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div class="row text-sm">
+        <div class="col-12 form-group">
+            <label class="text-xs">Name *</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.name" maxlength="120" appAutofocus>
+        </div>
+        <div class="col-12 form-group">
+            <label class="text-xs">Description</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.description" maxlength="500">
+        </div>
+        <ng-container *ngIf="e.model.kind === 'Document'">
+            <div class="col-md-8 form-group">
+                <label class="text-xs">Accepted file types</label>
+                <input class="form-control form-control-sm" [(ngModel)]="e.model.allowedExtensions" maxlength="200" placeholder=".pdf,.jpg,.png">
+            </div>
+            <div class="col-md-4 form-group">
+                <label class="text-xs">Largest file (MB)</label>
+                <input type="number" min="1" max="50" class="form-control form-control-sm" [(ngModel)]="e.model.maxSizeMb">
+            </div>
+        </ng-container>
+        <div class="col-12 mb-2">
+            <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isActive">Active</label>
+        </div>
+    </div>
+
+    <h6 class="_600 text-sm">Who must provide it</h6>
+    <table class="table table-sm text-sm mb-0">
+        <thead><tr><th>Member type</th><th class="text-center">Not asked</th><th class="text-center">Optional</th><th class="text-center">Required</th><th class="text-center">Verified</th></tr></thead>
+        <tbody>
+        <tr *ngFor="let t of memberTypes">
+            <td>{{ t.name }}</td>
+            <td class="text-center"><input type="radio" [name]="'rq-' + t.id" [checked]="state(t.id) === 'off'" (change)="setRule(t.id, 'off')"></td>
+            <td class="text-center"><input type="radio" [name]="'rq-' + t.id" [checked]="state(t.id) === 'optional'" (change)="setRule(t.id, 'optional')"></td>
+            <td class="text-center"><input type="radio" [name]="'rq-' + t.id" [checked]="state(t.id) === 'required'" (change)="setRule(t.id, 'required')"></td>
+            <td class="text-center"><input type="checkbox" [disabled]="state(t.id) === 'off'" [checked]="!!rule(t.id)?.verificationRequired"
+                                           (change)="rule(t.id) && (rule(t.id)!.verificationRequired = !rule(t.id)!.verificationRequired)"
+                                           title="Someone in your organisation must check it"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div aside-footer class="d-flex w-100">
+        <button *ngIf="e.id && !e.row?.isSystem" type="button" class="btn btn-sm white text-danger" [disabled]="saving" (click)="remove()" title="Delete"><i class="fa fa-trash"></i></button>
+        <span class="flex"></span>
+        <button type="button" class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Member requirements</h6><small class="text-muted">What customers, vendors and employees must provide</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+    <button class="btn btn-sm theme" (click)="open(null)"><i class="fa fa-plus mr-1"></i>New requirement</button>
+</ng-template>

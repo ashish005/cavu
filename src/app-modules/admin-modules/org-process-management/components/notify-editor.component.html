@@ -14,6 +14,10 @@
         </select>
     </div>
     <div *ngIf="!config.channels.length" class="text-danger text-xs mb-2">Choose at least one channel.</div>
+    <div *ngIf="usesConnection" class="text-xs text-muted mb-2">
+        WhatsApp, Slack and Teams use your connected accounts; Slack and Teams post once to the channel.
+        <a routerLink="/app/admin/setup/integrations/messaging" target="_blank">Manage connections</a>
+    </div>
 
     <!-- Content -->
     <div class="form-group mb-2">

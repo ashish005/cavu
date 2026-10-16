@@ -43,7 +43,7 @@ export class MainLayout implements OnInit {
                     {
                         id:'administration', isFLatChildren: false, key: 'mainLayout.heading.admin',
                         children:[
-                            { routeTo: ['integration'], icon:"fa fa-envelope-open", code: "ACCESS_VT_MGT", name: "Integration", key: 'mainLayout.integration' }
+                            { routeTo: ['/app/admin/setup/integrations/messaging'], icon:"fa fa-envelope-open", name: "Integration", key: 'mainLayout.integration' }
                         ]
                     }
                 ]);

@@ -1,0 +1,57 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Event, record or error">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 160px" [(ngModel)]="coreState.kind" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Everything</option>
+                <option value="Outbound">Webhooks sent</option>
+                <option value="Inbound">Events received</option>
+                <option value="Test">Tests</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 140px" [(ngModel)]="coreState.status" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any result</option>
+                <option value="Pending">Waiting</option>
+                <option value="Succeeded">Succeeded</option>
+                <option value="Failed">Failed</option>
+            </select>
+            <span *ngIf="coreState.integrationId" class="badge info mb-2 mr-2">One connection <a role="button" class="ml-1 text-white" (click)="clearConnection()">&times;</a></span>
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="detail || detailError" size="lg" [title]="detail?.log?.eventName || 'Activity'" [subtitle]="detail?.log?.integrationName || null" (closed)="detail = null; detailError = null">
+    <div *ngIf="detailError" class="alert alert-danger text-sm">{{ detailError }}</div>
+    <ng-container *ngIf="detail as d">
+        <div class="text-sm mb-2">
+            <span class="badge" [ngClass]="d.log.status === 'Succeeded' ? 'success' : d.log.status === 'Failed' ? 'danger' : 'warn'">{{ d.log.status }}</span>
+            <span class="ml-2">{{ d.log.kindLabel }}</span>
+            <span class="text-muted ml-2">{{ d.log.createdAt | date:'medium' }}</span>
+            <span *ngIf="d.log.durationMs != null" class="text-muted ml-2">{{ d.log.durationMs }} ms</span>
+            <span *ngIf="d.log.attempts" class="text-muted ml-2">{{ d.log.attempts }} attempt(s)</span>
+        </div>
+        <div *ngIf="d.log.error" class="alert alert-danger text-sm">{{ d.log.error }}</div>
+        <div *ngIf="d.log.status === 'Pending' && d.log.nextAttemptAt" class="text-sm text-muted mb-2">Next try {{ d.log.nextAttemptAt | date:'medium' }}</div>
+        <h6 class="_600 text-xs text-muted text-uppercase">Sent / received</h6>
+        <pre class="text-xs p-2 light lt rounded" style="max-height: 300px; overflow: auto">{{ pretty(d.requestJson) || '(none)' }}</pre>
+        <h6 class="_600 text-xs text-muted text-uppercase">Response{{ d.log.responseCode ? ' · HTTP ' + d.log.responseCode : '' }}</h6>
+        <pre class="text-xs p-2 light lt rounded" style="max-height: 200px; overflow: auto">{{ pretty(d.responseBody) || '(none)' }}</pre>
+    </ng-container>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Integration activity</h6><small class="text-muted">Tests, webhooks sent, events received</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

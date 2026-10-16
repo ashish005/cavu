@@ -1,0 +1,70 @@
+<app-aside size="lg" [title]="isNew ? 'New role' : (role?.name || 'Role')" [subtitle]="role?.isSystemRole ? 'Built-in role' : null" (closed)="done.emit(false)">
+    <loader [isLoading]="loading || saving"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+    <div class="row text-sm">
+        <div class="col-md-7 form-group">
+            <label class="text-xs">Name *</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.name" maxlength="100" placeholder="e.g. Payroll clerk" appAutofocus>
+        </div>
+        <div class="col-md-5 form-group">
+            <label class="text-xs">For</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.userTypeId" [disabled]="!!role?.isSystemRole || !!role?.memberCount">
+                <option *ngFor="let t of lookups.userTypes" [ngValue]="t.id">{{ t.name }}</option>
+            </select>
+        </div>
+        <div class="col-12 form-group">
+            <label class="text-xs">Description</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.description" maxlength="500" placeholder="What people with this role do">
+        </div>
+        <div class="col-12 mb-2">
+            <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="model.isActive" [disabled]="role?.code === 'super_admin'">Active</label>
+            <span class="text-xs text-muted ml-2">Members with an inactive role lose its permissions.</span>
+        </div>
+    </div>
+
+    <div *ngIf="isAdminRole" class="alert alert-info text-sm">Administrators hold every permission, including new ones as they are added.</div>
+
+    <h6 class="_600 text-sm mt-2">Modules</h6>
+    <table class="table table-sm text-sm mb-3">
+        <thead>
+        <tr>
+            <th>Module</th>
+            <th *ngFor="let a of actions" class="text-center" style="width: 70px">{{ actionNames[a] }}</th>
+            <th class="text-center" style="width: 50px">All</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let g of moduleGroups" [class.text-muted]="!g.moduleEnabled">
+            <td>
+                {{ g.group }}
+                <span *ngIf="!g.moduleEnabled" class="badge grey ml-1" title="Your plan does not include this module">not in plan</span>
+            </td>
+            <td *ngFor="let a of actions" class="text-center">
+                <input type="checkbox" [checked]="has(code(g, a))" [disabled]="isAdminRole" (change)="toggle(code(g, a))" [title]="actionNames[a] + ' ' + g.group">
+            </td>
+            <td class="text-center">
+                <input type="checkbox" [checked]="rowState(g) === 'all'" [indeterminate]="rowState(g) === 'some'" [disabled]="isAdminRole" (change)="toggleRow(g)">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <ng-container *ngFor="let g of otherGroups">
+        <h6 class="_600 text-sm">{{ g.group }}</h6>
+        <div *ngFor="let p of g.permissions" class="d-flex align-items-start mb-1 text-sm">
+            <input type="checkbox" class="mr-2 mt-1" [checked]="has(p.code)" [disabled]="isAdminRole" (change)="toggle(p.code)" [id]="'perm-' + p.code">
+            <label class="mb-0" [for]="'perm-' + p.code" [title]="title(p)">
+                {{ p.name }}<div *ngIf="p.description" class="text-xs text-muted">{{ p.description }}</div>
+            </label>
+        </div>
+    </ng-container>
+
+    <div aside-footer class="d-flex w-100">
+        <button *ngIf="role && !role.isSystemRole" type="button" class="btn btn-sm white text-danger" [disabled]="saving" (click)="remove()"
+                [title]="role.memberCount ? 'Give its members another role first' : 'Delete'"><i class="fa fa-trash"></i></button>
+        <span class="flex"></span>
+        <button type="button" class="btn btn-sm white mr-1" (click)="done.emit(false)">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving || loading" (click)="save()">Save role</button>
+    </div>
+</app-aside>

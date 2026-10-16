@@ -8,8 +8,6 @@ export {
 export {ModulePermission, PermissionAction, PermissionRegistry} from "./module-permission/module-permission.model";
 export {AppPermissionService} from "./module-permission/app-permission.service";
 
-export {DashboardLookup, Portlet} from "./dashboard/dashboard.lookup";
-export {DashboardAPIResolver} from "./dashboard/dashboard.resolver";
 
 
 export * from "./entitlement";

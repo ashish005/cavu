@@ -1,0 +1,76 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search branches">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 140px" [(ngModel)]="coreState.active" (ngModelChange)="applyFilter()">
+                <option value="">Open or closed</option>
+                <option value="true">Open</option>
+                <option value="false">Closed</option>
+            </select>
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" [title]="e.id ? e.model.name : 'New branch'" [subtitle]="e.row?.isHeadBranch ? 'Head branch' : null" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <p *ngIf="!e.id" class="text-sm text-muted">The branch gets its own books (chart of accounts and defaults), set up automatically after saving.
+        Members who work in all branches can use it straight away.</p>
+    <div class="row text-sm">
+        <div class="col-12 form-group">
+            <label class="text-xs">Name *</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.name" maxlength="150" appAutofocus>
+        </div>
+        <div class="col-12 form-group">
+            <label class="text-xs">Address</label>
+            <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="e.model.address" maxlength="500"></textarea>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Contact person</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.contactName" maxlength="150">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Phone</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.contactNo" maxlength="32">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Email</label>
+            <input type="email" class="form-control form-control-sm" [(ngModel)]="e.model.emailId" maxlength="254">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Website</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.websiteUrl" maxlength="250">
+        </div>
+        <div class="col-12">
+            <label class="d-block"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isSelfAdministration">Runs its own administration
+                <span class="text-xs text-muted d-block ml-3">Otherwise the head branch manages its members and settings.</span></label>
+            <label class="d-block" *ngIf="e.id"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isActive" [disabled]="!!e.row?.isHeadBranch">Open
+                <span class="text-xs text-muted d-block ml-3">Closing a branch stops members from signing in to it; its records are kept.</span></label>
+        </div>
+    </div>
+    <div aside-footer class="d-flex w-100">
+        <button *ngIf="e.row && !e.row.isHeadBranch && e.row.isActive" type="button" class="btn btn-sm white" [disabled]="saving" (click)="makeHead()">Make head branch</button>
+        <span class="flex"></span>
+        <button type="button" class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">{{ e.id ? 'Save' : 'Add branch' }}</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Branches</h6><small class="text-muted">{{ gridOptions?.total || 0 }} branch(es)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+    <button class="btn btn-sm theme" (click)="open(null)"><i class="fa fa-plus mr-1"></i>New branch</button>
+</ng-template>

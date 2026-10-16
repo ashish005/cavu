@@ -1,0 +1,68 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="container p-3" style="max-width: 980px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <ng-container *ngIf="branding">
+            <div class="row">
+                <div class="col-md-4 mb-3" *ngFor="let def of slots">
+                    <div class="box h-100 mb-0 d-flex flex-column">
+                        <div class="box-header"><h6 class="mb-0">{{ def.title }}</h6></div>
+                        <div class="box-body text-sm d-flex flex-column flex">
+                            <div class="d-flex align-items-center justify-content-center rounded mb-2"
+                                 style="height: 120px; background: repeating-conic-gradient(#f1f5f9 0 25%, #fff 0 50%) 0 0 / 16px 16px; border: 1px dashed rgba(0,0,0,.12)">
+                                <img *ngIf="url(def) as src" [src]="src" [alt]="def.title" style="max-height: 104px; max-width: 90%; object-fit: contain">
+                                <span *ngIf="!image(def)" class="text-muted text-xs">No image</span>
+                            </div>
+                            <div class="text-xs text-muted mb-2 flex">{{ def.hint }}</div>
+                            <div *ngIf="image(def) as img" class="text-xs text-muted mb-2 text-truncate" [title]="img.fileName">{{ img.fileName }} · {{ size(img.sizeBytes) }}</div>
+                            <div class="d-flex">
+                                <label class="btn btn-xs white mb-0 mr-1" [class.disabled]="uploading">
+                                    <i class="fa mr-1" [ngClass]="uploading === def.slot ? 'fa-spinner fa-spin' : 'fa-upload'"></i>{{ image(def) ? 'Replace' : 'Upload' }}
+                                    <input #file type="file" hidden [accept]="def.accept" [disabled]="!!uploading" (change)="upload(def, file)">
+                                </label>
+                                <button *ngIf="image(def)" type="button" class="btn btn-xs white text-danger" (click)="remove(def)">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <div class="box-header"><h6 class="mb-0">Colours</h6><small class="text-muted">Used for buttons and highlights on your login page and documents.</small></div>
+                <div class="box-body text-sm">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label class="text-xs">Primary</label>
+                            <div class="d-flex align-items-center">
+                                <input type="color" class="mr-2" [ngModel]="primary || '#2563eb'" (ngModelChange)="primary = $event" style="width: 40px; height: 32px; border: 0; padding: 0">
+                                <input class="form-control form-control-sm" [(ngModel)]="primary" maxlength="7" placeholder="#2563EB">
+                            </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="text-xs">Accent</label>
+                            <div class="d-flex align-items-center">
+                                <input type="color" class="mr-2" [ngModel]="accent || '#f59e0b'" (ngModelChange)="accent = $event" style="width: 40px; height: 32px; border: 0; padding: 0">
+                                <input class="form-control form-control-sm" [(ngModel)]="accent" maxlength="7" placeholder="#F59E0B">
+                            </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="text-xs">Preview</label>
+                            <div class="d-flex align-items-center">
+                                <span class="btn btn-sm mr-2" [style.background]="primary || '#2563eb'" style="color: #fff">Primary</span>
+                                <span class="badge" [style.background]="accent || '#f59e0b'" style="color: #fff">Accent</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm theme" [disabled]="saving" (click)="saveColors()">Save colours</button>
+                    <button class="btn btn-sm white ml-1" [disabled]="saving" (click)="primary = ''; accent = ''; saveColors()">Use defaults</button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Branding</h6><small class="text-muted">Logo, browser icon, login image and colours</small></div>
+</ng-template>
+<ng-template #actionTemplate></ng-template>

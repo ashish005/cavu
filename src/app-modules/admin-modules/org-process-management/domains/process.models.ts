@@ -24,7 +24,8 @@ export type TriggerOwnerSource = 'WorkflowDefault' | 'User' | 'PayloadField' | '
 export type TriggerDedupe = 'OnePerRecord' | 'Always';
 export type EventStatus = 'Pending' | 'Processed' | 'Ignored' | 'Failed';
 export type TriggerAction = 'StartWorkflow' | 'Notify';
-export type NotifyChannel = 'Email' | 'InApp' | 'Sms' | 'Push';
+/** Slack and Teams post once to the organisation's connected channel (Settings › Integrations › Messaging). */
+export type NotifyChannel = 'Email' | 'InApp' | 'Sms' | 'Push' | 'WhatsApp' | 'Slack' | 'Teams';
 export type NotifyPriority = 'Low' | 'Normal' | 'High' | 'Critical';
 export type RecipientKind = 'Users' | 'Role' | 'Team' | 'ProcessOwner' | 'TaskAssignee' | 'EventActor' | 'UserField' | 'ContactField' | 'Contacts';
 export type ConditionOp = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'startswith' | 'in' | 'exists' | 'notexists';
@@ -444,7 +445,10 @@ export const NOTIFY_CHANNELS: {value: NotifyChannel; label: string; icon: string
     {value: 'Email', label: 'Email', icon: 'fa fa-envelope'},
     {value: 'InApp', label: 'In-app', icon: 'fa fa-bell'},
     {value: 'Sms', label: 'SMS', icon: 'fa fa-mobile'},
-    {value: 'Push', label: 'Push', icon: 'fa fa-paper-plane'}
+    {value: 'Push', label: 'Push', icon: 'fa fa-paper-plane'},
+    {value: 'WhatsApp', label: 'WhatsApp', icon: 'fa fa-whatsapp'},
+    {value: 'Slack', label: 'Slack', icon: 'fa fa-slack'},
+    {value: 'Teams', label: 'Teams', icon: 'fa fa-users'}
 ];
 
 export const RECIPIENT_KINDS: {value: RecipientKind; label: string; hint: string}[] = [

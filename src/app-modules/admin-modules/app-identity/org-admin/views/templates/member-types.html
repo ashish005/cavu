@@ -1,0 +1,60 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="px-3 pt-2 text-sm text-muted">The kinds of people in your organisation. Rename them to your sector's words (Patient, Student, Tenant) and set how their numbers look.</div>
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search member types">
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" [title]="e.row.name" [subtitle]="e.row.code" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div class="form-group text-sm">
+        <label class="text-xs">Display name *</label>
+        <input class="form-control form-control-sm" [(ngModel)]="e.name" maxlength="100" appAutofocus>
+        <small class="text-muted">Used in menus and screens, e.g. "Patients" instead of "Customers".</small>
+    </div>
+    <div class="form-group text-sm">
+        <label class="text-xs">Number format</label>
+        <input class="form-control form-control-sm" [(ngModel)]="e.format" maxlength="60" placeholder="EMP-{yyyy}-{000000}">
+        <small class="text-muted">{{ '{' }}yyyy{{ '}' }} year, {{ '{' }}yy{{ '}' }} short year, and zeros in braces for the counter. Next number looks like <b>{{ preview || '—' }}</b>; numbers already given are kept.</small>
+    </div>
+
+    <h6 class="_600 text-sm mt-3">Relations</h6>
+    <p class="text-xs text-muted">People linked to a member, e.g. Guardian for a student or Spouse for an employee.</p>
+    <div *ngFor="let r of e.row.relations" class="d-flex align-items-center mb-1 text-sm">
+        <span class="flex">{{ r.name }}</span>
+        <button type="button" class="btn btn-xs white text-danger" [disabled]="saving" (click)="removeRelation(r)" title="Remove"><i class="fa fa-times"></i></button>
+    </div>
+    <div *ngIf="!e.row.relations.length" class="text-xs text-muted mb-1">None yet.</div>
+    <div class="d-flex mt-2">
+        <input class="form-control form-control-sm mr-1" [(ngModel)]="newRelation" maxlength="100" placeholder="New relation, e.g. Guardian" (keyup.enter)="addRelation()">
+        <button type="button" class="btn btn-sm white" [disabled]="saving || !newRelation.trim()" (click)="addRelation()">Add</button>
+    </div>
+
+    <div class="text-xs text-muted mt-3">{{ e.row.memberCount }} member(s) · {{ e.row.roleCount }} role(s){{ e.row.accountGroupName ? ' · ledger group ' + e.row.accountGroupName : '' }}.
+        Roles for this type are managed under <a routerLink="../roles">Roles &amp; permissions</a>.</div>
+    <div aside-footer>
+        <button type="button" class="btn btn-sm white mr-1" (click)="editing = null">Close</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Member types</h6><small class="text-muted">Employees, customers, vendors and your sector's names for them</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

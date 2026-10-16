@@ -1,0 +1,60 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="px-3 pt-2 text-sm text-muted">{{ page.description }}</div>
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <ng-container *ngIf="categories.length > 1">
+                <button type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === null ? 'primary' : 'white'" (click)="filterCategory(null)">All</button>
+                <button *ngFor="let c of categories" type="button" class="btn btn-xs mr-1 mb-2" [ngClass]="category === c.category ? 'primary' : 'white'"
+                        (click)="filterCategory(c.category)">{{ c.name }}</button>
+                <span class="mr-2"></span>
+            </ng-container>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="filterCategory(category)" placeholder="Search connections">
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<!-- Choose a provider -->
+<app-aside *ngIf="choosing" [title]="'Connect · ' + page.title" (closed)="choosing = false">
+    <ng-container *ngFor="let c of categories">
+        <h6 class="_600 text-sm mt-2 mb-1">{{ c.name }}</h6>
+        <div class="text-xs text-muted mb-2">{{ c.description }}</div>
+        <a *ngFor="let p of providers" [hidden]="p.category !== c.category" role="button" class="d-block p-2 mb-2 rounded text-sm"
+           style="border: 1px solid rgba(0,0,0,.1)" (click)="add(p)">
+            <div class="_600">{{ p.name }}</div>
+            <div class="text-xs text-muted">{{ p.description }}</div>
+        </a>
+    </ng-container>
+</app-aside>
+
+<org-integration-editor *ngIf="editing && catalog" [provider]="editing.provider" [catalog]="catalog" [integrationId]="editing.id" (done)="closed($event)"></org-integration-editor>
+
+<!-- Test -->
+<app-aside *ngIf="testing as t" [title]="'Test · ' + t.name" [subtitle]="t.providerName" (closed)="testing = null">
+    <p class="text-sm text-muted">{{ testHint }}</p>
+    <div *ngIf="testNeedsAddress" class="form-group">
+        <input class="form-control form-control-sm" [(ngModel)]="testTo" maxlength="254" [placeholder]="t.category === 'Email' ? 'you@example.com' : '+15551234567'" (keyup.enter)="runTest()" appAutofocus>
+    </div>
+    <button class="btn btn-sm theme" [disabled]="testBusy" (click)="runTest()"><i class="fa mr-1" [ngClass]="testBusy ? 'fa-spinner fa-spin' : 'fa-plug'"></i>Run test</button>
+    <div *ngIf="testResult as r" class="alert mt-3 text-sm" [ngClass]="r.success ? 'alert-success' : 'alert-danger'">
+        <i class="fa mr-1" [ngClass]="r.success ? 'fa-check' : 'fa-times'"></i>{{ r.message }}
+        <div class="text-xs mt-1">{{ r.responseCode ? 'HTTP ' + r.responseCode + ' · ' : '' }}{{ r.durationMs }} ms</div>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">{{ page.title }}</h6><small class="text-muted">{{ gridOptions?.total || 0 }} connection(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+    <button class="btn btn-sm theme" [disabled]="!catalog" (click)="choosing = true"><i class="fa fa-plus mr-1"></i>Connect</button>
+</ng-template>

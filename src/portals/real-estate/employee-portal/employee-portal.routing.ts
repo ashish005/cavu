@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {DashboardView} from "./views/dashboard/dashboard";
 import {CoreCommonModuleRoutes, PortalCommonModuleRoutes} from "@app-core-module";
-import {ADMIN_SETUP_ROUES, DashboardAPIResolver} from "@app-global";
+import {ADMIN_SETUP_ROUES} from "@app-global";
 import {MainLayout} from "./layout/layout";
 
 export const EMPLOYEE_Routes: Routes = [
@@ -13,7 +13,6 @@ export const EMPLOYEE_Routes: Routes = [
       {path: '', pathMatch: 'full', redirectTo: 'dashboard'},
       {
         path: 'dashboard',
-        resolve: {lookups: DashboardAPIResolver},
         component: DashboardView,
         data: {title: 'Dashboard', header: 'Dashboard'}
       },

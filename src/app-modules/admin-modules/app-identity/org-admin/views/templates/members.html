@@ -1,0 +1,57 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search name or email">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 170px" [(ngModel)]="coreState.userTypeId" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">All member types</option>
+                <option *ngFor="let t of lookups?.userTypes" [ngValue]="t.id">{{ t.name }}</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 190px" [(ngModel)]="coreState.roleId" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">Any role</option>
+                <option *ngFor="let r of lookups?.roles" [ngValue]="r.id">{{ r.name }}</option>
+            </select>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 130px" [(ngModel)]="coreState.active" (ngModelChange)="applyFilter()">
+                <option value="">Active or not</option>
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="member as m" [title]="m.name" [subtitle]="m.email + ' · ' + m.userTypeName" (closed)="member = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <p class="text-sm text-muted">Roles for {{ m.userTypeName | lowercase }} members. Permissions add up across roles.</p>
+    <div *ngFor="let r of memberRoles" class="d-flex align-items-start p-2 mb-1 rounded" style="border: 1px solid rgba(0,0,0,.08)">
+        <input type="checkbox" class="mr-2 mt-1" [id]="'role-' + r.id" [checked]="chosen.has(r.id)" (change)="flip(r.id)">
+        <label class="mb-0 flex text-sm" [for]="'role-' + r.id">
+            <span class="_600">{{ r.name }}</span>
+            <span *ngIf="!r.isActive" class="badge grey ml-1">off</span>
+            <div class="text-xs text-muted">{{ r.description || (r.allPermissions ? 'Every permission' : r.permissionCount + ' permission(s)') }}</div>
+        </label>
+    </div>
+    <div *ngIf="!memberRoles.length" class="text-muted text-sm">There are no roles for this member type yet. <a routerLink="../roles">Create one</a>.</div>
+    <div aside-footer>
+        <button type="button" class="btn btn-sm white mr-1" (click)="member = null">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="saveRoles()">Save roles</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Members and roles</h6><small class="text-muted">{{ gridOptions?.total || 0 }} member(s)</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

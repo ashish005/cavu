@@ -1,31 +1,28 @@
 import {Injectable, Injector} from "@angular/core";
-import {Observable, map} from "rxjs";
+import {Observable, catchError, map} from "rxjs";
 import {OrgTheme, OrgThemeSerializer} from "../domains/theme-setup.serializer";
 import {CoreEndpointBase} from "../../../services";
 
+/** The organisation's default theme on the tenant API (`v1/org-admin/theme`); saving needs the "change organisation settings" permission. */
 @Injectable()
 export class OrgThemeSettingService extends CoreEndpointBase {
-  protected viewUrl: string;
-  constructor(public override injector: Injector) {
-    super(injector);
-    this.viewUrl = `${this.baseAPIUrl}/organizationSetting/orgTheme`;
+  private readonly serializer = new OrgThemeSerializer();
+
+  constructor(public override injector: Injector) { super(injector); }
+
+  private get viewUrl() { return `${this.baseSectorAPIUrl}/v1/org-admin/theme`; }
+
+  public read(): Observable<OrgTheme> {
+    return this.httpClient.get(this.viewUrl, this.requestHeaders).pipe(
+      map((r: any) => this.serializer.fromJson(r?.data)),
+      catchError(error => this.handleError(error, () => this.read()))
+    );
   }
 
-  public create(item: OrgTheme): Observable<any> {
-    return this.httpClient.post(this.viewUrl, item, this.requestHeaders);
-  }
-
-  public update(id: string | number, item: OrgTheme): Observable<any> {
-    return this.httpClient.put(`${this.viewUrl}/${id}`, item, this.requestHeaders);
-  }
-
-  public read(id: string): Observable<OrgTheme> {
-    return this.httpClient
-      .get(`${this.viewUrl}/${id}`, this.requestHeaders)
-      .pipe(
-        map((r: any) => new OrgThemeSerializer().fromJson(r.data))
-      );
+  public save(item: OrgTheme): Observable<OrgTheme> {
+    return this.httpClient.put(this.viewUrl, this.serializer.toJson(item), this.requestHeaders).pipe(
+      map((r: any) => this.serializer.fromJson(r?.data)),
+      catchError(error => this.handleError(error, () => this.save(item)))
+    );
   }
 }
-
-

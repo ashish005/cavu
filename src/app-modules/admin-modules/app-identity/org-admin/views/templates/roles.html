@@ -1,0 +1,32 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search roles">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 180px" [(ngModel)]="coreState.userTypeId" (ngModelChange)="applyFilter()">
+                <option [ngValue]="null">All member types</option>
+                <option *ngFor="let t of lookups?.userTypes" [ngValue]="t.id">{{ t.name }}</option>
+            </select>
+            <button class="btn btn-sm white mb-2" (click)="applyFilter()">Search</button>
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<org-role-editor *ngIf="editing && lookups" [roleId]="editing" [lookups]="lookups" (done)="closed($event)"></org-role-editor>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Roles and permissions</h6><small class="text-muted">What each role can see and do</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+    <button class="btn btn-sm theme" [disabled]="!lookups" (click)="editing = 'new'"><i class="fa fa-plus mr-1"></i>New role</button>
+</ng-template>

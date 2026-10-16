@@ -1,0 +1,45 @@
+<div class="d-flex flex-column flex scroll-y bg-light">
+    <loader [isLoading]="loading"></loader>
+    <div class="container p-3" style="max-width: 980px">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+        <ng-container *ngIf="res as r">
+            <div class="box">
+                <div class="box-header d-flex align-items-center">
+                    <h6 class="mb-0 flex">Modules in your plan</h6>
+                    <span class="text-xs text-muted" *ngIf="r.planName">{{ r.planName }} plan</span>
+                </div>
+                <div class="box-body">
+                    <span *ngFor="let m of r.modules" class="badge mr-1 mb-1 p-2" [ngClass]="m.enabled ? 'success' : 'grey'" [title]="m.enabled ? 'Included' : 'Not in your plan'">
+                        <i class="fa mr-1" [ngClass]="m.enabled ? 'fa-check' : 'fa-lock'"></i>{{ m.name }}
+                    </span>
+                    <div class="text-xs text-muted mt-1">
+                        Need a locked module? <a routerLink="/app/admin/subscription/manage">Change your plan</a>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" *ngFor="let g of groups">
+                <div class="box-header"><h6 class="mb-0">{{ g.name }}</h6></div>
+                <div class="list-group no-radius no-border">
+                    <div *ngFor="let f of g.features" class="list-group-item d-flex align-items-center text-sm">
+                        <div class="flex pr-3">
+                            <div class="_600">{{ f.name }}</div>
+                            <div class="text-xs text-muted">{{ f.description }}</div>
+                            <div *ngIf="!f.available" class="text-xs text-warning"><i class="fa fa-lock mr-1"></i>{{ f.unavailableReason }}</div>
+                        </div>
+                        <button type="button" class="btn btn-sm" style="min-width: 64px" [ngClass]="f.enabled ? 'success' : 'white'"
+                                [disabled]="busy === f.code || (!f.available && !f.enabled)" (click)="toggle(f)">
+                            <i *ngIf="busy === f.code" class="fa fa-spinner fa-spin mr-1"></i>{{ f.enabled ? 'On' : 'Off' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Features</h6><small class="text-muted">Switch capabilities on or off for your organisation</small></div>
+</ng-template>
+<ng-template #actionTemplate></ng-template>

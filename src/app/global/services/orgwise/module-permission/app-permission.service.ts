@@ -28,42 +28,40 @@ export class AppPermissionService extends CoreEndpointBase implements Resolve<an
         });
     }
 
-    public getPermissions = (orgUserId: string) => this.httpClient
-        .get(`${this.baseAPIUrl}/userPermission/perm-check/${orgUserId}`, this.requestHeaders)
+    /**
+     * The signed-in member's module access from the tenant API (`GET v1/org-admin/me/access`): per module code, whether
+     * they may view, create, modify and delete (their roles' permissions, limited by the plan; administrators hold all).
+     */
+    public getPermissions = (_orgUserId?: string) => this.httpClient
+        .get(`${this.baseSectorAPIUrl}/v1/org-admin/me/access`, this.requestHeaders)
         .pipe(
-            map((resp: any) => { this.setupModulePermission(resp?.entities); return resp; }),
-            catchError(error => super.handleError(error, () => this.getPermissions(orgUserId)))
+            map((resp: any) => { this.setupModulePermission(resp?.data?.modules); return resp; }),
+            catchError(error => super.handleError(error, () => this.getPermissions()))
         );
 
     private setupModulePermission(data) {
-        this.modulePer = null;
-        const modulePer = new Map();
+        const modulePer = new Map<string, ModulePermission>();
         (data || []).forEach((curr) => {
             modulePer.set(curr.code, new ModulePermission(curr));
-            (curr.children || []).map(child => {
-                modulePer.set(child.code, new ModulePermission(child));
-            });
+            (curr.children || []).forEach(child => modulePer.set(child.code, new ModulePermission(child)));
         });
         this.modulePer = modulePer;
+        this.onPermissionChanged.next(modulePer);
     }
 
+    /**
+     * Menu items the member may open. An item is hidden only when its `code` is a module the API knows and the member
+     * cannot view it; items without a code, codes the API does not list (sector menus) and menus built before the
+     * permissions load stay visible. The API still refuses what the member may not do.
+     */
     public getEmployeeNavList(routeData: Array<any>) {
         const codePerm = (result, curr) => {
-            if (!this.modulePer) {
-                if (!curr.code) {
-                    result.push(curr);
-                }
-            } else if (curr.code) {
-                const code = this.modulePer.get(curr.code) || {view: false};
-                if (code.view) {
-                    result.push(curr);
-                }
-            } else {
+            const known = curr.code && this.modulePer?.get(curr.code);
+            if (!known || known.view) {
                 result.push(curr);
             }
             return result;
         };
-
 
         const filterRouteData = (r: any) => {
             r.children = (r.children || []).reduce(codePerm, []);

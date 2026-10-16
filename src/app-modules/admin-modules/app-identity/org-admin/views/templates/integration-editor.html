@@ -1,0 +1,88 @@
+<app-aside size="lg" [title]="isNew ? 'Connect ' + provider.name : model.name" [subtitle]="provider.name" (closed)="done.emit(!!res)">
+    <loader [isLoading]="loading || saving"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+
+    <p class="text-sm text-muted mb-2">{{ provider.description }}
+        <a *ngIf="provider.docsUrl" [href]="provider.docsUrl" target="_blank" rel="noopener">Setup guide <i class="fa fa-external-link"></i></a></p>
+
+    <div *ngIf="generatedSecret" class="alert alert-warning text-sm">
+        <b>Signing secret</b> (shown once; store it in the receiving system):
+        <div class="d-flex align-items-center mt-1">
+            <code class="flex text-break">{{ generatedSecret }}</code>
+            <button type="button" class="btn btn-xs white ml-2" (click)="copy(generatedSecret)">Copy</button>
+        </div>
+        <div class="text-xs mt-1">Each request carries <code>X-Enrator-Timestamp</code> and <code>X-Enrator-Signature: v1=HMAC-SHA256(secret, timestamp + "." + body)</code>.</div>
+    </div>
+
+    <div *ngIf="inboundUrl" class="alert alert-info text-sm">
+        <b>Webhook URL for {{ provider.name }}</b>: add it in your {{ provider.name }} dashboard, then paste the webhook secret it gives you below.
+        <div class="d-flex align-items-center mt-1">
+            <code class="flex text-break">{{ inboundUrl }}</code>
+            <button type="button" class="btn btn-xs white ml-2" (click)="copy(inboundUrl)">Copy</button>
+        </div>
+    </div>
+
+    <div class="row text-sm">
+        <div class="col-md-8 form-group">
+            <label class="text-xs">Name *</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.name" maxlength="120" appAutofocus>
+        </div>
+        <div class="col-md-4 form-group d-flex align-items-end">
+            <label class="mb-1 mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="model.isEnabled">On</label>
+            <label class="mb-1" *ngIf="!isWebhook"><input type="checkbox" class="mr-1" [(ngModel)]="model.isDefault" [disabled]="!model.isEnabled">Default</label>
+        </div>
+
+        <div *ngFor="let f of provider.fields" class="col-md-6 form-group" [class.col-md-12]="f.type === 'url' || f.secret && f.key.toLowerCase().includes('url')">
+            <ng-container [ngSwitch]="f.type">
+                <label *ngSwitchCase="'bool'" class="mb-0 mt-3"><input type="checkbox" class="mr-1" [ngModel]="flag(f)" (ngModelChange)="setFlag(f, $event)">{{ f.label }}</label>
+                <ng-container *ngSwitchDefault>
+                    <label class="text-xs">{{ f.label }}{{ f.required ? ' *' : '' }}</label>
+                    <select *ngIf="f.type === 'select'; else input" class="form-control form-control-sm" [(ngModel)]="model.settings[f.key]">
+                        <option [ngValue]="null">Choose…</option>
+                        <option *ngFor="let o of f.options" [value]="o">{{ o }}</option>
+                    </select>
+                    <ng-template #input>
+                        <input *ngIf="f.secret" type="password" autocomplete="new-password" class="form-control form-control-sm" [(ngModel)]="model.secrets[f.key]"
+                               maxlength="1000" [placeholder]="hint(f) ? 'Stored ' + hint(f) + ' · leave empty to keep' : (f.placeholder || '')">
+                        <input *ngIf="!f.secret" [type]="f.type === 'number' ? 'number' : f.type === 'email' ? 'email' : 'text'" class="form-control form-control-sm"
+                               [(ngModel)]="model.settings[f.key]" maxlength="1000" [placeholder]="f.placeholder || ''">
+                    </ng-template>
+                </ng-container>
+            </ng-container>
+            <small *ngIf="f.help" class="text-muted d-block">{{ f.help }}</small>
+        </div>
+    </div>
+
+    <ng-container *ngIf="isWebhook">
+        <h6 class="_600 text-sm mt-2">Events to send</h6>
+        <div class="d-flex mb-2">
+            <input class="form-control form-control-sm mr-2" [(ngModel)]="eventFilter" placeholder="Filter, e.g. customer">
+            <input class="form-control form-control-sm mr-1" style="max-width: 200px" [(ngModel)]="customEvent" (keyup.enter)="addCustomEvent()" placeholder="Own type: purchase_order.*">
+            <button type="button" class="btn btn-sm white" (click)="addCustomEvent()">Add</button>
+        </div>
+        <div class="mb-2">
+            <span *ngFor="let e of model.events" class="badge info mr-1 mb-1">{{ e === '*' ? 'every event' : e }}
+                <a role="button" class="ml-1 text-white" (click)="flipEvent(e)">&times;</a></span>
+            <span *ngIf="!model.events.length" class="text-danger text-xs">Choose at least one event.</span>
+        </div>
+        <div style="max-height: 220px; overflow: auto; border: 1px solid rgba(0,0,0,.08)" class="rounded p-2">
+            <label *ngFor="let e of events" class="d-block mb-1 text-sm" [class._600]="e === '*' || e.endsWith('.*')">
+                <input type="checkbox" class="mr-1" [checked]="hasEvent(e)" (change)="flipEvent(e)">{{ e === '*' ? 'Every event' : e }}
+            </label>
+        </div>
+    </ng-container>
+
+    <div *ngIf="res?.integration as i" class="text-xs text-muted mt-3">
+        Added {{ i.createdAt | date:'mediumDate' }}<ng-container *ngIf="i.lastTestedAt"> · last tested {{ i.lastTestedAt | date:'short' }}</ng-container>
+        <ng-container *ngIf="i.lastUsedAt"> · last used {{ i.lastUsedAt | date:'short' }}</ng-container>
+        <div *ngIf="i.lastError" class="text-danger">{{ i.lastError }}</div>
+    </div>
+
+    <div aside-footer class="d-flex w-100">
+        <button *ngIf="!isNew" type="button" class="btn btn-sm white text-danger mr-1" [disabled]="saving" (click)="remove()" title="Remove"><i class="fa fa-trash"></i></button>
+        <button *ngIf="!isNew && isWebhook" type="button" class="btn btn-sm white" [disabled]="saving" (click)="rotate()">New signing secret</button>
+        <span class="flex"></span>
+        <button type="button" class="btn btn-sm white mr-1" (click)="done.emit(!!res)">{{ generatedSecret || inboundUrl ? 'Done' : 'Cancel' }}</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving || loading || (isWebhook && !model.events.length)" (click)="save()">Save</button>
+    </div>
+</app-aside>

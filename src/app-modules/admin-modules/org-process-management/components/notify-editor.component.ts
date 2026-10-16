@@ -47,6 +47,7 @@ export class NotifyEditorComponent implements OnChanges {
     }
 
     get shortChannel() { return this.config.channels.includes('Sms') || this.config.channels.includes('Push'); }
+    get usesConnection() { return this.config.channels.some(c => c === 'WhatsApp' || c === 'Slack' || c === 'Teams'); }
 
     hasChannel(c: NotifyChannel) { return this.config.channels.includes(c); }
 
