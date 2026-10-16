@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {DynamicComponent} from "@app-global";
+import {APPEARANCE_STYLES, DynamicComponent} from "@app-global";
 import {OrgAdminGridEvents} from "../services/org-admin-api.service";
 
 // Cell renderers of the organisation administration grids (org-grid `cellTemplate`). Buttons report through
@@ -260,4 +260,38 @@ export class TicketStatusCell extends DynamicComponent {
 })
 export class FeedbackMessageCell extends DynamicComponent {
     constructor(public events: OrgAdminGridEvents) { super(); }
+}
+
+/** Appearance row: who it is for, and whether it is its own or inherited. */
+@Component({
+    standalone: true,
+    imports: [CommonModule],
+    template: `
+        <a role="button" class="_600" (click)="events.emit('open', context)">{{ context.name }}</a>
+        <span *ngIf="!context.isDefault && !context.isCustom" class="badge grey ml-1" title="Uses the organisation default">inherits</span>
+        <span *ngIf="!context.allowPersonal" class="badge warn ml-1" title="Members cannot choose their own">locked</span>
+        <div class="text-xs text-muted">{{ context.members }} member(s){{ context.personalChoices ? ' · ' + context.personalChoices + ' with their own choice' : '' }}</div>`
+})
+export class AppearanceNameCell extends DynamicComponent {
+    constructor(public events: OrgAdminGridEvents) { super(); }
+}
+
+/** A small swatch and summary of an appearance. */
+@Component({
+    standalone: true,
+    imports: [CommonModule],
+    template: `
+        <div class="d-flex align-items-center">
+            <span class="mr-2" style="width: 22px; height: 22px; border-radius: 50%; display: inline-block; box-shadow: inset 0 0 0 2px rgba(255,255,255,.3)"
+                  [style.background]="swatch"></span>
+            <span class="text-sm">{{ styleName }} · {{ mode }}</span>
+        </div>
+        <div class="text-xs text-muted">{{ context.theme?.cardHeaders === 'coloured' ? 'Coloured' : 'Plain' }} headers · {{ context.theme?.font }} · {{ size }} text</div>`
+})
+export class AppearanceSummaryCell extends DynamicComponent {
+    get style() { return APPEARANCE_STYLES.find(s => s.code === this.context?.theme?.style) ?? APPEARANCE_STYLES[0]; }
+    get swatch() { return `linear-gradient(135deg, ${this.style.swatch} 60%, ${this.style.accent} 60%)`; }
+    get styleName() { return this.style.name; }
+    get mode() { return ({light: 'Light', dark: 'Dark', auto: 'Auto'} as Record<string, string>)[this.context?.theme?.mode] ?? 'Light'; }
+    get size() { return ({sm: 'small', md: 'normal', lg: 'large'} as Record<string, string>)[this.context?.theme?.fontScale] ?? 'normal'; }
 }

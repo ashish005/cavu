@@ -24,6 +24,7 @@ import {SliderDropdownComponent} from "./slider-dropdown/slider-dropdown.compone
 import {StatusCheckComponent} from "./status-check/status-check.component";
 import {OrgDashboardComponent, OrgPortletComponent} from "./org-dashboard/org-dashboard.component";
 import {SupportCenterComponent} from "./support-center/support-center.component";
+import {AppearancePanelComponent} from "../modules/theme-setting/appearance.component";
 
 export const GLOBAL_COMPONENTS = [
   ORG_COMPONENTS,
@@ -45,6 +46,6 @@ export const GLOBAL_COMPONENTS = [
   GRID_COMPONENT,
   FlatSliderDropdownComponent, SliderDropdownComponent,
   StatusCheckComponent,
-  OrgDashboardComponent, OrgPortletComponent, SupportCenterComponent
+  OrgDashboardComponent, OrgPortletComponent, SupportCenterComponent, AppearancePanelComponent
   //MasterSearchComponent, ParticularSearch, MasterTypesSettingComponent, PaymentComponent
 ];

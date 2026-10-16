@@ -1,0 +1,45 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="px-3 pt-2 text-sm text-muted">How the app looks for each kind of member. A member sees their own choice when allowed,
+            else their member type's appearance, else the organisation default. The sign-in page uses the organisation default.</div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 mt-2 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" size="lg" [title]="'Appearance · ' + e.row.name" [subtitle]="e.row.isDefault ? 'For everyone without a member-type appearance' : e.row.members + ' member(s)'" (closed)="close()">
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div *ngIf="!e.row.isDefault && !e.row.isCustom" class="alert alert-info text-sm">{{ e.row.name }} uses the organisation default. Saving gives it its own.</div>
+    <div class="d-flex align-items-center mb-3 p-2 rounded b-a">
+        <div class="flex text-sm">
+            <div class="_600">Members may choose their own</div>
+            <div class="text-xs text-muted">{{ e.allowPersonal ? 'They can change it under Appearance (wrench in the header).' : 'Everyone sees this appearance.' }}
+                <span *ngIf="e.row.personalChoices && e.allowPersonal">{{ e.row.personalChoices }} already have their own.</span>
+                <span *ngIf="e.row.personalChoices && !e.allowPersonal">{{ e.row.personalChoices }} personal choice(s) will stop applying.</span></div>
+        </div>
+        <button type="button" class="btn btn-sm" [ngClass]="e.allowPersonal ? 'theme' : 'white'" (click)="e.allowPersonal = !e.allowPersonal">{{ e.allowPersonal ? 'Allowed' : 'Locked' }}</button>
+    </div>
+    <label class="text-sm d-flex align-items-center mb-3"><input type="checkbox" class="mr-2" [checked]="previewOnMe" (change)="togglePreview()">Preview it on my screen while editing</label>
+    <appearance-editor [value]="e.theme" (valueChange)="change($event)"></appearance-editor>
+    <div aside-footer class="d-flex w-100">
+        <button *ngIf="!e.row.isDefault && e.row.isCustom" type="button" class="btn btn-sm white" [disabled]="saving" (click)="inherit()">Use organisation default</button>
+        <span class="flex"></span>
+        <button type="button" class="btn btn-sm white mr-1" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()"><i *ngIf="saving" class="fa fa-spinner fa-spin mr-1"></i>Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Appearance</h6><small class="text-muted">Light and dark, colours, text and layout per member type</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

@@ -41,7 +41,7 @@ the replacements (`legacyRedirects` in `app-identity/index.ts`).
 
 The app shell uses the same API for:
 - the member's module access (`AppPermissionService` → `me/access`);
-- the organisation theme (`OrgThemeSettingService` → `theme`);
+- the member's appearance (`AppearancePanelComponent` → `v1/appearance/me`; defaults under `org/appearance`);
 - branch setup (`AppSetupService.onFinalizeSetup` → `v1/seed`).
 
 Portal dashboards are the global `<org-dashboard>` (`app/global/components/org-dashboard`). It loads

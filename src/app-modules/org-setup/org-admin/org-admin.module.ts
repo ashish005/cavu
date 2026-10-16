@@ -10,6 +10,8 @@ import {OrgIntegrationActivityView, OrgIntegrationEditorComponent, OrgIntegratio
 import {OrgBranchesView, OrgHostsView, OrgMemberTypesView, OrgRequirementsView} from "./views/structure.view";
 import {OrgDashboardsView} from "./views/dashboards.view";
 import {OrgFeedbackView, OrgSupportTicketsView} from "./views/support.view";
+import {OrgAppearanceView} from "./views/appearance.view";
+import {AppearanceEditorComponent} from "@app-global";
 
 /**
  * Organisation administration on the tenant API `api/v1/org-admin/*`: profile, regional settings, branding, features,
@@ -21,6 +23,7 @@ export const ORG_ADMIN_ROUTES: Routes = [
     {path: 'org/settings', component: OrgSettingsView, data: {title: 'Regional settings', header: 'Regional settings'}},
     {path: 'org/branding', component: OrgBrandingView, data: {title: 'Branding', header: 'Branding'}},
     {path: 'org/features', component: OrgFeaturesView, data: {title: 'Features', header: 'Features'}},
+    {path: 'org/appearance', component: OrgAppearanceView, data: {title: 'Appearance', header: 'Appearance'}},
     {path: 'org/branches', component: OrgBranchesView, data: {title: 'Branches', header: 'Branches'}},
     {path: 'org/hosts', component: OrgHostsView, data: {title: 'Host names', header: 'Host names'}},
     {path: 'access/member-types', component: OrgMemberTypesView, data: {title: 'Member types', header: 'Member types'}},
@@ -37,14 +40,14 @@ export const ORG_ADMIN_ROUTES: Routes = [
 ];
 
 @NgModule({
-    imports: [CommonModule, FormsModule, RouterModule.forChild(ORG_ADMIN_ROUTES), GlobalModule, AsidePanelComponent],
+    imports: [CommonModule, FormsModule, RouterModule.forChild(ORG_ADMIN_ROUTES), GlobalModule, AsidePanelComponent, AppearanceEditorComponent],
     providers: [ORG_ADMIN_SERVICES],
     declarations: [
         OrgProfileView, OrgSettingsView, OrgBrandingView, OrgFeaturesView,
         OrgRolesView, OrgRoleEditorComponent, OrgMembersView,
         OrgIntegrationsView, OrgIntegrationEditorComponent, OrgIntegrationActivityView,
         OrgBranchesView, OrgHostsView, OrgMemberTypesView, OrgRequirementsView, OrgDashboardsView,
-        OrgSupportTicketsView, OrgFeedbackView
+        OrgSupportTicketsView, OrgFeedbackView, OrgAppearanceView
     ]
 })
 export class OrgAdminModule {}

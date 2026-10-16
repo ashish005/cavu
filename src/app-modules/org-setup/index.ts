@@ -19,6 +19,7 @@ class Layout {
                 { routeTo: ['org', 'profile'], icon: 'fa fa-institution', key: 'Profile' },
                 { routeTo: ['org', 'settings'], icon: 'fa fa-globe', key: 'Regional settings' },
                 { routeTo: ['org', 'branding'], icon: 'fa fa-paint-brush', key: 'Branding' },
+                { routeTo: ['org', 'appearance'], icon: 'fa fa-adjust', key: 'Appearance' },
                 { routeTo: ['org', 'features'], icon: 'fa fa-toggle-on', key: 'Features' },
                 { routeTo: ['org', 'branches'], icon: 'fa fa-sitemap', key: 'Branches' },
                 { routeTo: ['org', 'hosts'], icon: 'fa fa-link', key: 'Host names' }

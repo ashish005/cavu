@@ -528,3 +528,19 @@ export interface SupportStats {
     recurring: {fingerprint: string; subject: string; module: string | null; reports: number; open: number; lastReportedAt: string}[];
     feedback: {last30Days: number; avgRating: number | null; unreviewed: number; byRating: CountByKey[]; lowestModules: {module: string; avgRating: number; count: number}[]};
 }
+
+// ---------- Appearance defaults ----------
+
+/** Row of `GET v1/org-admin/appearance`: the organisation default, then each member type. */
+export class AppearanceRow extends CoreResource {
+    declare key: string;
+    declare name: string;
+    declare isDefault: boolean;
+    declare isCustom: boolean;
+    declare allowPersonal: boolean;
+    declare theme: any;
+    declare members: number;
+    declare personalChoices: number;
+    constructor(json: any = {}) { super(); Object.assign(this, json); this.id = json?.key; }
+}
+export const APPEARANCE_SERIALIZER = readOnlySerializer(AppearanceRow);
