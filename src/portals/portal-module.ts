@@ -35,7 +35,7 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
     return [
       {
         path: '', component: PreSetupLayout,
-        loadChildren: () => import('app-modules/pre-org-setup').then(m => m.OrgCoreSetupModule)
+        loadChildren: () => import('app-modules/org-pre-setup').then(m => m.OrgCoreSetupModule)
       }
     ];
   }

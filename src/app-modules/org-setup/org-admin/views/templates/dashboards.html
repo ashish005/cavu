@@ -1,0 +1,79 @@
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex">
+        <div class="px-3 pt-2 text-sm text-muted">What each member sees on their dashboard. A portlet shows when it suits the member's type,
+            they hold its permission, its module is in your plan, and at least one of their roles is ticked.</div>
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button type="button" class="btn" [ngClass]="!coreState.userType ? 'primary' : 'white'" (click)="coreState.userType = null; applyFilter()">All</button>
+                <button *ngFor="let a of audiences" type="button" class="btn" [ngClass]="coreState.userType === a.code ? 'primary' : 'white'"
+                        (click)="coreState.userType = a.code; applyFilter()">{{ a.name }}</button>
+            </div>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()" placeholder="Search portlets">
+        </div>
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" [title]="e.row.name" [subtitle]="e.row.description" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="editError" class="alert alert-danger text-sm">{{ editError }}</div>
+    <div *ngIf="!e.row.moduleInPlan" class="alert alert-warning text-sm">Your plan does not include its module ({{ e.row.moduleCode }}), so nobody sees it for now.</div>
+
+    <div class="row text-sm">
+        <div class="col-12 mb-2">
+            <label class="mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="e.isEnabled">Show this portlet</label>
+            <span class="text-xs text-muted ml-2">Off hides it from everyone.</span>
+        </div>
+        <div class="col-6 form-group">
+            <label class="text-xs">Size</label>
+            <select class="form-control form-control-sm" [(ngModel)]="e.width">
+                <option *ngFor="let w of widths" [ngValue]="w.value">{{ w.name }}</option>
+            </select>
+        </div>
+        <div class="col-6 form-group">
+            <label class="text-xs">Order</label>
+            <input type="number" min="0" max="1000" class="form-control form-control-sm" [(ngModel)]="e.sortOrder">
+            <small class="text-muted">Lower numbers come first.</small>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center mt-2">
+        <h6 class="_600 text-sm mb-0 flex">Roles that see it</h6>
+        <a role="button" class="text-xs mr-2" (click)="setAll(true)">All</a>
+        <a role="button" class="text-xs" (click)="setAll(false)">None</a>
+    </div>
+    <p class="text-xs text-muted mb-2">{{ e.row.permissionName ? 'Only roles with the "' + e.row.permissionName + '" permission can see it.' : 'It shows members their own data, so no permission is needed.' }}</p>
+
+    <ng-container *ngFor="let g of roleGroups">
+        <div class="text-xs text-muted text-uppercase mt-2 mb-1">{{ g.type }}</div>
+        <label *ngFor="let r of g.roles" class="d-flex align-items-center mb-1 text-sm" [class.text-muted]="!r.hasPermission"
+               [title]="r.hasPermission ? '' : 'Give the role the permission under Roles & permissions first'">
+            <input type="checkbox" class="mr-2" [disabled]="!r.hasPermission" [checked]="r.hasPermission && e.visible[r.roleId] !== false"
+                   (change)="e.visible[r.roleId] = !(e.visible[r.roleId] !== false)">
+            <span class="flex">{{ r.roleName }}</span>
+            <span *ngIf="!r.hasPermission" class="text-xs">needs permission</span>
+        </label>
+    </ng-container>
+    <div *ngIf="!e.row.roles.length" class="text-sm text-muted">No roles for {{ e.row.userTypes.join(', ') }} members yet.</div>
+
+    <div aside-footer>
+        <button type="button" class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button type="button" class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate>
+    <div class="no-shadow"><h6 class="mb-0">Dashboards</h6><small class="text-muted">Which portlets each role sees</small></div>
+</ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white" [disabled]="isLoading" (click)="refreshGrid()" title="Refresh"><i class="fa fa-refresh" [class.fa-spin]="isLoading"></i></button>
+</ng-template>

@@ -29,7 +29,7 @@ export const ADMIN_SETUP_ROUES: Routes = [
         component: SetupLayout,
         //canActivate:[PortalAuthGuard], canLoad: [ModuleGuard],
         children: [
-            { path: 'setup', loadChildren: () => import('app-modules/admin-modules/app-identity/index').then(m => m.OrgIdentitySetupModule), data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'} },
+            { path: 'setup', loadChildren: () => import('app-modules/org-setup/index').then(m => m.OrgIdentitySetupModule), data: {code: "ACCESS_TASK_MGT", title: 'Process', key: 'process', header: 'process'} },
             { path: 'process', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-process-management/index').then(m => m.ProcessManageModule), data: {code: "ACCESS_TASK_MGT", module: "PROCESS_MGT", title: 'Process', key: 'process', header: 'process'} },
             { path: 'parties', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyManageModule), data: {module: "FIN", title: 'Customers, vendors & employees', key: 'parties', header: 'Parties'} },
             { path: 'compliance', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/index').then(m => m.ComplianceManageModule), data: {title: 'Compliance', header: 'Compliance'} },

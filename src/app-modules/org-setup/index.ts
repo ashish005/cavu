@@ -42,12 +42,6 @@ class Layout {
                 { routeTo: ['integrations', 'webhooks'], icon: 'fa fa-plug', key: 'Webhooks' },
                 { routeTo: ['integrations', 'activity'], icon: 'fa fa-history', key: 'Activity' }
             ]
-        },
-        {
-            name: "Others", isFLatChildren: true,
-            children: [
-                { routeTo: ['quiz'], icon: "fa fa-question-circle", key: 'Quiz' }
-            ]
         }
     ];
     constructor(public router: Router, public activatedRoute: ActivatedRoute, public cdref: ChangeDetectorRef){}
@@ -79,16 +73,17 @@ function legacyRedirects(map: Record<string, string>, fallback: string): Routes 
                 children: [
                     {path: '', pathMatch: 'full', redirectTo: 'org/profile'},
                     // Earlier screens (served by the identity server) now live in org-admin; old links land on their replacements.
-                    {path: 'org-setup', children: legacyRedirects({'general/branch': 'org/branches', 'general/host': 'org/hosts',
-                            'general/brand-image': 'org/branding', 'general/office': 'org/settings', 'config': 'org/settings', 'features': 'org/features'}, 'org/profile')},
+                    {path: 'org-setup', children: legacyRedirects({
+                            'general/branch': 'org/branches',
+                            'general/host': 'org/hosts',
+                            'general/brand-image': 'org/branding',
+                            'general/office': 'org/settings',
+                            'config': 'org/settings',
+                            'features': 'org/features'
+                        }, 'org/profile')},
                     {path: 'role-permission-setup', children: legacyRedirects({'users': 'access/members', 'contact': 'access/members'}, 'access/roles')},
                     {path: 'module-access-setup', children: legacyRedirects({'user-type': 'access/member-types', 'dashboard': 'access/dashboards'}, 'access/requirements')},
                     {path: 'integration', children: legacyRedirects({'payment': 'integrations/payments'}, 'integrations/messaging')},
-                    {
-                        path: 'quiz',
-                        loadChildren: () => import('app-modules/app-admin/quiz/index').then(r => r.QuizModule),
-                        data: {title: 'Quiz', header: 'Quiz'}
-                    },
                     // Profile, settings, branding, features, roles, members, integrations (tenant API v1/org-admin).
                     {
                         path: '',
