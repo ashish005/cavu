@@ -1,0 +1,37 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-percent mr-1"></i><b>Tax codes</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" (click)="add()"><i class="fa fa-plus mr-1"></i>New tax code</button></ng-template>
+
+<div class="d-flex flex-column flex">
+    <div class="px-3 pt-2 text-sm text-muted">Rates you charge on sales and pay on purchases (sales tax, VAT, GST). Mark one default for each side and it is filled in on new lines.</div>
+    <div class="d-flex px-2 pt-2"><input class="form-control form-control-sm mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="populateGrid()" placeholder="Code or name"></div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid></div>
+    <div class="mt-auto"><org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination></div>
+</div>
+
+<app-aside *ngIf="form as f" size="md" [title]="f.id ? 'Edit tax code' : 'New tax code'" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-5 form-group"><label class="text-sm _600">Code *</label><input class="form-control text-uppercase" [(ngModel)]="f.model.code" maxlength="20" placeholder="e.g. ST, VAT20"></div>
+        <div class="col-7 form-group"><label class="text-sm _600">Rate % *</label><input type="number" class="form-control" [(ngModel)]="f.model.rate" min="0" max="100" step="any"></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="100" placeholder="e.g. Texas sales tax"></div>
+    <div class="form-group"><label class="text-sm _600">Used for</label>
+        <select class="form-control" [(ngModel)]="f.model.scope"><option value="Both">Sales and purchases</option><option value="Sales">Sales only</option><option value="Purchases">Purchases only</option></select></div>
+    <div class="form-group" *ngIf="f.model.scope !== 'Purchases'"><label class="text-sm _600">Tax collected posts to</label>
+        <select class="form-control" [(ngModel)]="f.model.salesAccountId"><option [ngValue]="null">Output tax (default)</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+    <div class="form-group" *ngIf="f.model.scope !== 'Sales'"><label class="text-sm _600">Tax paid posts to</label>
+        <select class="form-control" [(ngModel)]="f.model.purchaseAccountId"><option [ngValue]="null">Input tax (default)</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+    <div class="row">
+        <div class="col-5 form-group"><label class="text-sm _600">Country</label><input class="form-control text-uppercase" [(ngModel)]="f.model.countryCode" maxlength="2" placeholder="US"></div>
+        <div class="col-7 form-group"><label class="text-sm _600">Description</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="500"></div>
+    </div>
+    <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefault">Default</label>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive">Active</label>
+    <div *ngIf="f.id" class="text-xs text-muted mt-1">Changing the rate affects new documents only; posted ones keep the rate they used.</div>
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id" class="btn white text-danger" (click)="remove()">Remove</button><span class="flex"></span>
+        <button class="btn white mr-1" (click)="form = null">Cancel</button><button class="btn theme" (click)="save()">Save</button>
+    </div>
+</app-aside>

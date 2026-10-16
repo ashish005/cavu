@@ -1,0 +1,31 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-file-text-o mr-1"></i><b>Invoicing</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!model || saving" (click)="save()">Save</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="model as m" style="max-width: 760px">
+        <h6 class="_600">Approvals</h6>
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-sm _600">Bills need approval from ({{ currency }})</label>
+                <input type="number" class="form-control" [(ngModel)]="m.billApprovalThreshold" min="0" step="any" placeholder="No approval">
+                <div class="text-xs text-muted">Someone other than the preparer approves before it is posted.</div></div>
+            <div class="col-md-6 form-group"><label class="text-sm _600">Invoices need approval from ({{ currency }})</label>
+                <input type="number" class="form-control" [(ngModel)]="m.invoiceApprovalThreshold" min="0" step="any" placeholder="No approval"></div>
+        </div>
+        <h6 class="_600 mt-2">Defaults</h6>
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-sm _600">Days to pay</label><input type="number" class="form-control" [(ngModel)]="m.defaultDueDays" min="0" max="365">
+                <div class="text-xs text-muted">When the customer or vendor has no payment terms.</div></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Sales tax on new lines</label>
+                <select class="form-control" [(ngModel)]="m.defaultSalesTaxCodeId"><option [ngValue]="null">None</option><option *ngFor="let t of taxes" [ngValue]="t.id" [disabled]="t.scope === 'Purchases'">{{ t.code }} ({{ t.rate }}%)</option></select></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Purchase tax on new lines</label>
+                <select class="form-control" [(ngModel)]="m.defaultPurchaseTaxCodeId"><option [ngValue]="null">None</option><option *ngFor="let t of taxes" [ngValue]="t.id" [disabled]="t.scope === 'Sales'">{{ t.code }} ({{ t.rate }}%)</option></select></div>
+        </div>
+        <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="m.pricesIncludeTax">Prices entered include tax</label>
+        <h6 class="_600 mt-3">On invoices</h6>
+        <div class="form-group"><label class="text-sm _600">How to pay</label><textarea class="form-control" rows="3" [(ngModel)]="m.paymentInstructions" maxlength="2000" placeholder="Bank details, payment link…"></textarea></div>
+        <div class="form-group"><label class="text-sm _600">Footer</label><textarea class="form-control" rows="2" [(ngModel)]="m.invoiceFooter" maxlength="2000" placeholder="Thank you for your business."></textarea></div>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</div>

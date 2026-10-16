@@ -1,0 +1,19 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-tasks mr-1"></i><b>Posting queue</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="queueDrafts()">Post all drafts in background</button>
+    <button class="btn btn-sm theme" [disabled]="!summary?.dead" (click)="retryAll()">Retry failed</button>
+</ng-template>
+
+<div class="d-flex flex-column flex">
+    <div class="row no-gutters px-2 pt-2" *ngIf="summary as s">
+        <div class="col-6 col-md-3 p-1"><a role="button" class="box p-2 mb-0 d-block" (click)="show('Pending')"><div class="text-xs text-muted">Waiting</div><div class="h5 mb-0 _600">{{ s.pending + s.processing }}</div>
+            <div class="text-xs text-muted" *ngIf="s.oldestPendingSince">oldest {{ s.oldestPendingSince | date:'short' }}</div></a></div>
+        <div class="col-6 col-md-3 p-1"><a role="button" class="box p-2 mb-0 d-block" (click)="show('Dead')"><div class="text-xs text-muted">Failed</div><div class="h5 mb-0 _600" [class.text-danger]="s.dead">{{ s.dead }}</div></a></div>
+        <div class="col-6 col-md-3 p-1"><a role="button" class="box p-2 mb-0 d-block" (click)="show('Posted')"><div class="text-xs text-muted">Posted (kept 14 days)</div><div class="h5 mb-0 _600">{{ s.posted }}</div></a></div>
+        <div class="col-6 col-md-3 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Posted in the last hour</div><div class="h5 mb-0 _600">{{ s.postedLastHour }}</div></div></div>
+    </div>
+    <div class="px-3 pb-1 text-xs text-muted">Failed postings show why. Fix the voucher (for example a missing default account or totals that do not add up), then retry.</div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <div class="mt-auto"><org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination></div>
+</div>

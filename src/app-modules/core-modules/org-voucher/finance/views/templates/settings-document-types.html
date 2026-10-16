@@ -1,0 +1,31 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-list-ol mr-1"></i><b>Document types and numbering</b></span></ng-template>
+<ng-template #actionTemplate></ng-template>
+
+<div class="d-flex flex-column flex">
+    <div class="px-3 pt-2 text-sm text-muted">Numbers are given when a document is posted, so they never have gaps. They restart each financial year and are kept per branch.</div>
+    <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent mt-2"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid></div>
+</div>
+
+<app-aside *ngIf="form as f" size="md" [title]="f.row.name" [subtitle]="'Next number ' + preview" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="form-group"><label class="text-sm _600">Name</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="60"></div>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.manual">Numbers are entered by hand</label>
+    <div class="row mt-2" *ngIf="!f.model.manual">
+        <div class="col-4 form-group"><label class="text-sm _600">Prefix</label><input class="form-control text-monospace" [(ngModel)]="f.model.prefix" maxlength="12"></div>
+        <div class="col-4 form-group"><label class="text-sm _600">Digits</label><input type="number" class="form-control" [(ngModel)]="f.model.numberLength" min="1" max="12"></div>
+        <div class="col-4 form-group"><label class="text-sm _600">Suffix</label><input class="form-control text-monospace" [(ngModel)]="f.model.suffix" maxlength="12"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Start from</label><input type="number" class="form-control" [(ngModel)]="f.model.startingNumber" min="1"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Next</label><div class="form-control-plaintext text-monospace _600">{{ preview }}</div></div>
+    </div>
+    <div class="row">
+        <div class="col-6 form-group"><label class="text-sm _600">Number label</label><input class="form-control" [(ngModel)]="f.model.numberLabel" maxlength="40"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Date label</label><input class="form-control" [(ngModel)]="f.model.dateLabel" maxlength="40"></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Default account</label>
+        <select class="form-control" [(ngModel)]="f.model.defaultAccountId"><option [ngValue]="null">Organisation default</option><option *ngFor="let a of accounts" [ngValue]="a.id">{{ a.name }} ({{ a.nature }})</option></select>
+        <div class="text-xs text-muted">Income account of new invoice lines, expense account of new bill lines.</div></div>
+    <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.showOnMenu">Show on menus</label>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive">Active</label>
+    <div class="d-flex mt-3"><span class="flex"></span><button class="btn white mr-1" (click)="form = null">Cancel</button><button class="btn theme" (click)="save()">Save</button></div>
+</app-aside>

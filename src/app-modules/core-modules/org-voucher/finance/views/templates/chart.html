@@ -1,0 +1,92 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-sitemap mr-1"></i><b>Chart of accounts</b></span></ng-template>
+<ng-template #actionTemplate>
+    <div class="btn-group btn-group-sm"><button class="btn white" (click)="expandAll(true)">Expand all</button><button class="btn white" (click)="expandAll(false)">Collapse</button></div>
+</ng-template>
+
+<!-- One group with its accounts and sub-groups -->
+<ng-template #groupTpl let-n let-nature="nature" let-depth="depth">
+    <tr class="light lt">
+        <td [style.padding-left.px]="8 + depth * 18">
+            <a role="button" (click)="toggle(n.group.id)"><i class="fa fa-fw" [ngClass]="expanded.has(n.group.id) ? 'fa-caret-down' : 'fa-caret-right'"></i></a>
+            <b>{{ n.group.name }}</b>
+            <span *ngIf="n.group.isSystem" class="text-xs text-muted ml-1" title="Built-in group">·</span>
+        </td>
+        <td></td>
+        <td class="text-right _600">{{ shown(n.total, nature) | money:chart?.currency:false }}</td>
+        <td class="text-right text-nowrap">
+            <button *ngIf="n.group.allowPosting && !n.party" class="btn btn-xs white mr-1" (click)="newAccount(n.group)" title="Add account"><i class="fa fa-plus"></i> Account</button>
+            <button *ngIf="!n.party" class="btn btn-xs white mr-1" (click)="newGroup(n.group)" title="Add sub-group"><i class="fa fa-folder-o"></i></button>
+            <button class="btn btn-xs white" (click)="renameGroup(n.group)" title="Rename"><i class="fa fa-pencil"></i></button>
+        </td>
+    </tr>
+    <ng-container *ngIf="expanded.has(n.group.id)">
+        <tr *ngIf="n.party">
+            <td [style.padding-left.px]="34 + depth * 18" class="text-muted">{{ n.party.accounts }} party accounts <span class="text-xs">(managed with customers, vendors and employees)</span></td>
+            <td></td><td class="text-right">{{ shown(n.party.balance, nature) | money:chart?.currency:false }}</td><td></td>
+        </tr>
+        <tr *ngFor="let a of n.accounts" [class.text-muted]="!a.isActive">
+            <td [style.padding-left.px]="34 + depth * 18">
+                <a role="button" (click)="editAccount(a)">{{ a.name }}</a>
+                <span *ngIf="a.isDefault" class="badge info ml-1" title="Used by default in postings (Settings › Accounting)">default</span>
+                <span *ngIf="a.isBank" class="badge white ml-1">bank</span><span *ngIf="a.isCash" class="badge white ml-1">cash</span>
+                <span *ngIf="!a.isActive" class="badge grey ml-1">inactive</span>
+            </td>
+            <td class="text-xs text-muted text-monospace">{{ a.code }}</td>
+            <td class="text-right">{{ shown(a.balance, nature) | money:chart?.currency:false }}</td>
+            <td class="text-right"><a class="btn btn-xs white" [routerLink]="['../../', 'reports']" [queryParams]="{tab: 'ledger', account: a.id}" title="Ledger"><i class="fa fa-list"></i></a></td>
+        </tr>
+        <ng-container *ngFor="let ch of n.children">
+            <ng-container *ngTemplateOutlet="groupTpl; context: {$implicit: ch, nature: nature, depth: depth + 1}"></ng-container>
+        </ng-container>
+    </ng-container>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger m-1">{{ error }}</div>
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <input class="form-control form-control-sm mr-2" style="max-width: 280px" [(ngModel)]="search" (keyup)="applySearch()" placeholder="Find an account by name or code">
+        <label class="text-sm mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="showInactive" (change)="applySearch()">Show inactive</label>
+        <span class="ml-auto text-xs text-muted">Balances in {{ chart?.currency }}; credit balances of liabilities, equity and income show as positive.</span>
+    </div>
+    <div *ngFor="let n of natures" class="box mb-2">
+        <div class="p-2 px-3 b-b"><b>{{ n.title }}</b></div>
+        <table class="table table-sm mb-0">
+            <tbody>
+            <ng-container *ngFor="let g of trees[n.nature]">
+                <ng-container *ngTemplateOutlet="groupTpl; context: {$implicit: g, nature: n.nature, depth: 0}"></ng-container>
+            </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<app-aside *ngIf="accountForm as f" size="md" [title]="f.id ? 'Edit account' : 'New account'" (closed)="accountForm = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="150"></div>
+    <div class="form-group"><label class="text-sm _600">Code</label><input class="form-control text-monospace" [(ngModel)]="f.model.code" maxlength="40" [disabled]="f.isSystem" placeholder="Optional, e.g. 4010">
+        <div *ngIf="f.isSystem" class="text-xs text-muted">Built-in accounts keep their code and group.</div></div>
+    <div class="form-group"><label class="text-sm _600">Group</label>
+        <select class="form-control" [(ngModel)]="f.model.groupId" [disabled]="f.isSystem"><option *ngFor="let g of postingGroups" [ngValue]="g.id">{{ g.name }} ({{ g.nature }})</option></select></div>
+    <div class="form-group"><label class="text-sm _600">Description</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="500"></div>
+    <div class="form-group">
+        <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isBank" [disabled]="f.isSystem">Bank account</label>
+        <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isCash" [disabled]="f.isSystem">Cash</label>
+        <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive" [disabled]="f.isSystem">Active</label>
+    </div>
+    <div class="form-group" *ngIf="f.model.isBank"><label class="text-sm _600">Currency</label><input class="form-control text-uppercase" style="max-width: 100px" [(ngModel)]="f.model.currencyCode" maxlength="3"></div>
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id && !f.isSystem" class="btn white text-danger" (click)="deleteAccount()">Delete</button>
+        <span class="flex"></span>
+        <button class="btn white mr-1" (click)="accountForm = null">Cancel</button><button class="btn theme" (click)="saveAccount()">Save</button>
+    </div>
+</app-aside>
+
+<app-aside *ngIf="groupForm as f" size="md" [title]="f.id ? 'Rename group' : 'New group under ' + f.parent?.name" (closed)="groupForm = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.name" maxlength="150"></div>
+    <div class="form-group" *ngIf="!f.id"><label class="text-sm _600">Code</label><input class="form-control text-monospace" [(ngModel)]="f.code" maxlength="60"></div>
+    <div class="d-flex mt-3"><span class="flex"></span><button class="btn white mr-1" (click)="groupForm = null">Cancel</button><button class="btn theme" (click)="saveGroup()">Save</button></div>
+</app-aside>

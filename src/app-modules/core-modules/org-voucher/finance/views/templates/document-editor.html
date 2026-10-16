@@ -1,0 +1,177 @@
+<loader [isLoading]="saving"></loader>
+<div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+<!-- Who and when -->
+<div class="row">
+    <div class="col-md-5 form-group" *ngIf="info.party === 'customer' || info.party === 'vendor'">
+        <label class="text-sm _600 mb-1">{{ info.party === 'customer' ? 'Customer' : 'Vendor' }} <span class="text-danger">*</span></label>
+        <fin-picker [search]="searchParties" [label]="partyLabel" [placeholder]="'Search ' + (info.party === 'customer' ? 'customers' : 'vendors')" (picked)="pickParty($event)"></fin-picker>
+    </div>
+    <div class="col-md-5 form-group" *ngIf="kind === 'Contra'">
+        <label class="text-sm _600 mb-1">From account <span class="text-danger">*</span></label>
+        <select class="form-control" [(ngModel)]="form.partyAccountId">
+            <option [ngValue]="null">Choose…</option>
+            <option *ngFor="let a of lookups?.bankAccounts" [ngValue]="a.id">{{ a.name }}</option>
+        </select>
+    </div>
+    <div class="col-6 col-md-2 form-group">
+        <label class="text-sm _600 mb-1">Date <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" [(ngModel)]="form.date">
+    </div>
+    <div class="col-6 col-md-2 form-group" *ngIf="kind === 'Invoice' || kind === 'Bill'">
+        <label class="text-sm _600 mb-1">Due date</label>
+        <input type="date" class="form-control" [(ngModel)]="form.dueDate" title="Leave empty to use the payment terms">
+    </div>
+    <div class="col-md-3 form-group" *ngIf="kind !== 'Journal'">
+        <label class="text-sm _600 mb-1">{{ kind === 'Bill' ? 'Vendor bill no.' : 'Reference' }}</label>
+        <input class="form-control" [(ngModel)]="form.reference" maxlength="100" [placeholder]="kind === 'Invoice' ? 'Customer PO' : ''">
+    </div>
+</div>
+
+<!-- Invoices, bills, notes: item lines -->
+<ng-container *ngIf="info.items">
+    <div class="table-responsive">
+        <table class="table table-sm mb-1">
+            <thead><tr class="text-xs text-muted">
+                <th style="min-width: 220px">Description</th><th style="min-width: 170px">Account</th><th style="width: 80px" class="text-right">Qty</th>
+                <th style="width: 110px" class="text-right">Price</th><th style="width: 75px" class="text-right">Disc %</th><th style="min-width: 120px">Tax</th>
+                <th style="width: 110px" class="text-right">Amount</th><th style="width: 30px"></th>
+            </tr></thead>
+            <tbody>
+            <tr *ngFor="let l of form.lines; let i = index">
+                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500" placeholder="What was sold or bought"></td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="l.accountId">
+                    <option [ngValue]="null">Default</option>
+                    <option *ngFor="let a of lineAccounts" [ngValue]="a.id">{{ a.name }}</option>
+                </select></td>
+                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" step="any"></td>
+                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitPrice" step="any"></td>
+                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.discountRate" min="0" max="100" step="any"></td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId">
+                    <option [ngValue]="null">No tax</option>
+                    <option *ngFor="let t of taxes" [ngValue]="t.id">{{ t.code }} ({{ t.rate }}%)</option>
+                </select></td>
+                <td class="text-right align-middle">{{ preview(l).total | money:form.currencyCode:false }}</td>
+                <td class="align-middle"><a role="button" class="text-muted" (click)="removeLine(i)" title="Remove line"><i class="fa fa-times"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex flex-wrap align-items-start">
+        <div>
+            <button type="button" class="btn btn-sm white mr-2" (click)="addLine()"><i class="fa fa-plus mr-1"></i>Add line</button>
+            <label class="text-sm mb-0 ml-1"><input type="checkbox" class="mr-1" [(ngModel)]="form.pricesIncludeTax">Prices include tax</label>
+        </div>
+        <table class="ml-auto text-sm" style="min-width: 260px">
+            <tr><td class="text-muted pr-3">Subtotal</td><td class="text-right">{{ totals.sub | money:form.currencyCode }}</td></tr>
+            <tr *ngIf="totals.discount"><td class="text-muted pr-3">Includes discounts</td><td class="text-right">{{ totals.discount | money:form.currencyCode }}</td></tr>
+            <tr><td class="text-muted pr-3">Tax</td><td class="text-right">{{ totals.tax | money:form.currencyCode }}</td></tr>
+            <tr><td class="text-muted pr-3">Adjustment</td><td class="text-right"><input type="number" class="form-control form-control-sm text-right d-inline-block" style="width: 110px" [(ngModel)]="form.adjustment" step="any"></td></tr>
+            <tr class="_600"><td class="pr-3 pt-1">Total</td><td class="text-right pt-1">{{ totals.total | money:form.currencyCode }}</td></tr>
+        </table>
+    </div>
+</ng-container>
+
+<!-- Receipts and payments -->
+<ng-container *ngIf="info.settlement">
+    <div class="row">
+        <div class="col-md-3 form-group">
+            <label class="text-sm _600 mb-1">Amount <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="form.amount" step="any" min="0">
+        </div>
+        <div class="col-md-4 form-group">
+            <label class="text-sm _600 mb-1">Paid by <span class="text-danger">*</span></label>
+            <select class="form-control" [(ngModel)]="form.paymentModeId">
+                <option *ngFor="let m of modes" [ngValue]="m.id">{{ m.name }}</option>
+            </select>
+        </div>
+        <div class="col-md-5 form-group">
+            <label class="text-sm _600 mb-1">{{ kind === 'Receipt' ? 'Deposit to' : 'Paid from' }}</label>
+            <select class="form-control" [(ngModel)]="form.bankAccountId">
+                <option [ngValue]="null">Automatic (by payment method)</option>
+                <option *ngFor="let a of lookups?.bankAccounts" [ngValue]="a.id">{{ a.name }}</option>
+            </select>
+        </div>
+    </div>
+</ng-container>
+
+<!-- What a receipt, payment or note pays off -->
+<div *ngIf="info.settles && form.partyAccountId" class="mb-3">
+    <div class="d-flex align-items-center mb-1">
+        <b class="text-sm">Apply to {{ info.settles === 'Invoice' ? 'invoices' : 'bills' }}</b>
+        <button *ngIf="allocations.length" type="button" class="btn btn-xs white ml-2" (click)="autoApply()">Apply oldest first</button>
+        <span class="ml-auto text-xs text-muted" *ngIf="allocations.length">Applied {{ applied | money:form.currencyCode }}</span>
+    </div>
+    <div *ngIf="!allocations.length" class="text-xs text-muted">Nothing is open for this {{ info.party }}. The amount stays as credit on account.</div>
+    <table *ngIf="allocations.length" class="table table-sm mb-0">
+        <thead><tr class="text-xs text-muted"><th>Number</th><th>Date</th><th>Due</th><th class="text-right">Open</th><th style="width: 140px" class="text-right">Apply</th></tr></thead>
+        <tbody>
+        <tr *ngFor="let a of allocations">
+            <td>{{ a.number }}</td><td>{{ a.date | date:'mediumDate' }}</td><td>{{ a.dueDate | date:'mediumDate' }}</td>
+            <td class="text-right">{{ a.balance | money:a.currencyCode }}</td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="a.apply" [max]="a.balance" min="0" step="any"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Journals: debit/credit lines; transfers: where the money goes -->
+<ng-container *ngIf="info.journal">
+    <table class="table table-sm mb-1">
+        <thead><tr class="text-xs text-muted">
+            <th style="min-width: 220px">{{ kind === 'Contra' ? 'To account' : 'Account' }}</th>
+            <th style="width: 130px" class="text-right">{{ kind === 'Contra' ? 'Amount' : 'Debit' }}</th>
+            <th *ngIf="kind === 'Journal'" style="width: 130px" class="text-right">Credit</th>
+            <th>Description</th><th style="width: 30px"></th>
+        </tr></thead>
+        <tbody>
+        <tr *ngFor="let l of form.journalLines; let i = index">
+            <td><select class="form-control form-control-sm" [(ngModel)]="l.accountId">
+                <option [ngValue]="null">Choose…</option>
+                <option *ngFor="let a of allAccounts" [ngValue]="a.id">{{ a.name }}{{ a.code ? ' · ' + a.code : '' }}</option>
+            </select></td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.debit" step="any" min="0" (ngModelChange)="$event > 0 && kind === 'Journal' ? l.credit = 0 : null"></td>
+            <td *ngIf="kind === 'Journal'"><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.credit" step="any" min="0" (ngModelChange)="$event > 0 ? l.debit = 0 : null"></td>
+            <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500"></td>
+            <td class="align-middle"><a role="button" class="text-muted" (click)="removeJournalLine(i)"><i class="fa fa-times"></i></a></td>
+        </tr>
+        </tbody>
+        <tfoot *ngIf="kind === 'Journal'"><tr class="text-sm _600">
+            <td class="text-right">Totals</td><td class="text-right">{{ journalTotals.debit | money:form.currencyCode:false }}</td>
+            <td class="text-right">{{ journalTotals.credit | money:form.currencyCode:false }}</td>
+            <td colspan="2"><span *ngIf="journalTotals.difference" class="text-danger">Off by {{ journalTotals.difference }}</span><span *ngIf="!journalTotals.difference" class="text-success"><i class="fa fa-check"></i> Balanced</span></td>
+        </tr></tfoot>
+    </table>
+    <button type="button" class="btn btn-sm white mb-3" (click)="addJournalLine()"><i class="fa fa-plus mr-1"></i>Add line</button>
+</ng-container>
+
+<!-- Notes and more -->
+<div class="row mt-2">
+    <div class="col-md-6 form-group" *ngIf="kind !== 'Journal' && kind !== 'Contra'">
+        <label class="text-sm _600 mb-1">Note to the {{ info.party }}</label>
+        <textarea class="form-control" rows="2" [(ngModel)]="form.notes" maxlength="2000"></textarea>
+    </div>
+    <div class="form-group" [ngClass]="kind === 'Journal' || kind === 'Contra' ? 'col-12' : 'col-md-6'">
+        <label class="text-sm _600 mb-1">{{ kind === 'Journal' || kind === 'Contra' ? 'Narration' : 'Internal note' }}</label>
+        <textarea class="form-control" rows="2" [(ngModel)]="form.internalNote" maxlength="2000" [placeholder]="kind === 'Journal' || kind === 'Contra' ? 'Why this entry was made' : 'Not shown to the ' + info.party"></textarea>
+    </div>
+</div>
+<a role="button" class="text-sm" (click)="showMore = !showMore"><i class="fa" [ngClass]="showMore ? 'fa-angle-up' : 'fa-angle-down'"></i> Currency</a>
+<div class="row mt-2" *ngIf="showMore || foreign">
+    <div class="col-6 col-md-2 form-group">
+        <label class="text-sm _600 mb-1">Currency</label>
+        <input class="form-control text-uppercase" [(ngModel)]="form.currencyCode" maxlength="3">
+    </div>
+    <div class="col-6 col-md-3 form-group" *ngIf="foreign">
+        <label class="text-sm _600 mb-1">1 {{ form.currencyCode | uppercase }} = ? {{ functional }}</label>
+        <input type="number" class="form-control" [(ngModel)]="form.currencyRate" step="any" min="0">
+    </div>
+</div>
+
+<div class="d-flex mt-3">
+    <button type="button" class="btn white" (click)="cancelled.emit()">Cancel</button>
+    <span class="flex"></span>
+    <button type="button" class="btn white mr-2" [disabled]="saving" (click)="save(false)">Save draft</button>
+    <button type="button" class="btn theme" [disabled]="saving" (click)="save(true)">Save and post</button>
+</div>
+<div class="text-xs text-muted text-right mt-1">Posting gives it its number and records it in the books.</div>

@@ -1,0 +1,104 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-bar-chart mr-1"></i><b>Reports</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button *ngIf="tab !== 'journals'" class="btn btn-sm white mr-1" (click)="exportCsv()"><i class="fa fa-download mr-1"></i>CSV</button>
+    <button class="btn btn-sm white" (click)="print()"><i class="fa fa-print mr-1"></i>Print</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <ul class="nav nav-pills nav-sm mb-2 flex-wrap">
+        <li class="nav-item" *ngFor="let t of tabs"><a role="button" class="nav-link" [class.active]="tab === t.key" (click)="select(t.key)">{{ t.label }}</a></li>
+    </ul>
+
+    <!-- Period -->
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <ng-container *ngIf="tab !== 'bs'">
+            <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="from" title="From (empty: start of the financial year)">
+            <span class="mr-1 mb-1 text-muted">to</span>
+        </ng-container>
+        <span *ngIf="tab === 'bs'" class="mr-1 mb-1 text-sm">As of</span>
+        <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="to">
+        <div class="btn-group btn-group-sm mr-2 mb-1" *ngIf="tab !== 'bs'">
+            <button class="btn white" (click)="period('month')">This month</button><button class="btn white" (click)="period('quarter')">Quarter</button>
+            <button class="btn white" (click)="period('fy')">Financial year</button>
+        </div>
+        <button class="btn btn-sm theme mb-1" (click)="run()">Run</button>
+        <div *ngIf="tab === 'ledger'" class="ml-md-3 mb-1" style="min-width: 280px">
+            <fin-picker [small]="true" [search]="searchAccounts" [label]="ledgerAccount?.label" placeholder="Choose an account" (picked)="pickAccount($event)"></fin-picker>
+        </div>
+    </div>
+
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="errorText" class="alert alert-danger">{{ errorText }}</div>
+
+    <!-- Profit and loss / balance sheet -->
+    <ng-template #statement let-sections let-currency="currency">
+        <div *ngFor="let s of sections" class="box mb-2">
+            <div class="p-2 px-3 b-b d-flex"><b>{{ s.title }}</b><b class="ml-auto">{{ s.total | money:currency }}</b></div>
+            <table class="table table-sm mb-0">
+                <tbody><tr *ngFor="let l of s.lines" [class._600]="l.isTotal">
+                    <td [style.padding-left.px]="12 + l.level * 20"><a *ngIf="l.accountId; else plain" role="button" (click)="openLedger(l.accountId)">{{ l.name }}</a><ng-template #plain>{{ l.name }}</ng-template>
+                        <span class="text-xs text-muted ml-1">{{ l.code }}</span></td>
+                    <td class="text-right">{{ l.amount | money:currency:false }}</td>
+                </tr>
+                <tr *ngIf="!s.lines.length"><td class="text-muted text-sm" colspan="2">Nothing in this period.</td></tr></tbody>
+            </table>
+        </div>
+    </ng-template>
+
+    <ng-container *ngIf="tab === 'pl' && pl as r">
+        <div class="text-sm text-muted mb-2">{{ r.from | date:'mediumDate' }} – {{ r.to | date:'mediumDate' }} · {{ r.currency }}</div>
+        <ng-container *ngTemplateOutlet="statement; context: {$implicit: r.sections, currency: r.currency}"></ng-container>
+        <div class="box p-3 d-flex h5 mb-0"><b>Net profit</b><b class="ml-auto" [ngClass]="r.netProfit >= 0 ? 'text-success' : 'text-danger'">{{ r.netProfit | money:r.currency }}</b></div>
+    </ng-container>
+
+    <ng-container *ngIf="tab === 'bs' && bs as r">
+        <div class="text-sm mb-2"><span class="text-muted">As of {{ r.asOf | date:'mediumDate' }} · {{ r.currency }}</span>
+            <span class="badge ml-2" [ngClass]="r.balanced ? 'success' : 'danger'">{{ r.balanced ? 'Assets = liabilities + equity' : 'Does not balance' }}</span></div>
+        <ng-container *ngTemplateOutlet="statement; context: {$implicit: r.sections, currency: r.currency}"></ng-container>
+    </ng-container>
+
+    <!-- Trial balance -->
+    <div *ngIf="tab === 'tb' && tb as r" class="box">
+        <div class="p-2 px-3 b-b text-sm"><span class="text-muted">{{ r.from | date:'mediumDate' }} – {{ r.to | date:'mediumDate' }}</span>
+            <span class="badge ml-2" [ngClass]="r.balanced ? 'success' : 'danger'">{{ r.balanced ? 'Balanced' : 'Out of balance' }}</span></div>
+        <div class="table-responsive"><table class="table table-sm mb-0">
+            <thead><tr class="text-xs text-muted"><th>Account</th><th>Group</th><th class="text-right">Opening</th><th class="text-right">Debit</th><th class="text-right">Credit</th><th class="text-right">Closing</th></tr></thead>
+            <tbody><tr *ngFor="let a of r.rows">
+                <td><a role="button" (click)="openLedger(a.accountId)">{{ a.name }}</a> <span class="text-xs text-muted">{{ a.code }}</span></td><td class="text-xs text-muted">{{ a.group }}</td>
+                <td class="text-right">{{ a.opening | money:r.currency:false }}</td><td class="text-right">{{ a.debit | money:r.currency:false }}</td>
+                <td class="text-right">{{ a.credit | money:r.currency:false }}</td><td class="text-right">{{ a.closing | money:r.currency:false }}</td>
+            </tr></tbody>
+            <tfoot><tr class="_600"><td colspan="3">Total</td><td class="text-right">{{ r.totalDebit | money:r.currency:false }}</td><td class="text-right">{{ r.totalCredit | money:r.currency:false }}</td>
+                <td class="text-right text-xs">Dr {{ r.closingDebit | money:r.currency:false }} / Cr {{ r.closingCredit | money:r.currency:false }}</td></tr></tfoot>
+        </table></div>
+    </div>
+
+    <!-- Account ledger -->
+    <ng-container *ngIf="tab === 'ledger'">
+        <div *ngIf="!ledgerAccount" class="text-muted p-3">Choose an account to see its ledger.</div>
+        <div *ngIf="ledger as r" class="box">
+            <div class="p-2 px-3 b-b d-flex flex-wrap text-sm">
+                <b class="mr-3">{{ r.account }} <span class="text-muted">{{ r.code }}</span></b>
+                <span class="mr-3">Opening {{ r.opening | money:r.currency }}</span><span class="mr-3">Debits {{ r.periodDebit | money:r.currency }}</span>
+                <span class="mr-3">Credits {{ r.periodCredit | money:r.currency }}</span><b>Closing {{ r.closing | money:r.currency }}</b>
+            </div>
+            <div class="table-responsive"><table class="table table-sm mb-0">
+                <thead><tr class="text-xs text-muted"><th>Date</th><th>Entry</th><th>Description</th><th>Party</th><th class="text-right">Debit</th><th class="text-right">Credit</th><th class="text-right">Balance</th></tr></thead>
+                <tbody><tr *ngFor="let l of r.lines.entities">
+                    <td class="text-nowrap">{{ l.date | date:'mediumDate' }}</td><td class="text-nowrap">{{ l.entryNumber }}</td><td class="text-sm">{{ l.description }}</td><td class="text-sm">{{ l.party }}</td>
+                    <td class="text-right">{{ l.debit ? (l.debit | money:r.currency:false) : '' }}</td><td class="text-right">{{ l.credit ? (l.credit | money:r.currency:false) : '' }}</td>
+                    <td class="text-right _600">{{ l.balance | money:r.currency:false }}</td>
+                </tr>
+                <tr *ngIf="!r.lines.entities.length"><td colspan="7" class="text-muted text-sm">No entries in this period.</td></tr></tbody>
+            </table></div>
+            <org-grid-pagination [count]="r.lines.count" [perPage]="ledgerPage.take" [page]="ledgerPage.page" (cb)="ledgerToPage($event)"></org-grid-pagination>
+        </div>
+    </ng-container>
+
+    <!-- Journal register -->
+    <ng-container *ngIf="tab === 'journals'">
+        <input class="form-control form-control-sm mb-2" style="max-width: 260px" [(ngModel)]="coreState.search" (keyup.enter)="run()" placeholder="Entry number or description">
+        <div class="d-flex flex-column flex box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+        <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+    </ng-container>
+</div>

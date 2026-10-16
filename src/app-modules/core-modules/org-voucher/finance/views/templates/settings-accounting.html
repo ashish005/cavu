@@ -1,0 +1,25 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-cogs mr-1"></i><b>Accounting defaults</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!settings || saving" (click)="save()">Save</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="settings as s" style="max-width: 820px">
+        <div class="text-sm text-muted mb-3">Where postings go when a document does not name an account: tax, discounts, freight, rounding, and money received or paid by each payment method.</div>
+        <div class="form-group" style="max-width: 260px">
+            <label class="text-sm _600">Functional currency</label>
+            <input class="form-control text-uppercase" [(ngModel)]="currency" maxlength="3" [disabled]="s.currencyLocked">
+            <div class="text-xs text-muted" *ngIf="s.currencyLocked">Fixed: journals have been posted in it.</div>
+        </div>
+        <table class="table table-sm">
+            <tbody><tr *ngFor="let slot of s.accounts">
+                <td class="align-middle text-sm" style="width: 40%">{{ slot.label }}</td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="choices[slot.key]">
+                    <option [ngValue]="null">Not set</option>
+                    <option *ngFor="let a of accounts" [ngValue]="a.id">{{ a.name }}{{ a.code ? ' · ' + a.code : '' }}</option>
+                </select></td>
+            </tr></tbody>
+        </table>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</div>

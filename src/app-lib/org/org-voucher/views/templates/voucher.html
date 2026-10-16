@@ -13,7 +13,7 @@
                 <div class="d-flex align-items-center mr-3" *ngIf="orgOption?.hasMultiCurrency">
                     <span class="text-muted text-xs mr-2">Currency</span>
                     <select class="form-control form-control-sm w-auto mr-1" formControlName="currencyCode" (change)="onCurrencyChange($event)">
-                        <option *ngFor="let c of orgLookup.currencies" [value]="c.currencyCode">{{c.currencyCode}}</option>
+                        <option *ngFor="let c of $any(orgLookup).currencies" [value]="c.currencyCode">{{c.currencyCode}}</option>
                     </select>
                     <input *ngIf="hasForeignCurrency" type="number" class="form-control form-control-sm w-sm" style="width: 80px" formControlName="currencyRate" placeholder="Rate">
                 </div>

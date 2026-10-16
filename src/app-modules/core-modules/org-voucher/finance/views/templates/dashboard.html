@@ -1,0 +1,95 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-line-chart mr-1"></i><b>Finance overview</b></span></ng-template>
+<ng-template #actionTemplate>
+    <div class="btn-group btn-group-sm">
+        <a class="btn theme" [routerLink]="['../', 'sales', 'invoices']" [queryParams]="{new: 1}"><i class="fa fa-plus mr-1"></i>Invoice</a>
+        <a class="btn white" [routerLink]="['../', 'purchases', 'bills']" [queryParams]="{new: 1}">Bill</a>
+        <a class="btn white" [routerLink]="['../', 'sales', 'receipts']" [queryParams]="{new: 1}">Money in</a>
+        <a class="btn white" [routerLink]="['../', 'purchases', 'payments']" [queryParams]="{new: 1}">Money out</a>
+    </div>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger d-flex align-items-center m-1"><span class="flex">{{ error }}</span><button class="btn btn-sm white" (click)="load()">Retry</button></div>
+
+    <ng-container *ngIf="data as d">
+        <!-- Things to do -->
+        <div *ngIf="d.awaitingApproval || d.postingFailed || d.drafts" class="alert alert-info d-flex flex-wrap align-items-center m-1 py-2">
+            <i class="fa fa-bell mr-2"></i>
+            <a *ngIf="d.awaitingApproval" class="mr-3" [routerLink]="['../', 'purchases', 'bills']">{{ d.awaitingApproval }} waiting for approval</a>
+            <span *ngIf="d.drafts" class="mr-3">{{ d.drafts }} drafts not posted</span>
+            <a *ngIf="d.postingFailed" class="text-danger mr-3" [routerLink]="['../', 'settings', 'posting']">{{ d.postingFailed }} postings failed</a>
+            <span *ngIf="d.postingQueue" class="text-muted">{{ d.postingQueue }} being posted</span>
+        </div>
+
+        <!-- Headline numbers -->
+        <div class="row no-gutters">
+            <div class="col-6 col-lg-3 p-1"><div class="box p-3 mb-0"><div class="text-xs text-muted">Cash and bank</div><div class="h4 mb-0 _600">{{ d.cash | money:d.currency }}</div></div></div>
+            <div class="col-6 col-lg-3 p-1"><a class="box p-3 mb-0 d-block" [routerLink]="['../', 'sales', 'invoices']"><div class="text-xs text-muted">Customers owe you</div>
+                <div class="h4 mb-0 _600">{{ d.receivable | money:d.currency }}</div><div class="text-xs" [class.text-danger]="d.receivableOverdue">{{ d.receivableOverdue | money:d.currency }} overdue</div></a></div>
+            <div class="col-6 col-lg-3 p-1"><a class="box p-3 mb-0 d-block" [routerLink]="['../', 'purchases', 'bills']"><div class="text-xs text-muted">You owe vendors</div>
+                <div class="h4 mb-0 _600">{{ d.payable | money:d.currency }}</div><div class="text-xs" [class.text-danger]="d.payableOverdue">{{ d.payableOverdue | money:d.currency }} overdue</div></a></div>
+            <div class="col-6 col-lg-3 p-1"><a class="box p-3 mb-0 d-block" [routerLink]="['../', 'reports']" [queryParams]="{tab: 'pl'}"><div class="text-xs text-muted">Profit this month</div>
+                <div class="h4 mb-0 _600" [ngClass]="d.profitThisMonth >= 0 ? 'text-success' : 'text-danger'">{{ d.profitThisMonth | money:d.currency }}</div>
+                <div class="text-xs text-muted">Income {{ d.incomeThisMonth | money:d.currency:false }} · Expenses {{ d.expensesThisMonth | money:d.currency:false }}</div></a></div>
+        </div>
+
+        <div class="row no-gutters">
+            <!-- Six months -->
+            <div class="col-lg-6 p-1">
+                <div class="box p-3 mb-0 h-100">
+                    <div class="d-flex mb-2"><b class="text-sm">Income and expenses</b><span class="ml-auto text-xs"><i class="fa fa-square text-success"></i> Income <i class="fa fa-square text-danger ml-2"></i> Expenses</span></div>
+                    <div class="d-flex align-items-end" style="height: 150px">
+                        <div *ngFor="let t of d.trend" class="flex d-flex flex-column align-items-center" [title]="t.month + ': ' + (t.income | money:d.currency) + ' / ' + (t.expenses | money:d.currency)">
+                            <div class="d-flex align-items-end w-100 justify-content-center" style="height: 130px">
+                                <div class="success mr-1" style="width: 30%" [style.height.%]="bar(t.income)"></div>
+                                <div class="danger" style="width: 30%" [style.height.%]="bar(t.expenses)"></div>
+                            </div>
+                            <div class="text-xs text-muted mt-1">{{ t.month.split(' ')[0] }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Aging -->
+            <div class="col-lg-6 p-1">
+                <div class="box p-3 mb-0 h-100">
+                    <div class="row">
+                        <div class="col-6" *ngFor="let side of [{title: 'Receivable aging', a: d.receivableAging, tone: 'primary'}, {title: 'Payable aging', a: d.payableAging, tone: 'warning'}]">
+                            <b class="text-sm d-block mb-2">{{ side.title }}</b>
+                            <div *ngFor="let r of agingRows(side.a)" class="mb-1">
+                                <div class="d-flex text-xs"><span class="text-muted">{{ r.label }}</span><span class="ml-auto">{{ r.value | money:d.currency:false }}</span></div>
+                                <div class="progress" style="height: 4px"><div class="progress-bar" [ngClass]="r.label === 'Not due' ? 'success' : side.tone" [style.width.%]="share(r.value, side.a.total)"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue -->
+        <div class="p-1">
+            <div class="box mb-0">
+                <div class="p-3 pb-1"><b class="text-sm">Overdue</b></div>
+                <div *ngIf="!d.overdue.length" class="px-3 pb-3 text-sm text-muted">Nothing is overdue.</div>
+                <table *ngIf="d.overdue.length" class="table table-sm mb-0">
+                    <tbody><tr *ngFor="let o of d.overdue">
+                        <td><a [routerLink]="docLink(o.kind)" [queryParams]="{doc: o.id}">{{ kinds[o.kind].label }} {{ o.number }}</a></td>
+                        <td>{{ o.partyName }}</td><td class="text-xs text-danger">{{ o.daysOverdue }} days late</td>
+                        <td class="text-right _600">{{ o.balance | money:o.currencyCode }}</td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Shortcuts -->
+        <div class="row no-gutters">
+            <div class="col-6 col-md-3 p-1" *ngFor="let s of [
+                {icon: 'fa fa-sitemap', label: 'Chart of accounts', route: ['../', 'accounting', 'chart']},
+                {icon: 'fa fa-balance-scale', label: 'Trial balance', route: ['../', 'reports'], q: {tab: 'tb'}},
+                {icon: 'fa fa-repeat', label: 'Recurring', route: ['../', 'recurring']},
+                {icon: 'fa fa-cog', label: 'Finance settings', route: ['../', 'settings', 'tax-codes']}]">
+                <a class="box p-2 mb-0 d-block text-sm" [routerLink]="s.route" [queryParams]="$any(s).q"><i [class]="s.icon" class="mr-2 text-muted"></i>{{ s.label }}</a>
+            </div>
+        </div>
+    </ng-container>
+</div>

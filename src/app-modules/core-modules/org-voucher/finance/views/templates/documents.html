@@ -1,0 +1,66 @@
+<ng-template #pageTitleTemplate>
+    <span class="navbar-text"><i [class]="info?.icon" class="mr-1"></i><b>{{ info?.plural }}</b></span>
+</ng-template>
+<ng-template #actionTemplate>
+    <button type="button" class="btn btn-sm theme" (click)="newDoc()"><i class="fa fa-plus mr-1"></i>New {{ info?.label?.toLowerCase() }}</button>
+</ng-template>
+
+<div class="d-flex flex">
+    <div class="d-flex flex-column flex" style="min-width: 0">
+        <!-- Totals -->
+        <div class="row no-gutters px-2 pt-2" *ngIf="summary as s">
+            <div class="col-6 col-md-3 p-1" *ngIf="kind === 'Invoice' || kind === 'Bill'">
+                <a role="button" class="box p-2 mb-0 d-block" (click)="quick('unpaid')"><div class="text-xs text-muted">{{ kind === 'Invoice' ? 'Customers owe' : 'You owe' }} ({{ s.openCount }})</div>
+                    <div class="h5 mb-0 _600">{{ s.openTotal | money:s.currencyCode }}</div></a>
+            </div>
+            <div class="col-6 col-md-3 p-1" *ngIf="kind === 'Invoice' || kind === 'Bill'">
+                <a role="button" class="box p-2 mb-0 d-block" (click)="quick('overdue')"><div class="text-xs text-muted">Overdue ({{ s.overdueCount }})</div>
+                    <div class="h5 mb-0 _600" [class.text-danger]="s.overdueTotal > 0">{{ s.overdueTotal | money:s.currencyCode }}</div></a>
+            </div>
+            <div class="col-6 col-md-3 p-1" *ngIf="kind === 'Invoice' || kind === 'Bill'">
+                <div class="box p-2 mb-0"><div class="text-xs text-muted">{{ kind === 'Invoice' ? 'Received' : 'Paid' }} in the last 30 days</div>
+                    <div class="h5 mb-0 _600 text-success">{{ s.settledLast30Days | money:s.currencyCode }}</div></div>
+            </div>
+            <div class="col-6 col-md-3 p-1">
+                <a role="button" class="box p-2 mb-0 d-block" (click)="quick(s.awaitingApproval ? 'awaiting_approval' : 'draft')">
+                    <div class="text-xs text-muted">Drafts · to approve</div>
+                    <div class="h5 mb-0 _600">{{ s.drafts }} · <span [class.text-warning]="s.awaitingApproval">{{ s.awaitingApproval }}</span></div></a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="d-flex flex-wrap align-items-center px-2 pt-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button *ngFor="let f of quickFilters" type="button" class="btn" [ngClass]="coreState.status === f.key ? 'theme' : 'white'" (click)="quick(f.key)">{{ f.label }}</button>
+            </div>
+            <input type="date" class="form-control form-control-sm mr-1 mb-2" style="max-width: 150px" [(ngModel)]="coreState.from" (change)="applyFilter()" title="From">
+            <input type="date" class="form-control form-control-sm mr-2 mb-2" style="max-width: 150px" [(ngModel)]="coreState.to" (change)="applyFilter()" title="To">
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 260px" [(ngModel)]="coreState.search" (keyup.enter)="applyFilter()"
+                   [placeholder]="'Number, reference or ' + (info?.party === 'vendor' ? 'vendor' : info?.party === 'customer' ? 'customer' : 'account')">
+        </div>
+
+        <div *ngIf="errorText && !isLoading" class="alert alert-danger d-flex align-items-center m-2">
+            <span class="flex">{{ errorText }}</span>
+            <button class="btn btn-sm white" (click)="refreshGrid()">Retry</button>
+        </div>
+        <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+            <i [class]="info?.icon" class="fa-2x d-block mb-2"></i>
+            Nothing here yet. <a role="button" class="text-primary" (click)="newDoc()">Create the first {{ info?.label?.toLowerCase() }}</a>.
+        </div>
+        <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent" [class.d-none]="!gridData?.length">
+            <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
+        </div>
+        <div class="mt-auto">
+            <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="detail as d" size="xl" [title]="info.label + ' ' + d.number" [subtitle]="d.kind === 'Journal' ? (d.internalNote || '') : d.partyName" (closed)="closeDetail()">
+    <fin-document-detail [doc]="d" (changed)="onChanged($event)" (edit)="editDoc($event)" (deleted)="onDeleted()" (openDoc)="openDoc($event)"></fin-document-detail>
+</app-aside>
+
+<app-aside *ngIf="editing as e" size="xl" [title]="(e.doc ? 'Edit ' : 'New ') + info.label.toLowerCase()" (closed)="editing = null">
+    <fin-document-editor [kind]="kind" [doc]="e.doc" (saved)="onSaved($event)" (cancelled)="editing = null"></fin-document-editor>
+</app-aside>
+<loader [isLoading]="loadingDoc"></loader>

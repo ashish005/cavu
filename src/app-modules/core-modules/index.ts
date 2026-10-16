@@ -9,9 +9,9 @@ export const PortalCommonModuleRoutes = [
 export const CoreCommonModuleRoutes = [
     { path: 'office-expense', loadChildren: () => import('app-modules/core-modules/office-expense').then(m => m.ExpenseModule), data: { code: 'OFC_EXPENSE', title: 'Expense', header:'Expense'} },//code: "EXPENSE",
 
-    { path: 'invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/create-voucher/index').then(m => m.InvoiceCEModule), data: {code: "FIN" } },
-    //{ path: 'manage-invoice', loadChildren: () => import('app-modules/manage-invoice').then(m => m.InvoiceManageModule), data: {code: "FIN" } },
-  { path: 'org-invoice', loadChildren: () => import('app-modules/app-admin/org-invoice/index').then(m => m.ManageMoneyModule), data: {icon:"fa fa-money", name: "Money", key: 'layout.money', title: 'Invoices', header:'Invoices' } },
+    // Finance workspace on api/v1/finance (org-voucher): invoices, bills, money in/out, journals, accounts, reports, settings.
+    { path: 'invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", title: 'Finance', header: 'Finance'} },
+    { path: 'org-invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", icon: "fa fa-money", name: "Money", key: 'layout.money', title: 'Finance', header: 'Finance'} },
     { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
 
     // Employees, clients / customers and suppliers: the party screens on api/v1/parties (org-party-management).
