@@ -13,7 +13,7 @@ import {FinanceDashboardView} from "./views/dashboard.view";
 import {FinanceChartView} from "./views/chart.view";
 import {FinanceReportsView} from "./views/reports.view";
 import {
-    FinanceAccountingView, FinanceDocumentTypesView, FinanceInvoicingView, FinancePostingView, FinanceRecurringView, FinanceTaxCodesView
+    FinanceAccountingView, FinanceDocumentTypesView, FinanceInvoicingView, FinancePostingView, FinanceRecurringView, FinanceTaxCodesView, FinanceTaxRulesView
 } from "./views/settings.view";
 import {FinanceKind} from "./domains/finance.models";
 
@@ -77,6 +77,7 @@ export class FinanceShell {
             {label: 'Recurring', icon: 'fa fa-clock-o', route: 'recurring'}]},
         {title: 'Settings', items: [
             {label: 'Tax codes', icon: 'fa fa-percent', route: 'settings/tax-codes'},
+            {label: 'Tax rules', icon: 'fa fa-random', route: 'settings/tax-rules'},
             {label: 'Invoicing', icon: 'fa fa-file-text', route: 'settings/invoicing'},
             {label: 'Document types', icon: 'fa fa-list-ol', route: 'settings/document-types'},
             {label: 'Accounting defaults', icon: 'fa fa-cogs', route: 'settings/accounting'},
@@ -121,6 +122,7 @@ export const FINANCE_ROUTES: Routes = [
             {path: 'reports', component: FinanceReportsView, data: {title: 'Reports', header: 'Reports'}},
             {path: 'recurring', component: FinanceRecurringView, data: {title: 'Recurring', header: 'Recurring'}},
             {path: 'settings/tax-codes', component: FinanceTaxCodesView, data: {title: 'Tax codes', header: 'Tax codes'}},
+            {path: 'settings/tax-rules', component: FinanceTaxRulesView, data: {title: 'Tax rules', header: 'Tax rules'}},
             {path: 'settings/invoicing', component: FinanceInvoicingView, data: {title: 'Invoicing', header: 'Invoicing'}},
             {path: 'settings/document-types', component: FinanceDocumentTypesView, data: {title: 'Document types', header: 'Document types'}},
             {path: 'settings/accounting', component: FinanceAccountingView, data: {title: 'Accounting defaults', header: 'Accounting defaults'}},
@@ -136,7 +138,7 @@ export const FINANCE_ROUTES: Routes = [
     providers: [FINANCE_SERVICES],
     declarations: [
         FinanceShell, FinanceLegacyCreateRedirect, FinanceDashboardView, FinanceDocumentsView, FinanceDocumentEditorComponent, FinanceDocumentDetailComponent,
-        FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
+        FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceTaxRulesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
         FinanceRecurringView
     ]
 })

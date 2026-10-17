@@ -1,0 +1,52 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-random mr-1"></i><b>Tax rules</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" (click)="add()"><i class="fa fa-plus mr-1"></i>New rule</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <div class="text-sm text-muted mb-2 px-1">When a line has no tax chosen, the first matching rule (lowest number) picks its code, by where the customer or vendor is
+        (billing address) compared with the branch, whether they have a tax number and whether they are exempt. Country packs add rules; edit them freely.</div>
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div class="box mb-0">
+        <table class="table table-sm mb-0">
+            <thead><tr class="text-xs text-muted"><th style="width: 60px">#</th><th>When</th><th>Tax</th><th>Source</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let r of rules" [class.text-muted]="!r.isActive">
+                <td>{{ r.priority }}</td>
+                <td><a role="button" (click)="edit(r)">{{ describe(r) }}</a><div *ngIf="r.description" class="text-xs text-muted">{{ r.description }}</div></td>
+                <td class="_600">{{ r.taxCode }}</td>
+                <td class="text-xs">{{ r.packCode ? r.packCode + ' pack' : 'custom' }}<span *ngIf="!r.isActive" class="badge grey ml-1">off</span></td>
+            </tr>
+            <tr *ngIf="!rules.length && !loading"><td colspan="4" class="text-muted text-sm p-3">No rules yet. Install a country under Tax codes, or add one.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<app-aside *ngIf="form as f" size="md" [title]="f.id ? 'Edit rule' : 'New rule'" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-4 form-group"><label class="text-sm _600">Order</label><input type="number" class="form-control" [(ngModel)]="f.model.priority" min="1"></div>
+        <div class="col-8 form-group"><label class="text-sm _600">Applies to</label>
+            <select class="form-control" [(ngModel)]="f.model.scope"><option value="Sales">Sales</option><option value="Purchases">Purchases</option><option value="Both">Both</option></select></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Where the party is</label>
+        <select class="form-control" [(ngModel)]="f.model.location"><option *ngFor="let l of locations" [ngValue]="l.value">{{ l.label }}</option></select></div>
+    <div class="row">
+        <div class="col-6 form-group"><label class="text-sm _600">Party country</label><input class="form-control text-uppercase" [(ngModel)]="f.model.partyCountry" maxlength="2" placeholder="Any"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Party state / province</label><input class="form-control text-uppercase" [(ngModel)]="f.model.partyRegion" maxlength="10" placeholder="Any"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Tax number</label>
+            <select class="form-control" [(ngModel)]="f.model.partyHasTaxId"><option [ngValue]="null">Any</option><option [ngValue]="true">Has one</option><option [ngValue]="false">Has none</option></select></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Exempt</label>
+            <select class="form-control" [(ngModel)]="f.model.partyExempt"><option [ngValue]="null">Any</option><option [ngValue]="true">Exempt</option><option [ngValue]="false">Not exempt</option></select></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Only branches in</label><input class="form-control text-uppercase" [(ngModel)]="f.model.originCountry" maxlength="2" placeholder="Any country"></div>
+        <div class="col-6 form-group"><label class="text-sm _600">Tax code *</label>
+            <select class="form-control" [(ngModel)]="f.model.taxCodeId"><option *ngFor="let c of codes" [ngValue]="c.id">{{ c.code }} — {{ c.name }}</option></select></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Note</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="300"></div>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive">Active</label>
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id" class="btn white text-danger" (click)="remove()">Remove</button><span class="flex"></span>
+        <button class="btn white mr-1" (click)="form = null">Cancel</button><button class="btn theme" (click)="save()">Save</button>
+    </div>
+</app-aside>

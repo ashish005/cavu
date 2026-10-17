@@ -5,6 +5,17 @@ import {CoreQueryOptions, CoreResource, CoreSerializer} from "@app-global";
 export type FinanceKind = 'Invoice' | 'Bill' | 'CreditNote' | 'DebitNote' | 'Receipt' | 'Payment' | 'Journal' | 'Contra';
 export type AccountNature = 'Asset' | 'Liability' | 'Equity' | 'Revenue' | 'Income' | 'Expense';
 export type TaxScope = 'Sales' | 'Purchases' | 'Both';
+export type TaxKind = 'Standard' | 'ZeroRated' | 'Exempt' | 'ReverseCharge' | 'Withholding' | 'OutOfScope';
+export type TaxLocation = 'Any' | 'SameRegion' | 'OtherRegion' | 'SameCountry' | 'SameBloc' | 'Abroad';
+
+export const TAX_KIND_LABEL: Record<TaxKind, string> = {
+    Standard: 'Standard (charged)', ZeroRated: 'Zero-rated (0%, reported)', Exempt: 'Exempt (reported)', ReverseCharge: 'Reverse charge (buyer accounts for it)',
+    Withholding: 'Withholding (deducted from payment)', OutOfScope: 'Out of scope (not reported)'
+};
+export const TAX_LOCATION_LABEL: Record<TaxLocation, string> = {
+    Any: 'Anywhere', SameRegion: 'Same state / province', OtherRegion: 'Other state / province (same country)', SameCountry: 'Same country',
+    SameBloc: 'Other EU country', Abroad: 'Abroad (outside the country / EU)'
+};
 export type ApprovalState = 'None' | 'Pending' | 'Approved' | 'Rejected';
 
 /** How each document kind behaves in the UI. */
@@ -99,10 +110,11 @@ export interface FinanceKindSummary {
 export interface FinanceLine {
     id?: string; lineNo?: number; description: string; accountId: string | null; accountName?: string; quantity: number; unitPrice: number;
     discountRate: number; taxCodeId: string | null; taxCode?: string | null; taxRate?: number; netAmount?: number; taxAmount?: number; lineTotal?: number;
+    withholdingTaxCodeId?: string | null; withholdingAmount?: number;
 }
 export interface LedgerLine { accountId: string; accountName: string; accountCode: string | null; debit: number; credit: number; description: string | null; }
 export interface FinanceAllocation { id: string; voucherId: string; kind: FinanceKind; number: string; date: string; amount: number; isApplied: boolean; }
-export interface FinanceTaxSummary { code: string; rate: number; taxable: number; tax: number; }
+export interface FinanceTaxSummary { code: string; component: string; kind: TaxKind; rate: number; jurisdiction: string | null; taxable: number; tax: number; }
 
 export interface FinanceDoc {
     id: string; kind: FinanceKind; number: string; isDraft: boolean; status: string; date: string; dueDate: string | null;
@@ -131,6 +143,7 @@ export interface FinanceDocInput {
     currencyCode: string | null;
     currencyRate: number | null;
     pricesIncludeTax: boolean | null;
+    autoTax?: boolean;
     adjustment: number;
     lines: FinanceLine[];
     journalLines: JournalLineInput[];
@@ -146,7 +159,11 @@ export interface FinanceActionRes { document: FinanceDoc; message: string; }
 
 export interface PartyOption { accountId: string; name: string; number: string; email: string | null; currencyCode: string | null; termDays: number | null; balance: number; }
 export interface AccountOption { id: string; name: string; code: string | null; group: string; nature: AccountNature; isBank: boolean; isCash: boolean; }
-export interface TaxOption { id: string; code: string; name: string; rate: number; scope: TaxScope; isDefault: boolean; }
+export interface TaxOption { id: string; code: string; name: string; rate: number; scope: TaxScope; isDefault: boolean; kind: TaxKind; countryCode: string | null; region: string | null; }
+export interface TaxSuggestion {
+    taxCodeId: string | null; taxCode: string | null; kind: TaxKind | null; branchCountry: string | null; branchRegion: string | null;
+    partyCountry: string | null; partyRegion: string | null; location: TaxLocation; partyHasTaxId: boolean; partyExempt: boolean;
+}
 export interface ModeOption { id: number; code: string; name: string; systemType: string | null; }
 export interface OpenDoc { id: string; number: string; date: string; dueDate: string | null; total: number; balance: number; currencyCode: string; }
 
@@ -215,11 +232,18 @@ export interface CoaAccountInput { name: string; code: string | null; groupId: s
 
 // ---------- Settings ----------
 
+export interface TaxComponent { id?: string | null; name: string; rate: number; salesAccountId: string | null; purchaseAccountId: string | null; validFrom: string | null; validTo: string | null; jurisdiction: string | null; }
+
 export class TaxCodeRow extends CoreResource {
     declare code: string;
     declare name: string;
     declare rate: number;
     declare scope: TaxScope;
+    declare kind: TaxKind;
+    declare region: string | null;
+    declare reportingCode: string | null;
+    declare packCode: string | null;
+    declare components: TaxComponent[];
     declare salesAccountId: string | null;
     declare salesAccount: string | null;
     declare purchaseAccountId: string | null;
@@ -232,7 +256,21 @@ export class TaxCodeRow extends CoreResource {
     constructor(json: any = {}) { super(); Object.assign(this, json); }
 }
 export const TAX_CODE_SERIALIZER = readOnlySerializer(TaxCodeRow);
-export interface TaxCodeInput { code: string; name: string; rate: number; scope: TaxScope; salesAccountId: string | null; purchaseAccountId: string | null; isDefault: boolean; isActive: boolean; description: string | null; countryCode: string | null; }
+export interface TaxCodeInput {
+    code: string; name: string; rate: number; scope: TaxScope; kind: TaxKind; salesAccountId: string | null; purchaseAccountId: string | null; isDefault: boolean;
+    isActive: boolean; description: string | null; countryCode: string | null; region: string | null; reportingCode: string | null; components: TaxComponent[];
+}
+export interface TaxRule {
+    id: string; priority: number; scope: TaxScope; location: TaxLocation; partyCountry: string | null; partyRegion: string | null; partyHasTaxId: boolean | null;
+    partyExempt: boolean | null; originCountry: string | null; taxCodeId: string; taxCode: string; description: string | null; packCode: string | null; isActive: boolean;
+}
+export type TaxRuleInput = Omit<TaxRule, 'id' | 'taxCode' | 'packCode'>;
+export interface TaxRegion { code: string; name: string; rate: number; }
+export interface TaxPackInfo { countryCode: string; name: string; system: string; regionsLabel: string | null; regions: TaxRegion[]; regionsRequired: boolean; notes: string; }
+export interface TaxPacks { branchCountry: string | null; branchRegion: string | null; packs: TaxPackInfo[]; installed: string[]; }
+export interface TaxReportRow { countryCode: string | null; jurisdiction: string | null; code: string; component: string; kind: TaxKind; isSales: boolean; rate: number; reportingCode: string | null; taxable: number; tax: number; documents: number; }
+export interface TaxReport { from: string; to: string; currency: string; rows: TaxReportRow[]; outputTax: number; inputTax: number; reverseCharge: number; withheldFromVendors: number; withheldByCustomers: number; netPayable: number; }
+export interface BulkResult { created: number; failed: number; queuedForPosting: number; items: {index: number; id: string | null; errorCode: string | null; error: string | null}[]; }
 
 export interface InvoiceSettings {
     billApprovalThreshold: number | null; invoiceApprovalThreshold: number | null; defaultSalesTaxCodeId: string | null; defaultPurchaseTaxCodeId: string | null;

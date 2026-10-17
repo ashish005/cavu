@@ -6,6 +6,11 @@
     <div class="col-md-5 form-group" *ngIf="info.party === 'customer' || info.party === 'vendor'">
         <label class="text-sm _600 mb-1">{{ info.party === 'customer' ? 'Customer' : 'Vendor' }} <span class="text-danger">*</span></label>
         <fin-picker [search]="searchParties" [label]="partyLabel" [placeholder]="'Search ' + (info.party === 'customer' ? 'customers' : 'vendors')" (picked)="pickParty($event)"></fin-picker>
+        <div *ngIf="info.items && suggestion as sg" class="text-xs text-muted mt-1">
+            <i class="fa fa-map-marker mr-1"></i>{{ sg.branchCountry || '?' }}{{ sg.branchRegion ? '/' + sg.branchRegion : '' }} → {{ sg.partyCountry || '?' }}{{ sg.partyRegion ? '/' + sg.partyRegion : '' }}:
+            {{ locationLabel[sg.location] }}{{ sg.partyExempt ? ', exempt' : '' }}{{ sg.partyHasTaxId ? ', registered' : '' }}
+            · tax <b>{{ sg.taxCode || 'none (no rule)' }}</b>
+        </div>
     </div>
     <div class="col-md-5 form-group" *ngIf="kind === 'Contra'">
         <label class="text-sm _600 mb-1">From account <span class="text-danger">*</span></label>
@@ -35,6 +40,7 @@
             <thead><tr class="text-xs text-muted">
                 <th style="min-width: 220px">Description</th><th style="min-width: 170px">Account</th><th style="width: 80px" class="text-right">Qty</th>
                 <th style="width: 110px" class="text-right">Price</th><th style="width: 75px" class="text-right">Disc %</th><th style="min-width: 120px">Tax</th>
+                <th *ngIf="withholdings.length" style="min-width: 110px">Withholding</th>
                 <th style="width: 110px" class="text-right">Amount</th><th style="width: 30px"></th>
             </tr></thead>
             <tbody>
@@ -49,7 +55,11 @@
                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.discountRate" min="0" max="100" step="any"></td>
                 <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId">
                     <option [ngValue]="null">No tax</option>
-                    <option *ngFor="let t of taxes" [ngValue]="t.id">{{ t.code }} ({{ t.rate }}%)</option>
+                    <option *ngFor="let t of taxes" [ngValue]="t.id">{{ t.code }} ({{ t.kind === 'Standard' ? t.rate + '%' : t.kind }})</option>
+                </select></td>
+                <td *ngIf="withholdings.length"><select class="form-control form-control-sm" [(ngModel)]="l.withholdingTaxCodeId">
+                    <option [ngValue]="null">None</option>
+                    <option *ngFor="let t of withholdings" [ngValue]="t.id">{{ t.code }} ({{ t.rate }}%)</option>
                 </select></td>
                 <td class="text-right align-middle">{{ preview(l).total | money:form.currencyCode:false }}</td>
                 <td class="align-middle"><a role="button" class="text-muted" (click)="removeLine(i)" title="Remove line"><i class="fa fa-times"></i></a></td>
@@ -66,6 +76,7 @@
             <tr><td class="text-muted pr-3">Subtotal</td><td class="text-right">{{ totals.sub | money:form.currencyCode }}</td></tr>
             <tr *ngIf="totals.discount"><td class="text-muted pr-3">Includes discounts</td><td class="text-right">{{ totals.discount | money:form.currencyCode }}</td></tr>
             <tr><td class="text-muted pr-3">Tax</td><td class="text-right">{{ totals.tax | money:form.currencyCode }}</td></tr>
+            <tr *ngIf="totals.withheld"><td class="text-muted pr-3">Withheld</td><td class="text-right">−{{ totals.withheld | money:form.currencyCode }}</td></tr>
             <tr><td class="text-muted pr-3">Adjustment</td><td class="text-right"><input type="number" class="form-control form-control-sm text-right d-inline-block" style="width: 110px" [(ngModel)]="form.adjustment" step="any"></td></tr>
             <tr class="_600"><td class="pr-3 pt-1">Total</td><td class="text-right pt-1">{{ totals.total | money:form.currencyCode }}</td></tr>
         </table>

@@ -6,7 +6,8 @@ import {
     AccountOption, AccountingSettings, BalanceSheet, Chart, CoaAccount, CoaAccountInput, CoaGroup, DOCUMENT_TYPE_SERIALIZER, DocumentTypeInput, DocumentTypeRow,
     FINANCE_DOC_SERIALIZER, FinanceActionRes, FinanceDashboard, FinanceDoc, FinanceDocInput, FinanceDocRow, FinanceKind, FinanceKindSummary, FinanceLookups,
     InvoiceSettings, JOURNAL_SERIALIZER, JournalRow, LedgerReport, OpenDoc, POSTING_JOB_SERIALIZER, PartyOption, PostingJobRow, PostingSummary, ProfitLoss,
-    RECURRING_SERIALIZER, RecurringInput, RecurringRow, TAX_CODE_SERIALIZER, TaxCodeInput, TaxCodeRow, TrialBalance
+    RECURRING_SERIALIZER, RecurringInput, RecurringRow, TAX_CODE_SERIALIZER, TaxCodeInput, TaxCodeRow, TrialBalance,
+    BulkResult, TaxPacks, TaxReport, TaxRule, TaxRuleInput, TaxSuggestion
 } from "../domains/finance.models";
 
 /** The API's message (validation, 403 "you need … permission", 409 conflicts) or a fallback. */
@@ -64,6 +65,8 @@ export class FinanceApiService extends CoreEndpointBase {
     accountOptions(purpose: string | null, search: string | null) { return this.get<AccountOption[]>('finance/account-options', {purpose, search}); }
     openDocuments(kind: FinanceKind, partyAccountId: string) { return this.get<OpenDoc[]>('finance/documents/open', {kind, partyAccountId}); }
     dashboard() { return this.get<FinanceDashboard>('finance/dashboard'); }
+    taxSuggestion(kind: FinanceKind, partyAccountId: string | null) { return this.get<TaxSuggestion>('finance/tax-suggestion', {kind, partyAccountId}); }
+    bulkCreate(documents: FinanceDocInput[], post: boolean) { return this.send<BulkResult>('POST', 'finance/documents/bulk', {documents, post}); }
 
     // Documents
     summary(kind: FinanceKind) { return this.get<FinanceKindSummary>('finance/documents/summary', {kind}); }
@@ -84,6 +87,7 @@ export class FinanceApiService extends CoreEndpointBase {
     trialBalance(from: string | null, to: string | null) { return this.get<TrialBalance>('finance/reports/trial-balance', {from, to}); }
     profitLoss(from: string | null, to: string | null) { return this.get<ProfitLoss>('finance/reports/profit-loss', {from, to}); }
     balanceSheet(asOf: string | null) { return this.get<BalanceSheet>('finance/reports/balance-sheet', {asOf}); }
+    taxReport(from: string | null, to: string | null) { return this.get<TaxReport>('finance/reports/tax', {from, to}); }
     ledger(accountId: string, from: string | null, to: string | null, skip: number, take: number) {
         return this.get<LedgerReport>('finance/reports/ledger', {accountId, from, to, skip, take});
     }
@@ -99,6 +103,13 @@ export class FinanceApiService extends CoreEndpointBase {
     // Settings
     saveTaxCode(id: string | null, body: TaxCodeInput) { return id ? this.send<TaxCodeRow>('PUT', `finance/settings/tax-codes/${id}`, body) : this.send<TaxCodeRow>('POST', 'finance/settings/tax-codes', body); }
     deleteTaxCode(id: string) { return this.send<void>('DELETE', `finance/settings/tax-codes/${id}`); }
+    taxPacks() { return this.get<TaxPacks>('finance/settings/tax-packs'); }
+    installTaxPack(countryCode: string, regions: string[]) {
+        return this.send<{pack: string; codesAdded: number; codesKept: number; rules: number}>('POST', 'finance/settings/tax-packs', {countryCode, regions});
+    }
+    taxRules() { return this.get<TaxRule[]>('finance/settings/tax-rules'); }
+    saveTaxRule(id: string | null, body: TaxRuleInput) { return id ? this.send<TaxRule>('PUT', `finance/settings/tax-rules/${id}`, body) : this.send<TaxRule>('POST', 'finance/settings/tax-rules', body); }
+    deleteTaxRule(id: string) { return this.send<void>('DELETE', `finance/settings/tax-rules/${id}`); }
     invoiceSettings() { return this.get<InvoiceSettings>('finance/settings/invoicing'); }
     saveInvoiceSettings(body: InvoiceSettings) { return this.send<InvoiceSettings>('PUT', 'finance/settings/invoicing', body); }
     saveDocumentType(id: number, body: DocumentTypeInput) { return this.send<DocumentTypeRow>('PUT', `finance/settings/document-types/${id}`, body); }

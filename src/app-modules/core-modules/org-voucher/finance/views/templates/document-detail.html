@@ -110,7 +110,11 @@
 <div *ngIf="doc.lines.length" class="d-flex mb-3">
     <table class="ml-auto text-sm">
         <tr><td class="text-muted pr-3">Subtotal</td><td class="text-right">{{ doc.subTotal | money:doc.currencyCode }}</td></tr>
-        <tr *ngFor="let t of doc.taxes"><td class="text-muted pr-3">{{ t.code }} {{ t.rate }}% on {{ t.taxable | money:doc.currencyCode:false }}</td><td class="text-right">{{ t.tax | money:doc.currencyCode }}</td></tr>
+        <tr *ngFor="let t of doc.taxes">
+            <td class="text-muted pr-3">{{ t.component }} {{ t.rate }}%<span *ngIf="t.jurisdiction"> ({{ t.jurisdiction }})</span> on {{ t.taxable | money:doc.currencyCode:false }}
+                <span *ngIf="t.kind === 'ReverseCharge'" class="badge info ml-1">reverse charge</span><span *ngIf="t.kind === 'Exempt' || t.kind === 'ZeroRated'" class="badge white ml-1">{{ t.kind === 'Exempt' ? 'exempt' : 'zero-rated' }}</span>
+                <span *ngIf="t.kind === 'Withholding'" class="badge warn ml-1">withheld</span></td>
+            <td class="text-right">{{ t.kind === 'Withholding' ? '−' : '' }}{{ t.tax | money:doc.currencyCode }}</td></tr>
         <tr *ngIf="doc.adjustment"><td class="text-muted pr-3">Adjustment</td><td class="text-right">{{ doc.adjustment | money:doc.currencyCode }}</td></tr>
         <tr class="_600"><td class="pr-3">Total</td><td class="text-right">{{ doc.total | money:doc.currencyCode }}</td></tr>
     </table>

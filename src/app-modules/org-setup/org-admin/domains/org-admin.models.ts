@@ -325,6 +325,13 @@ export class BranchRow extends CoreResource {
     declare seedCompletedAt: string | null;
     declare memberCount: number;
     declare createdAt: string;
+    declare countryCode: string | null;
+    declare region: string | null;
+    declare city: string | null;
+    declare postalCode: string | null;
+    declare timeZone: string | null;
+    declare taxRegistrationNo: string | null;
+    declare currencyCode: string | null;
 
     constructor(json: any = {}) { super(); Object.assign(this, json); }
 
@@ -341,6 +348,14 @@ export interface BranchDto {
     emailId: string | null;
     isSelfAdministration: boolean;
     isActive: boolean;
+    /** Region of the branch (tax place of supply, local date, invoice currency); empty: the organisation's. */
+    countryCode?: string | null;
+    region?: string | null;
+    city?: string | null;
+    postalCode?: string | null;
+    timeZone?: string | null;
+    taxRegistrationNo?: string | null;
+    currencyCode?: string | null;
 }
 
 export class BranchQueryOptions extends CoreQueryOptions {

@@ -52,6 +52,37 @@
             <label class="text-xs">Website</label>
             <input class="form-control form-control-sm" [(ngModel)]="e.model.websiteUrl" maxlength="250">
         </div>
+        <div class="col-12 mt-1 mb-1"><b class="text-xs text-uppercase text-muted">Region</b>
+            <span class="text-xs text-muted d-block">Decides the taxes of its invoices (place of supply), its local date and its default invoice currency. Leave empty to use the organisation's.</span></div>
+        <div class="col-4 form-group">
+            <label class="text-xs">Country (ISO)</label>
+            <input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.countryCode" maxlength="2" placeholder="US">
+        </div>
+        <div class="col-4 form-group">
+            <label class="text-xs">State / province</label>
+            <input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.region" maxlength="10" placeholder="TX">
+        </div>
+        <div class="col-4 form-group">
+            <label class="text-xs">Postal code</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.postalCode" maxlength="20">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">City</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.city" maxlength="100">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Time zone</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.timeZone" maxlength="64" placeholder="America/Chicago" list="branch-time-zones">
+            <datalist id="branch-time-zones"><option *ngFor="let tz of timeZones" [value]="tz"></option></datalist>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Tax registration (VAT / GST / sales tax no.)</label>
+            <input class="form-control form-control-sm" [(ngModel)]="e.model.taxRegistrationNo" maxlength="40">
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="text-xs">Invoice currency</label>
+            <input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.currencyCode" maxlength="3" placeholder="Organisation's">
+        </div>
         <div class="col-12">
             <label class="d-block"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isSelfAdministration">Runs its own administration
                 <span class="text-xs text-muted d-block ml-3">Otherwise the head branch manages its members and settings.</span></label>

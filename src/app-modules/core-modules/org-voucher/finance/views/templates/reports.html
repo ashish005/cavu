@@ -73,6 +73,32 @@
         </table></div>
     </div>
 
+    <!-- Tax summary -->
+    <ng-container *ngIf="tab === 'tax' && tax as r">
+        <div class="row no-gutters mb-2">
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Tax collected</div><div class="_600">{{ r.outputTax | money:r.currency }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Tax paid (deductible)</div><div class="_600">{{ r.inputTax | money:r.currency }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Net payable</div><div class="_600" [ngClass]="r.netPayable >= 0 ? 'text-danger' : 'text-success'">{{ r.netPayable | money:r.currency }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Reverse charge (in and out)</div><div class="_600">{{ r.reverseCharge | money:r.currency }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Withheld from vendors</div><div class="_600">{{ r.withheldFromVendors | money:r.currency }}</div></div></div>
+            <div class="col-6 col-md-2 p-1"><div class="box p-2 mb-0"><div class="text-xs text-muted">Withheld by customers</div><div class="_600">{{ r.withheldByCustomers | money:r.currency }}</div></div></div>
+        </div>
+        <div class="box">
+            <div class="table-responsive"><table class="table table-sm mb-0">
+                <thead><tr class="text-xs text-muted"><th>Where</th><th>Code</th><th>Component</th><th>Kind</th><th>Side</th><th class="text-right">Rate</th><th>Return box</th>
+                    <th class="text-right">Taxable</th><th class="text-right">Tax</th><th class="text-right">Docs</th></tr></thead>
+                <tbody><tr *ngFor="let x of r.rows">
+                    <td class="text-xs">{{ x.countryCode }}{{ x.jurisdiction && x.jurisdiction !== x.countryCode ? ' / ' + x.jurisdiction : '' }}</td><td>{{ x.code }}</td><td>{{ x.component }}</td>
+                    <td class="text-xs">{{ kindLabel[x.kind].split(' (')[0] }}</td><td class="text-xs">{{ x.isSales ? 'Sales' : 'Purchases' }}</td><td class="text-right">{{ x.rate }}%</td>
+                    <td class="text-xs text-muted">{{ x.reportingCode }}</td><td class="text-right">{{ x.taxable | money:r.currency:false }}</td>
+                    <td class="text-right _600">{{ x.tax | money:r.currency:false }}</td><td class="text-right text-muted">{{ x.documents }}</td>
+                </tr>
+                <tr *ngIf="!r.rows.length"><td colspan="10" class="text-muted text-sm">No taxed documents in this period.</td></tr></tbody>
+            </table></div>
+        </div>
+        <div class="text-xs text-muted mt-1">Posted documents of this branch, by document date, in {{ r.currency }}. Credit and debit notes reduce the figures.</div>
+    </ng-container>
+
     <!-- Account ledger -->
     <ng-container *ngIf="tab === 'ledger'">
         <div *ngIf="!ledgerAccount" class="text-muted p-3">Choose an account to see its ledger.</div>

@@ -5,22 +5,33 @@ import {finalize, forkJoin} from "rxjs";
 import {AlertService, DateFormatCell, FullDateFormatCell, MessageSeverity, ViewExtender} from "@app-global";
 import {
     AccountOption, AccountingSettings, DocumentTypeInput, DocumentTypeRow, InvoiceSettings, PostingJobQueryOptions, PostingJobRow, PostingSummary,
-    RecurringInput, RecurringRow, SimpleQueryOptions, TaxCodeInput, TaxCodeRow, TaxOption
+    RecurringInput, RecurringRow, SimpleQueryOptions, TAX_KIND_LABEL, TAX_LOCATION_LABEL, TaxCodeInput, TaxCodeRow, TaxComponent, TaxKind, TaxLocation, TaxOption,
+    TaxPackInfo, TaxPacks, TaxRule, TaxRuleInput
 } from "../domains/finance.models";
 import {
     DocumentTypeGridService, FinanceApiService, FinanceGridEvents, PostingJobGridService, RecurringGridService, TaxCodeGridService, financeErrorOf
 } from "../services/finance-api.service";
 import {DocumentTypeCell, PostingJobCell, RecurringCell, TaxCodeCell, formatMoney} from "../grid-cells/finance-cells";
 
-/** Tax codes: rates charged on sales and paid on purchases, with the accounts they post to. */
+/**
+ * Tax codes: rates charged on sales and paid on purchases, made of components (CGST + SGST, state + local), with the
+ * accounts they post to. A country pack sets up a country's codes and rules in one step.
+ */
 @Component({standalone: false, templateUrl: './templates/settings-tax-codes.html'})
 export class FinanceTaxCodesView extends ViewExtender<TaxCodeRow> implements OnInit {
     override coreState = new SimpleQueryOptions();
     private readonly destroyRef = inject(DestroyRef);
+    readonly kinds = Object.entries(TAX_KIND_LABEL).map(([value, label]) => ({value: value as TaxKind, label}));
     taxAccounts: AccountOption[] = [];
-    form: {id: string | null; model: TaxCodeInput} | null = null;
+    form: {id: string | null; model: TaxCodeInput; packCode: string | null} | null = null;
     saving = false;
     formError: string | null = null;
+
+    packs: TaxPacks | null = null;
+    pack: TaxPackInfo | null = null;
+    regions = new Set<string>();
+    installing = false;
+    packMessage: string | null = null;
 
     constructor(public override service: TaxCodeGridService, public override activatedRoute: ActivatedRoute, private api: FinanceApiService,
                 private events: FinanceGridEvents, private alerts: AlertService) {
@@ -28,11 +39,14 @@ export class FinanceTaxCodesView extends ViewExtender<TaxCodeRow> implements OnI
         this.gridOptions.header = {...this.gridOptions.header, add: false, edit: false, delete: false};
         this.gridOptions.columnDefs = [
             {headerName: 'Code', field: 'code', cellTemplate: TaxCodeCell},
-            {headerName: 'Rate', field: 'rate', class: 'text-right', cellFn: (r: TaxCodeRow) => `${+r.rate}%`},
+            {headerName: 'Rate', field: 'rate', class: 'text-right', cellFn: (r: TaxCodeRow) => r.kind === 'Standard' || r.kind === 'Withholding' || r.kind === 'ReverseCharge'
+                ? `${+r.rate}%${r.components?.length > 1 ? ' (' + r.components.map(c => `${c.name} ${+c.rate}`).join(' + ') + ')' : ''}` : '—'},
+            {headerName: 'Kind', field: 'kind', cellFn: (r: TaxCodeRow) => TAX_KIND_LABEL[r.kind]?.split(' (')[0] ?? r.kind},
+            {headerName: 'Where', field: 'countryCode', cellFn: (r: TaxCodeRow) => [r.countryCode, r.region].filter(Boolean).join(' / ') || '—'},
             {headerName: 'Used for', field: 'scope', cellFn: (r: TaxCodeRow) => r.scope === 'Both' ? 'Sales and purchases' : r.scope},
-            {headerName: 'Posts to', field: 'salesAccount', cellFn: (r: TaxCodeRow) => [r.salesAccount ?? (r.scope !== 'Purchases' ? 'Output tax (default)' : null), r.purchaseAccount ?? (r.scope !== 'Sales' ? 'Input tax (default)' : null)].filter(Boolean).join(' · ')},
             {headerName: 'Lines', field: 'usedOnLines', class: 'text-right'}
         ];
+        this.coreState.take = 50;
     }
 
     get errorText() { return this.errorMsg ? financeErrorOf(this.errorMsg, 'Tax codes could not be loaded.') : null; }
@@ -40,24 +54,78 @@ export class FinanceTaxCodesView extends ViewExtender<TaxCodeRow> implements OnI
     ngOnInit() {
         this.events.actions$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(a => { if (a.action === 'open') { this.edit(a.row); } });
         this.api.accountOptions(null, 'tax').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: a => this.taxAccounts = a, error: () => {}});
+        this.loadPacks();
         this.populateGrid();
     }
 
+    // ---------- Country packs ----------
+
+    loadPacks() {
+        this.api.taxPacks().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: p => {
+                this.packs = p;
+                if (!this.pack) { this.choosePack(p.packs.find(x => x.countryCode === p.branchCountry)?.countryCode ?? null); }
+            },
+            error: () => {}
+        });
+    }
+
+    choosePack(code: string | null) {
+        this.pack = this.packs?.packs.find(p => p.countryCode === code) ?? null;
+        this.regions = new Set(this.pack?.regionsLabel && this.packs?.branchRegion && this.pack.regions.some(r => r.code === this.packs!.branchRegion) ? [this.packs.branchRegion] : []);
+        this.packMessage = null;
+    }
+
+    toggleRegion(code: string) {
+        if (this.pack?.countryCode === 'IN') { this.regions = new Set([code]); return; }
+        this.regions.has(code) ? this.regions.delete(code) : this.regions.add(code);
+    }
+
+    install() {
+        if (!this.pack) { return; }
+        if (this.pack.regionsRequired && !this.regions.size) { this.packMessage = `Choose: ${this.pack.regionsLabel}.`; return; }
+        this.installing = true;
+        this.api.installTaxPack(this.pack.countryCode, [...this.regions]).pipe(finalize(() => this.installing = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => {
+                this.packMessage = `${r.pack}: ${r.codesAdded} codes added, ${r.codesKept} already there, ${r.rules} rules.`;
+                this.api.lookups(true);
+                this.loadPacks();
+                this.refreshGrid();
+            },
+            error: e => this.packMessage = financeErrorOf(e, 'The tax pack could not be installed.')
+        });
+    }
+
+    // ---------- Codes ----------
+
     actionCb(row: TaxCodeRow) { this.edit(row); }
 
-    add() { this.formError = null; this.form = {id: null, model: {code: '', name: '', rate: 0, scope: 'Both', salesAccountId: null, purchaseAccountId: null, isDefault: false, isActive: true, description: null, countryCode: null}}; }
+    add() {
+        this.formError = null;
+        this.form = {id: null, packCode: null, model: {code: '', name: '', rate: 0, scope: 'Both', kind: 'Standard', salesAccountId: null, purchaseAccountId: null, isDefault: false,
+            isActive: true, description: null, countryCode: this.packs?.branchCountry ?? null, region: null, reportingCode: null,
+            components: [this.component('')]}};
+    }
 
     edit(r: TaxCodeRow) {
         this.formError = null;
-        this.form = {id: r.id, model: {code: r.code, name: r.name, rate: +r.rate, scope: r.scope, salesAccountId: r.salesAccountId, purchaseAccountId: r.purchaseAccountId,
-            isDefault: r.isDefault, isActive: r.isActive, description: r.description, countryCode: r.countryCode}};
+        this.form = {id: r.id, packCode: r.packCode, model: {code: r.code, name: r.name, rate: +r.rate, scope: r.scope, kind: r.kind, salesAccountId: r.salesAccountId,
+            purchaseAccountId: r.purchaseAccountId, isDefault: r.isDefault, isActive: r.isActive, description: r.description, countryCode: r.countryCode, region: r.region,
+            reportingCode: r.reportingCode, components: (r.components?.length ? r.components : [this.component(r.name, +r.rate)]).map(c => ({...c}))}};
     }
+
+    component(name: string, rate = 0): TaxComponent { return {id: null, name, rate, salesAccountId: null, purchaseAccountId: null, validFrom: null, validTo: null, jurisdiction: null}; }
+    addComponent() { this.form!.model.components.push(this.component('')); }
+    removeComponent(i: number) { this.form!.model.components.splice(i, 1); }
+    get totalRate() { return (this.form?.model.components ?? []).filter(c => !c.validTo || c.validTo >= new Date().toISOString().slice(0, 10)).reduce((s, c) => s + (+c.rate || 0), 0); }
 
     save() {
         const f = this.form!;
         if (!f.model.code?.trim() || !f.model.name?.trim()) { this.formError = 'Enter the code and name.'; return; }
+        if (f.model.components.some(c => !c.name?.trim())) { this.formError = 'Every component needs a name.'; return; }
         this.saving = true;
-        this.api.saveTaxCode(f.id, {...f.model, rate: +f.model.rate}).pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+        const body: TaxCodeInput = {...f.model, rate: this.totalRate, components: f.model.components.map(c => ({...c, rate: +c.rate || 0, validFrom: c.validFrom || null, validTo: c.validTo || null}))};
+        this.api.saveTaxCode(f.id, body).pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
             next: () => { this.form = null; this.api.lookups(true); this.alerts.showMessage('Saved', 'Tax code saved.', MessageSeverity.success); this.refreshGrid(); },
             error: e => this.formError = financeErrorOf(e, 'The tax code could not be saved.')
         });
@@ -65,10 +133,87 @@ export class FinanceTaxCodesView extends ViewExtender<TaxCodeRow> implements OnI
 
     remove() {
         const f = this.form!;
-        if (!f.id || !confirm('Remove this tax code? Documents that used it keep their amounts.')) { return; }
+        if (!f.id || !confirm('Remove this tax code and its rules? Documents that used it keep their amounts.')) { return; }
         this.api.deleteTaxCode(f.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: () => { this.form = null; this.api.lookups(true); this.refreshGrid(); },
             error: e => this.formError = financeErrorOf(e, 'The tax code could not be removed.')
+        });
+    }
+}
+
+/** Tax rules: which code a new line gets, by where the customer or vendor is compared with the branch. */
+@Component({standalone: false, templateUrl: './templates/settings-tax-rules.html'})
+export class FinanceTaxRulesView implements OnInit {
+    @ViewChild('pageTitleTemplate', {static: true}) pageTitleTemplate!: TemplateRef<any>;
+    @ViewChild('actionTemplate', {static: true}) actionTemplate!: TemplateRef<any>;
+    private readonly destroyRef = inject(DestroyRef);
+    readonly locations = Object.entries(TAX_LOCATION_LABEL).map(([value, label]) => ({value: value as TaxLocation, label}));
+    readonly locationLabel = TAX_LOCATION_LABEL;
+    rules: TaxRule[] = [];
+    codes: TaxOption[] = [];
+    form: {id: string | null; model: TaxRuleInput} | null = null;
+    loading = false;
+    saving = false;
+    error: string | null = null;
+    formError: string | null = null;
+
+    constructor(private api: FinanceApiService, private alerts: AlertService) {}
+
+    ngOnInit() {
+        this.api.lookups(true).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: l => this.codes = l.taxCodes, error: () => {}});
+        this.load();
+    }
+
+    load() {
+        this.loading = true;
+        this.api.taxRules().pipe(finalize(() => this.loading = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => { this.rules = r; this.error = null; },
+            error: e => this.error = financeErrorOf(e, 'Tax rules could not be loaded.')
+        });
+    }
+
+    /** "Sales to customers in another EU country with a VAT number" — the rule read as a sentence. */
+    describe(r: TaxRule) {
+        const who = r.scope === 'Sales' ? 'Sales to customers' : r.scope === 'Purchases' ? 'Purchases from vendors' : 'Sales and purchases with parties';
+        const where = r.location === 'Any' ? '' : ` ${this.locationLabel[r.location].toLowerCase()}`;
+        const country = r.partyCountry ? ` in ${r.partyCountry}` : '';
+        const region = r.partyRegion ? ` in ${r.partyRegion}` : '';
+        const id = r.partyHasTaxId === true ? ' with a tax number' : r.partyHasTaxId === false ? ' without a tax number' : '';
+        const exempt = r.partyExempt === true ? ' that are tax-exempt' : r.partyExempt === false ? ' that are not exempt' : '';
+        const origin = r.originCountry ? ` (branches in ${r.originCountry})` : '';
+        return `${who}${where}${country}${region}${id}${exempt}${origin}`;
+    }
+
+    add() {
+        this.formError = null;
+        this.form = {id: null, model: {priority: 100, scope: 'Sales', location: 'Any', partyCountry: null, partyRegion: null, partyHasTaxId: null, partyExempt: null,
+            originCountry: null, taxCodeId: this.codes[0]?.id ?? '', description: null, isActive: true}};
+    }
+
+    edit(r: TaxRule) {
+        this.formError = null;
+        const {id, taxCode, packCode, ...model} = r;
+        this.form = {id, model: {...model}};
+    }
+
+    save() {
+        const f = this.form!;
+        if (!f.model.taxCodeId) { this.formError = 'Choose the tax code.'; return; }
+        this.saving = true;
+        const clean = (v: any) => v === '' ? null : v;
+        const body = {...f.model, priority: +f.model.priority || 100, partyCountry: clean(f.model.partyCountry), partyRegion: clean(f.model.partyRegion), originCountry: clean(f.model.originCountry)};
+        this.api.saveTaxRule(f.id, body).pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: () => { this.form = null; this.alerts.showMessage('Saved', 'Rule saved.', MessageSeverity.success); this.load(); },
+            error: e => this.formError = financeErrorOf(e, 'The rule could not be saved.')
+        });
+    }
+
+    remove() {
+        const f = this.form!;
+        if (!f.id || !confirm('Remove this rule?')) { return; }
+        this.api.deleteTaxRule(f.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: () => { this.form = null; this.load(); },
+            error: e => this.formError = financeErrorOf(e, 'The rule could not be removed.')
         });
     }
 }

@@ -58,6 +58,8 @@ export class OrgBranchesView extends EditableGrid<BranchRow> implements OnInit {
     override coreState = new BranchQueryOptions();
     protected readonly loadError = 'The branches could not be loaded.';
     editing: {id: string | null; row: BranchRow | null; model: BranchDto} | null = null;
+    /** IANA time zones for the branch form (from the browser). */
+    readonly timeZones: string[] = typeof (Intl as any).supportedValuesOf === 'function' ? (Intl as any).supportedValuesOf('timeZone') : [];
 
     constructor(public override service: BranchGridService, public override activatedRoute: ActivatedRoute,
                 private api: OrgAdminApiService, protected readonly events: OrgAdminGridEvents) {
@@ -83,7 +85,9 @@ export class OrgBranchesView extends EditableGrid<BranchRow> implements OnInit {
             id: row?.id ?? null, row,
             model: {
                 name: row?.name ?? '', address: row?.address ?? null, websiteUrl: row?.websiteUrl ?? null, contactName: row?.contactName ?? null,
-                contactNo: row?.contactNo ?? null, emailId: row?.emailId ?? null, isSelfAdministration: row?.isSelfAdministration ?? false, isActive: row?.isActive ?? true
+                contactNo: row?.contactNo ?? null, emailId: row?.emailId ?? null, isSelfAdministration: row?.isSelfAdministration ?? false, isActive: row?.isActive ?? true,
+                countryCode: row?.countryCode ?? null, region: row?.region ?? null, city: row?.city ?? null, postalCode: row?.postalCode ?? null,
+                timeZone: row?.timeZone ?? null, taxRegistrationNo: row?.taxRegistrationNo ?? null, currencyCode: row?.currencyCode ?? null
             }
         };
     }

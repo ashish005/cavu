@@ -1,35 +1,82 @@
 <ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-percent mr-1"></i><b>Tax codes</b></span></ng-template>
 <ng-template #actionTemplate><button class="btn btn-sm theme" (click)="add()"><i class="fa fa-plus mr-1"></i>New tax code</button></ng-template>
 
-<div class="d-flex flex-column flex">
-    <div class="px-3 pt-2 text-sm text-muted">Rates you charge on sales and pay on purchases (sales tax, VAT, GST). Mark one default for each side and it is filled in on new lines.</div>
-    <div class="d-flex px-2 pt-2"><input class="form-control form-control-sm mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="populateGrid()" placeholder="Code or name"></div>
+<div class="d-flex flex-column flex scroll-y">
+    <!-- Country tax setup -->
+    <div class="box m-2 p-3">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <b class="mr-2"><i class="fa fa-globe mr-1"></i>Set up country tax</b>
+            <span class="text-xs text-muted">This branch is in {{ packs?.branchCountry || 'an unknown country' }}{{ packs?.branchRegion ? ' / ' + packs?.branchRegion : '' }}
+                (Settings › Organisation › Branches). Installed: {{ packs?.installed?.length ? packs?.installed?.join(', ') : 'none' }}.</span>
+        </div>
+        <div class="d-flex flex-wrap align-items-center">
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 260px" [ngModel]="pack?.countryCode ?? null" (ngModelChange)="choosePack($event)">
+                <option [ngValue]="null">Choose a country…</option>
+                <option *ngFor="let p of packs?.packs" [ngValue]="p.countryCode">{{ p.name }} — {{ p.system }}</option>
+            </select>
+            <button class="btn btn-sm theme mb-1" [disabled]="!pack || installing" (click)="install()">{{ installing ? 'Installing…' : 'Install codes and rules' }}</button>
+        </div>
+        <ng-container *ngIf="pack as p">
+            <div class="text-xs text-muted mt-1">{{ p.notes }}</div>
+            <div *ngIf="p.regionsLabel" class="mt-2">
+                <div class="text-sm _600 mb-1">{{ p.regionsLabel }}</div>
+                <div class="d-flex flex-wrap" style="max-height: 180px; overflow-y: auto">
+                    <label *ngFor="let r of p.regions" class="text-xs mr-3 mb-1" style="min-width: 150px">
+                        <input [type]="p.countryCode === 'IN' ? 'radio' : 'checkbox'" class="mr-1" [checked]="regions.has(r.code)" (change)="toggleRegion(r.code)">
+                        {{ r.name }} <span class="text-muted">{{ r.code }}{{ p.countryCode === 'US' ? ' · ' + r.rate + '%' : '' }}</span>
+                    </label>
+                </div>
+            </div>
+        </ng-container>
+        <div *ngIf="packMessage" class="text-sm mt-2"><i class="fa fa-info-circle mr-1"></i>{{ packMessage }}</div>
+        <div class="text-xs text-muted mt-1">Rates are a starting point: check them with your adviser. Schedule rate changes with a component's "valid from".</div>
+    </div>
+
+    <div class="d-flex px-2"><input class="form-control form-control-sm mb-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="populateGrid()" placeholder="Code, name or region"></div>
     <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
-    <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid></div>
-    <div class="mt-auto"><org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination></div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
 </div>
 
-<app-aside *ngIf="form as f" size="md" [title]="f.id ? 'Edit tax code' : 'New tax code'" (closed)="form = null">
+<app-aside *ngIf="form as f" size="lg" [title]="f.id ? 'Edit tax code' : 'New tax code'" [subtitle]="f.packCode ? 'From the ' + f.packCode + ' pack' : ''" (closed)="form = null">
     <loader [isLoading]="saving"></loader>
     <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
     <div class="row">
-        <div class="col-5 form-group"><label class="text-sm _600">Code *</label><input class="form-control text-uppercase" [(ngModel)]="f.model.code" maxlength="20" placeholder="e.g. ST, VAT20"></div>
-        <div class="col-7 form-group"><label class="text-sm _600">Rate % *</label><input type="number" class="form-control" [(ngModel)]="f.model.rate" min="0" max="100" step="any"></div>
+        <div class="col-4 form-group"><label class="text-sm _600">Code *</label><input class="form-control text-uppercase" [(ngModel)]="f.model.code" maxlength="20"></div>
+        <div class="col-8 form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="100"></div>
+        <div class="col-md-6 form-group"><label class="text-sm _600">Kind</label>
+            <select class="form-control" [(ngModel)]="f.model.kind"><option *ngFor="let k of kinds" [ngValue]="k.value">{{ k.label }}</option></select></div>
+        <div class="col-md-6 form-group"><label class="text-sm _600">Used for</label>
+            <select class="form-control" [(ngModel)]="f.model.scope"><option value="Both">Sales and purchases</option><option value="Sales">Sales only</option><option value="Purchases">Purchases only</option></select></div>
+        <div class="col-4 form-group"><label class="text-sm _600">Country</label><input class="form-control text-uppercase" [(ngModel)]="f.model.countryCode" maxlength="2" placeholder="US"></div>
+        <div class="col-4 form-group"><label class="text-sm _600">State / province</label><input class="form-control text-uppercase" [(ngModel)]="f.model.region" maxlength="10"></div>
+        <div class="col-4 form-group"><label class="text-sm _600">Return box</label><input class="form-control" [(ngModel)]="f.model.reportingCode" maxlength="40"></div>
     </div>
-    <div class="form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="100" placeholder="e.g. Texas sales tax"></div>
-    <div class="form-group"><label class="text-sm _600">Used for</label>
-        <select class="form-control" [(ngModel)]="f.model.scope"><option value="Both">Sales and purchases</option><option value="Sales">Sales only</option><option value="Purchases">Purchases only</option></select></div>
-    <div class="form-group" *ngIf="f.model.scope !== 'Purchases'"><label class="text-sm _600">Tax collected posts to</label>
-        <select class="form-control" [(ngModel)]="f.model.salesAccountId"><option [ngValue]="null">Output tax (default)</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
-    <div class="form-group" *ngIf="f.model.scope !== 'Sales'"><label class="text-sm _600">Tax paid posts to</label>
-        <select class="form-control" [(ngModel)]="f.model.purchaseAccountId"><option [ngValue]="null">Input tax (default)</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+
+    <div class="d-flex align-items-center mb-1"><b class="text-sm">Components</b><span class="ml-2 text-xs text-muted">Total today {{ totalRate }}%</span>
+        <button class="btn btn-xs white ml-auto" (click)="addComponent()"><i class="fa fa-plus mr-1"></i>Component</button></div>
+    <table class="table table-sm">
+        <thead><tr class="text-xs text-muted"><th>Name</th><th style="width: 90px" class="text-right">Rate %</th><th style="width: 140px">Valid from</th><th style="width: 140px">Valid to</th><th style="width: 90px">Jurisdiction</th><th></th></tr></thead>
+        <tbody><tr *ngFor="let c of f.model.components; let i = index">
+            <td><input class="form-control form-control-sm" [(ngModel)]="c.name" maxlength="100" placeholder="e.g. CGST, State, Local"></td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="c.rate" min="0" max="100" step="any"></td>
+            <td><input type="date" class="form-control form-control-sm" [(ngModel)]="c.validFrom"></td>
+            <td><input type="date" class="form-control form-control-sm" [(ngModel)]="c.validTo"></td>
+            <td><input class="form-control form-control-sm text-uppercase" [(ngModel)]="c.jurisdiction" maxlength="60"></td>
+            <td class="align-middle"><a role="button" class="text-muted" (click)="removeComponent(i)" *ngIf="f.model.components.length > 1"><i class="fa fa-times"></i></a></td>
+        </tr></tbody>
+    </table>
+    <div class="text-xs text-muted mb-2">A rate change: end the current component on the last day and add one valid from the next — documents use the rate of their own date.</div>
+
     <div class="row">
-        <div class="col-5 form-group"><label class="text-sm _600">Country</label><input class="form-control text-uppercase" [(ngModel)]="f.model.countryCode" maxlength="2" placeholder="US"></div>
-        <div class="col-7 form-group"><label class="text-sm _600">Description</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="500"></div>
+        <div class="col-md-6 form-group" *ngIf="f.model.scope !== 'Purchases'"><label class="text-sm _600">{{ f.model.kind === 'Withholding' ? 'Withheld by customers posts to' : 'Tax collected posts to' }}</label>
+            <select class="form-control" [(ngModel)]="f.model.salesAccountId"><option [ngValue]="null">Organisation default</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div class="col-md-6 form-group" *ngIf="f.model.scope !== 'Sales'"><label class="text-sm _600">{{ f.model.kind === 'Withholding' ? 'Withheld from vendors posts to' : 'Tax paid posts to' }}</label>
+            <select class="form-control" [(ngModel)]="f.model.purchaseAccountId"><option [ngValue]="null">Organisation default</option><option *ngFor="let a of taxAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
     </div>
-    <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefault">Default</label>
+    <div class="form-group"><label class="text-sm _600">Description</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="500"></div>
+    <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefault">Default for new lines</label>
     <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive">Active</label>
-    <div *ngIf="f.id" class="text-xs text-muted mt-1">Changing the rate affects new documents only; posted ones keep the rate they used.</div>
     <div class="d-flex mt-3">
         <button *ngIf="f.id" class="btn white text-danger" (click)="remove()">Remove</button><span class="flex"></span>
         <button class="btn white mr-1" (click)="form = null">Cancel</button><button class="btn theme" (click)="save()">Save</button>

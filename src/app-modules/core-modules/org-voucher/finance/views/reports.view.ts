@@ -3,12 +3,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {Observable, finalize, map} from "rxjs";
 import {DateFormatCell, ViewExtender} from "@app-global";
-import {AccountOption, BalanceSheet, JournalQueryOptions, JournalRow, LedgerReport, ProfitLoss, ReportSection, TrialBalance, todayIso} from "../domains/finance.models";
+import {AccountOption, BalanceSheet, JournalQueryOptions, JournalRow, LedgerReport, ProfitLoss, ReportSection, TAX_KIND_LABEL, TaxReport, TrialBalance, todayIso} from "../domains/finance.models";
 import {FinanceApiService, JournalGridService, financeErrorOf} from "../services/finance-api.service";
 import {PickerOption} from "./finance-picker.component";
 import {formatMoney} from "../grid-cells/finance-cells";
 
-type Tab = 'pl' | 'bs' | 'tb' | 'ledger' | 'journals';
+type Tab = 'pl' | 'bs' | 'tb' | 'tax' | 'ledger' | 'journals';
 
 /**
  * Financial reports from the ledger: profit and loss, balance sheet, trial balance, account ledger (running balance)
@@ -19,7 +19,7 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
     override coreState = new JournalQueryOptions();
     private readonly destroyRef = inject(DestroyRef);
     readonly tabs: {key: Tab; label: string}[] = [
-        {key: 'pl', label: 'Profit and loss'}, {key: 'bs', label: 'Balance sheet'}, {key: 'tb', label: 'Trial balance'},
+        {key: 'pl', label: 'Profit and loss'}, {key: 'bs', label: 'Balance sheet'}, {key: 'tb', label: 'Trial balance'}, {key: 'tax', label: 'Tax summary'},
         {key: 'ledger', label: 'Account ledger'}, {key: 'journals', label: 'Journal register'}
     ];
     tab: Tab = 'pl';
@@ -31,6 +31,8 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
     pl: ProfitLoss | null = null;
     bs: BalanceSheet | null = null;
     tb: TrialBalance | null = null;
+    tax: TaxReport | null = null;
+    readonly kindLabel = TAX_KIND_LABEL;
     ledger: LedgerReport | null = null;
     ledgerAccount: {id: string; label: string} | null = null;
     ledgerPage = {skip: 0, take: 50, page: 1};
@@ -83,6 +85,7 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
             case 'pl': this.load(this.api.profitLoss(this.from, this.to), r => this.pl = r); break;
             case 'bs': this.load(this.api.balanceSheet(this.to), r => this.bs = r); break;
             case 'tb': this.load(this.api.trialBalance(this.from, this.to), r => this.tb = r); break;
+            case 'tax': this.load(this.api.taxReport(this.from, this.to), r => this.tax = r); break;
             case 'ledger': this.loadLedger(); break;
             case 'journals':
                 Object.assign(this.coreState, {from: this.from, to: this.to, skip: 0, page: 1, take: 25});
@@ -140,6 +143,12 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
             rows.push(['Code', 'Account', 'Group', 'Opening', 'Debit', 'Credit', 'Closing']);
             this.tb.rows.forEach(r => rows.push([r.code, r.name, r.group, r.opening, r.debit, r.credit, r.closing]));
             rows.push(['', 'Total', '', '', this.tb.totalDebit, this.tb.totalCredit, '']);
+        }
+        if (this.tab === 'tax' && this.tax) {
+            name = `tax_${this.tax.from}_${this.tax.to}`;
+            rows.push(['Country', 'Jurisdiction', 'Code', 'Component', 'Kind', 'Side', 'Rate', 'Return box', 'Taxable', 'Tax', 'Documents']);
+            this.tax.rows.forEach(r => rows.push([r.countryCode ?? '', r.jurisdiction ?? '', r.code, r.component, r.kind, r.isSales ? 'Sales' : 'Purchases', r.rate, r.reportingCode ?? '', r.taxable, r.tax, r.documents]));
+            rows.push([]); rows.push(['Output tax', this.tax.outputTax]); rows.push(['Input tax', this.tax.inputTax]); rows.push(['Net payable', this.tax.netPayable]);
         }
         if (this.tab === 'ledger' && this.ledger) {
             name = `ledger_${this.ledger.code ?? this.ledger.account}`;

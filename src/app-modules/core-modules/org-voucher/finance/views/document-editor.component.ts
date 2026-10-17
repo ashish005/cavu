@@ -2,8 +2,8 @@ import {Component, DestroyRef, EventEmitter, Input, OnInit, Output, inject} from
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {Observable, finalize, map} from "rxjs";
 import {
-    AccountOption, FinanceDoc, FinanceDocInput, FinanceKind, FinanceLine, FinanceLookups, JournalLineInput, KINDS, KindInfo, ModeOption, OpenDoc, TaxOption,
-    addDaysIso, todayIso
+    AccountOption, FinanceDoc, FinanceDocInput, FinanceKind, FinanceLine, FinanceLookups, JournalLineInput, KINDS, KindInfo, ModeOption, OpenDoc, TAX_LOCATION_LABEL,
+    TaxOption, TaxSuggestion, addDaysIso, todayIso
 } from "../domains/finance.models";
 import {FinanceApiService, financeErrorOf} from "../services/finance-api.service";
 import {PickerOption} from "./finance-picker.component";
@@ -35,6 +35,11 @@ export class FinanceDocumentEditorComponent implements OnInit {
     lineAccounts: AccountOption[] = [];
     allAccounts: AccountOption[] = [];
     taxes: TaxOption[] = [];
+    /** Withholding codes (TDS, backup withholding) of this side. */
+    withholdings: TaxOption[] = [];
+    /** What the tax rules give for the chosen party (and why). */
+    suggestion: TaxSuggestion | null = null;
+    readonly locationLabel = TAX_LOCATION_LABEL;
     modes: ModeOption[] = [];
     allocations: AllocationRow[] = [];
     partyLabel = '';
@@ -56,7 +61,9 @@ export class FinanceDocumentEditorComponent implements OnInit {
             next: l => {
                 this.lookups = l;
                 const salesSide = this.info.party === 'customer';
-                this.taxes = l.taxCodes.filter(t => t.scope === 'Both' || (salesSide ? t.scope === 'Sales' : t.scope === 'Purchases'));
+                const side = l.taxCodes.filter(t => t.scope === 'Both' || (salesSide ? t.scope === 'Sales' : t.scope === 'Purchases'));
+                this.taxes = side.filter(t => t.kind !== 'Withholding');
+                this.withholdings = side.filter(t => t.kind === 'Withholding');
                 this.modes = l.paymentModes;
                 if (!this.doc) {
                     this.form.currencyCode = l.functionalCurrency;
@@ -75,7 +82,25 @@ export class FinanceDocumentEditorComponent implements OnInit {
             if (!this.form.journalLines.length) { this.addJournalLine(); if (this.kind === 'Journal') { this.addJournalLine(); } }
         }
         if (this.info.settles && this.form.partyAccountId) { this.loadOpen(); }
+        if (this.info.items && this.form.partyAccountId) { this.suggestTax(false); }
     }
+
+    /** The tax the rules give for this party; lines still on the previous suggestion (or none) take the new one. */
+    suggestTax(apply = true) {
+        if (!this.info.items) { return; }
+        const previous = this.suggestion?.taxCodeId ?? null;
+        this.api.taxSuggestion(this.kind, this.form.partyAccountId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: sg => {
+                this.suggestion = sg;
+                if (!apply || !sg.taxCodeId) { return; }
+                const fallback = this.defaultTax();
+                this.form.lines.forEach(l => { if (!l.taxCodeId || l.taxCodeId === previous || l.taxCodeId === fallback) { l.taxCodeId = sg.taxCodeId; } });
+            },
+            error: () => this.suggestion = null
+        });
+    }
+
+    private defaultTax() { return (this.info.party === 'customer' ? this.lookups?.defaultSalesTaxCodeId : this.lookups?.defaultPurchaseTaxCodeId) ?? null; }
 
     get isNew() { return !this.doc; }
     get functional() { return this.lookups?.functionalCurrency ?? 'USD'; }
@@ -97,32 +122,34 @@ export class FinanceDocumentEditorComponent implements OnInit {
             this.form.dueDate = addDaysIso(this.form.date, p?.termDays ?? this.lookups?.defaultDueDays ?? 30);
         }
         if (this.info.settles) { this.loadOpen(); }
+        this.suggestTax(true);
     }
 
     // ---------- Item lines ----------
 
     addLine() {
-        const tax = this.info.party === 'customer' ? this.lookups?.defaultSalesTaxCodeId : this.lookups?.defaultPurchaseTaxCodeId;
         this.form.lines.push({description: '', accountId: this.info.lookupKey ? this.lookups?.defaultLineAccounts?.[this.info.lookupKey] ?? null : null,
-            quantity: 1, unitPrice: 0, discountRate: 0, taxCodeId: tax ?? null});
+            quantity: 1, unitPrice: 0, discountRate: 0, taxCodeId: this.suggestion?.taxCodeId ?? this.defaultTax(), withholdingTaxCodeId: null});
     }
     removeLine(i: number) { this.form.lines.splice(i, 1); }
 
-    rate(taxCodeId: string | null) { return this.taxes.find(t => t.id === taxCodeId)?.rate ?? this.lookups?.taxCodes.find(t => t.id === taxCodeId)?.rate ?? 0; }
+    private code(id: string | null | undefined) { return id ? this.lookups?.taxCodes.find(t => t.id === id) ?? null : null; }
 
-    /** Preview of a line (same rules as the server: discount, then tax added or taken out). */
+    /** Preview of a line (same rules as the server: discount, tax added or taken out, withholding deducted). */
     preview(l: FinanceLine) {
         const r2 = (x: number) => Math.round((x + Number.EPSILON) * 100) / 100;
         const gross = r2((+l.quantity || 0) * (+l.unitPrice || 0));
         const discount = r2(gross * (+l.discountRate || 0) / 100);
         const after = gross - discount;
-        const rate = this.rate(l.taxCodeId);
-        if (this.form.pricesIncludeTax && rate) {
-            const tax = r2(after - after / (1 + rate / 100));
-            return {net: after - tax, tax, total: after, discount};
-        }
-        const tax = r2(after * rate / 100);
-        return {net: after, tax, total: after + tax, discount};
+        const tax = this.code(l.taxCodeId);
+        // Only standard codes charge tax; zero-rated, exempt, out of scope and reverse charge do not.
+        const rate = tax && tax.kind === 'Standard' ? tax.rate : 0;
+        let net = after, charged = 0;
+        if (this.form.pricesIncludeTax && rate) { charged = r2(after - after / (1 + rate / 100)); net = after - charged; }
+        else { charged = r2(after * rate / 100); }
+        const wht = this.code(l.withholdingTaxCodeId);
+        const withheld = wht ? r2(net * wht.rate / 100) : 0;
+        return {net, tax: charged, withheld, total: net + charged - withheld, discount};
     }
 
     get totals() {
@@ -130,7 +157,8 @@ export class FinanceDocumentEditorComponent implements OnInit {
         const sub = rows.reduce((s, r) => s + r.net, 0);
         const tax = rows.reduce((s, r) => s + r.tax, 0);
         const discount = rows.reduce((s, r) => s + r.discount, 0);
-        return {sub, tax, discount, total: sub + tax + (+this.form.adjustment || 0)};
+        const withheld = rows.reduce((s, r) => s + r.withheld, 0);
+        return {sub, tax, discount, withheld, total: sub + tax - withheld + (+this.form.adjustment || 0)};
     }
 
     // ---------- Journal / transfer lines ----------
@@ -227,7 +255,8 @@ export class FinanceDocumentEditorComponent implements OnInit {
         return {
             kind: d.kind, partyAccountId: d.kind === 'Journal' ? null : d.partyAccountId, date: d.date, dueDate: d.dueDate, reference: d.reference, notes: d.notes,
             internalNote: d.internalNote, currencyCode: d.currencyCode, currencyRate: d.currencyRate, pricesIncludeTax: inclusive, adjustment: d.adjustment,
-            lines: d.lines.map(l => ({description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, discountRate: l.discountRate, taxCodeId: l.taxCodeId})),
+            lines: d.lines.map(l => ({description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, discountRate: l.discountRate,
+                taxCodeId: l.taxCodeId, withholdingTaxCodeId: l.withholdingTaxCodeId ?? null})),
             journalLines: KINDS[d.kind].journal ? d.ledgerLines.map(l => ({accountId: l.accountId, debit: l.debit, credit: l.credit, description: l.description} as JournalLineInput)) : [],
             amount: KINDS[d.kind].settlement ? d.total : null, paymentModeId: d.paymentModeId, bankAccountId: settlementBank,
             allocations: d.allocations.map(a => ({targetVoucherId: a.voucherId, amount: a.amount}))

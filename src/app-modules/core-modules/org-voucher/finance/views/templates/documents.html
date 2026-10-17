@@ -50,6 +50,7 @@
         <div class="scroll-y d-flex flex-column flex box mb-0 bg-transparent" [class.d-none]="!gridData?.length">
             <org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading" (cb)="actionCb($event)"></org-grid>
         </div>
+        <div *ngIf="gridOptions?.total > 10000" class="text-xs text-muted px-3 pt-1">More than 10,000 match: showing the first 10,000. Narrow the dates or search to see the rest.</div>
         <div class="mt-auto">
             <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
         </div>
