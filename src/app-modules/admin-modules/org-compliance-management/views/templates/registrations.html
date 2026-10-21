@@ -1,0 +1,92 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button *ngFor="let s of states" type="button" class="btn white" [class.active]="state === s.v" (click)="state = s.v; load()">{{ s.l }}</button>
+            </div>
+            <input class="form-control form-control-sm mb-2" style="max-width: 240px" placeholder="Name, number or authority" [(ngModel)]="search" (keyup.enter)="load()">
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div *ngIf="!loading && !rows.length && !error" class="box p-4 text-center text-muted">
+            Record your tax registrations, trade and industry licences, permits and certificates to be reminded before they expire.
+        </div>
+        <div *ngIf="rows.length" class="box"><div class="list">
+            <a *ngFor="let r of rows; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="open(r)">
+                <i class="fa fa-id-card-o text-muted mr-3"></i>
+                <div class="flex" style="min-width: 0">
+                    <div class="_500 text-ellipsis">{{ r.name }} <span *ngIf="r.number" class="text-muted text-monospace _400">{{ r.number }}</span></div>
+                    <div class="text-xs text-muted text-ellipsis">{{ r.kind }}<span *ngIf="r.authorityName"> · {{ r.authorityName }}</span><span *ngIf="r.countryCode"> · {{ r.countryCode }}{{ r.region ? '-' + r.region : '' }}</span>
+                        <span *ngIf="r.branch"> · {{ r.branch }}</span><span *ngIf="r.owner"> · {{ r.owner }}</span>
+                        <span *ngIf="r.files"> · <i class="fa fa-paperclip"></i> {{ r.files }}</span><span *ngIf="r.hasCredentials"> · <i class="fa fa-key"></i></span></div>
+                </div>
+                <div class="text-right ml-2" style="min-width: 140px">
+                    <span class="badge" [ngClass]="stateBadge[r.state].css">{{ stateBadge[r.state].label }}</span>
+                    <div *ngIf="r.expiresOn" class="text-xs" [class.text-danger]="(r.daysToExpiry ?? 0) < 0" [class.text-muted]="(r.daysToExpiry ?? 0) >= 0">expires {{ r.expiresOn | date:'d MMM yyyy' }}</div>
+                    <div *ngIf="!r.expiresOn" class="text-xs text-muted">no expiry</div>
+                </div>
+            </a>
+        </div></div>
+    </div>
+</div>
+
+<app-aside *ngIf="form as f" size="lg" [title]="f.id ? f.model.name : 'New licence or registration'" (closed)="form = null">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-xs _600">Kind</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.kind"><option *ngFor="let k of kinds" [ngValue]="k">{{ k }}</option></select></div>
+        <div class="col-md-8 form-group"><label class="text-xs _600">Name *</label><input class="form-control form-control-sm" [(ngModel)]="f.model.name" maxlength="200" placeholder="GST registration, Trade licence, ISO 27001…"></div>
+        <div class="col-md-5 form-group"><label class="text-xs _600">Issued by</label><input class="form-control form-control-sm" [(ngModel)]="f.model.authorityName" maxlength="200"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Number</label><input class="form-control form-control-sm" [(ngModel)]="f.model.number" maxlength="100"></div>
+        <div class="col-md-1 form-group px-md-1"><label class="text-xs _600">Country</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="f.model.countryCode" maxlength="2"></div>
+        <div class="col-md-2 form-group"><label class="text-xs _600">State</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="f.model.region" maxlength="10"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Issued on</label><input type="date" class="form-control form-control-sm" [(ngModel)]="f.model.issuedOn"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Expires on</label><input type="date" class="form-control form-control-sm" [(ngModel)]="f.model.expiresOn"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Remind days before</label><input type="number" class="form-control form-control-sm" [(ngModel)]="f.model.renewalLeadDays" min="0" max="365"></div>
+        <div class="col-12 form-group"><label class="text-sm mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.trackRenewal">Add a renewal task before it expires (appears in Tasks and reminders)</label></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Owner</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.ownerId"><option [ngValue]="null">Default owner</option>
+                <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Branch</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.branchId"><option [ngValue]="null">Whole organisation</option>
+                <option *ngFor="let b of lookups?.branches" [ngValue]="b.id">{{ b.name }}</option></select></div>
+    </div>
+
+    <div class="text-sm _600 mt-2 mb-1">Portal login</div>
+    <div class="row">
+        <div class="col-md-12 form-group"><label class="text-xs _600">Portal address</label><input class="form-control form-control-sm" [(ngModel)]="f.model.portalUrl" maxlength="300" placeholder="https://"></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Username</label><input class="form-control form-control-sm" [(ngModel)]="f.model.portalUsername" maxlength="200" autocomplete="off"></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Password</label>
+            <ng-container *ngIf="f.changeSecret">
+                <input type="password" class="form-control form-control-sm" [(ngModel)]="f.model.portalSecret" maxlength="500" autocomplete="new-password" placeholder="Stored encrypted">
+            </ng-container>
+            <div *ngIf="!f.changeSecret" class="d-flex align-items-center">
+                <span class="text-monospace mr-2">{{ f.revealed ?? (f.detail?.secretHint ?? 'none') }}</span>
+                <button *ngIf="f.detail?.secretHint && !f.revealed && lookups?.canManage" type="button" class="btn btn-xs white mr-1" (click)="reveal()" title="Every reveal is logged">Show</button>
+                <button *ngIf="lookups?.canManage" type="button" class="btn btn-xs white" (click)="f.changeSecret = true; f.model.portalSecret = ''">Change</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="f.model.notes" maxlength="2000"></textarea></div>
+    <div class="form-group">
+        <div class="text-xs _600 mb-1">Documents</div>
+        <div *ngFor="let d of f.detail?.files" class="text-sm"><i class="fa fa-file-o text-muted mr-1"></i><a role="button" (click)="download(d)">{{ d.fileName }}</a>
+            <span class="text-xs text-muted"> {{ d.uploadedAt | date:'d MMM yyyy' }}</span></div>
+        <label class="btn btn-xs white mt-1"><i class="fa fa-upload mr-1"></i>Attach certificate or receipt<input type="file" multiple hidden (change)="pickFiles($event)" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"></label>
+        <div *ngFor="let x of files" class="text-xs">{{ x.name }}</div>
+    </div>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isClosed">No longer held (surrendered or cancelled)</label>
+    <div *ngIf="f.detail?.obligations?.length" class="text-xs text-muted mt-2">Tracked: <span *ngFor="let o of f.detail?.obligations; let last = last">{{ o.name }}{{ o.nextDue ? ' (due ' + (o.nextDue | date:'d MMM yyyy') + ')' : '' }}{{ last ? '' : ', ' }}</span></div>
+
+    <div aside-footer class="d-flex">
+        <button *ngIf="f.id && lookups?.canDelete" class="btn white text-danger" (click)="remove()">Delete</button>
+        <span class="flex"></span>
+        <button class="btn white mr-1" (click)="form = null">Cancel</button>
+        <button *ngIf="lookups?.canWork" class="btn theme" [disabled]="busy" (click)="save()">Save</button>
+    </div>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Licences &amp; registrations</h6><small class="text-muted">What you hold, until when, and the portal to manage it</small></div></ng-template>
+<ng-template #actionTemplate><button *ngIf="lookups?.canWork" class="btn btn-sm theme" (click)="add()"><i class="fa fa-plus mr-1"></i>Add</button></ng-template>

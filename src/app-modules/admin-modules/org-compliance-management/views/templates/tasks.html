@@ -1,0 +1,80 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div *ngIf="!board" class="btn-group btn-group-sm mr-2 mb-2">
+                <button *ngFor="let t of tabs" type="button" class="btn white" [class.active]="status === t.status" (click)="setStatus(t.status)">{{ t.label }}</button>
+            </div>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 170px" [(ngModel)]="category" (change)="load()">
+                <option [ngValue]="null">All areas</option><option *ngFor="let c of categories" [ngValue]="c">{{ categoryLabel[c] }}</option>
+            </select>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" placeholder="Name, period, form or reference" [(ngModel)]="search" (keyup.enter)="load()">
+            <label class="text-sm mr-3 mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="mine" (change)="load()">Mine</label>
+            <span class="flex"></span>
+            <div class="btn-group btn-group-sm mb-2">
+                <button type="button" class="btn white" [class.active]="!board" (click)="board = false; load()" title="List"><i class="fa fa-list"></i></button>
+                <button type="button" class="btn white" [class.active]="board" (click)="board = true; load()" title="Board of open work"><i class="fa fa-columns"></i></button>
+            </div>
+        </div>
+        <div *ngIf="obligationId" class="text-sm mb-2">Showing one obligation · <a role="button" (click)="obligationId = null; load()">show all</a></div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div *ngIf="!loading && !rows.length && !error" class="box p-4 text-center text-muted">
+            Nothing here. <span *ngIf="status === 'open'">Activate obligations in <a routerLink="../obligations">Obligations</a> to schedule their deadlines.</span>
+        </div>
+
+        <!-- List -->
+        <div *ngIf="!board && rows.length" class="box"><div class="list">
+            <a *ngFor="let t of rows; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="open(t)">
+                <div class="text-center mr-3" style="width: 44px"><div class="text-xs text-muted">{{ t.dueDate | date:'MMM yy' }}</div><div class="_600">{{ t.dueDate | date:'d' }}</div></div>
+                <div class="flex" style="min-width: 0">
+                    <div class="_500 text-ellipsis">{{ t.name }} <span class="text-muted _400">· {{ t.periodLabel }}</span></div>
+                    <div class="text-xs text-muted text-ellipsis">{{ categoryLabel[t.category] }}<span *ngIf="t.countryCode"> · {{ t.countryCode }}</span><span *ngIf="t.formName"> · {{ t.formName }}</span>
+                        <span *ngIf="t.assignee"> · {{ t.assignee }}</span><span *ngIf="t.referenceNo"> · {{ t.referenceNo }}</span></div>
+                </div>
+                <div class="text-right ml-2" style="min-width: 120px">
+                    <span class="badge" [ngClass]="badge[t.displayStatus].css">{{ badge[t.displayStatus].label }}</span>
+                    <div *ngIf="t.status !== 'Completed' && t.status !== 'Waived'" class="text-xs" [class.text-danger]="t.daysLeft < 0" [class.text-muted]="t.daysLeft >= 0">{{ dueText(t.daysLeft) }}</div>
+                </div>
+            </a>
+        </div></div>
+        <div *ngIf="!board && count > pageSize" class="d-flex align-items-center mt-2 text-sm">
+            <span class="text-muted">{{ skip + 1 }}–{{ skip + rows.length }} of {{ count }}</span><span class="flex"></span>
+            <button class="btn btn-xs white mr-1" [disabled]="skip === 0" (click)="page(-1)">Previous</button>
+            <button class="btn btn-xs white" [disabled]="skip + rows.length >= count" (click)="page(1)">Next</button>
+        </div>
+
+        <!-- Board -->
+        <div *ngIf="board" class="d-flex" style="overflow-x: auto">
+            <div *ngFor="let c of boardColumns" class="mr-2" style="min-width: 230px; width: 20%">
+                <div class="text-xs text-uppercase _600 mb-2"><span class="badge mr-1" [ngClass]="badge[c].css">&nbsp;</span>{{ badge[c].label }} <span class="text-muted">{{ column(c).length }}</span></div>
+                <a *ngFor="let t of column(c); trackBy: trackById" class="box p-2 mb-2 d-block" role="button" (click)="open(t)">
+                    <div class="_500 text-sm">{{ t.name }}</div>
+                    <div class="text-xs text-muted">{{ t.periodLabel }} · due {{ t.dueDate | date:'d MMM' }}</div>
+                    <div *ngIf="t.assignee" class="text-xs text-muted"><i class="fa fa-user-o mr-1"></i>{{ t.assignee }}</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="openTaskId && lookups" size="lg" title="Compliance task" (closed)="close()">
+    <compliance-task-panel [taskId]="openTaskId" [lookups]="lookups" (changed)="load(false)"></compliance-task-panel>
+</app-aside>
+
+<app-aside *ngIf="adding as a" size="md" title="Add a task" (closed)="adding = null">
+    <div class="form-group"><label class="text-sm _600">Obligation *</label>
+        <select class="form-control" [(ngModel)]="a.obligationId"><option value="">Choose…</option>
+            <option *ngFor="let o of obligations" [value]="o.id">{{ o.name }}{{ o.countryCode ? ' (' + o.countryCode + ')' : '' }}</option></select></div>
+    <div class="row">
+        <div class="col-7 form-group"><label class="text-sm _600">Label *</label><input class="form-control" [(ngModel)]="a.periodLabel" maxlength="40" placeholder="Revised return, March 2026…"></div>
+        <div class="col-5 form-group"><label class="text-sm _600">Due *</label><input type="date" class="form-control" [(ngModel)]="a.dueDate"></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Assigned to</label>
+        <select class="form-control" [(ngModel)]="a.assigneeId"><option [ngValue]="null">The obligation's owner</option>
+            <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+    <div class="form-group"><label class="text-sm _600">Notes</label><textarea class="form-control" rows="3" [(ngModel)]="a.notes" maxlength="4000"></textarea></div>
+    <div aside-footer class="d-flex"><span class="flex"></span><button class="btn white mr-1" (click)="adding = null">Cancel</button><button class="btn theme" (click)="saveAdd()">Add</button></div>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Tasks</h6><small class="text-muted">Filings and actions by due date</small></div></ng-template>
+<ng-template #actionTemplate><button *ngIf="lookups?.canWork" class="btn btn-sm theme" (click)="startAdd()"><i class="fa fa-plus mr-1"></i>Add task</button></ng-template>

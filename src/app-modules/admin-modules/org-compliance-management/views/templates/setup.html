@@ -1,0 +1,94 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading || saving"></loader>
+    <div class="p-3">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div *ngIf="message" class="alert alert-success text-sm py-2">{{ message }}</div>
+
+        <!-- Profile -->
+        <div *ngIf="profile as p" class="box p-3 mb-3">
+            <div class="d-flex align-items-center mb-2">
+                <div class="_600">Compliance profile</div>
+                <span *ngIf="!p.reviewedAt" class="badge warn ml-2">assumed defaults: please review</span>
+                <span *ngIf="p.reviewedAt" class="text-xs text-muted ml-2">reviewed {{ p.reviewedAt | date:'d MMM yyyy' }}</span>
+            </div>
+            <div class="text-sm mb-3">
+                <span class="text-muted">From your organisation:</span>
+                operates in <b>{{ p.countries.join(', ') || '—' }}</b><span *ngIf="p.regions.length"> ({{ p.regions.join(', ') }})</span>
+                · {{ p.software ?? '—' }} · {{ p.businessType ?? '—' }} · financial year starts in {{ months[p.financialYearStartMonth - 1] }}.
+                <span class="text-xs text-muted">Branch countries and states are set in Organisation › Branches.</span>
+            </div>
+            <fieldset *ngIf="form as f" [disabled]="!canManage">
+                <div class="row">
+                    <div class="col-md-4 form-group"><label class="text-xs _600">Legal form</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="f.legalForm"><option *ngFor="let l of legalForms" [ngValue]="l">{{ legalFormLabel[l] }}</option></select></div>
+                    <div class="col-md-4 form-group"><label class="text-xs _600">Also operates in</label>
+                        <input class="form-control form-control-sm" [(ngModel)]="jurisdictions" placeholder="e.g. GB, US-CA, AE">
+                        <div class="text-xs text-muted">Countries (ISO codes) or states ("US-CA") without a branch.</div></div>
+                    <div class="col-md-4 form-group"><label class="text-xs _600">Default owner</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="f.defaultOwnerId"><option [ngValue]="null">Nobody</option>
+                            <option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option></select>
+                        <div class="text-xs text-muted">Gets obligations and reminders nobody else owns.</div></div>
+                </div>
+                <div class="text-xs _600 mb-1">Which of these apply?</div>
+                <div class="row">
+                    <div *ngFor="let c of lookups?.conditions" class="col-md-6 mb-1">
+                        <label class="text-sm mb-0"><input type="checkbox" class="mr-1" [checked]="hasCondition(c.code)" (change)="toggleCondition(c.code)">{{ c.question }}</label>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mt-2">
+                    <label class="text-sm mb-0 mr-2">Escalate overdue tasks after</label>
+                    <input type="number" class="form-control form-control-sm mr-1" style="width: 70px" [(ngModel)]="f.escalateAfterDays" min="0" max="60"><span class="text-sm">days</span>
+                    <span class="flex"></span>
+                    <button *ngIf="canManage" class="btn btn-sm theme" [disabled]="saving" (click)="saveProfile()">Save profile</button>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- Catalog -->
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div class="_600 mr-3 mb-2">Catalog</div>
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button type="button" class="btn white" [class.active]="scope === 'applicable'" (click)="scope = 'applicable'; loadCatalog()">Applies to us</button>
+                <button type="button" class="btn white" [class.active]="scope === 'all'" (click)="scope = 'all'; loadCatalog()">Everything</button>
+            </div>
+            <input class="form-control form-control-sm mr-2 mb-2 text-uppercase" style="width: 80px" [(ngModel)]="country" (keyup.enter)="loadCatalog()" placeholder="Country" maxlength="2">
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 170px" [(ngModel)]="category" (change)="loadCatalog()">
+                <option [ngValue]="null">All areas</option><option *ngFor="let c of categories" [ngValue]="c">{{ categoryLabel[c] }}</option></select>
+            <input class="form-control form-control-sm mr-2 mb-2" style="max-width: 220px" [(ngModel)]="search" (keyup.enter)="loadCatalog()" placeholder="Name, code or form">
+            <span class="flex"></span>
+            <ng-container *ngIf="canManage">
+                <button class="btn btn-sm white mr-1 mb-2" (click)="suggest()" title="Add newly applicable entries as suggestions">Refresh suggestions</button>
+                <button class="btn btn-sm theme mb-2" [disabled]="!selected.size" (click)="adoptSelected()">Track selected ({{ selected.size }})</button>
+            </ng-container>
+        </div>
+        <div *ngIf="!loading && !catalog.length" class="box p-4 text-center text-muted">Nothing matches. Try "Everything", another country or fewer filters.</div>
+        <div *ngIf="catalog.length" class="box"><div class="list">
+            <div *ngFor="let c of catalog" class="list-item p-2">
+                <div class="d-flex align-items-center">
+                    <input *ngIf="canManage" type="checkbox" class="mr-2" [disabled]="c.obligationStatus === 'Active'" [checked]="selected.has(c.id)" (change)="toggle(c.id)">
+                    <div class="flex" style="min-width: 0" role="button" (click)="expanded = expanded === c.id ? null : c.id">
+                        <div class="_500 text-ellipsis">{{ c.name }}<span *ngIf="c.formName" class="text-muted _400"> · {{ c.formName }}</span>
+                            <span *ngIf="c.isMandatory" class="badge white ml-1">required</span>
+                            <span *ngIf="!c.applies" class="badge grey ml-1" title="Your profile does not match">not for you</span></div>
+                        <div class="text-xs text-muted text-ellipsis">{{ c.countryCode ?? 'All countries' }}{{ c.region ? '-' + c.region : '' }} · {{ categoryLabel[c.category] }}
+                            <span *ngIf="c.authority"> · {{ c.authority }}</span> · {{ c.schedule }}</div>
+                    </div>
+                    <span *ngIf="c.obligationStatus" class="badge ml-2" [ngClass]="obligationBadge[c.obligationStatus]">{{ c.obligationStatus === 'Active' ? 'tracked' : c.obligationStatus }}</span>
+                    <button *ngIf="canManage && c.obligationStatus !== 'Active'" class="btn btn-xs white ml-2" (click)="adopt([c.id], true)">Track</button>
+                </div>
+                <div *ngIf="expanded === c.id" class="text-sm mt-2 ml-4">
+                    <p *ngIf="c.description" class="mb-1">{{ c.description }}</p>
+                    <div *ngIf="c.applies" class="text-xs text-success mb-1"><i class="fa fa-check mr-1"></i>{{ c.reasons.join(' · ') }}</div>
+                    <div *ngIf="c.applicabilityNote" class="text-xs text-muted mb-1"><i class="fa fa-info-circle mr-1"></i>{{ c.applicabilityNote }}</div>
+                    <div *ngIf="c.penaltyNote" class="text-xs text-danger mb-1"><i class="fa fa-exclamation-triangle mr-1"></i>{{ c.penaltyNote }}</div>
+                    <a *ngIf="c.referenceUrl" class="text-xs" [href]="c.referenceUrl" target="_blank" rel="noopener"><i class="fa fa-external-link mr-1"></i>Guidance</a>
+                    <span class="text-xs text-muted text-monospace ml-2">{{ c.code }}</span>
+                </div>
+            </div>
+        </div></div>
+        <div class="text-xs text-muted mt-2">Deadlines are the general statutory ones; extensions, thresholds and local variations are in each entry's notes. Every tracked schedule can be adjusted.</div>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Profile &amp; catalog</h6><small class="text-muted">What applies to you, by country, business and software</small></div></ng-template>
+<ng-template #actionTemplate><a class="btn btn-sm white" routerLink="../obligations" [queryParams]="{status: 'Suggested'}">Suggestions</a></ng-template>

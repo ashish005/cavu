@@ -1,0 +1,99 @@
+<loader [isLoading]="loading || busy"></loader>
+<div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+<ng-container *ngIf="task as t">
+    <!-- What and when -->
+    <div class="d-flex align-items-start mb-2">
+        <div class="flex">
+            <div class="text-muted text-sm">{{ categoryLabel[t.row.category] }}<span *ngIf="t.row.countryCode"> · {{ t.row.countryCode }}</span><span *ngIf="t.row.authorityName"> · {{ t.row.authorityName }}</span></div>
+            <div class="_600">{{ t.row.periodLabel }}<span *ngIf="t.row.formName" class="text-muted"> · {{ t.row.formName }}</span></div>
+        </div>
+        <div class="text-right">
+            <span class="badge" [ngClass]="badge[t.row.displayStatus].css">{{ badge[t.row.displayStatus].label }}</span>
+            <div class="text-sm mt-1">Due <b>{{ t.row.dueDate | date:'d MMM yyyy' }}</b></div>
+            <div *ngIf="t.row.status !== 'Completed' && t.row.status !== 'Waived'" class="text-xs" [class.text-danger]="t.row.daysLeft < 0">{{ dueText(t.row.daysLeft) }}</div>
+        </div>
+    </div>
+    <p *ngIf="t.description" class="text-sm text-muted mb-2">{{ t.description }}</p>
+    <div *ngIf="t.penaltyNote" class="text-xs text-danger mb-2"><i class="fa fa-exclamation-triangle mr-1"></i>{{ t.penaltyNote }}</div>
+    <div class="text-sm mb-3">
+        <a *ngIf="t.referenceUrl" [href]="t.referenceUrl" target="_blank" rel="noopener" class="mr-3"><i class="fa fa-external-link mr-1"></i>Authority guidance</a>
+        <span *ngIf="t.registration" class="text-muted"><i class="fa fa-id-card-o mr-1"></i>{{ t.registration }}</span>
+    </div>
+
+    <!-- People -->
+    <div *ngIf="!edit" class="box p-2 mb-3 text-sm d-flex flex-wrap align-items-center">
+        <div class="mr-4"><span class="text-muted">Assigned to</span> {{ t.row.assignee ?? 'nobody' }}</div>
+        <div class="mr-4"><span class="text-muted">Reviewer</span> {{ t.reviewer ?? 'none' }}</div>
+        <span class="flex"></span>
+        <button *ngIf="t.canEdit" class="btn btn-xs white" (click)="startEdit()"><i class="fa fa-pencil mr-1"></i>Edit</button>
+        <div *ngIf="t.notes" class="w-100 mt-2 text-muted" style="white-space: pre-wrap">{{ t.notes }}</div>
+    </div>
+    <div *ngIf="edit as e" class="box p-2 mb-3">
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-xs _600">Assigned to</label>
+                <select class="form-control form-control-sm" [(ngModel)]="e.assigneeId"><option [ngValue]="null">Nobody</option>
+                    <option *ngFor="let u of lookups.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Reviewer</label>
+                <select class="form-control form-control-sm" [(ngModel)]="e.reviewerId" [disabled]="!lookups.canManage"><option [ngValue]="null">No review</option>
+                    <option *ngFor="let u of lookups.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Due date</label>
+                <input type="date" class="form-control form-control-sm" [(ngModel)]="e.dueDate" [disabled]="!lookups.canManage">
+                <div class="text-xs text-muted">Move it only for an extension granted by the authority; the change is logged.</div></div>
+            <div class="col-12 form-group"><label class="text-xs _600">Working notes</label><textarea class="form-control form-control-sm" rows="3" [(ngModel)]="e.notes" maxlength="4000"></textarea></div>
+        </div>
+        <button class="btn btn-sm white mr-1" (click)="edit = null">Cancel</button><button class="btn btn-sm theme" [disabled]="busy" (click)="saveEdit()">Save</button>
+    </div>
+
+    <!-- Filing details -->
+    <div *ngIf="t.row.filedOn || t.row.referenceNo || t.amountPaid !== null || t.waiveReason" class="text-sm mb-3">
+        <div *ngIf="t.row.filedOn"><span class="text-muted">Filed on</span> {{ t.row.filedOn | date:'d MMM yyyy' }}
+            <span *ngIf="t.row.filedOn > t.row.dueDate" class="badge danger ml-1">late</span></div>
+        <div *ngIf="t.row.referenceNo"><span class="text-muted">Reference</span> <span class="text-monospace">{{ t.row.referenceNo }}</span></div>
+        <div *ngIf="t.amountPaid !== null"><span class="text-muted">Paid</span> {{ t.amountPaid | number:'1.2-2' }} {{ t.currencyCode }}</div>
+        <div *ngIf="t.waiveReason"><span class="text-muted">Not needed:</span> {{ t.waiveReason }}</div>
+    </div>
+
+    <!-- Actions -->
+    <div *ngIf="!pending" class="mb-3">
+        <ng-container *ngFor="let a of t.actions">
+            <button *ngIf="a !== 'note'" class="btn btn-sm mr-1 mb-1" [ngClass]="a === 'submit' || a === 'approve' ? 'theme' : 'white'" [disabled]="busy" (click)="choose(a)">{{ actionLabel[a] }}</button>
+        </ng-container>
+        <button *ngIf="t.actions.includes('note')" class="btn btn-sm white mb-1" (click)="choose('note')"><i class="fa fa-paperclip mr-1"></i>Note or evidence</button>
+    </div>
+    <div *ngIf="pending" class="box p-2 mb-3">
+        <div class="_600 text-sm mb-2">{{ actionLabel[pending] }}</div>
+        <div *ngIf="pending === 'submit' && t.reviewerId && t.reviewerId !== lookups.currentUserId" class="text-xs text-muted mb-2">{{ t.reviewer }} reviews it before it counts as done.</div>
+        <div *ngIf="recordsFiling" class="row">
+            <div class="col-md-4 form-group"><label class="text-xs _600">Filed on</label><input type="date" class="form-control form-control-sm" [(ngModel)]="form.filedOn"></div>
+            <div class="col-md-8 form-group"><label class="text-xs _600">Acknowledgement / reference no.</label><input class="form-control form-control-sm" [(ngModel)]="form.referenceNo" maxlength="100"></div>
+            <div class="col-md-5 form-group"><label class="text-xs _600">Amount paid</label><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="form.amountPaid" min="0" step="any"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Currency</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="form.currencyCode" maxlength="3"></div>
+        </div>
+        <div class="form-group"><label class="text-xs _600">{{ needsReason ? 'Reason *' : 'Note' }}</label>
+            <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="form.note" maxlength="2000"></textarea></div>
+        <div *ngIf="pending !== 'waive' && pending !== 'reopen'" class="form-group">
+            <label class="btn btn-xs white mb-1"><i class="fa fa-upload mr-1"></i>Attach evidence<input type="file" multiple hidden (change)="pickFiles($event)"
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.csv,.txt"></label>
+            <div *ngFor="let f of files; let i = index" class="text-xs">{{ f.name }} <a role="button" class="text-muted ml-1" (click)="removeFile(i)"><i class="fa fa-times"></i></a></div>
+        </div>
+        <button class="btn btn-sm white mr-1" (click)="pending = null">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="busy" (click)="run(pending)">{{ actionLabel[pending] }}</button>
+    </div>
+
+    <!-- Evidence -->
+    <ng-container *ngIf="t.files.length">
+        <div class="text-xs text-muted text-uppercase mb-1">Evidence</div>
+        <div *ngFor="let f of t.files" class="text-sm mb-1"><i class="fa fa-file-o mr-1 text-muted"></i>
+            <a role="button" (click)="download(f)">{{ f.fileName }}</a> <span class="text-xs text-muted">{{ size(f.sizeBytes) }} · {{ f.uploadedAt | date:'d MMM yyyy' }}</span></div>
+    </ng-container>
+
+    <!-- History -->
+    <div class="text-xs text-muted text-uppercase mt-3 mb-1">History</div>
+    <div *ngIf="!t.activity.length" class="text-sm text-muted">Nothing yet.</div>
+    <div *ngFor="let a of t.activity" class="text-sm mb-2">
+        <div><b>{{ a.user ?? 'Someone' }}</b> {{ a.action }}<span *ngIf="a.toStatus"> → {{ a.toStatus }}</span>
+            <span class="text-xs text-muted ml-1">{{ a.at | date:'d MMM yyyy, HH:mm' }}</span></div>
+        <div *ngIf="a.note" class="text-muted" style="white-space: pre-wrap">{{ a.note }}</div>
+    </div>
+</ng-container>

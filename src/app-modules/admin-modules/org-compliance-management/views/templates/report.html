@@ -1,0 +1,46 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-3">
+            <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="from" (change)="load()">
+            <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="to" (change)="load()">
+            <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 170px" [(ngModel)]="category" (change)="load()">
+                <option [ngValue]="null">All areas</option><option *ngFor="let c of categories" [ngValue]="c">{{ categoryLabel[c] }}</option></select>
+            <select *ngIf="(lookups?.branches?.length ?? 0) > 1" class="form-control form-control-sm mb-1" style="max-width: 180px" [(ngModel)]="branchId" (change)="load()">
+                <option [ngValue]="null">All branches</option><option *ngFor="let b of lookups?.branches" [ngValue]="b.id">{{ b.name }}</option></select>
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <ng-container *ngIf="report as r">
+            <div class="d-flex flex-wrap text-sm mb-3">
+                <div class="mr-4"><div class="text-xs text-muted">Due in the period</div><div class="h5 mb-0">{{ r.due }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">Filed on time</div><div class="h5 mb-0 text-success">{{ r.onTime }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">Filed late</div><div class="h5 mb-0" [class.text-warning]="r.late">{{ r.late }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">Overdue</div><div class="h5 mb-0" [class.text-danger]="r.overdue">{{ r.overdue }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">On-time rate</div><div class="h5 mb-0">{{ r.onTimeRate !== null ? r.onTimeRate + '%' : '—' }}</div></div>
+            </div>
+            <div class="box">
+                <table class="table table-sm mb-0">
+                    <thead><tr class="text-xs text-muted"><th>Obligation</th><th>Area</th><th class="text-right">Due</th><th class="text-right">On time</th><th class="text-right">Late</th>
+                        <th class="text-right">Not needed</th><th class="text-right">Open</th><th class="text-right">Overdue</th><th class="text-right">On time %</th><th class="text-right">Paid ({{ r.currencyCode }})</th></tr></thead>
+                    <tbody>
+                    <tr *ngFor="let x of r.rows">
+                        <td><a [routerLink]="['../tasks']" [queryParams]="{obligation: x.obligationId, status: 'all'}">{{ x.name }}</a> <span class="text-xs text-muted">{{ x.countryCode }}</span></td>
+                        <td class="text-sm text-muted">{{ categoryLabel[x.category] }}</td>
+                        <td class="text-right">{{ x.due }}</td><td class="text-right">{{ x.onTime }}</td><td class="text-right" [class.text-warning]="x.late">{{ x.late }}</td>
+                        <td class="text-right">{{ x.waived }}</td><td class="text-right">{{ x.open }}</td><td class="text-right" [class.text-danger]="x.overdue">{{ x.overdue }}</td>
+                        <td class="text-right">{{ x.onTimeRate !== null ? x.onTimeRate + '%' : '' }}</td><td class="text-right">{{ x.amountPaid ? (x.amountPaid | number:'1.2-2') : '' }}</td>
+                    </tr>
+                    <tr *ngIf="!r.rows.length"><td colspan="10" class="text-center text-muted">Nothing was due in this period.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-xs text-muted mt-2">Counted by due date. Late: filed after the due date. Amounts are as recorded on each filing.</div>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Compliance report</h6><small class="text-muted">Status by obligation for a period</small></div></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" [disabled]="!report" (click)="exportCsv()"><i class="fa fa-download mr-1"></i>CSV</button>
+    <button class="btn btn-sm white" onclick="window.print()"><i class="fa fa-print mr-1"></i>Print</button>
+</ng-template>

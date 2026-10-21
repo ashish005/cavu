@@ -1,0 +1,97 @@
+<loader [isLoading]="loading || busy"></loader>
+<div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+<div *ngIf="detail as d" class="d-flex flex-wrap align-items-center mb-3">
+    <span class="badge mr-2" [ngClass]="badge[d.status]">{{ d.status }}</span>
+    <span *ngIf="d.templateCode" class="text-xs text-muted text-monospace mr-2">{{ d.templateCode }}</span>
+    <span class="flex"></span>
+    <ng-container *ngIf="canManage">
+        <button *ngIf="d.status === 'Suggested'" class="btn btn-sm theme mr-1" (click)="act('activate')">Activate</button>
+        <button *ngIf="d.status === 'Active'" class="btn btn-sm white mr-1" (click)="act('pause')">Pause</button>
+        <button *ngIf="d.status === 'Paused' || d.status === 'Retired'" class="btn btn-sm white mr-1" (click)="act('resume')">Resume</button>
+        <button *ngIf="d.updateAvailable" class="btn btn-sm white mr-1" (click)="act('refresh')" title="The catalog's schedule changed since it was adopted"><i class="fa fa-refresh mr-1"></i>Catalog update</button>
+        <button *ngIf="d.status !== 'Retired'" class="btn btn-sm white text-danger mr-1" (click)="act('retire')">{{ d.status === 'Suggested' ? 'Dismiss' : 'Retire' }}</button>
+        <button *ngIf="lookups.canDelete" class="btn btn-sm white text-danger" (click)="remove()" title="Only without filing history"><i class="fa fa-trash"></i></button>
+    </ng-container>
+</div>
+<div *ngIf="detail?.applicabilityNote" class="alert alert-info text-sm py-2"><i class="fa fa-info-circle mr-1"></i>{{ detail?.applicabilityNote }}</div>
+<div *ngIf="detail?.penaltyNote" class="text-xs text-danger mb-2"><i class="fa fa-exclamation-triangle mr-1"></i>{{ detail?.penaltyNote }}</div>
+
+<fieldset [disabled]="readOnly">
+    <div class="row">
+        <div class="col-md-8 form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="model.name" maxlength="200"></div>
+        <div class="col-md-4 form-group"><label class="text-sm _600">Category</label>
+            <select class="form-control" [(ngModel)]="model.category"><option *ngFor="let c of categories" [ngValue]="c">{{ categoryLabel[c] }}</option></select></div>
+        <div class="col-12 form-group"><label class="text-sm _600">Description</label><textarea class="form-control" rows="2" [(ngModel)]="model.description" maxlength="1000"></textarea></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Authority</label><input class="form-control form-control-sm" [(ngModel)]="model.authorityName" maxlength="200"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Form / return</label><input class="form-control form-control-sm" [(ngModel)]="model.formName" maxlength="100"></div>
+        <div class="col-md-2 form-group"><label class="text-xs _600">Country</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="model.countryCode" maxlength="2" placeholder="IN"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">State / region</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="model.region" maxlength="10"></div>
+        <div class="col-md-8 form-group"><label class="text-xs _600">Guidance link</label><input class="form-control form-control-sm" [(ngModel)]="model.referenceUrl" maxlength="300" placeholder="https://"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Branch</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.branchId"><option [ngValue]="null">Whole organisation</option>
+                <option *ngFor="let b of lookups.branches" [ngValue]="b.id">{{ b.name }}</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Owner (does the work)</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.ownerId"><option [ngValue]="null">Default owner</option>
+                <option *ngFor="let u of lookups.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Reviewer</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.reviewerId"><option [ngValue]="null">No review</option>
+                <option *ngFor="let u of lookups.users" [ngValue]="u.id">{{ u.name }}</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Filed under registration</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.registrationId"><option [ngValue]="null">None</option>
+                <option *ngFor="let r of registrations" [ngValue]="r.id">{{ r.name }}{{ r.number ? ' · ' + r.number : '' }}</option></select></div>
+    </div>
+
+    <div class="text-sm _600 mt-2 mb-1">Schedule</div>
+    <div class="row">
+        <div class="col-md-5 form-group">
+            <select class="form-control form-control-sm" [(ngModel)]="model.schedule" (ngModelChange)="changed()"><option *ngFor="let k of kinds" [ngValue]="k">{{ scheduleLabel[k] }}</option></select></div>
+        <ng-container *ngIf="model.schedule === 'Periodic'">
+            <div class="col-md-4 form-group">
+                <select class="form-control form-control-sm" [(ngModel)]="model.intervalMonths" (ngModelChange)="changed()"><option *ngFor="let i of intervals" [ngValue]="i.v">{{ i.l }}</option></select></div>
+            <div class="col-md-3 form-group"><label class="text-sm mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="model.useFinancialYear" (ngModelChange)="changed()">Financial year</label></div>
+            <div *ngIf="!model.useFinancialYear" class="col-md-5 form-group"><label class="text-xs _600">Periods start in</label>
+                <select class="form-control form-control-sm" [(ngModel)]="model.yearStartMonth" (ngModelChange)="changed()"><option *ngFor="let m of months; let i = index" [ngValue]="i + 1">{{ m }}</option></select></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Due day</label><input type="number" class="form-control form-control-sm" [(ngModel)]="model.dueDay" (ngModelChange)="changed()" min="1" max="31"></div>
+            <div class="col-md-4 form-group"><label class="text-xs _600">Months after the period</label><input type="number" class="form-control form-control-sm" [(ngModel)]="model.dueMonthOffset" (ngModelChange)="changed()" min="-12" max="24">
+                <div class="text-xs text-muted">0: in its last month, 1: the next month…</div></div>
+        </ng-container>
+        <ng-container *ngIf="model.schedule === 'Anniversary'">
+            <div class="col-md-4 form-group">
+                <select class="form-control form-control-sm" [(ngModel)]="model.intervalMonths" (ngModelChange)="changed()"><option *ngFor="let i of intervals" [ngValue]="i.v">{{ i.l }}</option></select></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Days after (− before)</label><input type="number" class="form-control form-control-sm" [(ngModel)]="model.dueDay" (ngModelChange)="changed()"></div>
+        </ng-container>
+        <div *ngIf="model.schedule === 'Anniversary' || model.schedule === 'OneTime'" class="col-md-5 form-group">
+            <label class="text-xs _600">{{ model.schedule === 'OneTime' ? 'Due on *' : 'Counts from (incorporation, registration, expiry) *' }}</label>
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="model.anchorDate" (ngModelChange)="changed()"></div>
+        <ng-container *ngIf="model.schedule !== 'OnEvent'">
+            <div class="col-md-3 form-group"><label class="text-xs _600">Remind days before</label><input type="number" class="form-control form-control-sm" [(ngModel)]="model.leadDays" min="0" max="180"></div>
+            <div class="col-md-4 form-group"><label class="text-xs _600">Track from</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.startDate" (ngModelChange)="changed()"></div>
+            <div class="col-md-4 form-group"><label class="text-xs _600">Until</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.endDate"></div>
+            <div class="col-12 form-group"><label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="model.rollForwardWeekend" (ngModelChange)="changed()">Weekend due dates move to Monday</label></div>
+        </ng-container>
+        <div *ngIf="model.schedule === 'OnEvent'" class="col-12 text-xs text-muted mb-2">No tasks are scheduled; add one from Tasks when it happens.</div>
+    </div>
+    <div class="form-group"><label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="model.isMandatory">Required by law</label></div>
+    <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="model.notes" maxlength="2000"></textarea></div>
+</fieldset>
+
+<div *ngIf="periods.length" class="box p-2 mb-3">
+    <div class="text-xs text-muted text-uppercase mb-1">Next due dates</div>
+    <div *ngFor="let p of periods" class="d-flex text-sm"><span class="flex">{{ p.label }}</span><b>{{ p.due | date:'EEE d MMM yyyy' }}</b></div>
+</div>
+
+<ng-container *ngIf="detail?.recentTasks?.length">
+    <div class="text-xs text-muted text-uppercase mb-1">Recent periods</div>
+    <div *ngFor="let t of detail?.recentTasks" class="d-flex align-items-center text-sm mb-1">
+        <span class="flex">{{ t.periodLabel }} <span class="text-xs text-muted">due {{ t.dueDate | date:'d MMM yyyy' }}</span></span>
+        <span class="text-xs text-muted mr-2 text-monospace">{{ t.referenceNo }}</span>
+        <span class="badge" [ngClass]="taskBadge[t.displayStatus].css">{{ taskBadge[t.displayStatus].label }}</span>
+    </div>
+</ng-container>
+
+<div aside-footer class="d-flex">
+    <span class="flex"></span>
+    <button class="btn white mr-1" (click)="cancelled.emit()">Close</button>
+    <button *ngIf="!readOnly" class="btn theme" [disabled]="busy" (click)="save()">{{ detail ? 'Save' : 'Create and track' }}</button>
+</div>

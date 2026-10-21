@@ -12,7 +12,8 @@ export const CoreCommonModuleRoutes = [
     // Finance workspace on api/v1/finance (org-voucher): invoices, bills, money in/out, journals, accounts, reports, settings.
     { path: 'invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", title: 'Finance', header: 'Finance'} },
     { path: 'org-invoice', loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", icon: "fa fa-money", name: "Money", key: 'layout.money', title: 'Finance', header: 'Finance'} },
-    { path: 'compliance-report', loadChildren: () => import('app-modules/admin-modules/org-compliance-management/report/index').then(m => m.ComplianceReportModule), data: {title: 'Compliance', header: 'Compliance'} },
+    // Older "Audit & Compliance" menu links: compliance now lives in admin (org-compliance-management).
+    { path: 'compliance-report', pathMatch: 'full' as const, redirectTo: '/app/admin/compliance/report' },
 
     // Employees, clients / customers and suppliers: the party screens on api/v1/parties (org-party-management).
     // Gated by module (EMP / FIN / VEN); titles use the organisation's own name for the role (Patient, Student…).

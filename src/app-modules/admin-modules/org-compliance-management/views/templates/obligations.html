@@ -1,0 +1,62 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading || busy"></loader>
+    <div class="p-3">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div class="btn-group btn-group-sm mr-2 mb-2">
+                <button *ngFor="let s of statuses" type="button" class="btn white" [class.active]="status === s" (click)="setStatus(s)">{{ s }}</button>
+                <button type="button" class="btn white" [class.active]="status === null" (click)="setStatus(null)">All</button>
+            </div>
+            <select class="form-control form-control-sm mr-2 mb-2" style="max-width: 170px" [(ngModel)]="category" (change)="load()">
+                <option [ngValue]="null">All areas</option><option *ngFor="let c of categories" [ngValue]="c">{{ categoryLabel[c] }}</option>
+            </select>
+            <input class="form-control form-control-sm mb-2" style="max-width: 240px" placeholder="Name, form or authority" [(ngModel)]="search" (keyup.enter)="load()">
+        </div>
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div *ngIf="message" class="alert alert-success text-sm py-2">{{ message }}</div>
+
+        <div *ngIf="status === 'Suggested' && rows.length && lookups?.canManage" class="box p-2 mb-2 d-flex flex-wrap align-items-center text-sm">
+            <span class="mr-2">These apply to you according to the catalog. Owner for activated ones:</span>
+            <select class="form-control form-control-sm mr-2" style="max-width: 200px" [(ngModel)]="bulkOwnerId">
+                <option [ngValue]="null">Default owner</option><option *ngFor="let u of lookups?.users" [ngValue]="u.id">{{ u.name }}</option></select>
+            <span class="flex"></span>
+            <button class="btn btn-sm white mr-1" [disabled]="!selected.size" (click)="bulk('dismiss', false)">Dismiss selected</button>
+            <button class="btn btn-sm white mr-1" [disabled]="!selected.size" (click)="bulk('activate', false)">Activate selected ({{ selected.size }})</button>
+            <button class="btn btn-sm theme" (click)="bulk('activate', true)">Activate all</button>
+        </div>
+
+        <div *ngIf="!loading && !rows.length && !error" class="box p-4 text-center text-muted">
+            <ng-container *ngIf="status === 'Active'">Nothing tracked yet. Review the <a role="button" (click)="setStatus('Suggested')">suggestions</a>,
+                browse the <a routerLink="../setup">catalog</a>, or add your own.</ng-container>
+            <ng-container *ngIf="status !== 'Active'">Nothing here.</ng-container>
+        </div>
+        <div *ngIf="rows.length" class="box"><div class="list">
+            <a *ngFor="let o of rows; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="open(o.id)">
+                <input *ngIf="status === 'Suggested' && lookups?.canManage" type="checkbox" class="mr-2" [checked]="selected.has(o.id)" (click)="toggle(o.id, $event)">
+                <div class="flex" style="min-width: 0">
+                    <div class="_500 text-ellipsis">{{ o.name }} <span *ngIf="o.isMandatory" class="badge white ml-1" title="Required by law">required</span>
+                        <span *ngIf="o.updateAvailable" class="badge info ml-1" title="The catalog's schedule changed">update</span></div>
+                    <div class="text-xs text-muted text-ellipsis">{{ categoryLabel[o.category] }}<span *ngIf="o.countryCode"> · {{ o.countryCode }}{{ o.region ? '-' + o.region : '' }}</span>
+                        <span *ngIf="o.formName"> · {{ o.formName }}</span><span *ngIf="o.authorityName"> · {{ o.authorityName }}</span> · {{ o.schedule }}
+                        <span *ngIf="o.branch"> · {{ o.branch }}</span><span *ngIf="o.owner"> · {{ o.owner }}</span></div>
+                </div>
+                <div class="text-right ml-2" style="min-width: 150px">
+                    <span class="badge" [ngClass]="badge[o.status]">{{ o.status }}</span>
+                    <div *ngIf="o.nextDue" class="text-xs text-muted">next {{ o.nextDue | date:'d MMM yyyy' }}</div>
+                    <div *ngIf="o.overdueTasks" class="text-xs text-danger">{{ o.overdueTasks }} overdue</div>
+                </div>
+                <a class="btn btn-xs white ml-2" title="Tasks" [routerLink]="['../tasks']" [queryParams]="{obligation: o.id, status: 'all'}" (click)="$event.stopPropagation()"><i class="fa fa-check-square-o"></i></a>
+            </a>
+        </div></div>
+        <div *ngIf="count > rows.length" class="text-xs text-muted mt-2">Showing {{ rows.length }} of {{ count }}; narrow with the filters.</div>
+    </div>
+</div>
+
+<app-aside *ngIf="editing !== null && lookups" size="xl" [title]="editing ? 'Obligation' : 'New obligation'" (closed)="close()">
+    <compliance-obligation-editor [obligationId]="editing || null" [lookups]="lookups" (saved)="saved($event)" (cancelled)="close()"></compliance-obligation-editor>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Obligations</h6><small class="text-muted">What you must file, renew or do, and how often</small></div></ng-template>
+<ng-template #actionTemplate>
+    <a *ngIf="lookups?.canManage" class="btn btn-sm white mr-1" routerLink="../setup"><i class="fa fa-book mr-1"></i>Catalog</a>
+    <button *ngIf="lookups?.canManage" class="btn btn-sm theme" (click)="open(null)"><i class="fa fa-plus mr-1"></i>New obligation</button>
+</ng-template>

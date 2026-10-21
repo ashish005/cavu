@@ -1,0 +1,30 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <div class="box">
+            <div class="d-flex b-b">
+                <div *ngFor="let w of weekdays" class="flex p-1 text-xs text-muted text-center">{{ w }}</div>
+            </div>
+            <div *ngFor="let week of weeks" class="d-flex b-b">
+                <div *ngFor="let c of week" class="flex p-1 b-r" style="min-height: 96px; min-width: 0" [class.text-muted]="!c.inMonth" [style.background]="c.isToday ? 'rgba(120,130,140,.08)' : null">
+                    <div class="text-xs" [class._600]="c.isToday">{{ c.day }}</div>
+                    <a *ngFor="let t of c.tasks.slice(0, 4)" class="d-block text-xs text-ellipsis mb-1 px-1 rounded" role="button" (click)="openTaskId = t.id"
+                       [ngClass]="badge[t.displayStatus].css" [title]="t.name + ' · ' + t.periodLabel">{{ t.name }}</a>
+                    <div *ngIf="c.tasks.length > 4" class="text-xs text-muted">+{{ c.tasks.length - 4 }} more</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="openTaskId && lookups" size="lg" title="Compliance task" (closed)="openTaskId = null">
+    <compliance-task-panel [taskId]="openTaskId" [lookups]="lookups" (changed)="load()"></compliance-task-panel>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">{{ month | date:'MMMM yyyy' }}</h6><small class="text-muted">Due dates</small></div></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="move(-1)"><i class="fa fa-chevron-left"></i></button>
+    <button class="btn btn-sm white mr-1" (click)="today()">Today</button>
+    <button class="btn btn-sm white" (click)="move(1)"><i class="fa fa-chevron-right"></i></button>
+</ng-template>

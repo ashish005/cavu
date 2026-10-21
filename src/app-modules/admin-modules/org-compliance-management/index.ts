@@ -1,1 +1,0 @@
-export {ComplianceManageModule} from "./manage";

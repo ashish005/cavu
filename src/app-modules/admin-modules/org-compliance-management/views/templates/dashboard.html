@@ -1,0 +1,104 @@
+<div class="d-flex flex-column flex scroll-y">
+    <loader [isLoading]="loading"></loader>
+    <div class="p-3">
+        <div *ngIf="error" class="alert alert-danger text-sm">{{ error }}</div>
+        <ng-container *ngIf="data as d">
+            <!-- Setup prompts -->
+            <div *ngIf="!d.profileReviewed && lookups?.canManage" class="alert alert-info d-flex align-items-center">
+                <i class="fa fa-sliders mr-2"></i>
+                <span class="flex">Confirm what applies to you (legal form, employees, sales tax, card payments…) so the obligations suggested from the catalog fit.</span>
+                <a routerLink="../setup" class="btn btn-sm white ml-2">Review profile</a>
+            </div>
+            <div *ngIf="d.suggestedObligations" class="alert alert-warning d-flex align-items-center">
+                <i class="fa fa-lightbulb-o mr-2"></i>
+                <span class="flex">{{ d.suggestedObligations }} obligations from the catalog apply to you and are not tracked yet.</span>
+                <a routerLink="../obligations" [queryParams]="{status: 'Suggested'}" class="btn btn-sm white ml-2">Review suggestions</a>
+            </div>
+
+            <!-- Key figures -->
+            <div class="row">
+                <div class="col-6 col-md-3 mb-3"><a class="box p-3 d-block" routerLink="../tasks" [queryParams]="{status: 'overdue'}">
+                    <div class="text-xs text-muted text-uppercase">Overdue</div><div class="h3 mb-0" [class.text-danger]="d.overdue">{{ d.overdue }}</div></a></div>
+                <div class="col-6 col-md-3 mb-3"><a class="box p-3 d-block" routerLink="../tasks" [queryParams]="{status: 'due_soon'}">
+                    <div class="text-xs text-muted text-uppercase">Due in 7 days</div><div class="h3 mb-0">{{ d.dueThisWeek }}</div></a></div>
+                <div class="col-6 col-md-3 mb-3"><a class="box p-3 d-block" routerLink="../tasks" [queryParams]="{status: 'submitted'}">
+                    <div class="text-xs text-muted text-uppercase">Waiting for review</div><div class="h3 mb-0">{{ d.awaitingReview }}</div></a></div>
+                <div class="col-6 col-md-3 mb-3"><div class="box p-3">
+                    <div class="text-xs text-muted text-uppercase">Filed on time (12 months)</div>
+                    <div class="h3 mb-0">{{ d.onTimeRate !== null ? d.onTimeRate + '%' : '—' }}</div></div></div>
+            </div>
+            <div class="text-sm text-muted mb-3">{{ d.activeObligations }} obligations tracked · {{ d.open }} open tasks · {{ d.completedThisMonth }} filed this month
+                <span *ngIf="d.expiringRegistrations"> · <a routerLink="../registrations" [queryParams]="{state: 'expiring'}" class="text-warning">{{ d.expiringRegistrations }} licences to renew</a></span></div>
+
+            <div class="row">
+                <!-- Overdue and upcoming -->
+                <div class="col-lg-7 mb-3">
+                    <div class="box">
+                        <div class="p-2 b-b _600">Overdue</div>
+                        <div *ngIf="!d.overdues.length" class="p-3 text-muted text-sm">Nothing overdue.</div>
+                        <div class="list">
+                            <a *ngFor="let t of d.overdues; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="openTaskId = t.id">
+                                <div class="flex" style="min-width: 0"><div class="_500 text-ellipsis">{{ t.name }}</div>
+                                    <div class="text-xs text-muted">{{ t.periodLabel }}<span *ngIf="t.assignee"> · {{ t.assignee }}</span></div></div>
+                                <span class="text-xs text-danger ml-2">{{ dueText(t.daysLeft) }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="box mt-3">
+                        <div class="p-2 b-b _600 d-flex">Coming up <span class="flex"></span><a routerLink="../calendar" class="text-sm _400">Calendar</a></div>
+                        <div *ngIf="!d.upcoming.length" class="p-3 text-muted text-sm">Nothing scheduled. Activate obligations to track their deadlines.</div>
+                        <div class="list">
+                            <a *ngFor="let t of d.upcoming; trackBy: trackById" class="list-item p-2 d-flex align-items-center" role="button" (click)="openTaskId = t.id">
+                                <div class="text-center mr-3" style="width: 44px"><div class="text-xs text-muted">{{ t.dueDate | date:'MMM' }}</div><div class="_600">{{ t.dueDate | date:'d' }}</div></div>
+                                <div class="flex" style="min-width: 0"><div class="_500 text-ellipsis">{{ t.name }}</div>
+                                    <div class="text-xs text-muted">{{ t.periodLabel }}<span *ngIf="t.formName"> · {{ t.formName }}</span><span *ngIf="t.assignee"> · {{ t.assignee }}</span></div></div>
+                                <span class="badge ml-2" [ngClass]="badge[t.displayStatus].css">{{ badge[t.displayStatus].label }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 mb-3">
+                    <!-- By category -->
+                    <div class="box p-2 mb-3">
+                        <div class="_600 mb-2">By area</div>
+                        <div *ngIf="!d.byCategory.length" class="text-muted text-sm">No tasks yet.</div>
+                        <div *ngFor="let c of d.byCategory" class="d-flex align-items-center text-sm mb-1">
+                            <i class="fa fa-fw text-muted mr-2" [ngClass]="categoryIcon[c.category]"></i>
+                            <span class="flex">{{ categoryLabel[c.category] }}</span>
+                            <span class="mr-3">{{ c.open }} open</span>
+                            <span [class.text-danger]="c.overdue" [class.text-muted]="!c.overdue" style="min-width: 70px" class="text-right">{{ c.overdue }} overdue</span>
+                        </div>
+                    </div>
+                    <!-- Trend -->
+                    <div class="box p-2 mb-3">
+                        <div class="_600 mb-2">Last six months <span class="text-xs text-muted _400">by due date</span></div>
+                        <div class="d-flex align-items-end" style="height: 110px">
+                            <div *ngFor="let m of d.trend" class="flex d-flex flex-column align-items-center" style="height: 100%" [title]="m.onTime + ' on time, ' + m.late + ' late, ' + m.missed + ' missed'">
+                                <div class="d-flex flex-column-reverse w-50 flex" style="justify-content: flex-start">
+                                    <div class="success" [style.height]="bar(m.onTime)"></div><div class="warning" [style.height]="bar(m.late)"></div><div class="danger" [style.height]="bar(m.missed)"></div>
+                                </div>
+                                <div class="text-xs text-muted mt-1">{{ m.month.slice(0, 3) }}</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-muted mt-1"><span class="badge success">&nbsp;</span> on time <span class="badge warning ml-2">&nbsp;</span> late <span class="badge danger ml-2">&nbsp;</span> missed</div>
+                    </div>
+                    <!-- Licences -->
+                    <div *ngIf="d.expiring.length" class="box p-2">
+                        <div class="_600 mb-2">Licences to renew</div>
+                        <div *ngFor="let r of d.expiring" class="d-flex text-sm mb-1">
+                            <span class="flex">{{ r.name }}</span><span class="badge" [ngClass]="regState[r.state].css">{{ r.expiresOn | date:'d MMM yyyy' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<app-aside *ngIf="openTaskId && lookups" size="lg" title="Compliance task" (closed)="openTaskId = null">
+    <compliance-task-panel [taskId]="openTaskId" [lookups]="lookups" (changed)="load()"></compliance-task-panel>
+</app-aside>
+
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Compliance</h6><small class="text-muted">Deadlines, filings and licences</small></div></ng-template>
+<ng-template #actionTemplate><a class="btn btn-sm theme" routerLink="../tasks"><i class="fa fa-check-square-o mr-1"></i>Tasks</a></ng-template>
