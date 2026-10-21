@@ -63,7 +63,7 @@ export const STATUS_LABEL: Record<string, {label: string; tone: string}> = {
     void: {label: 'Void', tone: 'dark'}
 };
 
-const readOnlySerializer = <T extends CoreResource>(Row: new (json: any) => T): CoreSerializer => ({
+export const readOnlySerializer = <T extends CoreResource>(Row: new (json: any) => T): CoreSerializer => ({
     fromJson: (json: any) => new Row(json),
     toJson: () => { throw new Error('Grid rows are read-only.'); }
 });
@@ -111,6 +111,11 @@ export interface FinanceLine {
     id?: string; lineNo?: number; description: string; accountId: string | null; accountName?: string; quantity: number; unitPrice: number;
     discountRate: number; taxCodeId: string | null; taxCode?: string | null; taxRate?: number; netAmount?: number; taxAmount?: number; lineTotal?: number;
     withholdingTaxCodeId?: string | null; withholdingAmount?: number;
+    /** Catalog item (products and services); stocked items move stock when the document is posted. */
+    itemId?: string | null; itemCode?: string | null; itemName?: string | null; itemType?: 'Service' | 'NonInventory' | 'Inventory' | null; unit?: string | null;
+    classificationCode?: string | null; warehouseId?: string | null; warehouse?: string | null;
+    /** Stocked items, once posted: cost per unit and in total (functional currency). */
+    unitCost?: number | null; costAmount?: number | null;
 }
 export interface LedgerLine { accountId: string; accountName: string; accountCode: string | null; debit: number; credit: number; description: string | null; }
 export interface FinanceAllocation { id: string; voucherId: string; kind: FinanceKind; number: string; date: string; amount: number; isApplied: boolean; }

@@ -16,6 +16,9 @@ import {
     FinanceAccountingView, FinanceDocumentTypesView, FinanceInvoicingView, FinancePostingView, FinanceRecurringView, FinanceTaxCodesView, FinanceTaxRulesView
 } from "./views/settings.view";
 import {FinanceKind} from "./domains/finance.models";
+import {
+    FinanceInventoryReportsView, FinanceInventorySetupView, FinanceItemsView, FinanceStockDocumentsView, FinanceStockMovementsView, FinanceStockView, INVENTORY_SERVICES
+} from "./inventory";
 
 interface NavItem { label: string; icon: string; route: string; }
 interface NavSection { title: string; items: NavItem[]; }
@@ -69,6 +72,13 @@ export class FinanceShell {
             {label: 'Bills', icon: 'fa fa-file-o', route: ROUTE_OF_KIND.Bill},
             {label: 'Debit notes', icon: 'fa fa-repeat', route: ROUTE_OF_KIND.DebitNote},
             {label: 'Money out', icon: 'fa fa-arrow-up', route: ROUTE_OF_KIND.Payment}]},
+        {title: 'Products & stock', items: [
+            {label: 'Products & services', icon: 'fa fa-cubes', route: 'products/items'},
+            {label: 'Stock on hand', icon: 'fa fa-archive', route: 'products/stock'},
+            {label: 'Adjustments', icon: 'fa fa-sliders', route: 'products/adjustments'},
+            {label: 'Stock movements', icon: 'fa fa-history', route: 'products/movements'},
+            {label: 'Inventory reports', icon: 'fa fa-pie-chart', route: 'products/reports'},
+            {label: 'Products setup', icon: 'fa fa-cog', route: 'products/setup'}]},
         {title: 'Accounting', items: [
             {label: 'Journals', icon: 'fa fa-book', route: ROUTE_OF_KIND.Journal},
             {label: 'Transfers', icon: 'fa fa-exchange', route: ROUTE_OF_KIND.Contra},
@@ -118,6 +128,13 @@ export const FINANCE_ROUTES: Routes = [
             kindRoute('Invoice', 'Invoices'), kindRoute('CreditNote', 'Credit notes'), kindRoute('Receipt', 'Money in'),
             kindRoute('Bill', 'Bills'), kindRoute('DebitNote', 'Debit notes'), kindRoute('Payment', 'Money out'),
             kindRoute('Journal', 'Journals'), kindRoute('Contra', 'Transfers'),
+            {path: 'products', pathMatch: 'full', redirectTo: 'products/items'},
+            {path: 'products/items', component: FinanceItemsView, data: {title: 'Products & services', header: 'Products & services'}},
+            {path: 'products/stock', component: FinanceStockView, data: {title: 'Stock on hand', header: 'Stock on hand'}},
+            {path: 'products/adjustments', component: FinanceStockDocumentsView, data: {title: 'Stock adjustments', header: 'Stock adjustments'}},
+            {path: 'products/movements', component: FinanceStockMovementsView, data: {title: 'Stock movements', header: 'Stock movements'}},
+            {path: 'products/reports', component: FinanceInventoryReportsView, data: {title: 'Inventory reports', header: 'Inventory reports'}},
+            {path: 'products/setup', component: FinanceInventorySetupView, data: {title: 'Products setup', header: 'Products setup'}},
             {path: 'accounting/chart', component: FinanceChartView, data: {title: 'Chart of accounts', header: 'Chart of accounts'}},
             {path: 'reports', component: FinanceReportsView, data: {title: 'Reports', header: 'Reports'}},
             {path: 'recurring', component: FinanceRecurringView, data: {title: 'Recurring', header: 'Recurring'}},
@@ -135,11 +152,12 @@ export const FINANCE_ROUTES: Routes = [
 
 @NgModule({
     imports: [CommonModule, FormsModule, RouterModule.forChild(FINANCE_ROUTES), GlobalModule, AsidePanelComponent, MoneyPipe, FinanceStatusPipe, FinancePickerComponent],
-    providers: [FINANCE_SERVICES],
+    providers: [FINANCE_SERVICES, INVENTORY_SERVICES],
     declarations: [
         FinanceShell, FinanceLegacyCreateRedirect, FinanceDashboardView, FinanceDocumentsView, FinanceDocumentEditorComponent, FinanceDocumentDetailComponent,
         FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceTaxRulesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
-        FinanceRecurringView
+        FinanceRecurringView, FinanceItemsView, FinanceStockView, FinanceStockMovementsView, FinanceStockDocumentsView, FinanceInventoryReportsView,
+        FinanceInventorySetupView
     ]
 })
 export class FinanceModule {}

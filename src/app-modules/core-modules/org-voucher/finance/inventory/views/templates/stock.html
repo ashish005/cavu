@@ -1,0 +1,30 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-archive mr-1"></i><b>Stock on hand</b></span></ng-template>
+<ng-template #actionTemplate>
+    <a class="btn btn-sm white mr-1" routerLink="../movements"><i class="fa fa-history mr-1"></i>Movements</a>
+    <a class="btn btn-sm theme" routerLink="../adjustments" [queryParams]="{new: 'Adjustment'}"><i class="fa fa-sliders mr-1"></i>Adjust stock</a>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y">
+    <div class="d-flex flex-wrap px-2">
+        <input class="form-control form-control-sm mb-2 mr-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Item name or code">
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 180px" [(ngModel)]="coreState.warehouseId" (change)="search()">
+            <option [ngValue]="null">All warehouses</option>
+            <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
+        </select>
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 180px" [(ngModel)]="coreState.categoryId" (change)="search()">
+            <option [ngValue]="null">All categories</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.parent ? c.parent + ' › ' : '' }}{{ c.name }}</option>
+        </select>
+        <div class="btn-group btn-group-sm mb-2">
+            <button type="button" class="btn white" [class.active]="!coreState.level" (click)="coreState.level = null; search()">All</button>
+            <button type="button" class="btn white" [class.active]="coreState.level === 'low'" (click)="coreState.level = 'low'; search()">Low</button>
+            <button type="button" class="btn white" [class.active]="coreState.level === 'out'" (click)="coreState.level = 'out'; search()">Out of stock</button>
+        </div>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+        {{ coreState.level ? 'Nothing matches this filter.' : 'No stocked items yet. Create items of type "Stocked goods", then record opening stock or a bill.' }}
+    </div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>

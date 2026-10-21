@@ -7,6 +7,8 @@ import {
 } from "../domains/finance.models";
 import {FinanceApiService, financeErrorOf} from "../services/finance-api.service";
 import {PickerOption} from "./finance-picker.component";
+import {InventoryApiService} from "../inventory/inventory-api.service";
+import {ItemOption, Warehouse} from "../inventory/inventory.models";
 
 interface AllocationRow extends OpenDoc { apply: number | null; }
 
@@ -46,10 +48,14 @@ export class FinanceDocumentEditorComponent implements OnInit {
     saving = false;
     error: string | null = null;
     showMore = false;
+    /** Active warehouses of the branch (a choice is offered on stocked lines when there are several). */
+    warehouses: Warehouse[] = [];
+    /** Stock on hand in the branch of each line's item, as the picker reported it. */
+    private readonly onHand = new WeakMap<FinanceLine, number | null>();
 
     form: FinanceDocInput = this.blank();
 
-    constructor(private api: FinanceApiService) {}
+    constructor(private api: FinanceApiService, private inventory: InventoryApiService) {}
 
     ngOnInit() {
         this.info = KINDS[this.kind];
@@ -76,6 +82,9 @@ export class FinanceDocumentEditorComponent implements OnInit {
         });
         if (this.info.lineAccounts) {
             this.api.accountOptions(this.info.lineAccounts, null).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: a => this.lineAccounts = a, error: () => {}});
+        }
+        if (this.info.items) {
+            this.inventory.warehouses().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: w => this.warehouses = w.filter(x => x.isActive), error: () => {}});
         }
         if (this.info.journal) {
             this.api.accountOptions(this.kind === 'Contra' ? 'bank' : 'item', null).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: a => this.allAccounts = a, error: () => {}});
@@ -132,6 +141,39 @@ export class FinanceDocumentEditorComponent implements OnInit {
             quantity: 1, unitPrice: 0, discountRate: 0, taxCodeId: this.suggestion?.taxCodeId ?? this.defaultTax(), withholdingTaxCodeId: null});
     }
     removeLine(i: number) { this.form.lines.splice(i, 1); }
+
+    searchItems = (term: string | null): Observable<PickerOption[]> =>
+        this.inventory.itemOptions(this.kind, term).pipe(map(list => list.map(i => ({
+            id: i.id, label: i.name,
+            sub: [i.code, `${i.price} / ${i.unit}`, i.onHand !== null ? `${+i.onHand} in stock` : null].filter(Boolean).join(' · '), data: i
+        }))));
+
+    /** Fills the line from the item: description, unit, price (converted to the document's currency), account and tax. */
+    pickItem(l: FinanceLine, o: PickerOption) {
+        const i = o.data as ItemOption;
+        l.itemId = i.id; l.itemName = i.name; l.itemCode = i.code; l.itemType = i.type; l.unit = i.unit; l.classificationCode = i.classificationCode;
+        l.description = i.description;
+        const rate = +(this.form.currencyRate ?? 0);
+        l.unitPrice = this.foreign && rate > 0 ? Math.round(i.price / rate * 10000) / 10000 : i.price;
+        if (i.accountId) { l.accountId = i.accountId; }
+        if (i.taxCodeId) { l.taxCodeId = i.taxCodeId; }
+        l.warehouseId = i.type === 'Inventory' ? l.warehouseId ?? this.warehouses.find(w => w.isDefault)?.id ?? null : null;
+        this.onHand.set(l, i.onHand);
+    }
+
+    /** Back to a free-text line (description and amounts stay). */
+    clearItem(l: FinanceLine) {
+        const locked = this.locksAccount(l);
+        l.itemId = null; l.itemName = null; l.itemCode = null; l.itemType = null; l.classificationCode = null; l.warehouseId = null; l.unit = null;
+        if (locked) { l.accountId = this.info.lookupKey ? this.lookups?.defaultLineAccounts?.[this.info.lookupKey] ?? null : null; }
+        this.onHand.delete(l);
+    }
+
+    /** Stocked items on bills and debit notes post to their inventory account; the server fixes it. */
+    locksAccount(l: FinanceLine) { return l.itemType === 'Inventory' && (this.kind === 'Bill' || this.kind === 'DebitNote'); }
+    stockOf(l: FinanceLine) { return l.itemType === 'Inventory' ? this.onHand.get(l) ?? null : null; }
+    /** Selling more than the branch holds will be refused when posted (unless negative stock is allowed). */
+    short(l: FinanceLine) { const s = this.stockOf(l); return s !== null && this.info.party === 'customer' && this.kind === 'Invoice' && +l.quantity > s; }
 
     private code(id: string | null | undefined) { return id ? this.lookups?.taxCodes.find(t => t.id === id) ?? null : null; }
 
@@ -215,7 +257,8 @@ export class FinanceDocumentEditorComponent implements OnInit {
         if (!b.date) { return 'Enter the date.'; }
         if (this.info.items) {
             if (!b.lines.length) { return 'Add at least one line.'; }
-            if (b.lines.some(l => !l.description?.trim())) { return 'Every line needs a description.'; }
+            if (b.lines.some(l => !l.itemId && !l.description?.trim())) { return 'Every line needs a description or an item.'; }
+            if (b.lines.some(l => l.itemType === 'Inventory' && !(+l.quantity > 0))) { return 'Stocked items need a quantity above zero; use a credit or debit note for returns.'; }
         }
         if (this.info.settlement && !(+(b.amount ?? 0) > 0)) { return 'Enter the amount.'; }
         if (this.info.settlement && this.applied > (+(b.amount ?? 0))) { return 'More is applied than the amount received or paid.'; }
@@ -231,7 +274,10 @@ export class FinanceDocumentEditorComponent implements OnInit {
             currencyCode: f.currencyCode?.toUpperCase() || null,
             currencyRate: this.foreign ? +(f.currencyRate ?? 0) : null,
             adjustment: +f.adjustment || 0,
-            lines: this.info.items ? f.lines.map(l => ({...l, quantity: +l.quantity, unitPrice: +l.unitPrice, discountRate: +l.discountRate || 0})) : [],
+            lines: this.info.items ? f.lines.map(l => ({
+                description: l.description, accountId: l.accountId, quantity: +l.quantity, unitPrice: +l.unitPrice, discountRate: +l.discountRate || 0,
+                taxCodeId: l.taxCodeId, withholdingTaxCodeId: l.withholdingTaxCodeId ?? null, itemId: l.itemId ?? null, unit: l.unit ?? null, warehouseId: l.warehouseId ?? null
+            })) : [],
             journalLines: this.info.journal
                 ? f.journalLines.filter(l => l.accountId).map(l => ({...l, debit: this.kind === 'Contra' ? +l.debit || 0 : +l.debit || 0, credit: this.kind === 'Contra' ? 0 : +l.credit || 0}))
                 : [],
@@ -256,7 +302,9 @@ export class FinanceDocumentEditorComponent implements OnInit {
             kind: d.kind, partyAccountId: d.kind === 'Journal' ? null : d.partyAccountId, date: d.date, dueDate: d.dueDate, reference: d.reference, notes: d.notes,
             internalNote: d.internalNote, currencyCode: d.currencyCode, currencyRate: d.currencyRate, pricesIncludeTax: inclusive, adjustment: d.adjustment,
             lines: d.lines.map(l => ({description: l.description, accountId: l.accountId, quantity: l.quantity, unitPrice: l.unitPrice, discountRate: l.discountRate,
-                taxCodeId: l.taxCodeId, withholdingTaxCodeId: l.withholdingTaxCodeId ?? null})),
+                taxCodeId: l.taxCodeId, withholdingTaxCodeId: l.withholdingTaxCodeId ?? null, itemId: l.itemId ?? null, itemName: l.itemName ?? null,
+                itemCode: l.itemCode ?? null, itemType: l.itemType ?? null, unit: l.unit ?? null, classificationCode: l.classificationCode ?? null,
+                warehouseId: l.warehouseId ?? null})),
             journalLines: KINDS[d.kind].journal ? d.ledgerLines.map(l => ({accountId: l.accountId, debit: l.debit, credit: l.credit, description: l.description} as JournalLineInput)) : [],
             amount: KINDS[d.kind].settlement ? d.total : null, paymentModeId: d.paymentModeId, bankAccountId: settlementBank,
             allocations: d.allocations.map(a => ({targetVoucherId: a.voucherId, amount: a.amount}))

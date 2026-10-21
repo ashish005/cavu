@@ -1,0 +1,91 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-pie-chart mr-1"></i><b>Inventory reports</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="exportCsv()" [disabled]="!sales && !valuation"><i class="fa fa-download mr-1"></i>CSV</button>
+    <button class="btn btn-sm white" onclick="window.print()"><i class="fa fa-print mr-1"></i>Print</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <div class="btn-group btn-group-sm mr-3 mb-1">
+            <button type="button" class="btn white" [class.active]="report === 'sales'" (click)="show('sales')">Sales by item</button>
+            <button type="button" class="btn white" [class.active]="report === 'purchases'" (click)="show('purchases')">Purchases by item</button>
+            <button type="button" class="btn white" [class.active]="report === 'valuation'" (click)="show('valuation')">Stock valuation</button>
+        </div>
+        <ng-container *ngIf="report !== 'valuation'; else valuationFilters">
+            <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="from" (change)="load()">
+            <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="to" (change)="load()">
+            <input class="form-control form-control-sm mb-1" style="max-width: 200px" [(ngModel)]="search" (keyup.enter)="load()" placeholder="Item name or code">
+        </ng-container>
+        <ng-template #valuationFilters>
+            <label class="text-sm mb-1 mr-1">As of</label>
+            <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="asOf" (change)="load()">
+            <select class="form-control form-control-sm mb-1" style="max-width: 180px" [(ngModel)]="warehouseId" (change)="load()">
+                <option [ngValue]="null">All warehouses</option>
+                <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
+            </select>
+        </ng-template>
+    </div>
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <!-- Sales / purchases by item -->
+    <ng-container *ngIf="sales as s">
+        <div class="d-flex flex-wrap text-sm mb-2">
+            <div class="mr-4"><div class="text-xs text-muted">{{ s.side === 'sales' ? 'Revenue' : 'Spent' }}</div><div class="_600">{{ s.amount | money:s.currencyCode }}</div></div>
+            <ng-container *ngIf="s.side === 'sales'">
+                <div class="mr-4"><div class="text-xs text-muted">Cost of goods sold</div><div class="_600">{{ s.cost | money:s.currencyCode }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">Gross margin on stocked goods</div><div class="_600">{{ s.margin | money:s.currencyCode }}</div></div>
+            </ng-container>
+        </div>
+        <div class="text-xs text-muted mb-1">Posted {{ s.side === 'sales' ? 'invoices less credit notes' : 'bills less debit notes' }}, {{ s.from | date:'mediumDate' }} – {{ s.to | date:'mediumDate' }}, before tax, in {{ s.currencyCode }}.
+            <span *ngIf="s.side === 'sales'">Margin is shown for stocked goods (their cost is known when sold).</span></div>
+        <table class="table table-sm">
+            <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">Quantity</th><th class="text-right">Amount</th>
+                <ng-container *ngIf="s.side === 'sales'"><th class="text-right">Cost</th><th class="text-right">Margin</th><th class="text-right">%</th></ng-container>
+                <th class="text-right">Documents</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let r of s.rows">
+                <td><a role="button" (click)="openItem(r.itemId)">{{ r.name }}</a> <span class="text-xs text-muted">{{ r.code }}</span></td>
+                <td class="text-right">{{ r.quantity | number:'1.0-4' }} <span class="text-xs text-muted">{{ r.unit }}</span></td>
+                <td class="text-right">{{ r.amount | money:s.currencyCode:false }}</td>
+                <ng-container *ngIf="s.side === 'sales'">
+                    <td class="text-right">{{ r.cost !== null ? (r.cost | money:s.currencyCode:false) : '—' }}</td>
+                    <td class="text-right" [class.text-danger]="(r.margin ?? 0) < 0">{{ r.margin !== null ? (r.margin | money:s.currencyCode:false) : '—' }}</td>
+                    <td class="text-right">{{ r.marginPercent !== null ? r.marginPercent + '%' : '' }}</td>
+                </ng-container>
+                <td class="text-right">{{ r.documents }}</td>
+            </tr>
+            <tr *ngIf="!s.rows.length"><td colspan="7" class="text-center text-muted">No posted documents with items in this period.</td></tr>
+            </tbody>
+        </table>
+    </ng-container>
+
+    <!-- Valuation -->
+    <ng-container *ngIf="valuation as v">
+        <div class="d-flex flex-wrap text-sm mb-2">
+            <div class="mr-4"><div class="text-xs text-muted">Stock value</div><div class="_600">{{ v.stockValue | money:v.currencyCode }}</div></div>
+            <ng-container *ngIf="!warehouseId">
+                <div class="mr-4"><div class="text-xs text-muted">Inventory accounts (ledger)</div><div class="_600">{{ v.ledgerBalance | money:v.currencyCode }}</div></div>
+                <div class="mr-4"><div class="text-xs text-muted">Difference</div>
+                    <div class="_600" [class.text-danger]="v.difference !== 0" [class.text-success]="v.difference === 0">{{ v.difference | money:v.currencyCode }}</div></div>
+            </ng-container>
+        </div>
+        <div *ngIf="!warehouseId && v.difference !== 0" class="alert alert-warning text-sm py-2">
+            The inventory accounts differ from the stock value. Usual causes: journals or bills posted to an inventory account without items, or balances
+            from before stock was tracked. Record the difference with a journal once you know the cause.
+        </div>
+        <table class="table table-sm">
+            <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">Quantity</th><th class="text-right">Value</th><th class="text-right">Average</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let r of v.rows">
+                <td><a role="button" (click)="openItem(r.itemId)">{{ r.name }}</a> <span class="text-xs text-muted">{{ r.code }}</span></td>
+                <td class="text-right">{{ r.quantity | number:'1.0-4' }} <span class="text-xs text-muted">{{ r.unit }}</span></td>
+                <td class="text-right">{{ r.value | money:v.currencyCode:false }}</td>
+                <td class="text-right text-muted">{{ r.quantity > 0 ? ((r.value / r.quantity) | money:v.currencyCode:false) : '' }}</td>
+            </tr>
+            <tr *ngIf="!v.rows.length"><td colspan="4" class="text-center text-muted">No stock on this date.</td></tr>
+            </tbody>
+        </table>
+        <div *ngIf="v.truncated" class="text-xs text-muted">Showing the first 5,000 items; the totals include all of them.</div>
+    </ng-container>
+</div>

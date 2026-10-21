@@ -1,0 +1,83 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-cog mr-1"></i><b>Products setup</b></span></ng-template>
+<ng-template #actionTemplate></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div class="row">
+        <!-- Warehouses -->
+        <div class="col-lg-7 mb-3">
+            <div class="d-flex align-items-center mb-1">
+                <div class="_600">Warehouses <span class="text-xs text-muted">(this branch)</span></div><span class="flex"></span>
+                <button class="btn btn-sm white" (click)="addWarehouse()"><i class="fa fa-plus mr-1"></i>Warehouse</button>
+            </div>
+            <table class="table table-sm">
+                <thead><tr class="text-xs text-muted"><th>Warehouse</th><th class="text-right">Items in stock</th><th class="text-right">Stock value</th></tr></thead>
+                <tbody>
+                <tr *ngFor="let w of warehouses">
+                    <td><a role="button" class="_600" (click)="editWarehouse(w)">{{ w.name }}</a> <span class="text-xs text-muted text-monospace">{{ w.code }}</span>
+                        <span *ngIf="w.isDefault" class="badge info ml-1">default</span><span *ngIf="!w.isActive" class="badge grey ml-1">inactive</span>
+                        <div *ngIf="w.address" class="text-xs text-muted">{{ w.address }}</div></td>
+                    <td class="text-right">{{ w.items }}</td><td class="text-right">{{ w.stockValue | number:'1.2-2' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Categories -->
+        <div class="col-lg-5 mb-3">
+            <div class="d-flex align-items-center mb-1">
+                <div class="_600">Categories</div><span class="flex"></span>
+                <button class="btn btn-sm white" (click)="addCategory()"><i class="fa fa-plus mr-1"></i>Category</button>
+            </div>
+            <table class="table table-sm">
+                <tbody>
+                <tr *ngFor="let c of categories">
+                    <td [class.pl-4]="c.parentId"><a role="button" (click)="editCategory(c)">{{ c.name }}</a><div *ngIf="c.description" class="text-xs text-muted">{{ c.description }}</div></td>
+                    <td class="text-right text-muted text-sm">{{ c.items }} items</td>
+                </tr>
+                <tr *ngIf="!categories.length"><td class="text-muted text-sm">No categories yet. They group items in lists and reports.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Preferences -->
+    <div *ngIf="settings as s" class="box p-3" style="max-width: 640px">
+        <div class="_600 mb-2">Preferences</div>
+        <label class="d-block text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="s.allowNegativeStock">Allow selling more than is in stock</label>
+        <div class="text-xs text-muted mb-2 ml-3">Off (recommended): an invoice that would take stock below zero is refused when posted. On: the shortfall is costed at the last known cost and stock goes negative until received.</div>
+        <label class="d-block text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="s.lowStockAlerts">Send low-stock alerts</label>
+        <div class="text-xs text-muted mb-2 ml-3">Administrators and users who can post finance documents get one digest (in-app and email) when items fall to their reorder level.</div>
+        <div class="text-xs text-muted mb-2">Inventory, cost of goods sold and stock adjustment accounts are set in Settings › Accounting defaults.</div>
+        <button class="btn btn-sm theme" (click)="saveSettings()">Save preferences</button>
+    </div>
+</div>
+
+<app-aside *ngIf="warehouseForm as f" size="md" [title]="f.id ? 'Edit warehouse' : 'New warehouse'" (closed)="warehouseForm = null">
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-4 form-group"><label class="text-sm _600">Code *</label><input class="form-control text-uppercase" [(ngModel)]="f.model.code" maxlength="20"></div>
+        <div class="col-8 form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="100"></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Address</label><textarea class="form-control" rows="2" [(ngModel)]="f.model.address" maxlength="500"></textarea></div>
+    <label class="d-block text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefault">Default warehouse of this branch</label>
+    <label class="d-block text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive" [disabled]="f.model.isDefault">Active</label>
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id" class="btn white text-danger" (click)="deleteWarehouse()">Delete</button><span class="flex"></span>
+        <button class="btn white mr-1" (click)="warehouseForm = null">Cancel</button><button class="btn theme" (click)="saveWarehouse()">Save</button>
+    </div>
+</app-aside>
+
+<app-aside *ngIf="categoryForm as f" size="md" [title]="f.id ? 'Edit category' : 'New category'" (closed)="categoryForm = null">
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="100"></div>
+    <div class="form-group"><label class="text-sm _600">Under</label>
+        <select class="form-control" [(ngModel)]="f.model.parentId"><option [ngValue]="null">Top level</option>
+            <option *ngFor="let c of topCategories" [ngValue]="c.id">{{ c.name }}</option></select></div>
+    <div class="form-group"><label class="text-sm _600">Description</label><input class="form-control" [(ngModel)]="f.model.description" maxlength="500"></div>
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id" class="btn white text-danger" (click)="deleteCategory()">Delete</button><span class="flex"></span>
+        <button class="btn white mr-1" (click)="categoryForm = null">Cancel</button><button class="btn theme" (click)="saveCategory()">Save</button>
+    </div>
+</app-aside>

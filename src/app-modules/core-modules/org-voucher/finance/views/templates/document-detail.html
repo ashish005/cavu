@@ -101,7 +101,11 @@
     <thead><tr class="text-xs text-muted"><th>Description</th><th>Account</th><th class="text-right">Qty</th><th class="text-right">Price</th><th class="text-right">Disc</th><th>Tax</th><th class="text-right">Amount</th></tr></thead>
     <tbody>
     <tr *ngFor="let l of doc.lines">
-        <td>{{ l.description }}</td><td class="text-xs text-muted">{{ l.accountName }}</td><td class="text-right">{{ l.quantity }}</td>
+        <td>{{ l.description }}
+            <div *ngIf="l.itemId" class="text-xs text-muted">{{ l.itemCode }}<span *ngIf="l.classificationCode"> · HSN/SAC {{ l.classificationCode }}</span><span *ngIf="l.warehouse"> · {{ l.warehouse }}</span>
+                <span *ngIf="l.costAmount !== null && l.costAmount !== undefined && doc.kind === 'Invoice'"> · cost {{ l.costAmount | money:functionalCurrency:false }},
+                    margin {{ (l.netAmount * doc.currencyRate - l.costAmount) | money:functionalCurrency:false }}</span></div></td>
+        <td class="text-xs text-muted">{{ l.accountName }}</td><td class="text-right">{{ l.quantity }}<span *ngIf="l.unit" class="text-xs text-muted"> {{ l.unit }}</span></td>
         <td class="text-right">{{ l.unitPrice | money:doc.currencyCode:false }}</td><td class="text-right">{{ l.discountRate ? l.discountRate + '%' : '' }}</td>
         <td>{{ l.taxCode }}</td><td class="text-right">{{ l.lineTotal | money:doc.currencyCode:false }}</td>
     </tr>

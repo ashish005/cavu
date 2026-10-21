@@ -1,0 +1,22 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-history mr-1"></i><b>Stock movements</b></span></ng-template>
+<ng-template #actionTemplate><a class="btn btn-sm white" routerLink="../stock"><i class="fa fa-archive mr-1"></i>Stock on hand</a></ng-template>
+
+<div class="d-flex flex-column flex scroll-y">
+    <div class="d-flex flex-wrap align-items-start px-2">
+        <div class="d-flex mb-2 mr-2" style="width: 260px">
+            <fin-picker class="flex" [small]="true" [search]="searchItems" [label]="itemLabel" placeholder="All items" (picked)="pickItem($event)"></fin-picker>
+            <button *ngIf="coreState.itemId" type="button" class="btn btn-sm white ml-1" title="All items" (click)="pickItem(null)"><i class="fa fa-times"></i></button>
+        </div>
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 180px" [(ngModel)]="coreState.warehouseId" (change)="search()">
+            <option [ngValue]="null">All warehouses</option>
+            <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
+        </select>
+        <input type="date" class="form-control form-control-sm mb-2 mr-1" style="max-width: 150px" [(ngModel)]="coreState.from" (change)="search()" title="From">
+        <input type="date" class="form-control form-control-sm mb-2 mr-2" style="max-width: 150px" [(ngModel)]="coreState.to" (change)="search()" title="To">
+        <input class="form-control form-control-sm mb-2" style="max-width: 180px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Document number">
+    </div>
+    <div class="text-xs text-muted px-2 mb-1">Balance is the warehouse's quantity and value right after the movement was posted.</div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>

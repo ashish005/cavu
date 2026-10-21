@@ -1,0 +1,144 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-cubes mr-1"></i><b>Products &amp; services</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="add('Inventory')"><i class="fa fa-cube mr-1"></i>New stocked item</button>
+    <button class="btn btn-sm theme" (click)="add('Service')"><i class="fa fa-plus mr-1"></i>New item</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y">
+    <div class="d-flex flex-wrap px-2">
+        <input class="form-control form-control-sm mb-2 mr-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Name, code or barcode">
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 160px" [(ngModel)]="coreState.type" (change)="search()">
+            <option [ngValue]="null">All types</option>
+            <option *ngFor="let t of types" [ngValue]="t.value">{{ t.label }}</option>
+        </select>
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 180px" [(ngModel)]="coreState.categoryId" (change)="search()">
+            <option [ngValue]="null">All categories</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.parent ? c.parent + ' › ' : '' }}{{ c.name }}</option>
+        </select>
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 140px" [(ngModel)]="coreState.stock" (change)="search()">
+            <option [ngValue]="null">Any stock</option>
+            <option ngValue="low">Low on stock</option>
+            <option ngValue="out">Out of stock</option>
+        </select>
+        <select class="form-control form-control-sm mb-2" style="max-width: 120px" [(ngModel)]="coreState.state" (change)="search()">
+            <option ngValue="active">Active</option>
+            <option ngValue="inactive">Inactive</option>
+            <option ngValue="all">All</option>
+        </select>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length && !coreState.search" class="text-center text-muted p-4">
+        <div class="mb-2">No items here. Add the products and services you sell or buy, so invoice lines fill themselves in.</div>
+        <button class="btn btn-sm theme" (click)="add('Service')">Add an item</button>
+    </div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<app-aside *ngIf="form as f" size="xl" [title]="f.id ? f.model.name : 'New item'" [subtitle]="f.detail?.code ?? ''" (closed)="close()">
+    <loader [isLoading]="saving || loadingItem"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+
+    <!-- Stock and activity of a saved item -->
+    <div *ngIf="f.detail as d" class="mb-3">
+        <div class="d-flex flex-wrap text-sm">
+            <div *ngIf="d.type === 'Inventory'" class="mr-4 mb-2"><div class="text-xs text-muted">On hand (this branch)</div><div class="_600">{{ d.onHand | number:'1.0-4' }} {{ d.unit }}</div></div>
+            <div *ngIf="d.type === 'Inventory'" class="mr-4 mb-2"><div class="text-xs text-muted">Stock value</div><div class="_600">{{ d.stockValue | money:d.currencyCode }}</div></div>
+            <ng-container *ngIf="d.activity as a">
+                <div *ngIf="d.canSell" class="mr-4 mb-2"><div class="text-xs text-muted">Sold, last 90 days</div><div class="_600">{{ a.soldQuantity | number:'1.0-4' }} · {{ a.soldAmount | money:d.currencyCode }}</div></div>
+                <div *ngIf="d.type === 'Inventory' && a.soldAmount" class="mr-4 mb-2"><div class="text-xs text-muted">Gross margin</div>
+                    <div class="_600">{{ (a.soldAmount - a.costOfSales) | money:d.currencyCode }} ({{ ((a.soldAmount - a.costOfSales) / a.soldAmount * 100) | number:'1.0-1' }}%)</div></div>
+                <div *ngIf="d.canBuy" class="mr-4 mb-2"><div class="text-xs text-muted">Bought, last 90 days</div><div class="_600">{{ a.boughtQuantity | number:'1.0-4' }} · {{ a.boughtAmount | money:d.currencyCode }}</div></div>
+            </ng-container>
+        </div>
+        <table *ngIf="d.type === 'Inventory' && d.stock.length" class="table table-sm mb-1">
+            <thead><tr class="text-xs text-muted"><th>Warehouse</th><th class="text-right">On hand</th><th class="text-right">Average cost</th><th class="text-right">Value</th><th>Last movement</th></tr></thead>
+            <tbody><tr *ngFor="let s of d.stock">
+                <td>{{ s.warehouse }}</td><td class="text-right">{{ s.quantity | number:'1.0-4' }}</td><td class="text-right">{{ s.averageCost | money:d.currencyCode:false }}</td>
+                <td class="text-right">{{ s.value | money:d.currencyCode:false }}</td><td class="text-xs text-muted">{{ s.lastMovementAt | date:'mediumDate' }}</td>
+            </tr></tbody>
+        </table>
+        <a *ngIf="d.type === 'Inventory'" role="button" class="text-sm" (click)="movements()"><i class="fa fa-history mr-1"></i>Stock history</a>
+        <hr>
+    </div>
+
+    <!-- Basics -->
+    <div class="row">
+        <div class="col-md-6 form-group"><label class="text-sm _600">Name *</label><input class="form-control" [(ngModel)]="f.model.name" maxlength="200"></div>
+        <div class="col-md-3 form-group"><label class="text-sm _600">Code / SKU</label><input class="form-control text-uppercase" [(ngModel)]="f.model.code" maxlength="40" placeholder="Generated if empty"></div>
+        <div class="col-md-3 form-group"><label class="text-sm _600">Unit</label><input class="form-control" [(ngModel)]="f.model.unit" maxlength="20" [placeholder]="f.model.type === 'Service' ? 'hr' : 'pcs'"></div>
+    </div>
+    <div class="form-group">
+        <label class="text-sm _600 d-block">Type</label>
+        <label *ngFor="let t of types" class="mr-3 text-sm" [class.text-muted]="typeLocked(t.value)">
+            <input type="radio" class="mr-1" name="itemType" [value]="t.value" [(ngModel)]="f.model.type" [disabled]="typeLocked(t.value)">{{ t.label }}
+        </label>
+        <div class="text-xs text-muted">{{ typeHint[f.model.type] }}<span *ngIf="f.detail?.isUsed"> Items already used cannot change to or from stocked goods.</span></div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-sm _600">Category</label>
+            <select class="form-control" [(ngModel)]="f.model.categoryId"><option [ngValue]="null">None</option>
+                <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.parent ? c.parent + ' › ' : '' }}{{ c.name }}</option></select></div>
+        <div class="col-md-3 form-group"><label class="text-sm _600">HSN / SAC / tax class</label><input class="form-control text-uppercase" [(ngModel)]="f.model.classificationCode" maxlength="20"></div>
+        <div class="col-md-3 form-group"><label class="text-sm _600">Barcode</label><input class="form-control" [(ngModel)]="f.model.barcode" maxlength="64"></div>
+        <div class="col-md-2 form-group"><label class="text-sm _600">Brand</label><input class="form-control" [(ngModel)]="f.model.brand" maxlength="100"></div>
+    </div>
+
+    <!-- Sales -->
+    <label class="text-sm _600 d-block mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.canSell">I sell this</label>
+    <div *ngIf="f.model.canSell" class="row">
+        <div class="col-md-3 form-group"><label class="text-xs _600">Selling price ({{ currency }})</label><input type="number" class="form-control text-right" [(ngModel)]="f.model.salesPrice" min="0" step="any"></div>
+        <div class="col-md-5 form-group"><label class="text-xs _600">Income account</label>
+            <select class="form-control" [(ngModel)]="f.model.salesAccountId"><option [ngValue]="null">Default (the invoice type's)</option>
+                <option *ngFor="let a of accounts.income" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Sales tax</label>
+            <select class="form-control" [(ngModel)]="f.model.salesTaxCodeId"><option [ngValue]="null">By the tax rules</option>
+                <option *ngFor="let t of salesTaxes" [ngValue]="t.id">{{ t.code }} ({{ t.kind === 'Standard' ? t.rate + '%' : t.kind }})</option></select></div>
+        <div class="col-12 form-group"><label class="text-xs _600">Description on invoices</label><input class="form-control" [(ngModel)]="f.model.salesDescription" maxlength="500" [placeholder]="f.model.name"></div>
+    </div>
+
+    <!-- Purchases -->
+    <label class="text-sm _600 d-block mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.canBuy">I buy this</label>
+    <div *ngIf="f.model.canBuy" class="row">
+        <div class="col-md-3 form-group"><label class="text-xs _600">Purchase cost ({{ currency }})</label><input type="number" class="form-control text-right" [(ngModel)]="f.model.purchaseCost" min="0" step="any"></div>
+        <div *ngIf="!stocked" class="col-md-5 form-group"><label class="text-xs _600">Expense account</label>
+            <select class="form-control" [(ngModel)]="f.model.purchaseAccountId"><option [ngValue]="null">Default (the bill type's)</option>
+                <option *ngFor="let a of accounts.expense" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Purchase tax</label>
+            <select class="form-control" [(ngModel)]="f.model.purchaseTaxCodeId"><option [ngValue]="null">By the tax rules</option>
+                <option *ngFor="let t of purchaseTaxes" [ngValue]="t.id">{{ t.code }} ({{ t.kind === 'Standard' ? t.rate + '%' : t.kind }})</option></select></div>
+        <div class="col-md-5 form-group"><label class="text-xs _600">Preferred vendor</label>
+            <div class="d-flex"><fin-picker class="flex" [search]="searchVendors" [label]="f.vendorLabel" placeholder="Search vendors" (picked)="pickVendor($event)"></fin-picker>
+                <button *ngIf="f.model.preferredVendorAccountId" type="button" class="btn btn-sm white ml-1" (click)="clearVendor()" title="Clear"><i class="fa fa-times"></i></button></div></div>
+        <div class="col-md-7 form-group"><label class="text-xs _600">Description on bills</label><input class="form-control" [(ngModel)]="f.model.purchaseDescription" maxlength="500" [placeholder]="f.model.name"></div>
+    </div>
+    <div *ngIf="margin !== null" class="text-xs text-muted mb-2">Margin at these prices: {{ margin }}%</div>
+
+    <!-- Stock -->
+    <ng-container *ngIf="stocked">
+        <div class="text-sm _600 mt-1">Stock</div>
+        <div class="row">
+            <div class="col-md-3 form-group"><label class="text-xs _600">Reorder at</label><input type="number" class="form-control text-right" [(ngModel)]="f.model.reorderLevel" min="0" step="any"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Order quantity</label><input type="number" class="form-control text-right" [(ngModel)]="f.model.reorderQuantity" min="0" step="any"></div>
+            <div class="col-md-6 text-xs text-muted pt-md-4">Finance users get a low-stock alert when a warehouse falls to the reorder level (0: no alert).</div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Inventory account</label>
+                <select class="form-control" [(ngModel)]="f.model.inventoryAccountId" [disabled]="hasStock">
+                    <option [ngValue]="null">Default (Settings › Accounting defaults)</option>
+                    <option *ngFor="let a of accounts.inventory" [ngValue]="a.id">{{ a.name }}</option></select>
+                <div *ngIf="hasStock" class="text-xs text-muted">Fixed while there is stock.</div></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Cost of goods sold account</label>
+                <select class="form-control" [(ngModel)]="f.model.costOfGoodsSoldAccountId"><option [ngValue]="null">Default (Settings › Accounting defaults)</option>
+                    <option *ngFor="let a of accounts.cogs" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        </div>
+    </ng-container>
+
+    <div class="form-group"><label class="text-xs _600">Notes (internal)</label><textarea class="form-control" rows="2" [(ngModel)]="f.model.notes" maxlength="2000"></textarea></div>
+    <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isActive">Active (inactive items cannot be added to new documents)</label>
+
+    <div class="d-flex mt-3">
+        <button *ngIf="f.id && !f.detail?.isUsed" class="btn white text-danger" (click)="remove()">Delete</button>
+        <span class="flex"></span>
+        <button class="btn white mr-1" (click)="close()">Close</button>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</app-aside>

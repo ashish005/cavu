@@ -38,19 +38,30 @@
     <div class="table-responsive">
         <table class="table table-sm mb-1">
             <thead><tr class="text-xs text-muted">
-                <th style="min-width: 220px">Description</th><th style="min-width: 170px">Account</th><th style="width: 80px" class="text-right">Qty</th>
+                <th style="min-width: 260px">Item / description</th><th style="min-width: 170px">Account</th><th style="width: 80px" class="text-right">Qty</th>
                 <th style="width: 110px" class="text-right">Price</th><th style="width: 75px" class="text-right">Disc %</th><th style="min-width: 120px">Tax</th>
                 <th *ngIf="withholdings.length" style="min-width: 110px">Withholding</th>
                 <th style="width: 110px" class="text-right">Amount</th><th style="width: 30px"></th>
             </tr></thead>
             <tbody>
             <tr *ngFor="let l of form.lines; let i = index">
-                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500" placeholder="What was sold or bought"></td>
-                <td><select class="form-control form-control-sm" [(ngModel)]="l.accountId">
+                <td>
+                    <div class="d-flex mb-1">
+                        <fin-picker class="flex" [small]="true" [search]="searchItems" [label]="l.itemName ?? ''" placeholder="Item (optional)" (picked)="pickItem(l, $event)"></fin-picker>
+                        <a *ngIf="l.itemId" role="button" class="text-muted ml-1 align-self-center" title="Use as a free-text line" (click)="clearItem(l)"><i class="fa fa-unlink"></i></a>
+                    </div>
+                    <input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500" [placeholder]="l.itemId ? 'Description (from the item)' : 'What was sold or bought'">
+                    <div *ngIf="l.itemId" class="text-xs text-muted mt-1">{{ l.itemCode }}<span *ngIf="l.classificationCode"> · HSN/SAC {{ l.classificationCode }}</span>
+                        <span *ngIf="stockOf(l) !== null" [class.text-danger]="short(l)"> · {{ stockOf(l) }} {{ l.unit }} in stock</span></div>
+                    <select *ngIf="l.itemType === 'Inventory' && warehouses.length > 1" class="form-control form-control-sm mt-1" [(ngModel)]="l.warehouseId" title="Warehouse">
+                        <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
+                    </select>
+                </td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="l.accountId" [disabled]="locksAccount(l)" title="Stocked items on bills and debit notes post to their inventory account">
                     <option [ngValue]="null">Default</option>
                     <option *ngFor="let a of lineAccounts" [ngValue]="a.id">{{ a.name }}</option>
                 </select></td>
-                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" step="any"></td>
+                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" step="any"><div *ngIf="l.unit" class="text-xs text-muted text-right">{{ l.unit }}</div></td>
                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitPrice" step="any"></td>
                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.discountRate" min="0" max="100" step="any"></td>
                 <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId">

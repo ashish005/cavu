@@ -27,6 +27,8 @@ export class FinanceDocumentDetailComponent implements OnChanges {
     private readonly destroyRef = inject(DestroyRef);
     info!: KindInfo;
     lookups: FinanceLookups | null = null;
+    /** Costs of stocked items are kept in the books' currency. */
+    get functionalCurrency() { return this.lookups?.functionalCurrency ?? this.doc?.currencyCode ?? 'USD'; }
     panel: Panel = null;
     busy = false;
     error: string | null = null;
@@ -123,7 +125,7 @@ export class FinanceDocumentDetailComponent implements OnChanges {
         const m = (v: number) => e(formatMoney(v, d.currencyCode));
         const lines = d.lines.length
             ? `<table class="lines"><tr><th>Description</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Disc</th><th class="r">Tax</th><th class="r">Amount</th></tr>${
-                d.lines.map(l => `<tr><td>${e(l.description)}</td><td class="r">${l.quantity}</td><td class="r">${m(l.unitPrice)}</td><td class="r">${l.discountRate ? l.discountRate + '%' : ''}</td><td class="r">${e(l.taxCode ?? '')}</td><td class="r">${m(l.lineTotal ?? 0)}</td></tr>`).join('')}</table>
+                d.lines.map(l => `<tr><td>${e(l.description)}${l.itemCode || l.classificationCode ? `<div class="s">${e([l.itemCode, l.classificationCode ? 'HSN/SAC ' + l.classificationCode : null].filter(Boolean).join(' · '))}</div>` : ''}</td><td class="r">${l.quantity}${l.unit ? ' ' + e(l.unit) : ''}</td><td class="r">${m(l.unitPrice)}</td><td class="r">${l.discountRate ? l.discountRate + '%' : ''}</td><td class="r">${e(l.taxCode ?? '')}</td><td class="r">${m(l.lineTotal ?? 0)}</td></tr>`).join('')}</table>
                <table class="totals"><tr><td>Subtotal</td><td class="r">${m(d.subTotal)}</td></tr>${d.taxes.filter(t => t.tax !== 0 || t.kind !== 'Standard').map(t => `<tr><td>${e(t.component)} ${t.rate}%${t.jurisdiction ? ' (' + e(t.jurisdiction) + ')' : ''}${t.kind === 'ReverseCharge' ? ' — reverse charge' : t.kind === 'Exempt' ? ' — exempt' : t.kind === 'ZeroRated' ? ' — zero-rated' : ''}</td><td class="r">${t.kind === 'Withholding' ? '−' : ''}${m(t.tax)}</td></tr>`).join('')}${
                 d.adjustment ? `<tr><td>Adjustment</td><td class="r">${m(d.adjustment)}</td></tr>` : ''}<tr class="b"><td>Total</td><td class="r">${m(d.total)}</td></tr>${
                 d.settled ? `<tr><td>Paid</td><td class="r">${m(d.settled)}</td></tr><tr class="b"><td>Balance due</td><td class="r">${m(d.balance)}</td></tr>` : ''}</table>`

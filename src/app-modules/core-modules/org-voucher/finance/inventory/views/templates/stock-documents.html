@@ -1,0 +1,138 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-sliders mr-1"></i><b>Stock adjustments</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="create('Opening')"><i class="fa fa-flag-o mr-1"></i>Opening stock</button>
+    <button class="btn btn-sm white mr-1" (click)="create('Transfer')"><i class="fa fa-exchange mr-1"></i>Transfer</button>
+    <button class="btn btn-sm theme" (click)="create('Adjustment')"><i class="fa fa-plus mr-1"></i>Adjustment</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y">
+    <div class="d-flex flex-wrap px-2">
+        <input class="form-control form-control-sm mb-2 mr-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Number, reason or reference">
+        <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 160px" [(ngModel)]="coreState.kind" (change)="search()">
+            <option [ngValue]="null">All kinds</option>
+            <option *ngFor="let k of kinds" [ngValue]="k.value">{{ k.label }}</option>
+        </select>
+        <select class="form-control form-control-sm mb-2" style="max-width: 130px" [(ngModel)]="coreState.status" (change)="search()">
+            <option [ngValue]="null">Any status</option>
+            <option ngValue="Draft">Draft</option><option ngValue="Posted">Posted</option><option ngValue="Void">Void</option>
+        </select>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger m-2">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+        Record the stock you start with as <b>opening stock</b>; later, correct counts, damage and losses with <b>adjustments</b>, and move stock between warehouses with <b>transfers</b>.
+        Invoices, bills and notes move stock on their own.
+    </div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<!-- Detail -->
+<app-aside *ngIf="doc && !edit" size="lg" [title]="kindLabel[doc.kind] + ' ' + doc.number" [subtitle]="doc.date" (closed)="closeAll()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+    <div class="d-flex align-items-center mb-2">
+        <span class="badge mr-2" [ngClass]="tone[doc.status]">{{ doc.status }}</span>
+        <span class="text-sm">{{ doc.warehouse }}<span *ngIf="doc.toWarehouse"> → {{ doc.toWarehouse }}</span></span>
+        <span class="flex"></span>
+        <ng-container *ngIf="doc.canEdit">
+            <button class="btn btn-sm white text-danger mr-1" (click)="remove()">Delete</button>
+            <button class="btn btn-sm white mr-1" (click)="change()">Edit</button>
+            <button class="btn btn-sm theme" (click)="post()">Post</button>
+        </ng-container>
+        <button *ngIf="doc.canVoid && !voidForm" class="btn btn-sm white text-danger" (click)="voidForm = {reason: '', date: null}">Void</button>
+    </div>
+    <div class="text-sm mb-2">
+        <div *ngIf="doc.reason"><span class="text-muted">Reason:</span> {{ doc.reason }}</div>
+        <div *ngIf="doc.reference"><span class="text-muted">Reference:</span> {{ doc.reference }}</div>
+        <div *ngIf="doc.account"><span class="text-muted">Offset account:</span> {{ doc.account }}</div>
+        <div *ngIf="doc.voidReason" class="text-danger">Voided: {{ doc.voidReason }}</div>
+        <div *ngIf="doc.notes" class="text-muted">{{ doc.notes }}</div>
+    </div>
+    <div *ngIf="voidForm" class="box p-2 mb-2">
+        <div class="text-sm mb-2">Voiding puts the stock back as it was and reverses the stock journal.</div>
+        <div class="row">
+            <div class="col-md-8 form-group"><label class="text-xs _600">Reason</label><input class="form-control form-control-sm" [(ngModel)]="voidForm.reason" maxlength="1000"></div>
+            <div class="col-md-4 form-group"><label class="text-xs _600">Void date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="voidForm.date" [min]="doc.date"></div>
+        </div>
+        <button class="btn btn-sm white mr-1" (click)="voidForm = null">Cancel</button><button class="btn btn-sm danger" (click)="doVoid()">Void {{ doc.number }}</button>
+    </div>
+    <table class="table table-sm">
+        <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">{{ doc.status === 'Draft' ? 'On hand' : '' }}</th><th class="text-right">Change</th>
+            <th class="text-right">Unit cost</th><th class="text-right">Value</th></tr></thead>
+        <tbody><tr *ngFor="let l of doc.lines">
+            <td>{{ l.itemName }} <span class="text-xs text-muted">{{ l.itemCode }}</span><div *ngIf="l.description" class="text-xs text-muted">{{ l.description }}</div></td>
+            <td class="text-right text-muted">{{ doc.status === 'Draft' ? (l.onHand | number:'1.0-4') : '' }}</td>
+            <td class="text-right">{{ l.countedQuantity !== null && doc.status === 'Draft' ? 'count ' + l.countedQuantity : (l.quantity > 0 ? '+' : '') + (l.quantity | number:'1.0-4') }} {{ l.unit }}</td>
+            <td class="text-right">{{ l.unitCost !== null ? (l.unitCost | money:doc.currencyCode:false) : (doc.kind === 'Transfer' ? 'average' : '—') }}</td>
+            <td class="text-right">{{ doc.status === 'Draft' ? '—' : (l.value | money:doc.currencyCode:false) }}</td>
+        </tr></tbody>
+    </table>
+    <div *ngIf="doc.status !== 'Draft'" class="text-sm text-right mb-3"><span class="text-muted mr-2">Total value change</span><b>{{ doc.totalValue | money:doc.currencyCode }}</b></div>
+    <ng-container *ngIf="doc.journal.length">
+        <div class="text-xs text-muted text-uppercase mb-1">Stock journal</div>
+        <table class="table table-sm">
+            <tbody><tr *ngFor="let j of doc.journal"><td class="text-sm">{{ j.accountName }}<div class="text-xs text-muted">{{ j.description }}</div></td>
+                <td class="text-right">{{ j.debit ? (j.debit | money:doc.currencyCode:false) : '' }}</td><td class="text-right">{{ j.credit ? (j.credit | money:doc.currencyCode:false) : '' }}</td></tr></tbody>
+        </table>
+    </ng-container>
+    <div *ngIf="doc.kind === 'Transfer' && doc.status !== 'Draft'" class="text-xs text-muted">Transfers move value between warehouses at average cost; the books do not change.</div>
+</app-aside>
+
+<!-- Editor -->
+<app-aside *ngIf="edit as e" size="xl" [title]="(e.id ? 'Edit ' : 'New ') + kindLabel[e.model.kind].toLowerCase()" (closed)="e.id ? edit = null : closeAll()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+    <div class="row">
+        <div class="col-md-3 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.date"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">{{ e.model.kind === 'Transfer' ? 'From' : 'Warehouse' }}</label>
+            <select class="form-control form-control-sm" [(ngModel)]="e.model.warehouseId"><option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option></select></div>
+        <div *ngIf="e.model.kind === 'Transfer'" class="col-md-3 form-group"><label class="text-xs _600">To</label>
+            <select class="form-control form-control-sm" [(ngModel)]="e.model.toWarehouseId"><option [ngValue]="null">Choose…</option>
+                <ng-container *ngFor="let w of warehouses"><option *ngIf="w.id !== e.model.warehouseId" [ngValue]="w.id">{{ w.name }}</option></ng-container></select>
+            <div *ngIf="warehouses.length < 2" class="text-xs text-muted">Add another warehouse in Products › Setup first.</div></div>
+        <div *ngIf="e.model.kind !== 'Transfer'" class="col-md-6 form-group"><label class="text-xs _600">Offset account</label>
+            <select class="form-control form-control-sm" [(ngModel)]="e.model.accountId">
+                <option [ngValue]="null">{{ e.model.kind === 'Opening' ? 'Opening balance equity' : 'Stock adjustments (Settings › Accounting defaults)' }}</option>
+                <option *ngFor="let a of offsetAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Reason</label><input class="form-control form-control-sm" [(ngModel)]="e.model.reason" maxlength="200"
+            [placeholder]="e.model.kind === 'Adjustment' ? 'Cycle count, damage, expiry, theft…' : ''"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Reference</label><input class="form-control form-control-sm" [(ngModel)]="e.model.reference" maxlength="100"></div>
+    </div>
+    <div *ngIf="e.model.kind === 'Adjustment'" class="mb-2 text-sm">
+        <label class="mr-3"><input type="radio" name="adjMode" class="mr-1" [value]="true" [(ngModel)]="e.byCount">Enter the quantity counted</label>
+        <label><input type="radio" name="adjMode" class="mr-1" [value]="false" [(ngModel)]="e.byCount">Enter the change (+ found, − lost)</label>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm mb-1">
+            <thead><tr class="text-xs text-muted">
+                <th style="min-width: 240px">Item</th><th class="text-right" style="width: 100px">On hand</th>
+                <th class="text-right" style="width: 120px">{{ e.model.kind === 'Adjustment' ? (e.byCount ? 'Counted' : 'Change') : 'Quantity' }}</th>
+                <th *ngIf="e.model.kind !== 'Transfer'" class="text-right" style="width: 120px">Unit cost</th>
+                <th style="min-width: 160px">Note</th><th style="width: 30px"></th>
+            </tr></thead>
+            <tbody><tr *ngFor="let l of e.lines; let i = index">
+                <td><fin-picker [small]="true" [search]="searchItems" [label]="l.itemLabel" placeholder="Search stocked items" (picked)="pickItem(l, $event)"></fin-picker></td>
+                <td class="text-right align-middle text-muted text-sm">{{ l.onHand !== null ? (l.onHand | number:'1.0-4') + ' ' + l.unit : '' }}</td>
+                <td><input *ngIf="e.model.kind === 'Adjustment' && e.byCount; else qty" type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.countedQuantity" min="0" step="any">
+                    <ng-template #qty><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" step="any"></ng-template></td>
+                <td *ngIf="e.model.kind !== 'Transfer'"><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitCost" min="0" step="any"
+                    [placeholder]="e.model.kind === 'Opening' ? 'required' : 'average'"></td>
+                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500"></td>
+                <td class="align-middle"><a role="button" class="text-muted" (click)="removeLine(i)" title="Remove"><i class="fa fa-times"></i></a></td>
+            </tr></tbody>
+        </table>
+    </div>
+    <button type="button" class="btn btn-sm white mb-2" (click)="addLine()"><i class="fa fa-plus mr-1"></i>Add item</button>
+    <div class="text-xs text-muted mb-2" [ngSwitch]="e.model.kind">
+        <span *ngSwitchCase="'Opening'">Opening stock is valued at the unit cost entered and offset to opening balance equity.</span>
+        <span *ngSwitchCase="'Adjustment'">Decreases are valued at the current average cost; increases at the unit cost entered, or the average cost if left empty. Counts are compared with the stock on hand when posted.</span>
+        <span *ngSwitchDefault>Stock moves at the source warehouse's average cost.</span>
+    </div>
+    <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="e.model.notes" maxlength="2000"></textarea></div>
+    <div class="d-flex">
+        <span class="flex"></span>
+        <button class="btn white mr-1" (click)="e.id ? edit = null : closeAll()">Cancel</button>
+        <button class="btn white mr-1" [disabled]="busy" (click)="save(false)">Save draft</button>
+        <button class="btn theme" [disabled]="busy" (click)="save(true)">Save and post</button>
+    </div>
+</app-aside>
