@@ -3,7 +3,7 @@ import {HttpParams} from "@angular/common/http";
 import {Observable, Subject, catchError, map, shareReplay} from "rxjs";
 import {CoreEndpointBase, OrgResourceService} from "@app-global";
 import {
-    AccountOption, AccountingSettings, BalanceSheet, Chart, CoaAccount, CoaAccountInput, CoaGroup, DOCUMENT_TYPE_SERIALIZER, DocumentTypeInput, DocumentTypeRow,
+    AccountOption, AccountingSettings, AnalysisBy, AnalysisReport, AnalysisSide, BalanceSheet, Chart, CoaAccount, CoaAccountInput, CoaGroup, DOCUMENT_TYPE_SERIALIZER, DocumentTypeInput, DocumentTypeRow,
     FINANCE_DOC_SERIALIZER, FinanceActionRes, FinanceDashboard, FinanceDoc, FinanceDocInput, FinanceDocRow, FinanceKind, FinanceKindSummary, FinanceLookups,
     InvoiceSettings, JOURNAL_SERIALIZER, JournalRow, LedgerReport, OpenDoc, POSTING_JOB_SERIALIZER, PartyOption, PostingJobRow, PostingSummary, ProfitLoss,
     RECURRING_SERIALIZER, RecurringInput, RecurringRow, TAX_CODE_SERIALIZER, TaxCodeInput, TaxCodeRow, TrialBalance,
@@ -88,6 +88,7 @@ export class FinanceApiService extends CoreEndpointBase {
     profitLoss(from: string | null, to: string | null) { return this.get<ProfitLoss>('finance/reports/profit-loss', {from, to}); }
     balanceSheet(asOf: string | null) { return this.get<BalanceSheet>('finance/reports/balance-sheet', {asOf}); }
     taxReport(from: string | null, to: string | null) { return this.get<TaxReport>('finance/reports/tax', {from, to}); }
+    analysis(side: AnalysisSide, by: AnalysisBy, from: string | null, to: string | null) { return this.get<AnalysisReport>('finance/reports/analysis', {side, by, from, to}); }
     ledger(accountId: string, from: string | null, to: string | null, skip: number, take: number) {
         return this.get<LedgerReport>('finance/reports/ledger', {accountId, from, to, skip, take});
     }

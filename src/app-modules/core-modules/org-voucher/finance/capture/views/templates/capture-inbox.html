@@ -1,0 +1,177 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-camera mr-1"></i><b>Scan bills & receipts</b></span></ng-template>
+<ng-template #actionTemplate>
+    <select class="form-control form-control-sm mr-1 d-none d-md-inline-block" style="max-width: 170px" [(ngModel)]="uploadPurpose" title="What the uploads are">
+        <option [ngValue]="null">Default type</option><option *ngFor="let p of purposes" [ngValue]="p">{{ purposeLabel[p] }}</option></select>
+    <button class="btn btn-sm theme" [disabled]="uploading" (click)="captureFiles.click()"><i class="fa fa-upload mr-1"></i>Upload</button>
+</ng-template>
+
+<input #captureFiles type="file" multiple class="d-none" [accept]="accept" (change)="pick(captureFiles)">
+<div class="d-flex flex-column flex scroll-y p-2">
+    <!-- Drop zone -->
+    <div class="box p-3 mb-2 text-center text-sm" style="border-style: dashed" [class.primary]="dragging"
+         (dragover)="$event.preventDefault(); dragging = true" (dragleave)="dragging = false" (drop)="drop($event)">
+        <loader [isLoading]="uploading"></loader>
+        <i class="fa fa-cloud-upload fa-2x text-muted d-block mb-1"></i>
+        Drop bills and receipts here (PDF or photos, up to 20 at a time), or <a role="button" class="_600" (click)="captureFiles.click()">choose files</a>.
+        <div class="text-xs text-muted">The vendor, number, dates, totals, tax and lines are read for you; check them and convert.</div>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center mb-1">
+        <ul class="nav nav-pills nav-sm mr-2 mb-1">
+            <li class="nav-item" *ngFor="let v of views"><a role="button" class="nav-link" [class.active]="view === v.key" (click)="setView(v.key)">{{ v.label }}</a></li>
+        </ul>
+        <input class="form-control form-control-sm mb-1 mr-2" style="max-width: 240px" [(ngModel)]="search" (keyup.enter)="setView(view)" placeholder="File, vendor or number">
+        <span *ngIf="reading" class="text-xs text-muted mb-1"><i class="fa fa-spinner fa-spin mr-1"></i>Reading…</span>
+    </div>
+
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="!loading && !error && !rows.length" class="text-center text-muted p-4">Nothing here.</div>
+
+    <div *ngIf="rows.length" class="box mb-1 table-responsive">
+        <table class="table table-sm table-hover mb-0">
+            <thead><tr class="text-xs text-muted"><th>Document</th><th>Vendor</th><th>Number</th><th>Date</th><th class="text-right">Total</th><th>Read</th><th>Status</th></tr></thead>
+            <tbody><tr *ngFor="let r of rows" role="button" (click)="openRow(r)" [class.active]="current?.row?.id === r.id">
+                <td class="text-sm"><i class="fa mr-1 text-muted" [ngClass]="r.fileName.toLowerCase().endsWith('.pdf') ? 'fa-file-pdf-o' : 'fa-file-image-o'"></i>{{ r.fileName }}
+                    <div class="text-xs text-muted">{{ purposeLabel[r.purpose] }}</div></td>
+                <td class="text-sm">{{ r.party || r.vendorName || '—' }}<div *ngIf="!r.party && r.vendorName" class="text-xs text-warning">not matched</div></td>
+                <td class="text-sm">{{ r.documentNumber || '—' }}</td>
+                <td class="text-sm">{{ r.documentDate || '—' }}</td>
+                <td class="text-right text-sm">{{ r.total !== null ? (r.total | money:(r.currencyCode ?? currency):false) : '—' }}</td>
+                <td class="text-sm" [ngClass]="confidenceClass(r.confidence)">{{ r.confidence !== null ? r.confidence + '%' : '' }}</td>
+                <td><span class="badge" [ngClass]="statusTone[r.status]">{{ statusLabel[r.status] }}</span>
+                    <span *ngIf="r.isDuplicate && r.status !== 'Converted'" class="badge danger ml-1" title="Looks like a duplicate">duplicate?</span>
+                    <div *ngIf="r.error" class="text-xs text-danger">{{ r.error }}</div></td>
+            </tr></tbody>
+        </table>
+    </div>
+    <org-grid-pagination [count]="page.count" [perPage]="page.take" [page]="page.page" (cb)="toPage($event)"></org-grid-pagination>
+</div>
+
+<!-- Review -->
+<app-aside *ngIf="current as c" size="xl" [title]="c.row.fileName" [subtitle]="statusLabel[c.row.status] + (c.row.confidence !== null ? ' · read with ' + c.row.confidence + '% confidence' : '')" (closed)="close()">
+    <loader [isLoading]="busy"></loader>
+    <div class="row">
+        <!-- Original -->
+        <div class="col-lg-5 mb-2">
+            <div class="box mb-1" style="height: 70vh; overflow: auto">
+                <iframe *ngIf="safeFileUrl && isPdf" [src]="safeFileUrl" style="width: 100%; height: 100%; border: 0" title="Original document"></iframe>
+                <img *ngIf="fileUrl && isImage" [src]="fileUrl" style="width: 100%" alt="Original document">
+                <div *ngIf="fileUrl && !isPdf && !isImage" class="p-3 text-sm text-muted">No preview for this file type. <a [href]="fileUrl" [download]="c.row.fileName">Download it</a>.</div>
+                <div *ngIf="!fileUrl" class="p-3 text-sm text-muted">Loading the file…</div>
+            </div>
+            <a *ngIf="fileUrl" class="text-xs" [href]="fileUrl" [download]="c.row.fileName"><i class="fa fa-download mr-1"></i>Download</a>
+            <a *ngIf="c.text" role="button" class="text-xs ml-2" (click)="showText = !showText">{{ showText ? 'Hide' : 'Show' }} the text read</a>
+            <pre *ngIf="showText" class="text-xs p-2 light lt" style="max-height: 240px; overflow: auto; white-space: pre-wrap">{{ c.text }}</pre>
+        </div>
+
+        <!-- What was read -->
+        <div class="col-lg-7">
+            <div *ngIf="c.row.status === 'Queued' || c.row.status === 'Processing'" class="alert alert-info text-sm py-2"><i class="fa fa-spinner fa-spin mr-1"></i>
+                Reading the document; this usually takes a few seconds.</div>
+            <div *ngIf="c.row.status === 'Failed'" class="alert alert-danger text-sm py-2">{{ c.row.error }} You can type the details in or read it again.</div>
+            <div *ngIf="c.row.status === 'Discarded'" class="alert alert-secondary text-sm py-2">Discarded.</div>
+            <div *ngIf="converted" class="alert alert-success text-sm py-2">{{ converted.message }}
+                <a role="button" class="_600 ml-1" (click)="openDocument(converted.voucherId)">Open</a></div>
+            <div *ngIf="c.row.status === 'Converted' && !converted" class="alert alert-success text-sm py-2">Recorded.
+                <a *ngIf="c.row.voucherId" role="button" class="_600 ml-1" (click)="openDocument(c.row.voucherId)">Open the {{ c.row.purpose === 'Journal' ? 'journal' : 'bill' }}</a>
+                <a *ngIf="c.paymentVoucherId" role="button" class="ml-2" (click)="openDocument(c.paymentVoucherId)">the payment</a></div>
+            <div *ngIf="c.duplicateOf && c.row.status !== 'Converted'" class="alert alert-warning text-sm py-2">
+                This looks like <a role="button" class="_600" (click)="openDuplicate()">{{ c.duplicateOf }}</a> already captured or in the books.
+                <label class="d-block mb-0 mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="allowDuplicate">It is a different document; convert it anyway</label></div>
+            <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+
+            <ng-container *ngIf="edit as e">
+                <fieldset [disabled]="!editable">
+                    <div class="row">
+                        <div class="col-md-5 form-group"><label class="text-xs _600">Record as</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="e.model.purpose"><option *ngFor="let p of purposes" [ngValue]="p">{{ purposeLabel[p] }}</option></select></div>
+                        <div *ngIf="e.model.purpose !== 'Journal'" class="col-md-7 form-group"><label class="text-xs _600">Vendor</label>
+                            <fin-picker [small]="true" [search]="searchVendors" [label]="e.partyLabel" [disabled]="!editable" placeholder="Search vendors"
+                                        (picked)="e.model.partyAccountId = $event.id; e.partyLabel = $event.label"></fin-picker>
+                            <div *ngIf="e.model.vendorName && !e.model.partyAccountId" class="text-xs text-warning">Read as "{{ e.model.vendorName }}"{{ e.model.vendorTaxId ? ' (' + e.model.vendorTaxId + ')' : '' }}; choose or add the vendor.</div>
+                            <div *ngIf="e.model.partyAccountId && e.model.vendorName && e.partyLabel !== e.model.vendorName" class="text-xs text-muted">Read as "{{ e.model.vendorName }}"</div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 form-group"><label class="text-xs _600">Number</label><input class="form-control form-control-sm" [(ngModel)]="e.model.documentNumber" maxlength="100"></div>
+                        <div class="col-md-4 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.documentDate"></div>
+                        <div *ngIf="e.model.purpose === 'Bill'" class="col-md-4 form-group"><label class="text-xs _600">Due</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.dueDate"></div>
+                    </div>
+                    <div *ngIf="e.model.purpose !== 'Bill'" class="row">
+                        <div class="col-md-6 form-group"><label class="text-xs _600">Paid from</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="e.model.moneyAccountId"><option [ngValue]="null">Choose…</option>
+                                <option *ngFor="let a of moneyAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+                        <div *ngIf="e.model.purpose === 'PaidExpense'" class="col-md-6 form-group"><label class="text-xs _600">Payment mode</label>
+                            <select class="form-control form-control-sm" [(ngModel)]="e.model.paymentModeId"><option [ngValue]="null">Default</option>
+                                <option *ngFor="let m of modes" [ngValue]="m.id">{{ m.name }}</option></select></div>
+                    </div>
+
+                    <!-- Lines -->
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-1">
+                            <thead><tr class="text-xs text-muted"><th style="min-width: 160px">Description</th><th style="width: 70px" class="text-right">Qty</th>
+                                <th style="width: 100px" class="text-right">Price</th><th style="width: 110px" class="text-right">Amount</th><th style="min-width: 170px">Account</th>
+                                <th style="width: 110px">Tax</th><th style="width: 24px"></th></tr></thead>
+                            <tbody><tr *ngFor="let l of e.lines; let i = index">
+                                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500"></td>
+                                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" (change)="recalc(l)" step="any"></td>
+                                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitPrice" (change)="recalc(l)" step="any"></td>
+                                <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.amount" step="any"></td>
+                                <td><fin-picker [small]="true" [search]="searchAccounts" [label]="l.accountLabel" [disabled]="!editable" placeholder="Default expense"
+                                                (picked)="l.accountId = $event.id; l.accountLabel = $event.label"></fin-picker>
+                                    <div *ngIf="l.suggestedBy" class="text-xs text-muted">from {{ l.suggestedBy }}</div></td>
+                                <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId"><option [ngValue]="null">None</option>
+                                    <option *ngFor="let t of taxes" [ngValue]="t.id">{{ t.code }}</option></select></td>
+                                <td class="align-middle"><a *ngIf="editable" role="button" class="text-muted" (click)="removeLine(i)" title="Remove"><i class="fa fa-times"></i></a></td>
+                            </tr></tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="editable" class="mb-2">
+                        <button type="button" class="btn btn-xs white mr-1" (click)="addLine()"><i class="fa fa-plus mr-1"></i>Line</button>
+                        <button *ngIf="e.lines.length > 1" type="button" class="btn btn-xs white" (click)="collapseLines()">Use one line</button>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="row">
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Currency</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.currencyCode" maxlength="3"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Before tax</label><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="e.model.subTotal" step="any"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Tax</label><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="e.model.taxAmount" step="any"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Total</label><input type="number" class="form-control form-control-sm text-right _600" [(ngModel)]="e.model.total" step="any"></div>
+                    </div>
+                    <div class="text-xs mb-2" [ngClass]="totalGap === 0 ? 'text-muted' : 'text-warning'">Lines {{ linesTotal | money:(e.model.currencyCode || currency):false }}
+                        + tax {{ (+(e.model.taxAmount ?? 0)) | money:(e.model.currencyCode || currency):false }} = {{ computedTotal | money:(e.model.currencyCode || currency):false }}
+                        <span *ngIf="totalGap !== 0">; {{ totalGap | money:(e.model.currencyCode || currency):false }} off the document's total (small differences are booked as rounding)</span></div>
+                    <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="e.model.notes" maxlength="2000"></textarea></div>
+                </fieldset>
+
+                <div *ngIf="c.problems.length && editable" class="text-xs text-warning mb-2"><i class="fa fa-exclamation-triangle mr-1"></i>{{ c.problems.join(' ') }}</div>
+
+                <!-- Actions -->
+                <div class="d-flex flex-wrap align-items-center">
+                    <ng-container *ngIf="c.row.status !== 'Converted'">
+                        <select class="form-control form-control-sm mr-1 mb-1" style="max-width: 170px" [(ngModel)]="reprocessWith" title="Reader">
+                            <option *ngFor="let p of providers" [ngValue]="p.code">{{ p.label }}{{ p.simulated ? ' (simulated)' : '' }}</option></select>
+                        <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="reprocess()"><i class="fa fa-refresh mr-1"></i>Read again</button>
+                        <button *ngIf="c.row.status !== 'Discarded'" class="btn btn-sm white text-danger mr-1 mb-1" [disabled]="busy" (click)="discard()">Discard</button>
+                    </ng-container>
+                    <span class="flex"></span>
+                    <ng-container *ngIf="editable">
+                        <label *ngIf="e.model.purpose === 'Bill'" class="text-sm mr-2 mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="postBill">Post it</label>
+                        <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="save()">Save</button>
+                        <button class="btn btn-sm theme mb-1" [disabled]="busy" (click)="convert()">
+                            {{ e.model.purpose === 'Bill' ? (postBill ? 'Create and post bill' : 'Create bill draft') : e.model.purpose === 'PaidExpense' ? 'Record as paid' : 'Create journal' }}</button>
+                    </ng-container>
+                </div>
+
+                <!-- Fields read -->
+                <details *ngIf="c.fields.length" class="mt-2">
+                    <summary class="text-xs text-muted">Fields read ({{ c.fields.length }})</summary>
+                    <table class="table table-sm mb-0"><tbody>
+                        <tr *ngFor="let f of c.fields" class="text-xs"><td class="text-muted">{{ f.label || f.key }}</td><td>{{ f.value }}</td>
+                            <td class="text-right" [ngClass]="confidenceClass(f.confidence)">{{ f.confidence }}%</td></tr>
+                    </tbody></table>
+                </details>
+            </ng-container>
+        </div>
+    </div>
+</app-aside>

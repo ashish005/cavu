@@ -132,7 +132,10 @@ export interface FinanceDoc {
     canEdit: boolean; canPost: boolean; needsApproval: boolean; canVoid: boolean;
     lines: FinanceLine[]; ledgerLines: LedgerLine[]; taxes: FinanceTaxSummary[]; allocations: FinanceAllocation[]; journal: LedgerLine[];
     footer: string | null; paymentInstructions: string | null;
+    /** Scanned originals the document was captured from (Purchases › Scan bills & receipts). */
+    sourceFiles: FinanceSourceFile[];
 }
+export interface FinanceSourceFile { captureId: string; fileName: string; contentType: string; }
 
 export interface JournalLineInput { accountId: string | null; debit: number; credit: number; description: string | null; }
 export interface AllocationInput { targetVoucherId: string; amount: number; }
@@ -169,7 +172,8 @@ export interface TaxSuggestion {
     taxCodeId: string | null; taxCode: string | null; kind: TaxKind | null; branchCountry: string | null; branchRegion: string | null;
     partyCountry: string | null; partyRegion: string | null; location: TaxLocation; partyHasTaxId: boolean; partyExempt: boolean;
 }
-export interface ModeOption { id: number; code: string; name: string; systemType: string | null; }
+/** `accountId`: the money account the mode settles to by default (Settings › Payment modes). */
+export interface ModeOption { id: number; code: string; name: string; systemType: string | null; accountId: string | null; }
 export interface OpenDoc { id: string; number: string; date: string; dueDate: string | null; total: number; balance: number; currencyCode: string; }
 
 export interface FinanceLookups {
@@ -185,6 +189,14 @@ export interface FinanceLookups {
 }
 
 // ---------- Reports ----------
+
+export type AnalysisSide = 'sales' | 'purchases' | 'receipts' | 'payments';
+export type AnalysisBy = 'party' | 'month' | 'preparer' | 'mode';
+export interface AnalysisRow { key: string; label: string; documents: number; amount: number; outstanding: number; share: number; }
+/** Posted documents of a period grouped one way (functional currency); sales and purchases are net of notes. */
+export interface AnalysisReport {
+    side: AnalysisSide; by: AnalysisBy; from: string; to: string; currencyCode: string; documents: number; amount: number; outstanding: number; rows: AnalysisRow[];
+}
 
 export interface TrialBalanceRow { accountId: string; code: string; name: string; group: string; nature: AccountNature; opening: number; debit: number; credit: number; closing: number; }
 export interface TrialBalance { from: string; to: string; currency: string; rows: TrialBalanceRow[]; totalDebit: number; totalCredit: number; closingDebit: number; closingCredit: number; balanced: boolean; }
@@ -280,6 +292,8 @@ export interface BulkResult { created: number; failed: number; queuedForPosting:
 export interface InvoiceSettings {
     billApprovalThreshold: number | null; invoiceApprovalThreshold: number | null; defaultSalesTaxCodeId: string | null; defaultPurchaseTaxCodeId: string | null;
     defaultDueDays: number; invoiceFooter: string | null; paymentInstructions: string | null; pricesIncludeTax: boolean;
+    /** Nothing dated on or before it can be posted, voided or changed (closed periods). */
+    lockDate: string | null;
 }
 
 export class DocumentTypeRow extends CoreResource {

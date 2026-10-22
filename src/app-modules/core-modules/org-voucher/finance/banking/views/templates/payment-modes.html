@@ -1,0 +1,25 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-credit-card mr-1"></i><b>Payment modes</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!modes || saving" (click)="save()">Save</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="modes" style="max-width: 760px">
+        <p class="text-sm text-muted">Choose the modes offered when recording money in and out, in the order they are listed. A mode can settle to a money account
+            (card payments to the gateway's clearing account, cash to the till) when the document does not name one.</p>
+        <table class="table table-sm">
+            <thead><tr class="text-xs text-muted"><th style="width: 60px">Offer</th><th>Mode</th><th style="width: 280px">Settles to</th><th style="width: 70px"></th></tr></thead>
+            <tbody><tr *ngFor="let m of modes; let i = index; let last = last" [class.text-muted]="!m.isEnabled">
+                <td class="align-middle"><input type="checkbox" [(ngModel)]="m.isEnabled"></td>
+                <td class="align-middle">{{ m.name }} <span class="text-xs text-muted">{{ m.code }}</span></td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="m.accountId" [disabled]="!m.isEnabled">
+                    <option [ngValue]="null">{{ m.systemType === 'cash' ? 'Cash (default)' : 'Bank (default)' }}</option>
+                    <option *ngFor="let a of moneyAccounts" [ngValue]="a.id">{{ a.name }}</option></select></td>
+                <td class="align-middle text-right">
+                    <a role="button" class="text-muted mr-2" [class.invisible]="i === 0" (click)="move(i, -1)" title="Up"><i class="fa fa-arrow-up"></i></a>
+                    <a role="button" class="text-muted" [class.invisible]="last" (click)="move(i, 1)" title="Down"><i class="fa fa-arrow-down"></i></a></td>
+            </tr></tbody>
+        </table>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</div>

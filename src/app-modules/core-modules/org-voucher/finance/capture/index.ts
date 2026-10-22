@@ -1,0 +1,9 @@
+// Document capture inside the finance workspace (api/v1/finance/capture/*): scanned bills and receipts.
+import {CaptureApiService} from './capture-api.service';
+
+export * from './capture.models';
+export * from './capture-api.service';
+export {FinanceCaptureInboxView} from './views/capture-inbox.view';
+export {FinanceCaptureSettingsView} from './views/capture-settings.view';
+
+export const CAPTURE_SERVICES = [CaptureApiService];

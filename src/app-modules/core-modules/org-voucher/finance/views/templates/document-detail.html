@@ -141,6 +141,10 @@
     </table>
 </div>
 
+<div *ngIf="doc.sourceFiles?.length" class="text-sm mb-2"><b class="text-xs text-muted d-block">Original</b>
+    <a *ngFor="let f of doc.sourceFiles" role="button" class="mr-3" (click)="openSource(f)"><i class="fa mr-1" [ngClass]="f.contentType === 'application/pdf' ? 'fa-file-pdf-o' : 'fa-file-image-o'"></i>{{ f.fileName }}</a>
+</div>
+
 <div *ngIf="doc.notes" class="text-sm mb-2"><b class="text-xs text-muted d-block">Note</b><span style="white-space: pre-wrap">{{ doc.notes }}</span></div>
 <div *ngIf="doc.internalNote" class="text-sm mb-2"><b class="text-xs text-muted d-block">Internal note</b><span style="white-space: pre-wrap">{{ doc.internalNote }}</span></div>
 

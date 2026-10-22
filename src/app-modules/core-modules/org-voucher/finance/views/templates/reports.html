@@ -25,6 +25,11 @@
         <div *ngIf="tab === 'ledger'" class="ml-md-3 mb-1" style="min-width: 280px">
             <fin-picker [small]="true" [search]="searchAccounts" [label]="ledgerAccount?.label" placeholder="Choose an account" (picked)="pickAccount($event)"></fin-picker>
         </div>
+        <div *ngIf="tab === 'ledger' && moneyAccounts.length" class="w-100 mb-1 text-sm">
+            <span class="text-muted mr-1">Cash & bank books:</span>
+            <a *ngFor="let m of moneyAccounts" role="button" class="badge mr-1" [ngClass]="ledgerAccount?.id === m.id ? 'primary' : 'white b-a'"
+               (click)="pickAccount({id: m.id, label: m.name})"><i class="fa mr-1" [ngClass]="m.isCash ? 'fa-money' : 'fa-university'"></i>{{ m.name }}</a>
+        </div>
     </div>
 
     <loader [isLoading]="loading"></loader>
@@ -97,6 +102,41 @@
             </table></div>
         </div>
         <div class="text-xs text-muted mt-1">Posted documents of this branch, by document date, in {{ r.currency }}. Credit and debit notes reduce the figures.</div>
+    </ng-container>
+
+    <!-- Analysis -->
+    <ng-container *ngIf="tab === 'analysis'">
+        <div class="d-flex flex-wrap align-items-center mb-2">
+            <div class="btn-group btn-group-sm mr-2 mb-1">
+                <button *ngFor="let s of sides" class="btn white" [class.active]="side === s.key" (click)="setSide(s.key)">{{ s.label }}</button>
+            </div>
+            <span class="text-sm text-muted mr-1 mb-1">by</span>
+            <select class="form-control form-control-sm mb-1" style="max-width: 170px" [ngModel]="by" (ngModelChange)="setBy($event)">
+                <option ngValue="party">{{ side === 'sales' || side === 'receipts' ? 'Customer' : 'Vendor' }}</option>
+                <option ngValue="month">Month</option>
+                <option ngValue="preparer">Prepared by</option>
+                <option *ngIf="side === 'receipts' || side === 'payments'" ngValue="mode">Payment mode</option>
+            </select>
+        </div>
+        <div *ngIf="analysis as a" class="box">
+            <div *ngIf="!a.rows.length" class="text-center text-muted p-4">No posted documents in this period.</div>
+            <table *ngIf="a.rows.length" class="table table-sm mb-0">
+                <thead><tr class="text-xs text-muted"><th>{{ byLabel }}</th><th class="text-right">Documents</th><th class="text-right">Amount</th>
+                    <th *ngIf="hasOutstanding" class="text-right">Outstanding</th><th style="width: 30%">Share</th></tr></thead>
+                <tbody>
+                <tr *ngFor="let r of a.rows">
+                    <td>{{ r.label }}</td><td class="text-right">{{ r.documents }}</td><td class="text-right">{{ r.amount | money:a.currencyCode:false }}</td>
+                    <td *ngIf="hasOutstanding" class="text-right">{{ r.outstanding ? (r.outstanding | money:a.currencyCode:false) : '' }}</td>
+                    <td class="align-middle"><div class="d-flex align-items-center"><div class="progress flex mr-2" style="height: 6px">
+                        <div class="progress-bar primary" [style.width.%]="r.share > 0 ? r.share : 0"></div></div><span class="text-xs text-muted" style="width: 42px">{{ r.share }}%</span></div></td>
+                </tr>
+                <tr class="_600"><td>Total</td><td class="text-right">{{ a.documents }}</td><td class="text-right">{{ a.amount | money:a.currencyCode }}</td>
+                    <td *ngIf="hasOutstanding" class="text-right">{{ a.outstanding | money:a.currencyCode }}</td><td></td></tr>
+                </tbody>
+            </table>
+            <div class="text-xs text-muted p-2 b-t">Posted documents from {{ a.from }} to {{ a.to }} in {{ a.currencyCode }}.
+                <span *ngIf="hasOutstanding">Credit and debit notes are deducted.</span></div>
+        </div>
     </ng-container>
 
     <!-- Account ledger -->

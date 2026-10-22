@@ -3,16 +3,17 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {Observable, finalize, map} from "rxjs";
 import {DateFormatCell, ViewExtender} from "@app-global";
-import {AccountOption, BalanceSheet, JournalQueryOptions, JournalRow, LedgerReport, ProfitLoss, ReportSection, TAX_KIND_LABEL, TaxReport, TrialBalance, todayIso} from "../domains/finance.models";
+import {AccountOption, AnalysisBy, AnalysisReport, AnalysisSide, BalanceSheet, JournalQueryOptions, JournalRow, LedgerReport, ProfitLoss, ReportSection, TAX_KIND_LABEL, TaxReport, TrialBalance, todayIso} from "../domains/finance.models";
 import {FinanceApiService, JournalGridService, financeErrorOf} from "../services/finance-api.service";
 import {PickerOption} from "./finance-picker.component";
 import {formatMoney} from "../grid-cells/finance-cells";
 
-type Tab = 'pl' | 'bs' | 'tb' | 'tax' | 'ledger' | 'journals';
+type Tab = 'pl' | 'bs' | 'tb' | 'tax' | 'analysis' | 'ledger' | 'journals';
 
 /**
  * Financial reports from the ledger: profit and loss, balance sheet, trial balance, account ledger (running balance)
- * and the journal register. Periods default to the financial year to date; every report exports to CSV.
+ * (cash and bank books from the money accounts), sales/purchase analysis and the journal register. Periods default to
+ * the financial year to date; every report exports to CSV.
  */
 @Component({standalone: false, templateUrl: './templates/reports.html'})
 export class FinanceReportsView extends ViewExtender<JournalRow> implements OnInit {
@@ -20,7 +21,7 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
     private readonly destroyRef = inject(DestroyRef);
     readonly tabs: {key: Tab; label: string}[] = [
         {key: 'pl', label: 'Profit and loss'}, {key: 'bs', label: 'Balance sheet'}, {key: 'tb', label: 'Trial balance'}, {key: 'tax', label: 'Tax summary'},
-        {key: 'ledger', label: 'Account ledger'}, {key: 'journals', label: 'Journal register'}
+        {key: 'analysis', label: 'Analysis'}, {key: 'ledger', label: 'Ledger & cash book'}, {key: 'journals', label: 'Journal register'}
     ];
     tab: Tab = 'pl';
     from: string | null = null;
@@ -33,6 +34,14 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
     tb: TrialBalance | null = null;
     tax: TaxReport | null = null;
     readonly kindLabel = TAX_KIND_LABEL;
+    analysis: AnalysisReport | null = null;
+    side: AnalysisSide = 'sales';
+    by: AnalysisBy = 'party';
+    readonly sides: {key: AnalysisSide; label: string}[] = [
+        {key: 'sales', label: 'Sales'}, {key: 'purchases', label: 'Purchases'}, {key: 'receipts', label: 'Money in'}, {key: 'payments', label: 'Money out'}
+    ];
+    /** Cash and bank accounts, for the cash/bank book shortcuts. */
+    moneyAccounts: AccountOption[] = [];
     ledger: LedgerReport | null = null;
     ledgerAccount: {id: string; label: string} | null = null;
     ledgerPage = {skip: 0, take: 50, page: 1};
@@ -52,9 +61,12 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
     get errorText() { return this.error ?? (this.errorMsg ? financeErrorOf(this.errorMsg, 'The journals could not be loaded.') : null); }
 
     ngOnInit() {
+        this.api.lookups().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: l => this.moneyAccounts = l.bankAccounts, error: () => {}});
         this.activatedRoute.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(q => {
             const tab = (q.get('tab') as Tab) || 'pl';
             const account = q.get('account');
+            const side = q.get('side') as AnalysisSide | null;
+            if (side && ['sales', 'purchases', 'receipts', 'payments'].includes(side)) { this.side = side; }
             if (account && account !== this.ledgerAccount?.id) { this.ledgerAccount = {id: account, label: 'Selected account'}; }
             this.select(tab, false);
         });
@@ -86,6 +98,10 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
             case 'bs': this.load(this.api.balanceSheet(this.to), r => this.bs = r); break;
             case 'tb': this.load(this.api.trialBalance(this.from, this.to), r => this.tb = r); break;
             case 'tax': this.load(this.api.taxReport(this.from, this.to), r => this.tax = r); break;
+            case 'analysis':
+                if (this.by === 'mode' && (this.side === 'sales' || this.side === 'purchases')) { this.by = 'party'; }
+                this.load(this.api.analysis(this.side, this.by, this.from, this.to), r => this.analysis = r);
+                break;
             case 'ledger': this.loadLedger(); break;
             case 'journals':
                 Object.assign(this.coreState, {from: this.from, to: this.to, skip: 0, page: 1, take: 25});
@@ -130,6 +146,14 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
         this.router.navigate([], {relativeTo: this.activatedRoute, queryParams: {tab: 'ledger', account: accountId}, queryParamsHandling: 'merge'});
     }
 
+    // ---------- Analysis ----------
+
+    get byLabel() { return {party: this.side === 'sales' || this.side === 'receipts' ? 'Customer' : 'Vendor', month: 'Month', preparer: 'Prepared by', mode: 'Payment mode'}[this.by]; }
+    get hasOutstanding() { return this.side === 'sales' || this.side === 'purchases'; }
+
+    setSide(side: AnalysisSide) { this.side = side; this.run(); }
+    setBy(by: AnalysisBy) { this.by = by; this.run(); }
+
     // ---------- Export ----------
 
     exportCsv() {
@@ -149,6 +173,13 @@ export class FinanceReportsView extends ViewExtender<JournalRow> implements OnIn
             rows.push(['Country', 'Jurisdiction', 'Code', 'Component', 'Kind', 'Side', 'Rate', 'Return box', 'Taxable', 'Tax', 'Documents']);
             this.tax.rows.forEach(r => rows.push([r.countryCode ?? '', r.jurisdiction ?? '', r.code, r.component, r.kind, r.isSales ? 'Sales' : 'Purchases', r.rate, r.reportingCode ?? '', r.taxable, r.tax, r.documents]));
             rows.push([]); rows.push(['Output tax', this.tax.outputTax]); rows.push(['Input tax', this.tax.inputTax]); rows.push(['Net payable', this.tax.netPayable]);
+        }
+        if (this.tab === 'analysis' && this.analysis) {
+            const a = this.analysis;
+            name = `${a.side}-by-${a.by}_${a.from}_${a.to}`;
+            rows.push([this.byLabel, 'Documents', 'Amount', ...(this.hasOutstanding ? ['Outstanding'] : []), 'Share %']);
+            a.rows.forEach(r => rows.push([r.label, r.documents, r.amount, ...(this.hasOutstanding ? [r.outstanding] : []), r.share]));
+            rows.push(['Total', a.documents, a.amount, ...(this.hasOutstanding ? [a.outstanding] : []), 100]);
         }
         if (this.tab === 'ledger' && this.ledger) {
             name = `ledger_${this.ledger.code ?? this.ledger.account}`;

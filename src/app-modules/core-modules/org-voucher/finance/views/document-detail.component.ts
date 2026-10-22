@@ -2,8 +2,9 @@ import {Component, DestroyRef, EventEmitter, Input, OnChanges, Output, inject} f
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {Observable, finalize} from "rxjs";
 import {AlertService, MessageSeverity} from "@app-global";
-import {FinanceActionRes, FinanceDoc, FinanceLookups, Frequency, KINDS, KindInfo, todayIso} from "../domains/finance.models";
+import {FinanceActionRes, FinanceDoc, FinanceLookups, FinanceSourceFile, Frequency, KINDS, KindInfo, todayIso} from "../domains/finance.models";
 import {FinanceApiService, financeErrorOf} from "../services/finance-api.service";
+import {CaptureApiService} from "../capture/capture-api.service";
 import {formatMoney} from "../grid-cells/finance-cells";
 
 type Panel = 'pay' | 'void' | 'send' | 'repeat' | 'approve' | null;
@@ -40,7 +41,7 @@ export class FinanceDocumentDetailComponent implements OnChanges {
     repeat = {name: '', frequency: 'Monthly' as Frequency, interval: 1, nextRunDate: todayIso(), endDate: null as string | null, remainingCount: null as number | null, autoPost: false};
     approvalNote = '';
 
-    constructor(private api: FinanceApiService, private alerts: AlertService) {
+    constructor(private api: FinanceApiService, private capture: CaptureApiService, private alerts: AlertService) {
         this.api.lookups().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: l => this.lookups = l, error: () => {}});
     }
 
@@ -48,6 +49,15 @@ export class FinanceDocumentDetailComponent implements OnChanges {
         this.info = KINDS[this.doc.kind];
         this.panel = null;
         this.error = null;
+    }
+
+    /** Opens the scanned original in a new tab (fetched with the member's credentials). */
+    openSource(f: FinanceSourceFile) {
+        const tab = window.open('', '_blank');
+        this.capture.fileUrl(f.captureId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: url => { if (tab) { tab.location.href = url; } else { window.location.href = url; } setTimeout(() => URL.revokeObjectURL(url), 60_000); },
+            error: e => { tab?.close(); this.alerts.showMessage('Original', financeErrorOf(e, 'The file could not be opened.'), MessageSeverity.error); }
+        });
     }
 
     get settleable() { return this.doc.kind === 'Invoice' || this.doc.kind === 'Bill'; }

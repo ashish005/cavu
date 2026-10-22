@@ -92,7 +92,7 @@
             </li>
             <li class="dropdown-divider"></li>
             <li class="dropdown-item">
-                <a [routerLink]="['accounting', 'trxn']">
+                <a [routerLink]="['invoice', 'reports']" [queryParams]="{tab: 'journals'}">
                     <small class="d-block _500 title">Trxn Report</small>
                 </a>
             </li>
@@ -104,28 +104,28 @@
         </button>
         <ul class="dropdown-menu animate fadeIn" x-placement="bottom-start">
             <li class="dropdown-item">
-                <a [routerLink]="['reports', 'sale']">
+                <a [routerLink]="['invoice', 'reports']" [queryParams]="{tab: 'analysis', side: 'sales'}">
                     <small class="d-block _500 title">Sale Report</small>
                 </a>
             </li>
             <li class="dropdown-item">
-                <a [routerLink]="['reports', 'purchase']">
+                <a [routerLink]="['invoice', 'reports']" [queryParams]="{tab: 'analysis', side: 'purchases'}">
                     <small class="d-block _500 title">Purchase Report</small>
                 </a>
             </li>
             <li class="dropdown-item">
-                <a [routerLink]="['reports', 'payment']">
+                <a [routerLink]="['invoice', 'reports']" [queryParams]="{tab: 'analysis', side: 'payments'}">
                     <small class="d-block _500 title">Payment Report</small>
                 </a>
             </li>
             <li class="dropdown-item">
-                <a [routerLink]="['reports', 'receipt']">
+                <a [routerLink]="['invoice', 'reports']" [queryParams]="{tab: 'analysis', side: 'receipts'}">
                     <small class="d-block _500 title">Receipt Report</small>
                 </a>
             </li>
             <li class="dropdown-divider"></li>
             <li class="dropdown-item">
-                <a [routerLink]="['reports', 'inventory']">
+                <a [routerLink]="['invoice', 'products', 'reports']">
                     <small class="d-block _500 title">Inventory Report</small>
                 </a>
             </li>

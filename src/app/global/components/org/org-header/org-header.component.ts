@@ -35,7 +35,7 @@ export class OrgHeaderComponent implements OnInit {
     goBackToEmployeePortal = () => this.router.navigate(['app'], {relativeTo: this.activatedRoute.root});
 
     routeToSetupPath = (path) => this.router.navigate(['admin', 'setup', path], {relativeTo: this.activatedRoute.parent});
-    routeToModulePath = (path) => this.router.navigate(['app', 'admin', path], {relativeTo: this.activatedRoute.root});
+    routeToModulePath = (path: string) => this.router.navigate(['app', 'admin', ...path.split('/')], {relativeTo: this.activatedRoute.root});
 
     logout = () => this.authService.logout();
 

@@ -247,20 +247,20 @@
             </a>
         </div>
         <div class="col-4 dropdown-item">
-            <a (click)="routeToModulePath('accounting')" class="d-block text-center">
+            <a (click)="routeToModulePath('invoice/accounting/chart')" class="d-block text-center">
                 <i class="fa text-sm fa-institution text-muted"></i>
                 <small class="d-block _500 title">Account & Finance</small>
             </a>
         </div>
         <div class="col-4 dropdown-item">
-            <a (click)="routeToModulePath('trxn-setup')" class="d-block text-center">
-                <i class="fa text-sm fa fa-users text-muted"></i>
+            <a (click)="routeToModulePath('invoice/banking')" class="d-block text-center">
+                <i class="fa text-sm fa fa-university text-muted"></i>
                 <small class="d-block _500 title">Bank & Transaction Setup</small>
             </a>
         </div>
         <div class="col-4 dropdown-item">
-            <a (click)="routeToModulePath('tax-management')" class="d-block text-center">
-                <i class="fa text-sm fa fa fa-money text-muted"></i>
+            <a (click)="routeToModulePath('invoice/settings/tax-codes')" class="d-block text-center">
+                <i class="fa text-sm fa fa-percent text-muted"></i>
                 <small class="d-block _500 title">Tax management</small>
             </a>
         </div>
@@ -292,12 +292,16 @@
     <div class="row no-gutters px-2 pb-2">
         <div class="col-12 px-1 text-muted text-sm b-b b-theme">Reports</div>
         <div class="col dropdown-item">
-            <a (click)="routeToModulePath('reports')" class="d-block text-center">
+            <a (click)="routeToModulePath('invoice/reports')" class="d-block text-center">
                 <i class="fa text-sm fa-institution text-muted"></i>
                 <small class="d-block _500 title">Voucher Reports</small>
             </a>
         </div>
         <div class="col dropdown-item">
+            <a (click)="routeToModulePath('invoice/purchases/capture')" class="d-block text-center">
+                <i class="fa text-sm fa-camera text-muted"></i>
+                <small class="d-block _500 title">Scan bills & receipts</small>
+            </a>
         </div>
         <div class="col dropdown-item">
         </div>

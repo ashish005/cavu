@@ -1,1 +1,0 @@
-export {AccountingManageModule} from "./manage";

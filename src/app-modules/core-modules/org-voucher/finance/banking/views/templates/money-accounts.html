@@ -1,0 +1,95 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-university mr-1"></i><b>Bank & cash</b></span></ng-template>
+<ng-template #actionTemplate>
+    <button class="btn btn-sm white mr-1" (click)="create('Cash')"><i class="fa fa-money mr-1"></i>Cash</button>
+    <button class="btn btn-sm theme" (click)="create('Bank')"><i class="fa fa-plus mr-1"></i>Bank account</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div *ngIf="accounts && !accounts.length" class="text-center text-muted p-4">
+        Add the bank accounts, cash, cards and payment gateways money moves through. Import their statements to reconcile them with the books.
+    </div>
+
+    <div *ngIf="accounts?.length" class="text-sm text-muted mb-2">Total in {{ currency }} accounts: <b class="text-body">{{ total | money:currency }}</b></div>
+    <div class="row">
+        <div *ngFor="let a of accounts" class="col-md-6 col-xl-4 mb-3">
+            <div class="box mb-0 h-100 d-flex flex-column">
+                <div class="p-3 d-flex align-items-start">
+                    <span class="w-40 circle light lt text-center mr-2" style="line-height: 40px"><i class="fa" [ngClass]="kindIcon[a.kind]"></i></span>
+                    <div class="flex" style="min-width: 0">
+                        <a role="button" class="_600 d-block text-ellipsis" (click)="open(a)">{{ a.name }}</a>
+                        <div class="text-xs text-muted">{{ a.bankName || kindLabel[a.kind] }}<span *ngIf="a.numberLast4"> ••••{{ a.numberLast4 }}</span>
+                            <span *ngIf="a.accountCode"> · {{ a.accountCode }}</span></div>
+                        <div class="text-xs">
+                            <span *ngIf="a.isDefaultForReceipts" class="badge white b-a mr-1">receipts</span>
+                            <span *ngIf="a.isDefaultForPayments" class="badge white b-a">payments</span>
+                        </div>
+                    </div>
+                    <a role="button" class="text-muted" title="Edit" (click)="edit(a)"><i class="fa fa-pencil"></i></a>
+                </div>
+                <div class="px-3 pb-2 d-flex">
+                    <div class="flex"><div class="text-xs text-muted">In the books</div><div class="h5 mb-0">{{ a.ledgerBalance | money:a.currencyCode }}</div></div>
+                    <div *ngIf="a.statementBalance !== null" class="text-right"><div class="text-xs text-muted">Statement {{ a.statementDate }}</div>
+                        <div class="h6 mb-0">{{ a.statementBalance | money:a.currencyCode }}</div></div>
+                </div>
+                <span class="flex"></span>
+                <div class="px-3 py-2 b-t d-flex align-items-center text-sm">
+                    <span *ngIf="a.unmatched" class="badge warn mr-2">{{ a.unmatched }} to reconcile</span>
+                    <span *ngIf="!a.unmatched && a.statementBalance !== null" class="text-success mr-2"><i class="fa fa-check mr-1"></i>All matched</span>
+                    <span class="text-xs text-muted">{{ a.lastReconciledOn ? 'Reconciled to ' + a.lastReconciledOn : 'Not reconciled yet' }}</span>
+                    <span class="flex"></span>
+                    <button class="btn btn-xs white" (click)="open(a)">{{ a.kind === 'Cash' ? 'Open' : 'Reconcile' }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="form as f" size="lg" [title]="f.id ? 'Edit ' + f.model.name : 'New ' + kindLabel[f.model.kind].toLowerCase()" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-xs _600">Type</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.kind" [disabled]="!!f.id"><option *ngFor="let k of kinds" [ngValue]="k">{{ kindLabel[k] }}</option></select></div>
+        <div class="col-md-8 form-group"><label class="text-xs _600">Name</label>
+            <input class="form-control form-control-sm" [(ngModel)]="f.model.name" maxlength="150" [placeholder]="f.model.kind === 'Cash' ? 'Petty cash' : 'Current account'"></div>
+    </div>
+    <ng-container *ngIf="f.model.kind !== 'Cash'">
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-xs _600">{{ f.model.kind === 'Clearing' ? 'Provider' : 'Bank' }}</label>
+                <input class="form-control form-control-sm" [(ngModel)]="f.model.bankName" maxlength="150"></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Account number</label>
+                <input class="form-control form-control-sm" [(ngModel)]="f.model.accountNumber" maxlength="40" autocomplete="off" [placeholder]="f.masked || ''">
+                <div *ngIf="f.masked" class="text-xs text-muted">Stored encrypted; leave empty to keep {{ f.masked }}.</div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-xs _600">Code type</label>
+                <select class="form-control form-control-sm" [(ngModel)]="f.model.routingLabel"><option [ngValue]="null">—</option>
+                    <option *ngFor="let r of routingLabels" [ngValue]="r">{{ r }}</option></select></div>
+            <div class="col-md-5 form-group"><label class="text-xs _600">{{ f.model.routingLabel || 'Branch code' }}</label>
+                <input class="form-control form-control-sm" [(ngModel)]="f.model.routing" maxlength="40" autocomplete="off" [placeholder]="f.routingMasked || ''"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">BIC</label><input class="form-control form-control-sm" [(ngModel)]="f.model.bic" maxlength="11"></div>
+        </div>
+    </ng-container>
+    <div class="row">
+        <div class="col-md-3 form-group"><label class="text-xs _600">Currency</label>
+            <input class="form-control form-control-sm text-uppercase" [(ngModel)]="f.model.currencyCode" maxlength="3" [disabled]="!!f.id"></div>
+        <div *ngIf="!f.id" class="col-md-9 form-group"><label class="text-xs _600">Use an existing ledger account (optional)</label>
+            <fin-picker [small]="true" [search]="searchLedger" [label]="f.linkLabel" placeholder="A new account is created" (picked)="pickLedger($event)"></fin-picker></div>
+    </div>
+    <div *ngIf="!f.id" class="row">
+        <div class="col-md-6 form-group"><label class="text-xs _600">Opening balance</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="f.model.openingBalance" step="any" placeholder="0">
+            <div class="text-xs text-muted">The balance on the date below; overdrawn or owed on a card: negative.</div></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">As of</label><input type="date" class="form-control form-control-sm" [(ngModel)]="f.model.openingDate"></div>
+    </div>
+    <div class="mb-2 text-sm">
+        <label class="d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefaultForReceipts">Default for money received</label>
+        <label class="d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.isDefaultForPayments">Default for payments made</label>
+    </div>
+    <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="f.model.notes" maxlength="1000"></textarea></div>
+    <div class="d-flex"><span class="flex"></span>
+        <button class="btn white mr-1" (click)="form = null">Cancel</button><button class="btn theme" [disabled]="saving" (click)="save()">Save</button></div>
+</app-aside>

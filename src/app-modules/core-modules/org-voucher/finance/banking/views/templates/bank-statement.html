@@ -1,0 +1,208 @@
+<ng-template #pageTitleTemplate>
+    <span class="navbar-text"><a role="button" class="text-muted mr-2" (click)="back()" title="All accounts"><i class="fa fa-arrow-left"></i></a>
+        <i class="fa mr-1" [ngClass]="account ? kindIcon[account.row.kind] : 'fa-university'"></i><b>{{ account?.row?.name || 'Statement' }}</b>
+        <span *ngIf="account?.accountNumberMasked" class="text-muted text-sm ml-1">{{ account?.accountNumberMasked }}</span></span>
+</ng-template>
+<ng-template #actionTemplate>
+    <input #statementFile type="file" accept=".csv,.txt,text/csv" class="d-none" (change)="importFile(statementFile)">
+    <button class="btn btn-sm white mr-1" [disabled]="importing" (click)="statementFile.click()"><i class="fa fa-upload mr-1"></i>Import statement</button>
+    <button class="btn btn-sm theme" (click)="openReconcile()"><i class="fa fa-check-square-o mr-1"></i>Reconcile</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <!-- Balances -->
+    <div *ngIf="account?.row as a" class="d-flex flex-wrap mb-2">
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">In the books</div><b>{{ a.ledgerBalance | money:a.currencyCode }}</b></div>
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Statement {{ a.statementDate || '' }}</div>
+            <b>{{ a.statementBalance !== null ? (a.statementBalance | money:a.currencyCode) : '—' }}</b></div>
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">To reconcile</div><b [class.text-warning]="a.unmatched">{{ a.unmatched }}</b></div>
+        <div class="box p-2 px-3 mb-1"><div class="text-xs text-muted">Reconciled to</div><b>{{ a.lastReconciledOn || '—' }}</b></div>
+    </div>
+
+    <loader [isLoading]="importing"></loader>
+    <div *ngIf="importResult as r" class="alert py-2 text-sm" [ngClass]="r.imported ? 'alert-success' : 'alert-warning'">
+        <a role="button" class="float-right text-muted" (click)="importResult = null; mapping = null"><i class="fa fa-times"></i></a>
+        <b>{{ r.imported }}</b> new line{{ r.imported === 1 ? '' : 's' }}<span *ngIf="r.from"> from {{ r.from }} to {{ r.to }}</span>;
+        {{ r.duplicates }} already imported<span *ngIf="r.skipped">, {{ r.skipped }} skipped</span>.
+        <ul *ngIf="r.problems.length" class="mb-0 mt-1 pl-3"><li *ngFor="let p of r.problems">{{ p }}</li></ul>
+    </div>
+
+    <!-- Column mapping when detection failed -->
+    <div *ngIf="mapping as m" class="box p-2 mb-2">
+        <div class="text-sm _600 mb-1">Which column is which?</div>
+        <div class="row">
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">Date</label>
+                <select class="form-control form-control-sm" [(ngModel)]="m.map.date"><option [ngValue]="null">—</option><option *ngFor="let c of m.columns; let i = index" [ngValue]="i">{{ c }}</option></select></div>
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">Description</label>
+                <select class="form-control form-control-sm" [(ngModel)]="m.map.description"><option [ngValue]="null">—</option><option *ngFor="let c of m.columns; let i = index" [ngValue]="i">{{ c }}</option></select></div>
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">Amount (signed)</label>
+                <select class="form-control form-control-sm" [(ngModel)]="m.map.amount"><option [ngValue]="null">—</option><option *ngFor="let c of m.columns; let i = index" [ngValue]="i">{{ c }}</option></select></div>
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">or Money out</label>
+                <select class="form-control form-control-sm" [(ngModel)]="m.map.debit"><option [ngValue]="null">—</option><option *ngFor="let c of m.columns; let i = index" [ngValue]="i">{{ c }}</option></select></div>
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">and Money in</label>
+                <select class="form-control form-control-sm" [(ngModel)]="m.map.credit"><option [ngValue]="null">—</option><option *ngFor="let c of m.columns; let i = index" [ngValue]="i">{{ c }}</option></select></div>
+            <div class="col-6 col-md-2 form-group"><label class="text-xs">Date format</label>
+                <input class="form-control form-control-sm" [(ngModel)]="m.map.dateFormat" placeholder="dd/MM/yyyy"></div>
+        </div>
+        <label class="text-sm mr-3"><input type="checkbox" class="mr-1" [(ngModel)]="m.map.outflowsPositive">Amounts are positive for money out (card statements)</label>
+        <button class="btn btn-sm theme" (click)="retryImport()">Import again</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="d-flex flex-wrap align-items-center mb-1">
+        <ul class="nav nav-pills nav-sm mr-2 mb-1">
+            <li class="nav-item" *ngFor="let f of filters"><a role="button" class="nav-link" [class.active]="filter === f.key" (click)="setFilter(f.key)">{{ f.label }}</a></li>
+        </ul>
+        <input class="form-control form-control-sm mb-1" style="max-width: 240px" [(ngModel)]="search" (keyup.enter)="setFilter(filter)" placeholder="Description or reference">
+    </div>
+
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="!loading && !error && !lines.length" class="text-center text-muted p-4">
+        <ng-container *ngIf="filter === 'Unmatched'; else none">Nothing to reconcile. Import the bank's statement (CSV) to bring in new lines.</ng-container>
+        <ng-template #none>No lines.</ng-template>
+    </div>
+
+    <!-- Lines -->
+    <div class="box mb-1" *ngIf="lines.length">
+        <div *ngFor="let l of lines" class="d-flex flex-wrap align-items-start p-2 b-b">
+            <div style="width: 92px" class="text-sm text-muted">{{ l.date }}</div>
+            <div class="flex" style="min-width: 200px">
+                <div class="text-sm">{{ l.description }}</div>
+                <div class="text-xs text-muted"><span *ngIf="l.reference">Ref {{ l.reference }}</span>
+                    <span *ngIf="l.balance !== null"> · balance {{ l.balance | money:(account?.row?.currencyCode ?? 'USD'):false }}</span></div>
+                <!-- Matched / excluded -->
+                <div *ngIf="l.status === 'Matched'" class="text-xs text-success mt-1"><i class="fa fa-check mr-1"></i>{{ l.matchedEntries.join(', ') }}
+                    <a *ngIf="l.voucherId" role="button" class="ml-1" (click)="openDocument(l.voucherId)">open</a>
+                    <span *ngIf="l.note" class="text-muted"> · {{ l.note }}</span></div>
+                <div *ngIf="l.status === 'Excluded'" class="text-xs text-muted mt-1"><i class="fa fa-ban mr-1"></i>Excluded<span *ngIf="l.note">: {{ l.note }}</span></div>
+                <!-- Suggestions -->
+                <div *ngIf="l.status === 'Unmatched'" class="mt-1">
+                    <div *ngIf="l.suggestions[0] as s" class="text-xs">
+                        <span class="badge" [ngClass]="s.score >= 80 ? 'success' : 'info'">{{ s.score >= 80 ? 'Match found' : 'Possible match' }}</span>
+                        {{ s.entryNumber }} · {{ s.date }} · {{ s.description }}
+                        <a *ngIf="l.suggestions.length > 1" role="button" class="ml-1" (click)="openMatch(l)">+{{ l.suggestions.length - 1 }} more</a>
+                    </div>
+                    <div *ngIf="l.rule as r" class="text-xs"><span class="badge white b-a">Rule</span> {{ r.ruleName }}: {{ actionLabel[r.action] }}
+                        <span *ngIf="r.party || r.account" class="text-muted">· {{ r.party || r.account }}</span></div>
+                </div>
+            </div>
+            <div class="text-right" style="width: 130px">
+                <b [ngClass]="l.amount > 0 ? 'text-success' : ''">{{ l.amount > 0 ? '+' : '' }}{{ l.amount | money:(account?.row?.currencyCode ?? 'USD'):false }}</b>
+            </div>
+            <div class="text-right ml-2" style="min-width: 210px">
+                <ng-container *ngIf="l.status === 'Unmatched'">
+                    <button *ngIf="l.suggestions.length" class="btn btn-xs theme mr-1 mb-1" [disabled]="busyLines.has(l.id)" (click)="quickMatch(l)">Match</button>
+                    <button *ngIf="l.rule && !l.suggestions.length" class="btn btn-xs theme mr-1 mb-1" [disabled]="busyLines.has(l.id)" (click)="applyRule(l)">Apply rule</button>
+                    <button class="btn btn-xs white mr-1 mb-1" [disabled]="busyLines.has(l.id)" (click)="openCreate(l, !!l.rule)">Record…</button>
+                    <button *ngIf="l.suggestions.length > 1" class="btn btn-xs white mr-1 mb-1" (click)="openMatch(l)">Find…</button>
+                    <button class="btn btn-xs white text-muted mb-1" [disabled]="busyLines.has(l.id)" (click)="excludeForm = {line: l, note: ''}; formError = null" title="Exclude">
+                        <i class="fa fa-ban"></i></button>
+                </ng-container>
+                <button *ngIf="l.status !== 'Unmatched'" class="btn btn-xs white" [disabled]="busyLines.has(l.id)" (click)="undo(l)">Undo</button>
+            </div>
+        </div>
+    </div>
+    <org-grid-pagination [count]="page.count" [perPage]="page.take" [page]="page.page" (cb)="toPage($event)"></org-grid-pagination>
+</div>
+
+<!-- Match several entries -->
+<app-aside *ngIf="matchForm as f" size="md" title="Match to entries in the books" [subtitle]="f.line.date + ' · ' + f.line.description" (closed)="matchForm = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="text-sm mb-2">Choose the entries that make up this line. They must add up to <b>{{ f.line.amount | money:(account?.row?.currencyCode ?? 'USD') }}</b>.</div>
+    <div *ngFor="let s of f.line.suggestions" class="d-flex align-items-center p-1 b-b">
+        <input type="checkbox" class="mr-2" [checked]="f.chosen.has(s.valueId)" (change)="toggle(s.valueId)">
+        <div class="flex text-sm">{{ s.entryNumber }} · {{ s.date }}<div class="text-xs text-muted">{{ s.description }}</div></div>
+        <span class="text-sm">{{ s.amount | money:(account?.row?.currencyCode ?? 'USD'):false }}</span>
+    </div>
+    <div *ngIf="!f.line.suggestions.length" class="text-muted text-sm p-2">Nothing in the books with this amount within two weeks. Record it instead.</div>
+    <div class="d-flex mt-2 align-items-center"><span class="text-sm" [class.text-danger]="chosenTotal !== f.line.amount">Chosen: {{ chosenTotal | money:(account?.row?.currencyCode ?? 'USD') }}</span>
+        <span class="flex"></span><button class="btn white mr-1" (click)="matchForm = null">Cancel</button>
+        <button class="btn theme" [disabled]="saving || !f.chosen.size" (click)="confirmMatch()">Match</button></div>
+</app-aside>
+
+<!-- Record what is missing -->
+<app-aside *ngIf="createForm as f" size="md" title="Record this line" [subtitle]="f.line.date + ' · ' + f.line.description" (closed)="createForm = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="text-sm mb-2">{{ f.line.amount > 0 ? 'Money in' : 'Money out' }}: <b>{{ (f.line.amount > 0 ? f.line.amount : -f.line.amount) | money:(account?.row?.currencyCode ?? 'USD') }}</b></div>
+    <div class="form-group"><label class="text-xs _600">What is it?</label>
+        <select class="form-control form-control-sm" [ngModel]="f.model.action" (ngModelChange)="changeAction($event)">
+            <option *ngFor="let a of actionsFor(f.line)" [ngValue]="a">{{ actionLabel[a] }}</option></select></div>
+    <ng-container [ngSwitch]="f.model.action">
+        <div *ngSwitchCase="'Transfer'" class="form-group"><label class="text-xs _600">{{ f.line.amount > 0 ? 'From' : 'To' }}</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.accountId"><option [ngValue]="null">Choose…</option>
+                <option *ngFor="let a of otherAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <ng-container *ngSwitchCase="'Receipt'">
+            <div class="form-group"><label class="text-xs _600">Customer</label>
+                <fin-picker [small]="true" [search]="searchParties" [label]="f.partyLabel" placeholder="Search customers" (picked)="f.model.partyAccountId = $event.id; f.partyLabel = $event.label"></fin-picker></div>
+            <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.applyToOpen">Settle the oldest unpaid invoices</label>
+        </ng-container>
+        <ng-container *ngSwitchCase="'Payment'">
+            <div class="form-group"><label class="text-xs _600">Vendor</label>
+                <fin-picker [small]="true" [search]="searchParties" [label]="f.partyLabel" placeholder="Search vendors" (picked)="f.model.partyAccountId = $event.id; f.partyLabel = $event.label"></fin-picker></div>
+            <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.model.applyToOpen">Settle the oldest unpaid bills</label>
+        </ng-container>
+        <div *ngSwitchDefault class="form-group"><label class="text-xs _600">{{ f.model.action === 'Expense' ? 'Expense account' : 'Income account' }}</label>
+            <fin-picker [small]="true" [search]="searchAccounts" [label]="f.accountLabel" placeholder="Search accounts" (picked)="f.model.accountId = $event.id; f.accountLabel = $event.label"></fin-picker></div>
+    </ng-container>
+    <div *ngIf="f.model.action === 'Receipt' || f.model.action === 'Payment'" class="form-group"><label class="text-xs _600">Payment mode</label>
+        <select class="form-control form-control-sm" [(ngModel)]="f.model.paymentModeId"><option [ngValue]="null">Bank transfer</option>
+            <option *ngFor="let m of modes" [ngValue]="m.id">{{ m.name }}</option></select></div>
+    <div class="form-group"><label class="text-xs _600">Description</label><input class="form-control form-control-sm" [(ngModel)]="f.model.description" maxlength="500"></div>
+    <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.remember" (change)="suggestRuleText()">Remember for lines like this</label>
+    <div *ngIf="f.remember" class="form-group"><label class="text-xs _600">Lines containing</label>
+        <input class="form-control form-control-sm" [(ngModel)]="f.model.rememberAs" maxlength="100">
+        <div class="text-xs text-muted">Future lines with this text are pre-filled the same way (Settings › Bank rules).</div></div>
+    <div class="d-flex mt-2"><span class="flex"></span><button class="btn white mr-1" (click)="createForm = null">Cancel</button>
+        <button class="btn theme" [disabled]="saving" (click)="confirmCreate()">Record and match</button></div>
+</app-aside>
+
+<!-- Exclude -->
+<app-aside *ngIf="excludeForm as f" size="md" title="Exclude this line" [subtitle]="f.line.date + ' · ' + f.line.description" (closed)="excludeForm = null">
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="text-sm mb-2">For lines that never belong in the books: a duplicate in the statement, a reversed transaction, a line already reconciled elsewhere.</div>
+    <div class="form-group"><label class="text-xs _600">Why</label><input class="form-control form-control-sm" [(ngModel)]="f.note" maxlength="500"></div>
+    <div class="d-flex"><span class="flex"></span><button class="btn white mr-1" (click)="excludeForm = null">Cancel</button>
+        <button class="btn theme" [disabled]="saving" (click)="confirmExclude()">Exclude</button></div>
+</app-aside>
+
+<!-- Reconcile -->
+<app-aside *ngIf="rec as r" size="lg" title="Reconcile" [subtitle]="account?.row?.name ?? ''" (closed)="rec = null">
+    <loader [isLoading]="r.loading"></loader>
+    <div *ngIf="r.error" class="alert alert-danger text-sm py-2">{{ r.error }}</div>
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-xs _600">Statement date</label>
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="r.asOf" (change)="loadReconciliation()"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Statement closing balance</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="r.statementBalance" step="any"></div>
+    </div>
+    <ng-container *ngIf="r.data as d">
+        <table class="table table-sm mb-2">
+            <tbody>
+            <tr><td>Balance in the books on {{ d.asOf }}</td><td class="text-right">{{ d.ledgerBalance | money:d.currencyCode }}</td></tr>
+            <tr><td>Statement balance</td><td class="text-right">{{ r.statementBalance !== null ? (+r.statementBalance | money:d.currencyCode) : '—' }}</td></tr>
+            <tr class="_600" [ngClass]="recDifference === 0 ? 'text-success' : 'text-danger'"><td>Difference</td>
+                <td class="text-right">{{ recDifference !== null ? (recDifference | money:d.currencyCode) : '—' }}</td></tr>
+            </tbody>
+        </table>
+        <div *ngIf="d.unmatchedLines" class="alert alert-warning text-sm py-2">{{ d.unmatchedLines }} statement line{{ d.unmatchedLines === 1 ? '' : 's' }}
+            ({{ d.unmatchedTotal | money:d.currencyCode }}) up to this date still to match.</div>
+        <ng-container *ngIf="d.unreconciled.length">
+            <div class="text-xs text-muted text-uppercase mb-1">In the books but not on the statement</div>
+            <table class="table table-sm">
+                <tbody><tr *ngFor="let e of d.unreconciled"><td class="text-sm">{{ e.date }}</td><td class="text-sm">{{ e.entryNumber }}<div class="text-xs text-muted">{{ e.description }}</div></td>
+                    <td class="text-right">{{ e.amount | money:d.currencyCode:false }}</td>
+                    <td class="text-right"><a *ngIf="e.voucherId" role="button" class="text-xs" (click)="openDocument(e.voucherId)">open</a></td></tr></tbody>
+            </table>
+            <div class="text-xs text-muted mb-2">Cheques not yet cleared and deposits in transit explain a difference; entries that never happened should be voided.</div>
+        </ng-container>
+        <div class="d-flex align-items-center">
+            <span class="text-xs text-muted">{{ d.lastReconciledOn ? 'Last reconciled to ' + d.lastReconciledOn : 'Never reconciled' }}</span>
+            <span class="flex"></span>
+            <button class="btn theme" [disabled]="r.loading || recDifference !== 0 || d.unmatchedLines > 0" (click)="closeReconciliation()">Close reconciliation</button>
+        </div>
+        <div class="text-xs text-muted text-right mt-1">Closing locks the matched lines up to this date.</div>
+    </ng-container>
+</app-aside>

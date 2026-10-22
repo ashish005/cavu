@@ -1,0 +1,53 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-magic mr-1"></i><b>Bank rules</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" (click)="create()"><i class="fa fa-plus mr-1"></i>Rule</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <p class="text-sm text-muted" style="max-width: 760px">Statement lines whose description contains the text are pre-filled the way the rule says; you confirm each one.
+        The lowest priority number wins when several rules fit.</p>
+    <div *ngIf="rules && !rules.length" class="text-center text-muted p-4">No rules yet. Add one here, or tick "Remember for lines like this" when recording a statement line.</div>
+    <table *ngIf="rules?.length" class="table table-sm">
+        <thead><tr class="text-xs text-muted"><th>Contains</th><th>Direction</th><th>Records as</th><th>Account</th><th class="text-right">Priority</th><th></th></tr></thead>
+        <tbody><tr *ngFor="let r of rules">
+            <td><a role="button" (click)="edit(r)">"{{ r.contains }}"</a><div *ngIf="r.name !== r.contains" class="text-xs text-muted">{{ r.name }}</div></td>
+            <td class="text-sm">{{ r.moneyIn === null ? 'Either' : r.moneyIn ? 'Money in' : 'Money out' }}</td>
+            <td class="text-sm">{{ actionLabel[r.action] }}<div class="text-xs text-muted">{{ r.party || r.account }}</div></td>
+            <td class="text-sm">{{ accountName(r.bankAccountId) }}</td>
+            <td class="text-right text-sm">{{ r.priority }}</td>
+            <td class="text-right"><a role="button" class="text-muted" (click)="remove(r)" title="Remove"><i class="fa fa-trash-o"></i></a></td>
+        </tr></tbody>
+    </table>
+</div>
+
+<app-aside *ngIf="form as f" size="md" [title]="f.id ? 'Edit rule' : 'New rule'" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="form-group"><label class="text-xs _600">Description contains</label>
+        <input class="form-control form-control-sm" [(ngModel)]="f.model.contains" maxlength="100" placeholder="SERVICE CHARGES"></div>
+    <div class="form-group"><label class="text-xs _600">Name (optional)</label><input class="form-control form-control-sm" [(ngModel)]="f.model.name" maxlength="100"></div>
+    <div class="form-group"><label class="text-xs _600">Record as</label>
+        <select class="form-control form-control-sm" [ngModel]="f.model.action" (ngModelChange)="changeAction($event)">
+            <option *ngFor="let a of actions" [ngValue]="a">{{ actionLabel[a] }}</option></select></div>
+    <ng-container [ngSwitch]="f.model.action">
+        <div *ngSwitchCase="'Transfer'" class="form-group"><label class="text-xs _600">Other account</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.accountId"><option [ngValue]="null">Choose…</option>
+                <option *ngFor="let a of moneyLedgers" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div *ngSwitchCase="'Receipt'" class="form-group"><label class="text-xs _600">Customer</label>
+            <fin-picker [small]="true" [search]="searchParties" [label]="f.partyLabel" placeholder="Search customers" (picked)="f.model.partyAccountId = $event.id; f.partyLabel = $event.label"></fin-picker></div>
+        <div *ngSwitchCase="'Payment'" class="form-group"><label class="text-xs _600">Vendor</label>
+            <fin-picker [small]="true" [search]="searchParties" [label]="f.partyLabel" placeholder="Search vendors" (picked)="f.model.partyAccountId = $event.id; f.partyLabel = $event.label"></fin-picker></div>
+        <div *ngSwitchDefault class="form-group"><label class="text-xs _600">{{ f.model.action === 'Expense' ? 'Expense account' : 'Income account' }}</label>
+            <fin-picker [small]="true" [search]="searchAccounts" [label]="f.accountLabel" placeholder="Search accounts" (picked)="f.model.accountId = $event.id; f.accountLabel = $event.label"></fin-picker></div>
+    </ng-container>
+    <div class="row">
+        <div class="col-md-5 form-group"><label class="text-xs _600">Direction</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.moneyIn" [disabled]="f.model.action !== 'Transfer'">
+                <option [ngValue]="null">Either</option><option [ngValue]="true">Money in</option><option [ngValue]="false">Money out</option></select></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Only for</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.model.bankAccountId"><option [ngValue]="null">Any account</option>
+                <option *ngFor="let a of accounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Priority</label><input type="number" class="form-control form-control-sm" [(ngModel)]="f.model.priority" min="1" max="1000"></div>
+    </div>
+    <div class="d-flex"><span class="flex"></span><button class="btn white mr-1" (click)="form = null">Cancel</button>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button></div>
+</app-aside>

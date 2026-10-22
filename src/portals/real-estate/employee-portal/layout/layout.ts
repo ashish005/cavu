@@ -33,8 +33,6 @@ export class MainLayout implements OnInit {
               public cdref: ChangeDetectorRef,
               public permService: AppPermissionService, public lookupService: OrgLookupService){
       this.orgLookup = this.lookupService.getOrgLookup();
-
-      debugger
   }
 
   ngOnInit() {

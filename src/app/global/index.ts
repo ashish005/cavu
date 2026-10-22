@@ -1,6 +1,6 @@
 import { SetupLayout } from "./layouts";
 import { moduleGuard } from "./services/orgwise/entitlement/module.guard";
-import {Routes} from "@angular/router";
+import {Route, Routes} from "@angular/router";
 export * from "./layouts";
 export {CoreProcessFactory} from "./pluginFactory";
 export * from "./modules/entity-workflow";
@@ -23,6 +23,32 @@ export * from "./modules";
 export { AppTitleService } from "./app-title.service";
 export { SharedService } from "./shared.service";
 
+/** Old admin finance URLs (accounting, reports, trxn-setup, tax-management) → the matching finance workspace page. */
+const FIN = '/app/admin/invoice';
+const legacy = (path: string, home: string, pages: Record<string, string> = {}): Route => ({
+    path, children: [
+        {path: '', pathMatch: 'full', redirectTo: `${FIN}/${home}`},
+        ...Object.entries(pages).map(([page, to]): Route => ({path: page, pathMatch: 'full', redirectTo: `${FIN}/${to}`})),
+        {path: '**', redirectTo: `${FIN}/${home}`}
+    ]
+});
+const LEGACY_FINANCE_REDIRECTS: Routes = [
+    legacy('accounting', 'accounting/chart', {
+        ledger: 'reports?tab=ledger', book: 'banking', 'account-book': 'banking', 'cash-book': 'banking', 'bank-ledger': 'banking', 'day-book': 'reports?tab=journals',
+        report: 'reports', 'profit-loss': 'reports?tab=pl', 'balance-sheet': 'reports?tab=bs', 'trial-balance': 'reports?tab=tb', 'ledger-trial-balance': 'reports?tab=tb',
+        trxn: 'reports?tab=journals', setup: 'accounting/chart'
+    }),
+    legacy('reports', 'reports?tab=analysis', {
+        sale: 'reports?tab=analysis&side=sales', purchase: 'reports?tab=analysis&side=purchases', payment: 'reports?tab=analysis&side=payments',
+        receipt: 'reports?tab=analysis&side=receipts', inventory: 'products/reports', transaction: 'reports?tab=journals'
+    }),
+    legacy('trxn-setup', 'settings/document-types', {
+        bank: 'banking', 'bank-setup': 'banking', 'bank-trxn': 'banking', cash: 'banking', wallet: 'banking', 'payment-gateway': 'banking',
+        mode: 'settings/payment-modes', digital: 'settings/payment-modes', voucher: 'settings/document-types', 'voucher-setup': 'settings/document-types'
+    }),
+    legacy('tax-management', 'settings/tax-codes')
+];
+
 export const ADMIN_SETUP_ROUES: Routes = [
     {
         path: 'admin',
@@ -34,15 +60,11 @@ export const ADMIN_SETUP_ROUES: Routes = [
             { path: 'parties', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyManageModule), data: {module: "FIN", title: 'Customers, vendors & employees', key: 'parties', header: 'Parties'} },
             { path: 'compliance', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-compliance-management/index').then(m => m.ComplianceManageModule), data: {module: "CMP", title: 'Compliance', key: 'compliance', header: 'Compliance'} },
             { path: 'org-log', loadChildren: () => import('app-modules/admin-modules/org-log-management/index').then(m => m.OrgLogModule), data: {title: 'Log', header: 'Log'} },
-            { path: 'accounting', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-account-management').then(m => m.AccountingManageModule), data: {code: "FIN", module: "FIN" } },
-            { path: 'reports', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-reports-management/index').then(m => m.OrgReportModule), data: {code: "FIN", module: "FIN" } },
+            // Finance workspace (chart, bank & cash, reports, tax, document types, document capture) for administrators.
+            { path: 'invoice', canMatch: [moduleGuard], loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", module: "FIN", title: 'Finance', header: 'Finance'} },
+            // Earlier admin finance screens now live in the finance workspace.
+            ...LEGACY_FINANCE_REDIRECTS,
             { path: 'subscription', loadChildren: () => import('app-modules/admin-modules/org-subscription/index').then(m => m.OrgSubscriptionModule), data: { key:'Subscription', icon:"fa fa-money", name: "Subscription", title: 'Subscription', header:'Subscription' } },
-            { path: 'trxn-setup', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/trxn-setup-management/index').then(m => m.SetupTransactionModule), data: {code: "FIN", module: "FIN" } },
-            {
-                path: 'tax-management', canMatch: [moduleGuard],
-                loadChildren: () => import('app-modules/admin-modules/org-tax-management/index').then(m => m.TaxManagementModule),
-                data: {code: "ACCESS_TAX_MGT", module: "TAX_MGT", title: 'Tax', header: 'Manage Tax'}
-            },
             {
                 path: 'payroll', //canLoad:[ModuleGuard],
                 loadChildren: () => import('app-modules/admin-modules/org-payroll-management').then(m => m.SalaryModule),

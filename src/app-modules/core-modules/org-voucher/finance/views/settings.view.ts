@@ -6,7 +6,7 @@ import {AlertService, DateFormatCell, FullDateFormatCell, MessageSeverity, ViewE
 import {
     AccountOption, AccountingSettings, DocumentTypeInput, DocumentTypeRow, InvoiceSettings, PostingJobQueryOptions, PostingJobRow, PostingSummary,
     RecurringInput, RecurringRow, SimpleQueryOptions, TAX_KIND_LABEL, TAX_LOCATION_LABEL, TaxCodeInput, TaxCodeRow, TaxComponent, TaxKind, TaxLocation, TaxOption,
-    TaxPackInfo, TaxPacks, TaxRule, TaxRuleInput
+    TaxPackInfo, TaxPacks, TaxRule, TaxRuleInput, todayIso
 } from "../domains/finance.models";
 import {
     DocumentTypeGridService, FinanceApiService, FinanceGridEvents, PostingJobGridService, RecurringGridService, TaxCodeGridService, financeErrorOf
@@ -227,6 +227,7 @@ export class FinanceInvoicingView implements OnInit {
     model: InvoiceSettings | null = null;
     taxes: TaxOption[] = [];
     currency = 'USD';
+    readonly today = todayIso();
     saving = false;
     error: string | null = null;
 
@@ -244,7 +245,7 @@ export class FinanceInvoicingView implements OnInit {
         this.error = null;
         const m = this.model!;
         const num = (v: any) => v === null || v === '' || v === undefined ? null : +v;
-        this.api.saveInvoiceSettings({...m, billApprovalThreshold: num(m.billApprovalThreshold), invoiceApprovalThreshold: num(m.invoiceApprovalThreshold), defaultDueDays: +m.defaultDueDays || 0})
+        this.api.saveInvoiceSettings({...m, billApprovalThreshold: num(m.billApprovalThreshold), invoiceApprovalThreshold: num(m.invoiceApprovalThreshold), defaultDueDays: +m.defaultDueDays || 0, lockDate: m.lockDate || null})
             .pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
                 next: s => { this.model = s; this.api.lookups(true); this.alerts.showMessage('Saved', 'Invoicing settings saved.', MessageSeverity.success); },
                 error: e => this.error = financeErrorOf(e, 'Settings could not be saved.')

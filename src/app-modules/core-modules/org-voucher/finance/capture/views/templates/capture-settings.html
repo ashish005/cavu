@@ -1,0 +1,50 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-camera mr-1"></i><b>Document capture</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!model || saving" (click)="save()">Save</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="model as m" style="max-width: 760px">
+        <h6 class="_600">How documents are read</h6>
+        <div *ngIf="simulated" class="alert alert-info text-sm py-2">AWS is not configured on this server, so reading is simulated with a sample bill. Set <code>AWS:Enabled</code> to use Textract.</div>
+        <div *ngFor="let p of m.providers" class="mb-2">
+            <label class="mb-0 d-flex align-items-start" [class.text-muted]="!p.available">
+                <input type="radio" name="provider" class="mr-2 mt-1" [value]="p.code" [(ngModel)]="m.provider" [disabled]="!p.available">
+                <span><span class="_600">{{ p.label }}</span><span *ngIf="p.code === 'auto'" class="badge white b-a ml-1">recommended</span>
+                    <span class="d-block text-xs text-muted">{{ p.description }}</span></span>
+            </label>
+        </div>
+        <div class="text-xs text-muted mb-3">Any document can be read again with another reader from the review panel.</div>
+
+        <h6 class="_600">What uploads become</h6>
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-sm _600">Default type</label>
+                <select class="form-control" [(ngModel)]="m.defaultPurpose"><option *ngFor="let p of purposes" [ngValue]="p">{{ purposeLabel[p] }}</option></select></div>
+            <div class="col-md-6 form-group"><label class="text-sm _600">Expense account when nothing better is known</label>
+                <div class="d-flex"><div class="flex"><fin-picker [search]="searchAccounts" [label]="expenseLabel" placeholder="Accounting defaults' expense account"
+                    (picked)="m.defaultExpenseAccountId = $event.id; expenseLabel = $event.label"></fin-picker></div>
+                    <button *ngIf="m.defaultExpenseAccountId" class="btn white ml-1" (click)="clearExpense()" title="Clear"><i class="fa fa-times"></i></button></div>
+                <div class="text-xs text-muted">The vendor's earlier bills and the item catalogue come first.</div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-sm _600">Receipts are paid from</label>
+                <select class="form-control" [(ngModel)]="m.defaultMoneyAccountId"><option [ngValue]="null">Choose on each receipt</option>
+                    <option *ngFor="let a of moneyAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+            <div class="col-md-6 form-group"><label class="text-sm _600">Payment mode</label>
+                <select class="form-control" [(ngModel)]="m.defaultPaymentModeId"><option [ngValue]="null">The default</option>
+                    <option *ngFor="let x of modes" [ngValue]="x.id">{{ x.name }}</option></select></div>
+        </div>
+
+        <h6 class="_600 mt-2">Automation</h6>
+        <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="m.autoCreateDraft">Create bill drafts on their own when a document is read confidently</label>
+        <div class="row mt-1">
+            <div class="col-md-6 form-group"><label class="text-sm _600">Confident from (%)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.confidenceThreshold" min="0" max="100">
+                <div class="text-xs text-muted">The lowest of the vendor, date and total confidences. The vendor must also be matched, nothing missing and no duplicate.</div></div>
+            <div class="col-md-6 form-group"><label class="text-sm _600">Rounding accepted ({{ currency }})</label>
+                <input type="number" class="form-control" [(ngModel)]="m.roundingTolerance" min="0" step="any">
+                <div class="text-xs text-muted">Differences up to this between the lines and the document's total are booked as rounding.</div></div>
+        </div>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</div>
