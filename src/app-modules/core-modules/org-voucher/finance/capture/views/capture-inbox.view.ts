@@ -30,7 +30,10 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
     @ViewChild('pageTitleTemplate', {static: true}) pageTitleTemplate!: TemplateRef<any>;
     @ViewChild('actionTemplate', {static: true}) actionTemplate!: TemplateRef<any>;
     private readonly destroyRef = inject(DestroyRef);
-    readonly accept = CAPTURE_ACCEPT;
+    accept = CAPTURE_ACCEPT;
+    maxFileMb = 50;
+    /** Review panel: the editable details, or the readers compared side by side. */
+    tab: 'details' | 'compare' = 'details';
     readonly purposeLabel = CAPTURE_PURPOSE_LABEL;
     readonly purposes = Object.keys(CAPTURE_PURPOSE_LABEL) as CapturePurpose[];
     readonly statusLabel = CAPTURE_STATUS_LABEL;
@@ -74,7 +77,12 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.api.settings().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: s => { this.providers = s.providers; this.threshold = s.confidenceThreshold; }, error: () => {}
+            next: s => {
+                this.providers = s.providers.filter(p => p.available);
+                this.threshold = s.confidenceThreshold;
+                this.maxFileMb = s.maxFileMb || 50;
+                if (s.extensions?.length) { this.accept = s.extensions.join(','); }
+            }, error: () => {}
         });
         this.finance.lookups().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: l => { this.taxes = l.taxCodes.filter(t => t.scope !== 'Sales'); this.modes = l.paymentModes; this.moneyAccounts = l.bankAccounts; this.currency = l.functionalCurrency; },
@@ -142,8 +150,8 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
     upload(files: File[]) {
         if (!files.length) { return; }
         if (files.length > 20) { this.alerts.showMessage('Upload', 'Upload up to 20 files at a time.', MessageSeverity.warn); return; }
-        const big = files.find(f => f.size > 10 * 1024 * 1024);
-        if (big) { this.alerts.showMessage('Upload', `${big.name} is larger than 10 MB.`, MessageSeverity.warn); return; }
+        const big = files.find(f => f.size > this.maxFileMb * 1024 * 1024);
+        if (big) { this.alerts.showMessage('Upload', `${big.name} is larger than ${this.maxFileMb} MB.`, MessageSeverity.warn); return; }
         this.uploading = true;
         this.api.upload(files, this.uploadPurpose).pipe(finalize(() => this.uploading = false), takeUntilDestroyed(this.destroyRef)).subscribe({
             next: r => {
@@ -167,7 +175,7 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
                 const sameFile = this.current?.row.id === c.row.id;
                 this.current = c;
                 if (!keepEdits || !this.edit || c.row.status !== 'Review') { this.fill(c); }
-                if (!sameFile) { this.converted = null; this.allowDuplicate = false; this.showText = false; this.loadFile(c.row.id); }
+                if (!sameFile) { this.converted = null; this.allowDuplicate = false; this.showText = false; this.tab = 'details'; this.loadFile(c.row.id); }
                 this.schedulePoll();
             },
             error: e => this.alerts.showMessage('Capture', financeErrorOf(e, 'The document could not be opened.'), MessageSeverity.error)
@@ -306,6 +314,15 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
             error: e => this.formError = financeErrorOf(e, 'The document could not be read again.')
         });
     }
+
+    /** Values copied from the compared readings: the document as it now is. */
+    onApplied(c: Capture) {
+        this.current = c;
+        this.fill(c);
+        this.load(true);
+    }
+
+    providerLabel(code: string) { return this.providers.find(p => p.code === code)?.label ?? code; }
 
     /** Opens the bill, payment or journal made from the document. */
     openDocument(id: string) {

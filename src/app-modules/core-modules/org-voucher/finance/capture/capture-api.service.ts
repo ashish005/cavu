@@ -4,7 +4,7 @@ import {Observable, catchError, map} from "rxjs";
 import {CoreEndpointBase} from "@app-global";
 import {GridPage} from "../banking/banking.models";
 import {
-    Capture, CaptureConvertResult, CaptureInput, CapturePurpose, CaptureRow, CaptureSettings, CaptureUploadResult, CaptureView
+    Capture, CaptureComparison, CaptureConvertResult, CaptureInput, CapturePurpose, CaptureRow, CaptureSettings, CaptureUploadResult, CaptureView, ProviderReport
 } from "./capture.models";
 
 const unwrap = <T>(resp: any): T => {
@@ -57,6 +57,14 @@ export class CaptureApiService extends CoreEndpointBase {
         return this.httpClient.get(`${this.root}/${id}/file`, this.getFileDownloadRequestHeaders).pipe(
             map((blob: any) => URL.createObjectURL(blob as Blob)), catchError(e => this.handleError(e, () => this.fileUrl(id))));
     }
+
+    /** Every reader's result side by side with the consensus. */
+    readings(id: string) { return this.get<CaptureComparison>(`${id}/readings`); }
+    /** Read with more providers (none: the comparison set); they run in the background. */
+    compare(id: string, providers: string[], again = false) { return this.send<CaptureComparison>('POST', `${id}/readings`, {providers, again}); }
+    /** Copy fields (none: all) from `consensus` or one provider into the document. */
+    applyReading(id: string, source: string, fields: string[] = []) { return this.send<Capture>('POST', `${id}/readings/apply`, {source, fields}); }
+    providerReport(from: string | null, to: string | null) { return this.get<ProviderReport>('providers/report', {from, to}); }
 
     settings() { return this.get<CaptureSettings>('settings'); }
     saveSettings(body: CaptureSettings) { return this.send<CaptureSettings>('PUT', 'settings', body); }

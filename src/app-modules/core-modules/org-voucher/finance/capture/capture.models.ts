@@ -11,13 +11,50 @@ export const CAPTURE_STATUS_LABEL: Record<CaptureStatus, string> = {
 export const CAPTURE_STATUS_TONE: Record<CaptureStatus, string> = {
     Queued: 'grey', Processing: 'info', Review: 'warn', Converted: 'success', Discarded: 'grey', Failed: 'danger'
 };
-/** Upload types the readers understand; others are attached and typed in. */
-export const CAPTURE_ACCEPT = '.pdf,.png,.jpg,.jpeg,.tif,.tiff,image/*,application/pdf';
+/** Upload types the readers understand (the server's list replaces this once settings load); others are attached and typed in. */
+export const CAPTURE_ACCEPT = '.pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.gif,.webp,.heic,.docx,.xlsx,.csv,.tsv,.txt,.md,.html,.htm,.xml,.json';
 
-export interface CaptureProvider { code: string; label: string; description: string; available: boolean; simulated: boolean; }
+/** A reader as the organisation's country has it: ready or not (setup says what is missing), simulated, file types, order. */
+export interface CaptureProvider {
+    code: string; label: string; engine: string; description: string; available: boolean; simulated: boolean; setup: string | null; accepts: string[];
+    priority: number; countryCompare: boolean;
+}
 export interface CaptureSettings {
     provider: string; defaultPurpose: CapturePurpose; autoCreateDraft: boolean; confidenceThreshold: number; defaultExpenseAccountId: string | null;
-    defaultMoneyAccountId: string | null; defaultPaymentModeId: number | null; roundingTolerance: number; providers: CaptureProvider[];
+    defaultMoneyAccountId: string | null; defaultPaymentModeId: number | null; roundingTolerance: number; compareProviders: string[]; compareOnUpload: boolean;
+    countryCode: string | null; maxFileMb: number; extensions: string[]; providers: CaptureProvider[];
+}
+
+// ---------- Comparing readers ----------
+
+export type ReadingStatus = 'Queued' | 'Processing' | 'Done' | 'Failed';
+export type CompareStatus = 'agree' | 'majority' | 'conflict' | 'single' | 'missing';
+export const COMPARE_STATUS_LABEL: Record<CompareStatus, string> = {agree: 'All agree', majority: 'Majority', conflict: 'Disagree', single: 'One reader', missing: 'Not read'};
+export const COMPARE_STATUS_TONE: Record<CompareStatus, string> = {agree: 'success', majority: 'info', conflict: 'danger', single: 'grey', missing: 'grey'};
+
+export interface CaptureReadLine { description: string; quantity: number; unitPrice: number; amount: number; }
+export interface CaptureReading {
+    id: string; provider: string; label: string; engine: string; status: ReadingStatus; simulated: boolean; primary: boolean; error: string | null;
+    durationMs: number | null; confidence: number | null; lineCount: number; linesTotal: number | null; completedAt: string | null;
+    lines: CaptureReadLine[]; fields: CaptureField[]; text: string | null;
+}
+export interface CompareCell { provider: string; value: string | null; confidence: number | null; agrees: boolean | null; }
+export interface CompareField {
+    key: string; label: string; status: CompareStatus; consensus: string | null; agreeing: number; answered: number; current: string | null;
+    currentMatches: boolean | null; cells: CompareCell[];
+}
+export interface CaptureComparison {
+    captureId: string; readings: CaptureReading[]; fields: CompareField[]; alignment: number | null; conflicts: string[]; runnable: CaptureProvider[]; running: boolean;
+}
+
+export interface ProviderStat {
+    provider: string; label: string; engine: string; simulated: boolean; readings: number; succeeded: number; failed: number; avgDurationMs: number | null;
+    avgConfidence: number | null; agreement: number | null; accuracy: number | null; checked: number; fieldAccuracy: Record<string, number | null>;
+}
+export interface DocumentStat { captureId: string; fileName: string; status: CaptureStatus; uploadedAt: string; providers: number; alignment: number | null; conflicts: string[]; }
+export interface ProviderReport {
+    from: string; to: string; documents: number; compared: number; avgAlignment: number | null; providers: ProviderStat[]; recent: DocumentStat[];
+    fieldKeys: {key: string; label: string}[];
 }
 
 export interface CaptureRow {

@@ -60,6 +60,8 @@ export const ADMIN_SETUP_ROUES: Routes = [
             { path: 'parties', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-party-management/index').then(m => m.PartyManageModule), data: {module: "FIN", title: 'Customers, vendors & employees', key: 'parties', header: 'Parties'} },
             { path: 'compliance', canMatch: [moduleGuard], loadChildren: () => import('app-modules/admin-modules/org-compliance-management/index').then(m => m.ComplianceManageModule), data: {module: "CMP", title: 'Compliance', key: 'compliance', header: 'Compliance'} },
             { path: 'org-log', loadChildren: () => import('app-modules/admin-modules/org-log-management/index').then(m => m.OrgLogModule), data: {title: 'Log', header: 'Log'} },
+            // Platform staff (root users): OCR providers per country for document capture.
+            { path: 'platform-ocr', loadChildren: () => import('app-modules/admin-modules/platform-ocr/index').then(m => m.PlatformOcrModule), data: {title: 'OCR providers', header: 'OCR providers'} },
             // Finance workspace (chart, bank & cash, reports, tax, document types, document capture) for administrators.
             { path: 'invoice', canMatch: [moduleGuard], loadChildren: () => import('app-modules/core-modules/org-voucher/index').then(m => m.FinanceModule), data: {code: "FIN", module: "FIN", title: 'Finance', header: 'Finance'} },
             // Earlier admin finance screens now live in the finance workspace.

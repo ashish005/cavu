@@ -6,15 +6,30 @@
     <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
     <div *ngIf="model as m" style="max-width: 760px">
         <h6 class="_600">How documents are read</h6>
-        <div *ngIf="simulated" class="alert alert-info text-sm py-2">AWS is not configured on this server, so reading is simulated with a sample bill. Set <code>AWS:Enabled</code> to use Textract.</div>
-        <div *ngFor="let p of m.providers" class="mb-2">
-            <label class="mb-0 d-flex align-items-start" [class.text-muted]="!p.available">
-                <input type="radio" name="provider" class="mr-2 mt-1" [value]="p.code" [(ngModel)]="m.provider" [disabled]="!p.available">
-                <span><span class="_600">{{ p.label }}</span><span *ngIf="p.code === 'auto'" class="badge white b-a ml-1">recommended</span>
-                    <span class="d-block text-xs text-muted">{{ p.description }}</span></span>
-            </label>
-        </div>
-        <div class="text-xs text-muted mb-3">Any document can be read again with another reader from the review panel.</div>
+        <p class="text-sm text-muted">Readers set up by the platform for {{ m.countryCode || 'your country' }}. Those not ready say what is missing.
+            Uploads up to {{ m.maxFileMb }} MB; large PDFs are read page by page.</p>
+        <div *ngIf="simulated" class="alert alert-info text-sm py-2">AWS is not set up on this server, so the Textract readers answer with a sample bill. Do not use them as the main reader.</div>
+        <table class="table table-sm mb-1">
+            <thead><tr class="text-xs text-muted"><th>Main reader</th><th>Reader</th><th class="text-center">Compare with</th></tr></thead>
+            <tbody>
+            <tr *ngFor="let p of m.providers" [class.text-muted]="!p.available">
+                <td style="width: 90px" class="text-center align-middle">
+                    <input type="radio" name="provider" [value]="p.code" [(ngModel)]="m.provider" [disabled]="!p.available" [attr.aria-label]="'Use ' + p.label"></td>
+                <td><span class="_600">{{ p.label }}</span><span *ngIf="p.code === 'auto'" class="badge white b-a ml-1">recommended</span>
+                    <span *ngIf="p.simulated" class="badge grey ml-1">simulated</span>
+                    <span *ngIf="p.code !== 'auto' && p.code !== 'manual'" class="text-xs text-muted ml-1">{{ p.engine }}</span>
+                    <span class="d-block text-xs text-muted">{{ p.description }}</span>
+                    <span *ngIf="p.setup" class="d-block text-xs" [ngClass]="p.available ? 'text-info' : 'text-warning'">{{ p.setup }}</span></td>
+                <td class="text-center align-middle" style="width: 110px">
+                    <input *ngIf="p.code !== 'auto' && p.code !== 'manual'" type="checkbox" [checked]="compares(p.code)" [disabled]="!p.available" (change)="toggleCompare(p.code)"
+                           [attr.aria-label]="'Compare with ' + p.label">
+                    <div *ngIf="p.countryCompare && !m.compareProviders.length && p.available" class="text-xs text-muted">country default</div></td>
+            </tr>
+            </tbody>
+        </table>
+        <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="m.compareOnUpload" [disabled]="!compareSet.length">
+            Compare every upload with the readers ticked ({{ compareSet.length }}), not only when asked in the review panel</label>
+        <div class="text-xs text-muted mb-3">Comparing calls each reader once per document (each may charge for it). The comparison report shows how they do over time.</div>
 
         <h6 class="_600">What uploads become</h6>
         <div class="row">

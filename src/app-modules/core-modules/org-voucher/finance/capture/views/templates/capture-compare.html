@@ -1,0 +1,84 @@
+<loader [isLoading]="loading || busy"></loader>
+<div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+<ng-container *ngIf="data as d">
+    <!-- Summary and readers to run -->
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <span class="badge mr-2" [ngClass]="alignmentClass(d.alignment)" title="How far the readers agree, over the fields at least two of them read">
+            {{ d.alignment !== null ? d.alignment + '% aligned' : 'Needs two readings to compare' }}</span>
+        <span *ngIf="d.conflicts.length" class="text-xs text-danger mr-2"><i class="fa fa-exclamation-triangle mr-1"></i>Disagree on {{ d.conflicts.join(', ') }}</span>
+        <span *ngIf="d.running" class="text-xs text-muted mr-2"><i class="fa fa-spinner fa-spin mr-1"></i>Reading…</span>
+        <span class="flex"></span>
+        <button *ngIf="editable && d.readings.length > 1" class="btn btn-xs theme mb-1" [disabled]="busy" (click)="apply('consensus')"
+                title="Copy every field the readers agree on into the document">Use the agreed values</button>
+    </div>
+
+    <div class="box p-2 mb-2">
+        <div class="text-xs _600 mb-1">Read with</div>
+        <div class="d-flex flex-wrap">
+            <label *ngFor="let p of d.runnable" class="text-sm mr-3 mb-1" [title]="p.description">
+                <input type="checkbox" class="mr-1" [checked]="chosen.has(p.code)" (change)="toggle(p.code)">{{ p.label }}
+                <span *ngIf="p.simulated" class="badge grey ml-1">simulated</span>
+                <span *ngIf="reading(p.code)" class="text-xs text-muted ml-1">(read)</span>
+            </label>
+        </div>
+        <div *ngIf="!d.runnable.length" class="text-xs text-muted">No other reader is set up for your country that reads this file type.</div>
+        <button class="btn btn-xs white mt-1" [disabled]="busy || !chosen.size" (click)="runChosen()"><i class="fa fa-play mr-1"></i>Read with {{ chosen.size }} selected</button>
+    </div>
+
+    <div *ngIf="!d.readings.length" class="text-center text-muted text-sm p-3">No readings yet.</div>
+
+    <!-- Field by field -->
+    <div *ngIf="d.readings.length" class="table-responsive box mb-2">
+        <table class="table table-sm mb-0 text-sm">
+            <thead>
+            <tr class="text-xs text-muted">
+                <th>Field</th>
+                <th *ngFor="let r of columns; trackBy: trackReading" style="min-width: 130px">
+                    <div class="_600 text-dark">{{ r.label }}<span *ngIf="r.primary" class="badge white b-a ml-1" title="Filled the document">used</span>
+                        <span *ngIf="r.simulated" class="badge grey ml-1">simulated</span></div>
+                    <div *ngIf="r.status === 'Done'">{{ seconds(r.durationMs) }}<span *ngIf="r.confidence !== null"> · {{ r.confidence }}%</span></div>
+                    <div *ngIf="r.status === 'Queued' || r.status === 'Processing'"><i class="fa fa-spinner fa-spin mr-1"></i>reading</div>
+                    <div *ngIf="r.status === 'Failed'" class="text-danger" [title]="r.error || ''">failed</div>
+                    <div>
+                        <a *ngIf="r.status !== 'Queued' && r.status !== 'Processing'" role="button" class="mr-2" (click)="run([r.provider], true)" title="Read again">again</a>
+                        <a *ngIf="editable && r.status === 'Done'" role="button" (click)="apply(r.provider)" title="Copy everything this reader found">use all</a>
+                    </div>
+                </th>
+                <th>Consensus</th>
+                <th>On the document</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let f of d.fields; trackBy: trackField">
+                <td class="text-xs _600">{{ f.label }}<div><span class="badge" [ngClass]="statusTone[f.status]">{{ statusLabel[f.status] }}</span></div></td>
+                <td *ngFor="let r of columns; trackBy: trackReading" [ngClass]="cellClass(f, r.provider)">
+                    <ng-container *ngIf="cellOf(f, r.provider)?.value as v; else none">
+                        <a *ngIf="editable; else plain" role="button" [ngClass]="cellClass(f, r.provider)" (click)="apply(r.provider, [f.key])" title="Use this value">{{ v }}</a>
+                        <ng-template #plain>{{ v }}</ng-template>
+                        <i *ngIf="cellOf(f, r.provider)?.agrees === false" class="fa fa-times ml-1"></i>
+                    </ng-container>
+                    <ng-template #none><span class="text-muted">—</span></ng-template>
+                </td>
+                <td class="_600">{{ f.consensus || '—' }}</td>
+                <td [ngClass]="f.currentMatches === false ? 'text-warning' : ''">{{ f.current || '—' }}
+                    <a *ngIf="editable && f.consensus && f.currentMatches === false" role="button" class="text-xs ml-1" (click)="apply('consensus', [f.key])">use consensus</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Each reader's lines and errors -->
+    <div *ngFor="let r of columns; trackBy: trackReading" class="mb-1">
+        <div *ngIf="r.status === 'Failed'" class="text-xs text-danger"><b>{{ r.label }}:</b> {{ r.error }}</div>
+        <ng-container *ngIf="r.lines.length">
+            <a role="button" class="text-xs" (click)="showLines = showLines === r.provider ? null : r.provider">
+                {{ showLines === r.provider ? 'Hide' : 'Show' }} the {{ r.lineCount }} lines {{ r.label }} read</a>
+            <a *ngIf="editable" role="button" class="text-xs ml-2" (click)="apply(r.provider, ['lines'])">use these lines</a>
+            <table *ngIf="showLines === r.provider" class="table table-sm text-xs mb-1">
+                <tr *ngFor="let l of r.lines"><td>{{ l.description }}</td><td class="text-right">{{ l.quantity }}</td>
+                    <td class="text-right">{{ l.unitPrice | money:currency:false }}</td><td class="text-right">{{ l.amount | money:currency:false }}</td></tr>
+            </table>
+        </ng-container>
+    </div>
+</ng-container>

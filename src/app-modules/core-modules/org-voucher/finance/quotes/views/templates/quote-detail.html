@@ -1,0 +1,162 @@
+<app-aside size="xl" [title]="quote.number + (quote.revision > 1 ? ' rev ' + quote.revision : '') + (quote.title ? ' · ' + quote.title : '')"
+           [subtitle]="quote.customerName + (quote.isProspect ? ' (prospect)' : '')" (closed)="closed.emit()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+    <!-- Summary -->
+    <div class="d-flex flex-wrap align-items-start mb-2">
+        <div class="mr-4 mb-2"><span class="badge" [ngClass]="tone[quote.status]">{{ statusLabel[quote.status] }}</span>
+            <div class="text-xs text-muted mt-1">{{ quote.issueDate }} · valid until {{ quote.validUntil }}
+                <span *ngIf="quote.status === 'sent' || quote.status === 'approved'" [class.text-warning]="quote.daysToExpiry <= 7">({{ quote.daysToExpiry }} d)</span></div>
+            <div class="text-xs text-muted" *ngIf="quote.ownerName">Owner {{ quote.ownerName }} · {{ quote.probability }}% likely</div></div>
+        <div class="mr-4 mb-2 text-sm" *ngIf="quote.contactName || quote.contactEmail"><div class="text-xs text-muted">Contact</div>{{ quote.contactName }}
+            <div class="text-xs">{{ quote.contactEmail }} {{ quote.contactPhone }}</div></div>
+        <div class="ml-auto text-right mb-2">
+            <div class="h4 mb-0 _600">{{ quote.total | money:quote.currencyCode }}</div>
+            <div class="text-xs text-muted">subtotal {{ quote.subTotal | money:quote.currencyCode:false }} · tax {{ quote.taxTotal | money:quote.currencyCode:false }}
+                <span *ngIf="quote.discountTotal"> · discount {{ quote.discountTotal | money:quote.currencyCode:false }}</span></div>
+            <div class="text-xs" *ngIf="quote.marginPercent !== null">Margin {{ quote.marginPercent }}% ({{ quote.marginTotal | money:quote.currencyCode:false }})</div>
+            <div class="text-xs text-muted" *ngIf="quote.optionalTotal">Optional extras {{ quote.optionalTotal | money:quote.currencyCode:false }}</div>
+        </div>
+    </div>
+
+    <div *ngIf="quote.approvalReasons.length" class="alert alert-info text-sm py-2">Needs approval before it is sent: {{ quote.approvalReasons.join(' ') }}</div>
+    <div *ngIf="quote.status === 'pending_approval'" class="alert alert-warning text-sm py-2">Waiting for approval: {{ quote.approvalReason }}</div>
+    <div *ngIf="quote.changesRequested" class="alert alert-warning text-sm py-2">Changes requested: {{ quote.approvalNote }}</div>
+    <div *ngIf="quote.status === 'expired'" class="alert alert-danger text-sm py-2">Expired. Extend the valid-until date to send it again or record the answer.</div>
+    <div *ngIf="quote.status === 'declined'" class="alert alert-secondary text-sm py-2">Declined: {{ declineLabel[quote.declineReason ?? ''] || quote.declineReason }}
+        <span *ngIf="quote.lostToCompetitor"> (to {{ quote.lostToCompetitor }})</span><span *ngIf="quote.declineNote"> — {{ quote.declineNote }}</span></div>
+    <div *ngIf="quote.status === 'accepted' || quote.status === 'invoiced'" class="alert alert-success text-sm py-2">Accepted {{ quote.acceptedAt | date:'mediumDate' }}
+        <span *ngIf="quote.acceptedByName"> by {{ quote.acceptedByName }}</span><span *ngIf="quote.customerPoNumber"> · PO {{ quote.customerPoNumber }}</span>
+        <span *ngIf="quote.invoiceId"> · invoice <a role="button" class="_600" (click)="openInvoice.emit(quote.invoiceId!)">{{ quote.invoiceNumber }}</a> ({{ quote.invoiceStatus }})</span></div>
+    <div *ngIf="quote.status === 'cancelled'" class="alert alert-secondary text-sm py-2">Cancelled{{ quote.cancelReason ? ': ' + quote.cancelReason : '' }}</div>
+
+    <!-- Actions -->
+    <div class="d-flex flex-wrap mb-2">
+        <button *ngIf="quote.canEdit" class="btn btn-sm white mr-1 mb-1" (click)="edit.emit(quote)"><i class="fa fa-pencil mr-1"></i>Edit</button>
+        <button *ngIf="quote.canSubmit" class="btn btn-sm theme mr-1 mb-1" [disabled]="busy" (click)="submit()">Send for approval</button>
+        <button *ngIf="quote.canApprove" class="btn btn-sm theme mr-1 mb-1" (click)="open('approve')">Approve…</button>
+        <button *ngIf="quote.canSend" class="btn btn-sm theme mr-1 mb-1" (click)="open('send')"><i class="fa fa-paper-plane mr-1"></i>{{ quote.sentCount ? 'Send again' : 'Send' }}</button>
+        <button *ngIf="quote.canDecide" class="btn btn-sm white mr-1 mb-1" (click)="open('accept')"><i class="fa fa-check mr-1"></i>Accepted</button>
+        <button *ngIf="quote.canDecide" class="btn btn-sm white mr-1 mb-1" (click)="open('decline')"><i class="fa fa-times mr-1"></i>Declined</button>
+        <button *ngIf="quote.canConvert" class="btn btn-sm theme mr-1 mb-1" (click)="open('convert')"><i class="fa fa-file-text-o mr-1"></i>Create invoice</button>
+        <button *ngIf="quote.canRevise" class="btn btn-sm white mr-1 mb-1" (click)="open('revise')">Revise</button>
+        <button *ngIf="quote.status === 'sent' || quote.status === 'approved' || quote.status === 'expired'" class="btn btn-sm white mr-1 mb-1" (click)="open('extend')">Extend</button>
+        <button *ngIf="quote.status !== 'invoiced' && quote.status !== 'cancelled'" class="btn btn-sm white mr-1 mb-1" (click)="open('follow')"><i class="fa fa-bell-o mr-1"></i>Follow-up</button>
+        <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="duplicate()">Copy</button>
+        <button *ngIf="quote.canCancel" class="btn btn-sm white text-danger mr-1 mb-1" (click)="open('cancel')">Cancel</button>
+        <button *ngIf="quote.canDelete" class="btn btn-sm white text-danger mb-1" (click)="remove()">Delete</button>
+    </div>
+
+    <!-- Panels -->
+    <div *ngIf="panel === 'send'" class="box p-2 mb-2">
+        <label class="text-sm mr-3"><input type="radio" name="sendHow" class="mr-1" [value]="true" [(ngModel)]="send.email">Email it</label>
+        <label class="text-sm"><input type="radio" name="sendHow" class="mr-1" [value]="false" [(ngModel)]="send.email">Mark as sent (handed over another way)</label>
+        <ng-container *ngIf="send.email">
+            <div class="row mt-1">
+                <div class="col-md-6 form-group"><label class="text-xs _600">To</label><input type="email" class="form-control form-control-sm" [(ngModel)]="send.to" maxlength="254"></div>
+                <div class="col-md-6 form-group"><label class="text-xs _600">Subject</label>
+                    <input class="form-control form-control-sm" [(ngModel)]="send.subject" maxlength="200" [placeholder]="'Quote ' + quote.number"></div>
+            </div>
+            <div class="form-group"><label class="text-xs _600">Message</label><textarea class="form-control form-control-sm" rows="3" [(ngModel)]="send.message" maxlength="4000"></textarea></div>
+        </ng-container>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="doSend()">{{ send.email ? 'Send' : 'Mark as sent' }}</button></div>
+    </div>
+    <div *ngIf="panel === 'approve'" class="box p-2 mb-2">
+        <div class="form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="approveNote" maxlength="1000" placeholder="Required when asking for changes"></div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" [disabled]="busy" (click)="doApprove(false)">Ask for changes</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="doApprove(true)">Approve</button></div>
+    </div>
+    <div *ngIf="panel === 'accept'" class="box p-2 mb-2">
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-xs _600">Accepted by</label><input class="form-control form-control-sm" [(ngModel)]="accept.acceptedByName" maxlength="150"></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Customer PO number</label><input class="form-control form-control-sm" [(ngModel)]="accept.customerPoNumber" maxlength="100"></div>
+        </div>
+        <div *ngIf="optionalLines.length" class="mb-2"><div class="text-xs _600">Optional extras the customer chose</div>
+            <label *ngFor="let l of optionalLines" class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="accept.optional[l.id]">{{ l.description }}
+                <span class="text-muted">{{ l.lineTotal | money:quote.currencyCode:false }}</span></label></div>
+        <div class="form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="accept.note" maxlength="1000"></div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="doAccept()">Record acceptance</button></div>
+    </div>
+    <div *ngIf="panel === 'decline'" class="box p-2 mb-2">
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-xs _600">Why</label>
+                <select class="form-control form-control-sm" [(ngModel)]="decline.reason"><option *ngFor="let r of lookups.declineReasons" [ngValue]="r">{{ declineLabel[r] || r }}</option></select></div>
+            <div class="col-md-6 form-group" *ngIf="decline.reason === 'competitor'"><label class="text-xs _600">Lost to</label>
+                <input class="form-control form-control-sm" [(ngModel)]="decline.lostToCompetitor" maxlength="150"></div>
+        </div>
+        <div class="form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="decline.note" maxlength="1000"></div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm danger" [disabled]="busy" (click)="doDecline()">Record decline</button></div>
+    </div>
+    <div *ngIf="panel === 'convert'" class="box p-2 mb-2">
+        <div class="row">
+            <div *ngIf="quote.isProspect" class="col-md-6 form-group"><label class="text-xs _600">Customer to invoice</label>
+                <fin-picker [small]="true" [search]="searchCustomers" [label]="convert.customerLabel" placeholder="Search customers (add the prospect in Customers first)"
+                            (picked)="convert.customerAccountId = $event.id; convert.customerLabel = $event.label"></fin-picker></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Invoice date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="convert.invoiceDate"></div>
+        </div>
+        <label class="text-sm d-block" *ngIf="lookups.canInvoice"><input type="checkbox" class="mr-1" [(ngModel)]="convert.post">Post the invoice now (otherwise a draft for finance)</label>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="doConvert()">Create invoice</button></div>
+    </div>
+    <div *ngIf="panel === 'revise' || panel === 'cancel'" class="box p-2 mb-2">
+        <div class="form-group"><label class="text-xs _600">{{ panel === 'revise' ? 'What changes (kept with the old version)' : 'Why it is cancelled' }}</label>
+            <input class="form-control form-control-sm" [(ngModel)]="reason" maxlength="1000"></div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm" [ngClass]="panel === 'revise' ? 'theme' : 'danger'" [disabled]="busy" (click)="panel === 'revise' ? doRevise() : doCancel()">
+                {{ panel === 'revise' ? 'Make a new revision' : 'Cancel the quote' }}</button></div>
+    </div>
+    <div *ngIf="panel === 'extend'" class="box p-2 mb-2 d-flex align-items-end">
+        <div class="form-group mb-0 mr-2"><label class="text-xs _600">Valid until</label><input type="date" class="form-control form-control-sm" [(ngModel)]="extendTo"></div>
+        <button class="btn btn-sm theme" [disabled]="busy" (click)="doExtend()">Extend</button>
+    </div>
+    <div *ngIf="panel === 'follow'" class="box p-2 mb-2">
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-xs _600">Next follow-up</label><input type="date" class="form-control form-control-sm" [(ngModel)]="follow.date"></div>
+            <div class="col-md-8 form-group"><label class="text-xs _600">What happened</label><input class="form-control form-control-sm" [(ngModel)]="follow.note" maxlength="2000"></div>
+        </div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm theme" [disabled]="busy" (click)="doFollow()">Save</button></div>
+    </div>
+
+    <!-- Lines -->
+    <table class="table table-sm mb-2">
+        <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">Qty</th><th class="text-right">Price</th><th class="text-right">Disc</th>
+            <th>Tax</th><th class="text-right">Amount</th></tr></thead>
+        <tbody><tr *ngFor="let l of quote.lines" [class._600]="l.lineType === 'Section'" [class.text-muted]="l.isOptional && !l.isSelected">
+            <ng-container *ngIf="l.lineType === 'Item'; else section">
+                <td>{{ l.description }} <span *ngIf="l.isOptional" class="badge light">optional</span><div *ngIf="l.details" class="text-xs text-muted">{{ l.details }}</div></td>
+                <td class="text-right">{{ l.quantity | number:'1.0-4' }} {{ l.unit }}</td>
+                <td class="text-right">{{ l.unitPrice | money:quote.currencyCode:false }}</td>
+                <td class="text-right">{{ l.discountRate ? l.discountRate + '%' : '' }}</td>
+                <td class="text-xs">{{ l.taxCode }}</td>
+                <td class="text-right">{{ l.lineTotal | money:quote.currencyCode:false }}<div *ngIf="l.marginPercent !== null" class="text-xs text-muted">{{ l.marginPercent }}% margin</div></td>
+            </ng-container>
+            <ng-template #section><td colspan="6">{{ l.description }}</td></ng-template>
+        </tr></tbody>
+    </table>
+    <div *ngIf="quote.taxes.length" class="text-xs text-muted mb-2">
+        <span *ngFor="let t of quote.taxes" class="mr-3">{{ t.component }} {{ t.rate }}% on {{ t.taxable | money:quote.currencyCode:false }}: {{ t.tax | money:quote.currencyCode:false }}</span></div>
+    <div *ngIf="quote.notes" class="text-sm mb-2"><b class="text-xs text-muted d-block">Notes</b><span style="white-space: pre-wrap">{{ quote.notes }}</span></div>
+    <div *ngIf="quote.terms" class="text-sm mb-2"><b class="text-xs text-muted d-block">Terms</b><span style="white-space: pre-wrap">{{ quote.terms }}</span></div>
+    <div *ngIf="quote.internalNote" class="text-sm mb-2"><b class="text-xs text-muted d-block">Internal note</b>{{ quote.internalNote }}</div>
+    <div *ngIf="quote.files.length" class="text-sm mb-2"><b class="text-xs text-muted d-block">Files</b>
+        <a *ngFor="let f of quote.files" role="button" class="mr-3" (click)="file(f.id)"><i class="fa fa-paperclip mr-1"></i>{{ f.fileName }}</a></div>
+
+    <div class="row">
+        <div class="col-md-6" *ngIf="quote.revisions.length">
+            <div class="text-xs text-muted text-uppercase mb-1">Earlier versions</div>
+            <div *ngFor="let r of quote.revisions" class="text-sm">Revision {{ r.revision }} · {{ r.total | money:quote.currencyCode }} · {{ r.createdAt | date:'mediumDate' }}
+                <span *ngIf="r.reason" class="text-xs text-muted">— {{ r.reason }}</span></div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-xs text-muted text-uppercase mb-1">Timeline</div>
+            <div *ngFor="let a of quote.activity" class="text-sm mb-1"><b>{{ a.summary }}</b> <span class="text-xs text-muted">{{ a.actorName }} · {{ a.at | date:'medium' }}</span>
+                <div *ngIf="a.note" class="text-xs">{{ a.note }}</div></div>
+            <div class="d-flex mt-1"><input class="form-control form-control-sm mr-1" [(ngModel)]="comment" maxlength="2000" placeholder="Add a note" (keyup.enter)="addComment()">
+                <button class="btn btn-sm white" [disabled]="!comment.trim()" (click)="addComment()">Add</button></div>
+        </div>
+    </div>
+</app-aside>

@@ -12,8 +12,8 @@
          (dragover)="$event.preventDefault(); dragging = true" (dragleave)="dragging = false" (drop)="drop($event)">
         <loader [isLoading]="uploading"></loader>
         <i class="fa fa-cloud-upload fa-2x text-muted d-block mb-1"></i>
-        Drop bills and receipts here (PDF or photos, up to 20 at a time), or <a role="button" class="_600" (click)="captureFiles.click()">choose files</a>.
-        <div class="text-xs text-muted">The vendor, number, dates, totals, tax and lines are read for you; check them and convert.</div>
+        Drop bills and receipts here (PDF, photos, Word, Excel or CSV; up to 20 at a time, {{ maxFileMb }} MB each), or <a role="button" class="_600" (click)="captureFiles.click()">choose files</a>.
+        <div class="text-xs text-muted">The vendor, number, dates, totals, tax and lines are read for you (large PDFs page by page); check them, compare readers, and convert.</div>
     </div>
 
     <div class="d-flex flex-wrap align-items-center mb-1">
@@ -49,7 +49,7 @@
 </div>
 
 <!-- Review -->
-<app-aside *ngIf="current as c" size="xl" [title]="c.row.fileName" [subtitle]="statusLabel[c.row.status] + (c.row.confidence !== null ? ' · read with ' + c.row.confidence + '% confidence' : '')" (closed)="close()">
+<app-aside *ngIf="current as c" size="xl" [title]="c.row.fileName" [subtitle]="statusLabel[c.row.status] + ' · ' + providerLabel(c.row.provider) + (c.row.confidence !== null ? ' · ' + c.row.confidence + '% confidence' : '')" (closed)="close()">
     <loader [isLoading]="busy"></loader>
     <div class="row">
         <!-- Original -->
@@ -67,6 +67,12 @@
 
         <!-- What was read -->
         <div class="col-lg-7">
+            <ul class="nav nav-tabs nav-sm mb-2">
+                <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'details'" (click)="tab = 'details'">Details</a></li>
+                <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'compare'" (click)="tab = 'compare'"><i class="fa fa-columns mr-1"></i>Compare readers</a></li>
+            </ul>
+            <capture-compare *ngIf="tab === 'compare'" [captureId]="c.row.id" [editable]="editable" [currency]="c.row.currencyCode || currency" (applied)="onApplied($event)"></capture-compare>
+            <div [hidden]="tab !== 'details'">
             <div *ngIf="c.row.status === 'Queued' || c.row.status === 'Processing'" class="alert alert-info text-sm py-2"><i class="fa fa-spinner fa-spin mr-1"></i>
                 Reading the document; this usually takes a few seconds.</div>
             <div *ngIf="c.row.status === 'Failed'" class="alert alert-danger text-sm py-2">{{ c.row.error }} You can type the details in or read it again.</div>
@@ -151,6 +157,7 @@
                     <ng-container *ngIf="c.row.status !== 'Converted'">
                         <select class="form-control form-control-sm mr-1 mb-1" style="max-width: 170px" [(ngModel)]="reprocessWith" title="Reader">
                             <option *ngFor="let p of providers" [ngValue]="p.code">{{ p.label }}{{ p.simulated ? ' (simulated)' : '' }}</option></select>
+                        <a role="button" class="text-xs mr-2 mb-1" (click)="tab = 'compare'">compare readers</a>
                         <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="reprocess()"><i class="fa fa-refresh mr-1"></i>Read again</button>
                         <button *ngIf="c.row.status !== 'Discarded'" class="btn btn-sm white text-danger mr-1 mb-1" [disabled]="busy" (click)="discard()">Discard</button>
                     </ng-container>
@@ -172,6 +179,7 @@
                     </tbody></table>
                 </details>
             </ng-container>
+            </div>
         </div>
     </div>
 </app-aside>

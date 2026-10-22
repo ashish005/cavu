@@ -1,0 +1,32 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-file-o mr-1"></i><b>Quotes</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!model || saving" (click)="save()">Save</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="model as m" style="max-width: 760px">
+        <h6 class="_600">Numbering and validity</h6>
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-sm _600">Numbers start with</label>
+                <input class="form-control text-uppercase" [(ngModel)]="m.quotePrefix" maxlength="10"></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Valid for (days)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.defaultValidityDays" min="1" max="365"></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Warn before expiry (days)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.expiryWarningDays" min="1" max="60"></div>
+        </div>
+        <h6 class="_600 mt-2">Approval</h6>
+        <p class="text-sm text-muted">A quote needs someone with the "Change sales quotes" permission to approve it before it is sent when any of these is exceeded. Leave empty for no limit.</p>
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-sm _600">Total above ({{ currency }})</label>
+                <input type="number" class="form-control" [(ngModel)]="m.approvalAmount" min="0" step="any"></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Any discount above (%)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.maxDiscountWithoutApproval" min="0" max="100" step="any"></div>
+            <div class="col-md-4 form-group"><label class="text-sm _600">Margin below (%)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.minMarginPercent" min="-100" max="100" step="any"></div>
+        </div>
+        <h6 class="_600 mt-2">On new quotes</h6>
+        <div class="form-group"><label class="text-sm _600">Notes</label><textarea class="form-control" rows="3" [(ngModel)]="m.defaultNotes" maxlength="4000"></textarea></div>
+        <div class="form-group"><label class="text-sm _600">Terms and conditions</label><textarea class="form-control" rows="5" [(ngModel)]="m.defaultTerms" maxlength="8000"></textarea></div>
+        <button class="btn theme" [disabled]="saving" (click)="save()">Save</button>
+    </div>
+</div>

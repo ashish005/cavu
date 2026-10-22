@@ -1,0 +1,74 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-columns mr-1"></i><b>OCR comparison</b></span></ng-template>
+<ng-template #actionTemplate>
+    <input type="date" class="form-control form-control-sm mr-1" style="max-width: 150px" [(ngModel)]="from" aria-label="From">
+    <input type="date" class="form-control form-control-sm mr-1" style="max-width: 150px" [(ngModel)]="to" aria-label="To">
+    <button class="btn btn-sm white mr-1" [disabled]="loading" (click)="load()">Show</button>
+    <button class="btn btn-sm white" [disabled]="!used.length" (click)="download()"><i class="fa fa-download mr-1"></i>CSV</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <ng-container *ngIf="report as r">
+        <div class="row mb-2">
+            <div class="col-6 col-md-3 mb-2"><div class="box p-3"><div class="text-xs text-muted">Documents read</div><div class="h4 mb-0">{{ r.documents }}</div></div></div>
+            <div class="col-6 col-md-3 mb-2"><div class="box p-3"><div class="text-xs text-muted">Read by two or more</div><div class="h4 mb-0">{{ r.compared }}</div></div></div>
+            <div class="col-6 col-md-3 mb-2"><div class="box p-3"><div class="text-xs text-muted">Average alignment</div>
+                <div class="h4 mb-0" [ngClass]="rateClass(r.avgAlignment)">{{ rate(r.avgAlignment) }}</div></div></div>
+            <div class="col-6 col-md-3 mb-2"><div class="box p-3"><div class="text-xs text-muted">Readers used</div><div class="h4 mb-0">{{ used.length }}</div></div></div>
+        </div>
+
+        <div *ngIf="!used.length" class="text-center text-muted p-4">No document was read in this period. Compare readers from a document's review panel, or turn on comparing at upload in Settings › Document capture.</div>
+
+        <ng-container *ngIf="used.length">
+            <h6 class="_600">By reader</h6>
+            <p class="text-xs text-muted mb-1"><b>Agreement</b>: how often its values match the consensus of the other readers.
+                <b>Accuracy</b>: how often they match what was finally recorded, on converted documents (the Checked column).</p>
+            <div class="box table-responsive mb-3">
+                <table class="table table-sm mb-0 text-sm">
+                    <thead><tr class="text-xs text-muted"><th>Reader</th><th class="text-right">Readings</th><th class="text-right">Succeeded</th><th class="text-right">Avg time</th>
+                        <th class="text-right">Avg confidence</th><th class="text-right">Agreement</th><th class="text-right">Accuracy</th><th class="text-right">Checked</th></tr></thead>
+                    <tbody><tr *ngFor="let p of used; trackBy: trackProvider">
+                        <td><span class="_600">{{ p.label }}</span><span *ngIf="p.simulated" class="badge grey ml-1">simulated</span><div class="text-xs text-muted">{{ p.engine }}</div></td>
+                        <td class="text-right">{{ p.readings }}</td>
+                        <td class="text-right" [ngClass]="rateClass(successRate(p))">{{ rate(successRate(p)) }}<div *ngIf="p.failed" class="text-xs text-danger">{{ p.failed }} failed</div></td>
+                        <td class="text-right">{{ seconds(p.avgDurationMs) }}</td>
+                        <td class="text-right">{{ p.avgConfidence !== null ? p.avgConfidence + '%' : '—' }}</td>
+                        <td class="text-right _600" [ngClass]="rateClass(p.agreement)">{{ rate(p.agreement) }}</td>
+                        <td class="text-right _600" [ngClass]="rateClass(p.accuracy)">{{ rate(p.accuracy) }}</td>
+                        <td class="text-right">{{ p.checked }}</td>
+                    </tr></tbody>
+                </table>
+            </div>
+
+            <h6 class="_600">Accuracy by field</h6>
+            <div class="box table-responsive mb-3">
+                <table class="table table-sm mb-0 text-sm">
+                    <thead><tr class="text-xs text-muted"><th>Field</th><th *ngFor="let p of used; trackBy: trackProvider" class="text-right">{{ p.label }}</th></tr></thead>
+                    <tbody><tr *ngFor="let k of r.fieldKeys">
+                        <td class="text-xs _600">{{ k.label }}</td>
+                        <td *ngFor="let p of used; trackBy: trackProvider" class="text-right" [ngClass]="rateClass(p.fieldAccuracy[k.key])">{{ rate(p.fieldAccuracy[k.key]) }}</td>
+                    </tr></tbody>
+                </table>
+                <div class="text-xs text-muted p-2">Measured on converted documents only; empty until reviewed documents are recorded.</div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="r.recent.length">
+            <h6 class="_600">Documents</h6>
+            <div class="box table-responsive">
+                <table class="table table-sm table-hover mb-0 text-sm">
+                    <thead><tr class="text-xs text-muted"><th>Document</th><th>Status</th><th class="text-right">Readers</th><th class="text-right">Alignment</th><th>Disagree on</th></tr></thead>
+                    <tbody><tr *ngFor="let d of r.recent; trackBy: trackDoc" role="button" (click)="open(d)">
+                        <td>{{ d.fileName }}<div class="text-xs text-muted">{{ d.uploadedAt | date:'mediumDate' }}</div></td>
+                        <td><span class="badge" [ngClass]="statusTone[d.status]">{{ statusLabel[d.status] }}</span></td>
+                        <td class="text-right">{{ d.providers }}</td>
+                        <td class="text-right" [ngClass]="rateClass(d.alignment)">{{ rate(d.alignment) }}</td>
+                        <td class="text-xs text-danger">{{ d.conflicts.join(', ') }}</td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

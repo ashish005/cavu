@@ -46,7 +46,26 @@ export class FinanceCaptureSettingsView implements OnInit {
         });
     }
 
-    get simulated() { return this.model?.providers.some(p => p.simulated) ?? false; }
+    get simulated() { return this.model?.providers.some(p => p.simulated && p.available) ?? false; }
+
+    /** The organisation's own comparison set, else the country's default. */
+    get compareSet(): string[] {
+        const m = this.model;
+        if (!m) { return []; }
+        return m.compareProviders.length ? m.compareProviders : m.providers.filter(p => p.countryCompare && p.available).map(p => p.code);
+    }
+
+    compares(code: string) { return this.compareSet.includes(code); }
+
+    /** The first change turns the country's default into the organisation's own set. */
+    toggleCompare(code: string) {
+        const m = this.model;
+        if (!m) { return; }
+        const set = new Set(this.compareSet);
+        set.has(code) ? set.delete(code) : set.add(code);
+        m.compareProviders = [...set];
+        if (!m.compareProviders.length) { m.compareOnUpload = false; }
+    }
 
     searchAccounts = (term: string | null): Observable<PickerOption[]> =>
         this.finance.accountOptions('expense', term).pipe(map((list: AccountOption[]) => list.map(a => ({id: a.id, label: a.name, sub: [a.code, a.group].filter(Boolean).join(' · ')}))));
@@ -58,7 +77,8 @@ export class FinanceCaptureSettingsView implements OnInit {
         if (!m) { return; }
         this.error = null;
         this.saving = true;
-        this.api.saveSettings({...m, confidenceThreshold: +m.confidenceThreshold || 0, roundingTolerance: +m.roundingTolerance || 0})
+        this.api.saveSettings({...m, confidenceThreshold: +m.confidenceThreshold || 0, roundingTolerance: +m.roundingTolerance || 0,
+            compareProviders: m.compareProviders.length ? m.compareProviders : (m.compareOnUpload ? this.compareSet : [])})
             .pipe(finalize(() => this.saving = false), takeUntilDestroyed(this.destroyRef)).subscribe({
                 next: s => { this.model = s; this.alerts.showMessage('Saved', 'Document capture settings saved.', MessageSeverity.success); },
                 error: e => this.error = financeErrorOf(e, 'Settings could not be saved.')

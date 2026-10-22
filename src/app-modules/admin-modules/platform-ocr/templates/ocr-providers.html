@@ -1,0 +1,128 @@
+<div class="d-flex flex-column flex scroll-y">
+    <div class="navbar flex-nowrap white lt box-shadow">
+        <span class="navbar-text"><i class="fa fa-eye mr-1"></i><b>OCR providers</b><span class="text-muted ml-2 d-none d-md-inline">by country, for document capture</span></span>
+        <span class="flex"></span>
+        <button class="btn btn-sm white" [disabled]="loading" (click)="load()"><i class="fa fa-refresh"></i></button>
+    </div>
+
+    <div class="p-3">
+        <loader [isLoading]="loading"></loader>
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+        <ng-container *ngIf="data as d">
+            <!-- Scope -->
+            <div class="d-flex flex-wrap align-items-center mb-3">
+                <ul class="nav nav-pills nav-sm mr-2 mb-1">
+                    <li class="nav-item"><a role="button" class="nav-link" [class.active]="country === '*'" (click)="pick('*')">Every country (*)</a></li>
+                    <li class="nav-item" *ngFor="let c of d.countries"><a role="button" class="nav-link" [class.active]="country === c" (click)="pick(c)">{{ c }}</a></li>
+                    <li class="nav-item" *ngIf="country !== '*' && !d.countries.includes(country)"><a class="nav-link active">{{ country }} (new)</a></li>
+                </ul>
+                <div class="d-flex mb-1">
+                    <input class="form-control form-control-sm text-uppercase mr-1" style="width: 70px" maxlength="2" [(ngModel)]="newCountry" (keyup.enter)="addCountry()"
+                           placeholder="IN" aria-label="Country code">
+                    <button class="btn btn-sm white" (click)="addCountry()">Set up a country</button>
+                </div>
+            </div>
+
+            <p class="text-sm text-muted">
+                <ng-container *ngIf="country === '*'">The default for every country. A country's own row replaces the default for that provider there (switching it off, another key or model).</ng-container>
+                <ng-container *ngIf="country !== '*'">Rows for {{ country }} replace the * rows of the same provider; providers without one here use the * row.</ng-container>
+                Automatic reading picks the enabled provider with the lowest order that reads the file. Keys are stored encrypted and never shown again.
+            </p>
+
+            <!-- Effective set for a country -->
+            <div *ngIf="country !== '*' && d.effective.length" class="box mb-3">
+                <div class="p-2 _600 text-sm b-b">What organisations in {{ country }} get</div>
+                <table class="table table-sm mb-0 text-sm">
+                    <thead><tr class="text-xs text-muted"><th>Order</th><th>Provider</th><th>From</th><th>Status</th><th>Model</th><th>Compared</th></tr></thead>
+                    <tbody><tr *ngFor="let x of d.effective" [class.text-muted]="!x.enabled">
+                        <td>{{ x.enabled ? x.priority : '—' }}</td><td>{{ x.label }}</td>
+                        <td><span class="badge" [ngClass]="x.source === country ? 'primary' : 'white b-a'">{{ x.source === 'default' ? 'built in' : x.source }}</span></td>
+                        <td><span *ngIf="x.ready" class="text-success">ready</span><span *ngIf="!x.enabled && x.source !== 'none'">off</span>
+                            <span *ngIf="x.source === 'none'">not set up</span><span *ngIf="x.enabled && !x.ready" class="text-warning">{{ x.missing }}</span></td>
+                        <td class="text-xs">{{ x.model || '' }}</td><td>{{ x.useForComparison ? 'yes' : '' }}</td>
+                    </tr></tbody>
+                </table>
+            </div>
+
+            <!-- Rows of the scope -->
+            <div class="box table-responsive mb-2">
+                <table class="table table-sm mb-0 text-sm">
+                    <thead><tr class="text-xs text-muted"><th>Provider</th><th>On</th><th class="text-right">Order</th><th>Compared</th><th>Model / endpoint</th><th>Key</th>
+                        <th class="text-right">Pages · parallel · timeout</th><th></th></tr></thead>
+                    <tbody>
+                    <tr *ngFor="let r of rows; trackBy: trackRow">
+                        <td><span class="_600">{{ r.label }}</span><div class="text-xs text-muted">{{ info(r.provider)?.engine }}</div></td>
+                        <td><span class="badge" [ngClass]="r.isEnabled ? 'success' : 'grey'">{{ r.isEnabled ? 'on' : 'off' }}</span></td>
+                        <td class="text-right">{{ r.priority }}</td>
+                        <td>{{ r.useForComparison ? 'yes' : '' }}</td>
+                        <td class="text-xs">{{ r.model || '' }}<div class="text-muted">{{ r.endpoint || '' }}</div><div *ngIf="r.extractModel" class="text-muted">fields: {{ r.extractModel }}</div></td>
+                        <td class="text-xs">{{ r.hasSecret ? '••••' + (r.secretHint || '') : (info(r.provider)?.secretLabel ? 'none' : '') }}</td>
+                        <td class="text-right text-xs">{{ r.maxPages }} · {{ r.concurrency }} · {{ r.timeoutSeconds }} s</td>
+                        <td class="text-right text-nowrap"><button class="btn btn-xs white mr-1" (click)="edit(r)">Edit</button>
+                            <button class="btn btn-xs white text-danger" (click)="remove(r)" title="Remove"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                    <tr *ngIf="!rows.length"><td colspan="8" class="text-center text-muted p-3">Nothing set up {{ country === '*' ? 'for every country' : 'for ' + country }} yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="addable.length" class="d-flex flex-wrap align-items-center">
+                <span class="text-xs text-muted mr-2">Add for {{ country === '*' ? 'every country' : country }}:</span>
+                <button *ngFor="let p of addable" class="btn btn-xs white mr-1 mb-1" (click)="add(p)"><i class="fa fa-plus mr-1"></i>{{ p.label }}</button>
+            </div>
+        </ng-container>
+    </div>
+</div>
+
+<app-aside *ngIf="editing as e" size="lg" [title]="e.info.label + ' · ' + (e.model.countryCode === '*' ? 'every country' : e.model.countryCode)" [subtitle]="e.info.engine" (closed)="editing = null">
+    <loader [isLoading]="saving"></loader>
+    <p class="text-xs text-muted">{{ e.info.description }}<br>Reads: {{ e.info.accepts.join(', ') }}</p>
+    <div *ngIf="e.info.simulated" class="alert alert-info text-xs py-2">On this server it answers with a sample bill (AWS is not set up).</div>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-sm d-block _600">Status</label>
+            <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isEnabled">Switched on</label></div>
+        <div class="col-md-4 form-group"><label class="text-sm _600">Order</label><input type="number" class="form-control form-control-sm" [(ngModel)]="e.model.priority" min="0" max="999">
+            <div class="text-xs text-muted">Lower is tried first.</div></div>
+        <div class="col-md-4 form-group"><label class="text-sm d-block _600">Comparison</label>
+            <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.useForComparison">Compare by default</label></div>
+    </div>
+
+    <div class="row">
+        <div *ngFor="let f of fieldsOf(e.info)" class="col-md-6 form-group">
+            <label class="text-sm _600">{{ settingLabel[f]?.label || f }}</label>
+            <input *ngIf="f === 'endpoint'" class="form-control form-control-sm" [(ngModel)]="e.model.endpoint" [placeholder]="e.info.defaultEndpoint || 'https://'" maxlength="300">
+            <input *ngIf="f === 'model'" class="form-control form-control-sm" [(ngModel)]="e.model.model" [placeholder]="e.info.defaultModel || ''" maxlength="150">
+            <input *ngIf="f === 'extractModel'" class="form-control form-control-sm" [(ngModel)]="e.model.extractModel" placeholder="none: label rules" maxlength="150">
+            <input *ngIf="f === 'region'" class="form-control form-control-sm" [(ngModel)]="e.model.region" maxlength="40">
+            <div *ngIf="settingLabel[f]?.hint" class="text-xs text-muted">{{ settingLabel[f]?.hint }}</div>
+        </div>
+        <div *ngFor="let o of e.options" class="col-md-6 form-group">
+            <label class="text-sm _600">{{ settingLabel['options:' + o.key]?.label || o.key }}</label>
+            <input class="form-control form-control-sm" [(ngModel)]="o.value" maxlength="2000">
+            <div *ngIf="settingLabel['options:' + o.key]?.hint" class="text-xs text-muted">{{ settingLabel['options:' + o.key]?.hint }}</div>
+        </div>
+    </div>
+
+    <div *ngIf="e.info.secretLabel" class="form-group">
+        <label class="text-sm _600">{{ e.info.secretLabel }}</label>
+        <div *ngIf="e.hasSecret" class="text-xs text-muted mb-1">A key is stored{{ e.secretHint ? ' (ends in ' + e.secretHint + ')' : '' }}. Leave empty to keep it.</div>
+        <textarea *ngIf="e.info.secretLabel.includes('JSON'); else keyInput" class="form-control form-control-sm" rows="4" [(ngModel)]="e.model.secret" [disabled]="e.removeSecret"
+                  autocomplete="off" spellcheck="false"></textarea>
+        <ng-template #keyInput><input type="password" class="form-control form-control-sm" [(ngModel)]="e.model.secret" [disabled]="e.removeSecret" autocomplete="new-password"></ng-template>
+        <label *ngIf="e.hasSecret" class="text-xs mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="e.removeSecret">Remove the stored key</label>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 form-group"><label class="text-sm _600">Pages read</label><input type="number" class="form-control form-control-sm" [(ngModel)]="e.model.maxPages" min="1" max="2000">
+            <div class="text-xs text-muted">Later pages are skipped.</div></div>
+        <div class="col-md-4 form-group"><label class="text-sm _600">Pages at once</label><input type="number" class="form-control form-control-sm" [(ngModel)]="e.model.concurrency" min="1" max="16"></div>
+        <div class="col-md-4 form-group"><label class="text-sm _600">Timeout (s)</label><input type="number" class="form-control form-control-sm" [(ngModel)]="e.model.timeoutSeconds" min="10" max="900"></div>
+    </div>
+    <div class="form-group"><label class="text-sm _600">Notes</label><input class="form-control form-control-sm" [(ngModel)]="e.model.notes" maxlength="500"></div>
+
+    <div class="d-flex"><span class="flex"></span>
+        <button class="btn btn-sm white mr-1" (click)="editing = null">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="saving" (click)="save()">Save</button></div>
+</app-aside>

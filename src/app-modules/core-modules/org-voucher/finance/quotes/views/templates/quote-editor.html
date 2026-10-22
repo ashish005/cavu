@@ -1,0 +1,111 @@
+<app-aside size="xl" [title]="quote ? 'Edit ' + quote.number : 'New quote'" [subtitle]="quote?.status === 'approved' ? 'Changing it needs a fresh approval' : null" (closed)="closed.emit()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+    <div *ngIf="quote?.changesRequested" class="alert alert-warning text-sm py-2"><b>Changes requested:</b> {{ quote?.approvalNote }}</div>
+
+    <!-- Customer -->
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="text-xs _600 d-flex">{{ prospect ? 'Prospect' : 'Customer' }}
+                <a role="button" class="ml-auto _400" (click)="setProspect(!prospect)">{{ prospect ? 'Choose a customer' : 'Not a customer yet?' }}</a></label>
+            <fin-picker *ngIf="!prospect" [small]="true" [search]="searchCustomers" [label]="customerLabel" placeholder="Search customers" (picked)="pickCustomer($event)"></fin-picker>
+            <input *ngIf="prospect" class="form-control form-control-sm" [(ngModel)]="model.customerName" maxlength="200" placeholder="Company or person">
+        </div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Title</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.title" maxlength="200" placeholder="Annual maintenance, website redesign…"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Contact</label><input class="form-control form-control-sm" [(ngModel)]="model.contactName" maxlength="150"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Email</label><input type="email" class="form-control form-control-sm" [(ngModel)]="model.contactEmail" maxlength="254"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Phone</label><input class="form-control form-control-sm" [(ngModel)]="model.contactPhone" maxlength="32"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.issueDate"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Valid until</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.validUntil" [min]="model.issueDate"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Owner</label>
+            <select class="form-control form-control-sm" [(ngModel)]="model.ownerUserId"><option [ngValue]="null">Me</option>
+                <option *ngFor="let o of lookups.owners" [ngValue]="o.userId">{{ o.name }}</option></select></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Chance to win (%)</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="model.probability" min="0" max="100"></div>
+    </div>
+
+    <!-- Lines -->
+    <div class="table-responsive">
+        <table class="table table-sm mb-1">
+            <thead><tr class="text-xs text-muted">
+                <th style="min-width: 220px">Item</th><th style="width: 80px" class="text-right">Qty</th><th style="width: 110px" class="text-right">Price</th>
+                <th style="width: 70px" class="text-right">Disc %</th><th style="width: 120px">Tax</th><th style="width: 100px" class="text-right">Cost</th>
+                <th style="width: 110px" class="text-right">Amount</th><th style="width: 70px"></th></tr></thead>
+            <tbody><tr *ngFor="let l of lines; let i = index" [class.light]="l.lineType === 'Section'">
+                <ng-container *ngIf="l.lineType === 'Item'; else section">
+                    <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500" placeholder="What you will supply">
+                        <input class="form-control form-control-sm mt-1 text-xs" [(ngModel)]="l.details" maxlength="4000" placeholder="Details (optional)">
+                        <label class="text-xs mb-0 mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="l.isOptional">Optional extra</label>
+                        <label *ngIf="l.isOptional" class="text-xs mb-0 mt-1 ml-2"><input type="checkbox" class="mr-1" [(ngModel)]="l.isSelected">Included in the total</label></td>
+                    <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" min="0" step="any">
+                        <input class="form-control form-control-sm mt-1 text-xs" [(ngModel)]="l.unit" maxlength="20" placeholder="unit"></td>
+                    <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitPrice" min="0" step="any"></td>
+                    <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.discountRate" min="0" max="100" step="any"></td>
+                    <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId"><option [ngValue]="null">None</option>
+                        <option *ngFor="let t of salesTaxes" [ngValue]="t.id">{{ t.code }}</option></select></td>
+                    <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitCost" min="0" step="any" placeholder="—" title="Your cost per unit (for the margin; not shown to the customer)"></td>
+                    <td class="text-right align-middle" [class.text-muted]="l.isOptional && !l.isSelected">{{ net(l) | money:currency:false }}</td>
+                </ng-container>
+                <ng-template #section>
+                    <td colspan="7"><input class="form-control form-control-sm _600" [(ngModel)]="l.description" maxlength="500" placeholder="Section heading"></td>
+                </ng-template>
+                <td class="align-middle text-nowrap">
+                    <a role="button" class="text-muted mr-1" (click)="move(i, -1)" title="Up"><i class="fa fa-arrow-up"></i></a>
+                    <a role="button" class="text-muted mr-1" (click)="move(i, 1)" title="Down"><i class="fa fa-arrow-down"></i></a>
+                    <a role="button" class="text-muted" (click)="removeLine(i)" title="Remove"><i class="fa fa-times"></i></a></td>
+            </tr></tbody>
+        </table>
+    </div>
+    <div class="d-flex flex-wrap mb-2">
+        <button type="button" class="btn btn-sm white mr-1" (click)="addLine()"><i class="fa fa-plus mr-1"></i>Item</button>
+        <button type="button" class="btn btn-sm white mr-3" (click)="addSection()"><i class="fa fa-header mr-1"></i>Section</button>
+        <label class="text-sm mb-0 align-self-center"><input type="checkbox" class="mr-1" [(ngModel)]="model.pricesIncludeTax">Prices include tax</label>
+        <span class="flex"></span>
+        <div class="text-right text-sm">
+            <div>Subtotal {{ subTotal | money:currency }} · tax {{ taxTotal | money:currency }}</div>
+            <div class="d-flex align-items-center justify-content-end">Adjustment
+                <input type="number" class="form-control form-control-sm text-right ml-1" style="width: 100px" [(ngModel)]="model.adjustment" step="any"></div>
+            <div class="h5 mb-0 _600">{{ total | money:currency }}</div>
+            <div *ngIf="margin !== null" class="text-xs text-muted">Margin {{ margin }}%</div>
+        </div>
+    </div>
+
+    <a role="button" class="text-sm" (click)="showMore = !showMore"><i class="fa mr-1" [ngClass]="showMore ? 'fa-angle-up' : 'fa-angle-down'"></i>Notes, terms, currency, follow-up, files</a>
+    <div *ngIf="showMore" class="mt-2">
+        <div class="row">
+            <div class="col-md-6 form-group"><label class="text-xs _600">Notes to the customer</label>
+                <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="model.notes" maxlength="4000"></textarea></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Terms</label>
+                <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="model.terms" maxlength="8000"></textarea></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Internal note (not printed)</label>
+                <input class="form-control form-control-sm" [(ngModel)]="model.internalNote" maxlength="4000"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Follow up on</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.followUpDate"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Expected decision</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.expectedCloseDate"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Lead source</label>
+                <input class="form-control form-control-sm" [(ngModel)]="model.leadSource" list="lead-sources" maxlength="60">
+                <datalist id="lead-sources"><option *ngFor="let s of lookups.leadSources" [value]="s"></option></datalist></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Reference</label><input class="form-control form-control-sm" [(ngModel)]="model.reference" maxlength="100"></div>
+            <div class="col-md-2 form-group"><label class="text-xs _600">Currency</label>
+                <input class="form-control form-control-sm text-uppercase" [(ngModel)]="model.currencyCode" maxlength="3"></div>
+            <div *ngIf="currency !== lookups.functionalCurrency" class="col-md-2 form-group"><label class="text-xs _600">Rate</label>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="model.currencyRate" min="0" step="any"></div>
+            <div class="col-md-12 form-group"><label class="text-xs _600">Address</label><input class="form-control form-control-sm" [(ngModel)]="model.address" maxlength="500"></div>
+        </div>
+        <label class="text-xs _600 d-block">Files (specifications, drawings)</label>
+        <span *ngFor="let f of files; let i = index" class="badge light mr-1 mb-1"><i class="fa fa-paperclip mr-1"></i>{{ f.fileName }}
+            <a role="button" class="ml-1" (click)="files.splice(i, 1)">&times;</a></span>
+        <input #quoteFile type="file" class="d-none" (change)="upload(quoteFile)">
+        <button type="button" class="btn btn-xs white" [disabled]="uploading" (click)="quoteFile.click()"><i class="fa mr-1" [ngClass]="uploading ? 'fa-spinner fa-spin' : 'fa-paperclip'"></i>Attach</button>
+    </div>
+
+    <div aside-footer>
+        <span class="mr-auto text-xs text-muted" *ngIf="lookups.settings.approvalAmount || lookups.settings.maxDiscountWithoutApproval">
+            Needs approval above {{ lookups.settings.approvalAmount ? (lookups.settings.approvalAmount | money:lookups.functionalCurrency) : '—' }}
+            <span *ngIf="lookups.settings.maxDiscountWithoutApproval"> or a discount over {{ lookups.settings.maxDiscountWithoutApproval }}%</span></span>
+        <button class="btn btn-sm white mr-1" (click)="closed.emit()">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="busy" (click)="save()">Save</button>
+    </div>
+</app-aside>
