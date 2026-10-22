@@ -3,7 +3,7 @@ import {HttpParams} from "@angular/common/http";
 import {Observable, catchError, map, of, shareReplay} from "rxjs";
 import {CoreEndpointBase} from "@app-global";
 import {
-    Attachment, Dashboard, EntityType, EventQuery, Page, Team, TeamMemberRow, TeamSummary, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
+    Attachment, Dashboard, EntityType, EventQuery, Page, ProcessDetail, ProcessLookups, ProcessQuery, ProcessRow, ScheduleDefinition, ScheduleDetail,
     SchedulePreview, ScheduleRow, ScheduleRun, StartProcess, TaskDetail, TaskQuery, TaskRow, TaskSave, TaskStatus, Trigger,
     TriggerTestResult, Workflow, WorkflowEvent, WorkflowSummary
 } from "../domains/process.models";
@@ -112,21 +112,7 @@ export class ProcessApiService extends CoreEndpointBase {
     testTrigger(body: {entityType: string; eventName: string; payload: any; condition?: any; nameTemplate?: string | null; notify?: any; entityId?: string | null}) {
         return this.send<TriggerTestResult>('POST', 'triggers/test', body);
     }
-    // Teams and attachments
-    teams() { return this.get<TeamSummary[]>('teams'); }
-    team(id: string) { return this.get<Team>(`teams/${id}`); }
-    saveTeam(team: Team) {
-        this.lookups$ = null;
-        return team.id ? this.send<Team>('PUT', `teams/${team.id}`, team) : this.send<Team>('POST', 'teams', team);
-    }
-    deleteTeam(id: string) { this.lookups$ = null; return this.send<void>('DELETE', `teams/${id}`); }
-    teamMembers(id: string, query: {skip?: number; take?: number; search?: string | null}) { return this.get<Page<TeamMemberRow>>(`teams/${id}/members`, query); }
-    /** Members an unsaved definition would include. */
-    previewTeam(team: Team, query: {skip?: number; take?: number; search?: string | null}) {
-        const params = new URLSearchParams(Object.entries(query).filter(([, v]) => v !== null && v !== undefined && v !== '').map(([k, v]) => [k, String(v)])).toString();
-        return this.send<Page<TeamMemberRow>>('POST', `teams/preview${params ? '?' + params : ''}`, team);
-    }
-
+    // Attachments
     uploadAttachment(file: File): Observable<Attachment> {
         const form = new FormData();
         form.append('file', file, file.name);

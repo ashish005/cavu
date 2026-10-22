@@ -1,0 +1,49 @@
+<div class="d-flex flex-column flex scroll-y"><div class="container-fluid p-3" style="max-width: 1200px">
+<loader [isLoading]="loading"></loader>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<ng-container *ngIf="data as d">
+    <div class="row">
+        <div class="col-6 col-md-3 mb-3"><div class="box p-3 mb-0"><div class="text-xs text-muted">Sent (7 days)</div><div class="h4 mb-0">{{ d.sent }}</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="box p-3 mb-0"><div class="text-xs text-muted">Failed</div><div class="h4 mb-0" [class.text-danger]="d.failed > 0">{{ d.failed }}</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="box p-3 mb-0"><div class="text-xs text-muted">Waiting to send</div><div class="h4 mb-0">{{ d.pending }}</div></div></div>
+        <div class="col-6 col-md-3 mb-3"><div class="box p-3 mb-0"><div class="text-xs text-muted">Delivered</div>
+            <div class="h4 mb-0">{{ d.successRate !== null ? d.successRate + '%' : '—' }}</div></div></div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="box mb-0 h-100">
+                <div class="p-2 px-3 b-b d-flex align-items-center"><b class="flex">Channels</b>
+                    <a class="text-xs" [routerLink]="integrationsUrl">Connect email, SMS, WhatsApp, Slack…</a></div>
+                <div *ngFor="let c of d.channels" class="d-flex align-items-center px-3 py-2 b-b">
+                    <i class="fa fa-fw mr-2 text-muted" [ngClass]="icon[c.channel]"></i>
+                    <div class="flex"><div>{{ c.label }}</div><div class="text-xs text-muted">{{ c.source }}</div></div>
+                    <span *ngIf="c.sent || c.failed" class="text-xs text-muted mr-2">{{ c.sent }} sent<span *ngIf="c.failed" class="text-danger"> · {{ c.failed }} failed</span></span>
+                    <span class="badge" [ngClass]="c.configured ? 'success' : 'grey'">{{ c.configured ? 'Ready' : 'Not set up' }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="box mb-3">
+                <div class="p-3 d-flex align-items-center">
+                    <div class="flex"><b>{{ d.kindsOn }}</b> notifications on<span *ngIf="d.kindsOff">, <b>{{ d.kindsOff }}</b> switched off</span>
+                        <div class="text-xs text-muted">Choose what is sent, on which channels, and the wording.</div></div>
+                    <a class="btn btn-sm white" routerLink="../list">Manage</a>
+                </div>
+            </div>
+            <div class="box mb-0">
+                <div class="p-2 px-3 b-b d-flex align-items-center"><b class="flex">Recent failures</b><a class="text-xs" routerLink="../log" [queryParams]="{status: 'failed'}">All</a></div>
+                <div *ngIf="!d.recentFailures.length" class="p-3 text-sm text-muted"><i class="fa fa-check text-success mr-1"></i>Nothing failed.</div>
+                <div *ngFor="let r of d.recentFailures" class="d-flex align-items-start px-3 py-2 b-b">
+                    <div class="flex text-sm" style="min-width: 0">
+                        <div>{{ r.kind }} <span class="text-muted">to {{ r.recipient }}</span></div>
+                        <div *ngFor="let f of failedChannels(r)" class="text-xs text-danger text-ellipsis">{{ f.channel }}: {{ f.error }}</div>
+                        <div class="text-xs text-muted">{{ r.createdAt | date:'medium' }}</div>
+                    </div>
+                    <button class="btn btn-xs white ml-2" [disabled]="retrying === r.id" (click)="retry(r)">Send again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+</div></div>

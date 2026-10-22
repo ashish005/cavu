@@ -1,0 +1,97 @@
+<div class="d-flex flex-column flex scroll-y"><div class="container-fluid p-3" style="max-width: 1200px">
+<loader [isLoading]="loading"></loader>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div *ngFor="let a of areas; trackBy: trackByArea" class="mb-3">
+    <div class="text-xs text-muted text-uppercase _600 mb-1">{{ a.area }}</div>
+    <div class="box mb-0">
+        <div *ngFor="let k of a.kinds; trackBy: trackByCode" class="d-flex flex-wrap align-items-start p-3 b-b" [class.text-muted]="!k.isEnabled">
+            <!-- On / off -->
+            <label class="mr-3 mb-0 mt-1" [title]="k.onRequest ? 'Sent whenever someone asks for it' : (k.isEnabled ? 'Switch off' : 'Switch on')">
+                <input type="checkbox" [checked]="k.isEnabled" [disabled]="k.onRequest || saving.has(k.code)" (change)="toggle(k)" style="transform: scale(1.3)">
+            </label>
+
+            <div class="flex" style="min-width: 240px">
+                <div class="_600">{{ k.name }}
+                    <span *ngIf="k.mode === 'Mandatory' && k.isEnabled" class="badge warn ml-1" title="People cannot switch it off">required</span>
+                    <i *ngIf="saving.has(k.code)" class="fa fa-spinner fa-spin text-muted ml-1"></i></div>
+                <div class="text-xs text-muted">{{ k.description }}</div>
+                <div class="text-xs text-muted mt-1" *ngIf="k.sentLast30Days || k.failedLast30Days">{{ k.sentLast30Days }} sent in 30 days
+                    <span *ngIf="k.failedLast30Days" class="text-danger">· {{ k.failedLast30Days }} failed</span></div>
+
+                <!-- Channels -->
+                <div class="mt-2" *ngIf="k.isEnabled || k.onRequest">
+                    <ng-container *ngIf="!k.onRequest && !k.ruleChannels; else fixed">
+                        <button *ngFor="let c of k.channels" type="button" class="btn btn-xs mr-1 mb-1" [ngClass]="c.isEnabled ? 'theme' : 'white'"
+                                [disabled]="saving.has(k.code)" (click)="flipChannel(k, c.channel)"
+                                [title]="ready(c.channel) ? '' : channelLabel[c.channel] + ' is not set up yet (Settings › Integrations)'">
+                            <i class="fa fa-fw" [ngClass]="icon[c.channel]"></i> {{ channelLabel[c.channel] }}
+                            <i *ngIf="c.isEnabled && !ready(c.channel)" class="fa fa-exclamation-triangle text-warning ml-1"></i>
+                        </button>
+                        <div *ngIf="!allReady(k)" class="text-xs text-warning">
+                            Some chosen channels are not set up and will fail. <a [routerLink]="integrationsUrl">Connect them</a>.</div>
+                    </ng-container>
+                    <ng-template #fixed>
+                        <span class="text-xs text-muted" *ngIf="k.onRequest"><i class="fa fa-envelope mr-1"></i>Sent by email when someone sends it; always on.</span>
+                        <span class="text-xs text-muted" *ngIf="k.ruleChannels">Each rule chooses its own channels and words —
+                            <a routerLink="/app/admin/process/triggers">manage rules</a>.</span>
+                    </ng-template>
+                </div>
+            </div>
+
+            <!-- Who decides, wording, test -->
+            <div class="text-right ml-2" style="min-width: 220px" *ngIf="k.isEnabled && !k.onRequest">
+                <select class="form-control form-control-sm mb-1" [ngModel]="k.mode" (ngModelChange)="setMode(k, $event)" [disabled]="saving.has(k.code)" title="Can people switch channels off for themselves?">
+                    <option *ngFor="let m of modes" [ngValue]="m">{{ modeLabel[m] }}</option>
+                </select>
+                <button *ngIf="k.templated" class="btn btn-xs white mr-1" (click)="openEditor(k)"><i class="fa fa-pencil mr-1"></i>Wording</button>
+                <div class="btn-group" *ngIf="enabledChannels(k).length">
+                    <button type="button" class="btn btn-xs white dropdown-toggle" data-toggle="dropdown" [disabled]="testing !== null">Send me a test</button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a *ngFor="let c of enabledChannels(k)" class="dropdown-item" role="button" (click)="test(k, c)">
+                            <i class="fa fa-fw mr-1" [ngClass]="icon[c]"></i>{{ channelLabel[c] }}<span *ngIf="!ready(c)" class="text-muted"> (not set up)</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wording editor -->
+</div></div>
+
+<app-aside *ngIf="editor as e" size="xl" [title]="'Wording: ' + e.kind.name" subtitle="What people receive on each channel" (closed)="editor = null">
+    <loader [isLoading]="e.loading"></loader>
+    <div *ngIf="e.error" class="alert alert-danger text-sm py-2">{{ e.error }}</div>
+    <ul class="nav nav-pills nav-sm mb-2 flex-wrap">
+        <li class="nav-item" *ngFor="let c of editorChannels(e.kind)">
+            <a role="button" class="nav-link" [class.active]="e.channel === c" (click)="openEditor(e.kind, c)">
+                <i class="fa fa-fw" [ngClass]="icon[c]"></i> {{ channelLabel[c] }}</a></li>
+    </ul>
+    <div class="row">
+        <div class="col-lg-6">
+            <div *ngIf="hasSubject(e.channel)" class="form-group"><label class="text-xs _600">{{ subjectLabel(e.channel) }}</label>
+                <input class="form-control form-control-sm" [(ngModel)]="e.model.subject" (ngModelChange)="changed()" maxlength="300"></div>
+            <div class="form-group"><label class="text-xs _600">Message</label>
+                <textarea #bodyBox class="form-control form-control-sm" rows="10" [(ngModel)]="e.model.body" (ngModelChange)="changed()" maxlength="20000"></textarea></div>
+            <div class="text-xs text-muted mb-1">Insert a value:</div>
+            <button *ngFor="let p of e.kind.placeholders" type="button" class="btn btn-xs white mr-1 mb-1" (click)="insert(p, bodyBox)" [textContent]="token(p)"></button>
+            <label *ngIf="e.channel === 'Email'" class="text-sm d-block mt-2"><input type="checkbox" class="mr-1" [(ngModel)]="e.model.isHtml" (ngModelChange)="changed()">The message is HTML</label>
+            <div class="text-xs text-muted mt-2"><code ngNonBindable>{{title}}</code> and <code ngNonBindable>{{message}}</code> are the standard text the app writes; keep them to stay informative, or replace them with your own words.</div>
+        </div>
+        <div class="col-lg-6">
+            <div class="text-xs text-muted text-uppercase mb-1">Preview with sample values</div>
+            <div class="box p-3">
+                <div *ngIf="hasSubject(e.channel)" class="_600 mb-2">{{ preview?.subject || '—' }}</div>
+                <div *ngIf="preview?.isHtml; else plain" [innerHTML]="preview?.body"></div>
+                <ng-template #plain><div style="white-space: pre-wrap">{{ preview?.body }}</div></ng-template>
+            </div>
+            <div *ngIf="preview?.unknownPlaceholders?.length" class="text-xs text-warning">Unknown values (left as typed): {{ preview?.unknownPlaceholders?.join(', ') }}</div>
+        </div>
+    </div>
+    <div aside-footer>
+        <button class="btn btn-sm white mr-auto" [disabled]="e.loading || !e.isCustomised" (click)="resetTemplate()">Standard wording</button>
+        <button class="btn btn-sm white mr-1" (click)="editor = null">Close</button>
+        <button class="btn btn-sm theme" [disabled]="e.loading" (click)="saveTemplate()">Save {{ channelLabel[e.channel] }} wording</button>
+    </div>
+</app-aside>

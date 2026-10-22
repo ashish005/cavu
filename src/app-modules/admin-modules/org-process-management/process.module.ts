@@ -18,7 +18,6 @@ import {ZonedPipe} from "./components/zoned.pipe";
 import {ConditionBuilderComponent} from "./components/condition-builder.component";
 import {TriggersView} from "./views/triggers.view";
 import {EventsView} from "./views/events.view";
-import {TeamsView} from "./views/teams.view";
 import {NotifyEditorComponent} from "./components/notify-editor.component";
 import {DashBarListComponent, DashLineChartComponent, DashStatComponent} from "./components/dashboard-charts";
 import {DashboardView} from "./views/dashboard.view";
@@ -41,7 +40,8 @@ const routes: Routes = [
             {path: 'schedules/new', component: ScheduleEditorView, data: {title: 'New schedule', key: 'schedule', header: 'Schedule'}},
             {path: 'schedules/:id', component: ScheduleEditorView, data: {title: 'Schedule', key: 'schedule', header: 'Schedule'}},
             {path: 'triggers', component: TriggersView, data: {title: 'Triggers', key: 'triggers', header: 'Triggers'}},
-            {path: 'teams', component: TeamsView, data: {title: 'Teams', key: 'teams', header: 'Teams'}},
+            // Teams are organisation-wide (Settings › Teams).
+            {path: 'teams', redirectTo: '/app/admin/org-team'},
             {path: 'events', component: EventsView, data: {title: 'Event log', key: 'events', header: 'Event log'}},
             {path: '**', redirectTo: 'tasks'}
         ]
@@ -53,7 +53,7 @@ const routes: Routes = [
     providers: [ProcessApiService],
     declarations: [
         ProcessLayout, TasksView, ProcessesView, ProcessDetailView, WorkflowsView, WorkflowEditorView,
-        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TeamsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, DashboardView, DashLineChartComponent, DashBarListComponent, DashStatComponent, ZonedPipe
+        SchedulesView, ScheduleEditorView, CalendarView, TriggersView, EventsView, TaskPanelComponent, ConditionBuilderComponent, NotifyEditorComponent, DashboardView, DashLineChartComponent, DashBarListComponent, DashStatComponent, ZonedPipe
     ]
 })
 export class ProcessManageModule {}

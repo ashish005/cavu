@@ -1,0 +1,40 @@
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Payments and advances</h6></div></ng-template>
+<ng-template #actionTemplate>
+    <button *ngIf="lookups?.canFinance" class="btn btn-sm theme" (click)="newAdvance()"><i class="fa fa-plus mr-1"></i>Cash advance</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <div class="d-flex flex-wrap mb-1">
+        <input class="form-control form-control-sm mb-2 mr-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Employee, reference, journal">
+        <select class="form-control form-control-sm mb-2" style="max-width: 180px" [(ngModel)]="coreState.kind" (change)="search()">
+            <option [ngValue]="null">Reimbursements and advances</option><option ngValue="Reimbursement">Reimbursements</option><option ngValue="Advance">Advances</option>
+        </select>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">No payments yet.</div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<app-aside *ngIf="advance as a" size="md" title="Cash advance" subtitle="Money paid to an employee before they spend it" (closed)="advance = null">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+    <div class="form-group"><label class="text-xs _600">Employee</label>
+        <select class="form-control form-control-sm" [(ngModel)]="a.employeePartyId"><option [ngValue]="null">Choose…</option>
+            <option *ngFor="let e of employees" [ngValue]="e.partyId">{{ e.name }} ({{ e.number }})</option></select></div>
+    <div class="row">
+        <div class="col-md-6 form-group"><label class="text-xs _600">Amount ({{ lookups?.functionalCurrency }})</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="a.amount" min="0" step="any"></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="a.date"></div>
+    </div>
+    <div class="form-group"><label class="text-xs _600">Paid from</label>
+        <select class="form-control form-control-sm" [(ngModel)]="a.bankAccountId"><option [ngValue]="null">Choose…</option>
+            <option *ngFor="let b of lookups?.paymentAccounts" [ngValue]="b.id">{{ b.name }}</option></select></div>
+    <div class="row">
+        <div class="col-md-6 form-group"><label class="text-xs _600">Reference</label><input class="form-control form-control-sm" [(ngModel)]="a.reference" maxlength="100"></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="a.note" maxlength="500"></div>
+    </div>
+    <div class="text-xs text-muted mb-2">The employee's later claims can be settled against it (Reimburse › against the advance).</div>
+    <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="advance = null">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="busy" (click)="payAdvance()">Pay advance</button></div>
+</app-aside>

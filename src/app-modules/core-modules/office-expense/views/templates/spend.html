@@ -1,0 +1,33 @@
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Spend report</h6></div></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm white" [disabled]="!report?.rows?.length" (click)="exportCsv()"><i class="fa fa-download mr-1"></i>CSV</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <span class="text-sm mr-1 mb-1">By</span>
+        <select class="form-control form-control-sm mr-2 mb-1" style="max-width: 160px" [(ngModel)]="groupBy" (change)="run()">
+            <option *ngFor="let g of groups" [ngValue]="g.key">{{ g.label }}</option></select>
+        <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="from">
+        <span class="mr-1 mb-1 text-muted">to</span>
+        <input type="date" class="form-control form-control-sm mr-2 mb-1" style="max-width: 150px" [(ngModel)]="to">
+        <button class="btn btn-sm theme mb-1" (click)="run()">Run</button>
+    </div>
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="report as r" class="box">
+        <div *ngIf="!r.rows.length" class="text-center text-muted p-4">No posted expenses in this period.</div>
+        <table *ngIf="r.rows.length" class="table table-sm mb-0">
+            <thead><tr class="text-xs text-muted"><th>{{ groupLabel }}</th><th class="text-right">Claims</th><th class="text-right">Expenses</th>
+                <th class="text-right">Amount</th><th class="text-right">Tax</th><th class="text-right">Billable</th><th style="width: 25%"></th></tr></thead>
+            <tbody>
+            <tr *ngFor="let x of r.rows">
+                <td>{{ x.label }}</td><td class="text-right">{{ x.claims }}</td><td class="text-right">{{ x.lines }}</td>
+                <td class="text-right">{{ x.amount | number:'1.2-2' }}</td><td class="text-right text-muted">{{ x.tax | number:'1.2-2' }}</td>
+                <td class="text-right text-muted">{{ x.billable ? (x.billable | number:'1.2-2') : '' }}</td>
+                <td class="align-middle"><div class="progress" style="height: 6px"><div class="progress-bar primary" [style.width.%]="x.amount / max * 100"></div></div></td>
+            </tr>
+            <tr class="_600"><td>Total</td><td></td><td></td><td class="text-right">{{ r.total | number:'1.2-2' }} {{ r.currencyCode }}</td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+        <div class="text-xs text-muted p-2 b-t">Posted claims, expenses dated {{ r.from }} to {{ r.to }}, in {{ r.currencyCode }}; expenses left out by approvers are excluded.</div>
+    </div>
+</div>

@@ -22,7 +22,7 @@ export class MainLayout implements OnInit {
               //{ routeTo: ['project'], icon:"fa fa-dashboard", name: "Projects" },
               { routeTo: ['project'], icon:"fa fa-bell", key: 'Project' },//code: "PERM_PROJECT"
               { routeTo: ['product'], icon:"fa fa-dashboard", key: 'Services' },//code: "PERM_INVENTORY",
-              { routeTo: ['client/quotation'], icon:"fa fa-bell", key: 'Quotation' }
+              { routeTo: ['invoice/sales/quotes'], icon:"fa fa-file-o", key: 'Quotation' }
           ]
       },
       ...EMPLOYEE_COMMON_ROUES
@@ -65,7 +65,7 @@ export class MainLayout implements OnInit {
                             { routeTo: ['project'], icon:"fa fa-bell", code: "PERM_PROJECT", key: 'mainLayout.project' },
                             { routeTo: ['product'], icon:"fa fa-dashboard", code: "PERM_INVENTORY", key: 'mainLayout.svc_product' },
                             { routeTo: ['expense'], icon:"fa fa-bell", code: "OFC_EXPENSE", key: 'mainLayout.ofc_expense' },
-                            { routeTo: ['quotation'], icon:"fa fa-bell", name: "Quotation", key: 'mainLayout.quote' },
+                            { routeTo: ['invoice/sales/quotes'], icon:"fa fa-file-o", name: "Quotation", key: 'mainLayout.quote' },
                             { routeTo: ['invoice'], icon:"fa fa-bell", name: "Invoice", key: 'mainLayout.invoice' }
                         ]
                     },

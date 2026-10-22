@@ -9,9 +9,7 @@ export type TaskScope = 'Mine' | 'Queue' | 'All';
 export type ProcessStatus = 'Active' | 'OnHold' | 'Completed' | 'Cancelled';
 export type StageAdvanceMode = 'Automatic' | 'Approval';
 export type AssigneeType = 'ProcessOwner' | 'User' | 'Role' | 'Team';
-export type TeamMembershipMode = 'Static' | 'Dynamic' | 'Mixed';
 export type TeamAssignmentStrategy = 'Queue' | 'RoundRobin' | 'LeastBusy';
-export type TeamRuleKind = 'UserType' | 'Role' | 'Branch';
 export type ScheduleKind = 'CreateTask' | 'StartProcess' | 'RunActions';
 export type ScheduleStatus = 'Draft' | 'Active' | 'Paused' | 'Expired' | 'Disabled';
 export type RecurrenceType = 'Once' | 'Daily' | 'Weekly' | 'Monthly' | 'Yearly' | 'Fiscal' | 'Cron' | 'BusinessDay' | 'Minutely' | 'Hourly';
@@ -235,43 +233,11 @@ export interface Attachment { id: string; fileName: string; contentType: string;
 export interface ResolvedRecipient { userId: string | null; name: string; email: string | null; phone: string | null; source: string; }
 export interface NotifyPreview { recipients: ResolvedRecipient[]; subject: string; body: string; attachments: string[]; notes: string[]; }
 
-export interface TeamMember { id?: string | null; userId?: string | null; name?: string | null; email?: string | null; phone?: string | null; isExcluded?: boolean; }
-export interface TeamRule { id?: string | null; kind: TeamRuleKind; operator: 'In' | 'NotIn'; values: string[]; }
-export interface Team {
-    id?: string | null;
-    code: string;
-    name: string;
-    description?: string | null;
-    category?: string | null;
-    membershipMode: TeamMembershipMode;
-    assignmentStrategy: TeamAssignmentStrategy;
-    leadUserId?: string | null;
-    isActive: boolean;
-    rules: TeamRule[];
-    members: TeamMember[];
-}
-export interface TeamSummary {
-    id: string; code: string; name: string; description: string | null; category: string | null;
-    membershipMode: TeamMembershipMode; assignmentStrategy: TeamAssignmentStrategy; lead: UserRef | null; isActive: boolean;
-    memberCount: number; externalCount: number; ruleCount: number; queuedTasks: number; openTasks: number;
-}
-export interface TeamMemberRow { userId: string; name: string; email: string; openTasks: number; chosen: boolean; }
-
 export const TEAM_STRATEGIES: {value: TeamAssignmentStrategy; label: string; hint: string}[] = [
     {value: 'Queue', label: 'Shared queue', hint: 'Tasks wait in the team queue until a member takes them.'},
     {value: 'RoundRobin', label: 'Round-robin', hint: 'Each task goes to the next member in turn.'},
     {value: 'LeastBusy', label: 'Least busy', hint: 'Each task goes to the member with the fewest open tasks.'}
 ];
-export const TEAM_MODES: {value: TeamMembershipMode; label: string; hint: string}[] = [
-    {value: 'Static', label: 'Chosen people', hint: 'Only the people you add.'},
-    {value: 'Dynamic', label: 'By rules', hint: 'Everyone matching the rules, now and later.'},
-    {value: 'Mixed', label: 'Rules + chosen', hint: 'Rule matches plus the people you add.'}
-];
-export const TEAM_RULE_KINDS: {value: TeamRuleKind; label: string}[] = [
-    {value: 'UserType', label: 'User type'}, {value: 'Role', label: 'Role'}, {value: 'Branch', label: 'Branch access'}
-];
-export const newTeam = (): Team => ({code: '', name: '', description: '', category: '', membershipMode: 'Static', assignmentStrategy: 'Queue', leadUserId: null, isActive: true, rules: [], members: []});
-
 export interface Trigger {
     id?: string | null;
     action: TriggerAction;

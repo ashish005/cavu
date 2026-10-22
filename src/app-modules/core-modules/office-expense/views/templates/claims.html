@@ -1,0 +1,54 @@
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">{{ title }}</h6></div></ng-template>
+<ng-template #actionTemplate>
+    <button *ngIf="scope === 'mine'" class="btn btn-sm theme" (click)="newClaim()"><i class="fa fa-plus mr-1"></i>New claim</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <!-- At a glance -->
+    <div *ngIf="summary as s" class="d-flex flex-wrap mb-2">
+        <ng-container *ngIf="scope === 'mine'">
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Drafts</div><b>{{ s.myDrafts }}</b></div>
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">In approval</div><b>{{ s.myInProgress }}</b></div>
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Owed to me</div><b>{{ s.myOwed | number:'1.2-2' }} {{ s.currencyCode }}</b></div>
+            <div *ngIf="lookups?.me as me" class="box p-2 px-3 mb-1"><div class="text-xs text-muted">My balance</div>
+                <b [class.text-success]="me.balance < 0">{{ (me.balance < 0 ? -me.balance : me.balance) | number:'1.2-2' }}</b>
+                <span class="text-xs text-muted ml-1">{{ me.balance < 0 ? 'owed to me' : me.balance > 0 ? 'advance held' : '' }}</span></div>
+        </ng-container>
+        <ng-container *ngIf="scope === 'team'">
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Waiting for me</div><b>{{ s.awaitingMyApproval }}</b></div>
+        </ng-container>
+        <ng-container *ngIf="scope === 'finance' || scope === 'all'">
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">To post</div><b>{{ s.awaitingFinance }}</b></div>
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">To reimburse</div><b>{{ s.toReimburseCount }}</b>
+                <span class="text-xs text-muted ml-1">{{ s.toReimburseAmount | number:'1.2-2' }} {{ s.currencyCode }}</span></div>
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Spend this month</div><b>{{ s.spendThisMonth | number:'1.2-2' }}</b>
+                <span class="text-xs text-muted ml-1">last month {{ s.spendLastMonth | number:'1.2-2' }}</span></div>
+            <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Policy exceptions waiting</div><b [class.text-warning]="s.openViolations">{{ s.openViolations }}</b></div>
+            <div class="box p-2 px-3 mb-1"><div class="text-xs text-muted">Advances held</div><b>{{ s.advancesOutstanding | number:'1.2-2' }}</b></div>
+        </ng-container>
+    </div>
+
+    <div *ngIf="scope === 'mine' && lookups && !lookups.me" class="alert alert-warning text-sm">
+        You have no employee record in this organisation, so you cannot claim expenses. Ask an administrator to add you as an employee.</div>
+
+    <div class="d-flex flex-wrap align-items-center mb-1">
+        <ul class="nav nav-pills nav-sm mr-2 mb-1">
+            <li class="nav-item" *ngFor="let f of filters"><a role="button" class="nav-link" [class.active]="coreState.status === f.key" (click)="setFilter(f)">{{ f.label }}</a></li>
+        </ul>
+        <input class="form-control form-control-sm mb-1 mr-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Number, title, employee">
+        <label class="text-sm mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="coreState.withViolations" (change)="search()">With policy exceptions</label>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+        <ng-container [ngSwitch]="scope">
+            <span *ngSwitchCase="'mine'">No claims here. Use <b>New claim</b> to record expenses with their receipts.</span>
+            <span *ngSwitchCase="'team'">Nothing waiting for your approval.</span>
+            <span *ngSwitchDefault>Nothing here.</span>
+        </ng-container>
+    </div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<expense-claim-detail *ngIf="claim && !editing && lookups" [claim]="claim" [lookups]="lookups" (closed)="closePanels()" (edit)="edit($event)" (changed)="changed($event)"></expense-claim-detail>
+<expense-claim-editor *ngIf="editing && lookups" [claim]="editing.claim" [lookups]="lookups" (closed)="closeEditor()" (saved)="saved($event)"></expense-claim-editor>

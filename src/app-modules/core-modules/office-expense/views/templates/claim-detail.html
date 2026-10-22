@@ -1,0 +1,133 @@
+<app-aside size="xl" [title]="claim.number + ' · ' + claim.title" [subtitle]="claim.employeeName + (claim.periodFrom ? ' · ' + claim.periodFrom + (claim.periodTo !== claim.periodFrom ? ' – ' + claim.periodTo : '') : '')" (closed)="closed.emit()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+    <!-- Summary -->
+    <div class="d-flex flex-wrap align-items-start mb-2">
+        <div class="mr-4 mb-2">
+            <span class="badge" [ngClass]="tone[claim.status]">{{ statusLabel[claim.status] }}</span>
+            <div class="text-xs text-muted mt-1" *ngIf="claim.approverName && claim.status === 'submitted'">Waiting for {{ claim.approverName }}</div>
+            <div class="text-xs text-muted mt-1" *ngIf="claim.status === 'awaiting_finance'">Waiting for finance</div>
+        </div>
+        <div class="mr-4 mb-2 text-sm" *ngIf="claim.purpose"><div class="text-xs text-muted">Purpose</div>{{ claim.purpose }}</div>
+        <div class="mr-4 mb-2 text-sm" *ngIf="claim.costCenter"><div class="text-xs text-muted">Cost centre</div>{{ claim.costCenter }}</div>
+        <div class="ml-auto text-right mb-2">
+            <div class="h4 mb-0 _600">{{ claim.total | number:'1.2-2' }} {{ claim.currencyCode }}</div>
+            <div class="text-xs text-muted">tax {{ claim.taxTotal | number:'1.2-2' }}<span *ngIf="claim.companyPaidTotal"> · company paid {{ claim.companyPaidTotal | number:'1.2-2' }}</span>
+                <span *ngIf="claim.rejectedTotal"> · left out {{ claim.rejectedTotal | number:'1.2-2' }}</span></div>
+            <div class="text-sm" *ngIf="claim.reimbursableTotal">Owed to the employee {{ claim.reimbursableTotal | number:'1.2-2' }}
+                <span *ngIf="claim.reimbursedAmount"> · paid {{ claim.reimbursedAmount | number:'1.2-2' }}</span>
+                <b *ngIf="claim.outstanding" class="text-warning"> · due {{ claim.outstanding | number:'1.2-2' }}</b></div>
+        </div>
+    </div>
+    <div *ngIf="claim.status === 'returned'" class="alert alert-warning text-sm py-2"><b>Returned:</b> {{ claim.returnReason }}</div>
+    <div *ngIf="claim.status === 'cancelled'" class="alert alert-secondary text-sm py-2">Cancelled: {{ claim.cancelReason }}</div>
+    <div *ngIf="claim.violationCount" class="alert alert-warning text-sm py-2"><i class="fa fa-flag mr-1"></i>{{ claim.violationCount }} expense{{ claim.violationCount === 1 ? '' : 's' }} outside the policy — see the explanations below.</div>
+
+    <!-- Actions -->
+    <div class="d-flex flex-wrap mb-2">
+        <button *ngIf="claim.canEdit" class="btn btn-sm white mr-1 mb-1" (click)="edit.emit(claim)"><i class="fa fa-pencil mr-1"></i>Edit</button>
+        <button *ngIf="claim.canSubmit" class="btn btn-sm theme mr-1 mb-1" [disabled]="busy" (click)="submit()">Submit</button>
+        <button *ngIf="reviewing" class="btn btn-sm theme mr-1 mb-1" (click)="open('review')">{{ claim.canPost ? 'Check and post' : 'Approve' }}</button>
+        <button *ngIf="claim.canReturn" class="btn btn-sm white mr-1 mb-1" (click)="open('return')">Return for changes</button>
+        <button *ngIf="claim.canReimburse" class="btn btn-sm theme mr-1 mb-1" (click)="open('reimburse')"><i class="fa fa-money mr-1"></i>Reimburse</button>
+        <button *ngIf="claim.canCancel || claim.canVoid" class="btn btn-sm white text-danger mr-1 mb-1" (click)="open('cancel')">{{ claim.canVoid ? 'Cancel and void' : 'Cancel claim' }}</button>
+        <button *ngIf="claim.canDelete" class="btn btn-sm white text-danger mb-1" (click)="remove()">Delete</button>
+    </div>
+
+    <!-- Review (approve / post) -->
+    <div *ngIf="panel === 'review'" class="box p-2 mb-2">
+        <div class="text-sm mb-2">Untick expenses that should not be {{ claim.canPost ? 'posted' : 'approved' }} and say why.
+            <span *ngIf="claim.canPost">You can also post an expense to another account.</span></div>
+        <table class="table table-sm mb-2">
+            <tbody><tr *ngFor="let l of claim.lines">
+                <td style="width: 30px"><input type="checkbox" [checked]="!decisions[l.id].reject" (change)="decisions[l.id].reject = !decisions[l.id].reject"></td>
+                <td class="text-sm">{{ l.lineNo }}. {{ l.description }}<div class="text-xs text-muted">{{ l.categoryName }} · {{ l.amount | number:'1.2-2' }}</div>
+                    <span *ngFor="let f of flagsOf(l)" class="badge warn mr-1">{{ f }}</span></td>
+                <td style="width: 40%">
+                    <input *ngIf="decisions[l.id].reject" class="form-control form-control-sm mb-1" [(ngModel)]="decisions[l.id].reason" placeholder="Why it is left out" maxlength="500">
+                    <select *ngIf="claim.canPost && !decisions[l.id].reject" class="form-control form-control-sm" [(ngModel)]="decisions[l.id].accountId">
+                        <option [ngValue]="null">{{ l.accountName }}</option>
+                        <option *ngFor="let a of lookups.expenseAccounts" [ngValue]="a.id">{{ a.name }}</option></select>
+                </td>
+            </tr></tbody>
+        </table>
+        <div class="row">
+            <div class="col-md-8 form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="note" maxlength="1000"></div>
+            <div *ngIf="claim.canPost" class="col-md-4 form-group"><label class="text-xs _600">Posting date</label>
+                <input type="date" class="form-control form-control-sm" [(ngModel)]="postingDate"></div>
+        </div>
+        <div class="d-flex align-items-center"><span class="text-sm">{{ claim.canPost ? 'Posting' : 'Approving' }} <b>{{ reviewTotal | number:'1.2-2' }} {{ claim.currencyCode }}</b></span>
+            <span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="approve()">{{ claim.canPost ? 'Post to the ledger' : 'Approve' }}</button></div>
+    </div>
+
+    <!-- Return / cancel -->
+    <div *ngIf="panel === 'return' || panel === 'cancel'" class="box p-2 mb-2">
+        <div class="form-group"><label class="text-xs _600">{{ panel === 'return' ? 'What should change' : 'Why it is cancelled' }}</label>
+            <input class="form-control form-control-sm" [(ngModel)]="reason" maxlength="1000"></div>
+        <div *ngIf="panel === 'cancel' && claim.canVoid" class="text-xs text-muted mb-2">The posted journal {{ claim.journalNumber }} is voided.</div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm" [ngClass]="panel === 'return' ? 'theme' : 'danger'" [disabled]="busy" (click)="panel === 'return' ? returnClaim() : cancel()">
+                {{ panel === 'return' ? 'Return to the employee' : 'Cancel the claim' }}</button></div>
+    </div>
+
+    <!-- Reimburse -->
+    <div *ngIf="panel === 'reimburse'" class="box p-2 mb-2">
+        <div class="row">
+            <div class="col-md-3 form-group"><label class="text-xs _600">Amount</label>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="pay.amount" min="0" step="any" [max]="claim.outstanding"></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="pay.date"></div>
+            <div class="col-md-6 form-group" *ngIf="!pay.againstAdvance"><label class="text-xs _600">Paid from</label>
+                <select class="form-control form-control-sm" [(ngModel)]="pay.bankAccountId"><option [ngValue]="null">Choose…</option>
+                    <option *ngFor="let a of lookups.paymentAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Reference</label><input class="form-control form-control-sm" [(ngModel)]="pay.reference" maxlength="100"></div>
+            <div class="col-md-6 form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="pay.note" maxlength="500"></div>
+        </div>
+        <label class="text-sm"><input type="checkbox" class="mr-1" [(ngModel)]="pay.againstAdvance">Settle against the employee's cash advance (nothing is paid out)</label>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="reimburse()">Record</button></div>
+    </div>
+
+    <!-- Expenses -->
+    <table class="table table-sm mb-2">
+        <thead><tr class="text-xs text-muted"><th>Date</th><th>Expense</th><th>Paid by</th><th class="text-right">Tax</th><th class="text-right">Amount</th><th></th></tr></thead>
+        <tbody><tr *ngFor="let l of claim.lines" [class.text-muted]="l.isRejected">
+            <td class="text-sm">{{ l.date }}</td>
+            <td class="text-sm"><span [style.text-decoration]="l.isRejected ? 'line-through' : null">{{ l.description }}</span>
+                <div class="text-xs text-muted">{{ l.categoryName }}<span *ngIf="l.merchant"> · {{ l.merchant }}</span><span *ngIf="l.quantity"> · {{ l.quantity }} × {{ l.rate }}</span>
+                    <span *ngIf="l.originalCurrency !== claim.currencyCode"> · {{ l.originalAmount | number:'1.2-2' }} {{ l.originalCurrency }} at {{ l.exchangeRate }}</span>
+                    · {{ l.accountName }}</div>
+                <span *ngFor="let f of flagsOf(l)" class="badge warn mr-1">{{ f }}</span>
+                <div *ngIf="l.noReceiptReason" class="text-xs">No receipt: {{ l.noReceiptReason }}</div>
+                <div *ngIf="l.justification" class="text-xs">Explained: {{ l.justification }}</div>
+                <div *ngIf="l.attendees" class="text-xs text-muted">With {{ l.attendees }}</div>
+                <div *ngIf="l.isRejected" class="text-xs text-danger">Left out: {{ l.rejectReason }}</div></td>
+            <td class="text-xs">{{ paidByLabel[l.paidBy] }}<div *ngIf="l.isBillable" class="badge light">billable</div></td>
+            <td class="text-right text-sm">{{ l.taxAmount ? (l.taxAmount | number:'1.2-2') : '' }}<div class="text-xs text-muted">{{ l.taxCode }}</div></td>
+            <td class="text-right text-sm">{{ l.amount | number:'1.2-2' }}</td>
+            <td class="text-right"><a *ngIf="l.receiptFileId" role="button" (click)="receipt(l)" title="Open the receipt"><i class="fa fa-paperclip"></i></a></td>
+        </tr></tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-md-6">
+            <ng-container *ngIf="claim.journalNumber || claim.payments.length">
+                <div class="text-xs text-muted text-uppercase mb-1">In the books</div>
+                <div *ngIf="claim.journalNumber" class="text-sm mb-1">Posted as <b>{{ claim.journalNumber }}</b> on {{ claim.postingDate }} by {{ claim.postedByName }}</div>
+                <div *ngFor="let p of claim.payments" class="text-sm" [class.text-muted]="p.isVoided">
+                    {{ p.date }} · {{ p.amount | number:'1.2-2' }} {{ p.currencyCode }} {{ p.voucherId ? 'from ' + p.bankAccountName : 'against advance' }}
+                    <span *ngIf="p.voucherNumber" class="text-xs text-muted">({{ p.voucherNumber }})</span><span *ngIf="p.isVoided" class="badge danger ml-1">voided</span></div>
+                <div class="text-xs text-muted mt-1">Employee balance: {{ (claim.employeeBalance < 0 ? -claim.employeeBalance : claim.employeeBalance) | number:'1.2-2' }}
+                    {{ claim.employeeBalance < 0 ? 'owed to them' : claim.employeeBalance > 0 ? 'advance held' : '' }}</div>
+            </ng-container>
+        </div>
+        <div class="col-md-6">
+            <div class="text-xs text-muted text-uppercase mb-1">Timeline</div>
+            <div *ngFor="let a of claim.activity" class="text-sm mb-1"><b>{{ a.summary }}</b> <span class="text-xs text-muted">{{ a.actorName }} · {{ a.at | date:'medium' }}</span>
+                <div *ngIf="a.note" class="text-xs">{{ a.note }}</div></div>
+            <div class="d-flex mt-1"><input class="form-control form-control-sm mr-1" [(ngModel)]="comment" maxlength="2000" placeholder="Add a comment" (keyup.enter)="addComment()">
+                <button class="btn btn-sm white" [disabled]="!comment.trim()" (click)="addComment()">Add</button></div>
+        </div>
+    </div>
+</app-aside>

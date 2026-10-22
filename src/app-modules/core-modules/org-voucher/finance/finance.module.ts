@@ -21,6 +21,7 @@ import {
 } from "./inventory";
 import {BANKING_SERVICES, FinanceBankRulesView, FinanceBankStatementView, FinanceMoneyAccountsView, FinancePaymentModesView} from "./banking";
 import {CAPTURE_SERVICES, FinanceCaptureInboxView, FinanceCaptureSettingsView} from "./capture";
+import {FinanceQuoteSettingsView, FinanceQuotesView, QUOTE_SERVICES, QuoteDetailComponent, QuoteEditorComponent} from "./quotes";
 
 interface NavItem { label: string; icon: string; route: string; }
 interface NavSection { title: string; items: NavItem[]; }
@@ -67,6 +68,7 @@ export class FinanceShell {
     readonly nav: NavSection[] = [
         {title: 'Overview', items: [{label: 'Dashboard', icon: 'fa fa-line-chart', route: 'dashboard'}]},
         {title: 'Sales', items: [
+            {label: 'Quotes', icon: 'fa fa-file-o', route: 'sales/quotes'},
             {label: 'Invoices', icon: 'fa fa-file-text-o', route: ROUTE_OF_KIND.Invoice},
             {label: 'Credit notes', icon: 'fa fa-undo', route: ROUTE_OF_KIND.CreditNote},
             {label: 'Money in', icon: 'fa fa-arrow-down', route: ROUTE_OF_KIND.Receipt}]},
@@ -93,6 +95,7 @@ export class FinanceShell {
             {label: 'Tax codes', icon: 'fa fa-percent', route: 'settings/tax-codes'},
             {label: 'Tax rules', icon: 'fa fa-random', route: 'settings/tax-rules'},
             {label: 'Invoicing', icon: 'fa fa-file-text', route: 'settings/invoicing'},
+            {label: 'Quotes', icon: 'fa fa-file-o', route: 'settings/quotes'},
             {label: 'Payment modes', icon: 'fa fa-credit-card', route: 'settings/payment-modes'},
             {label: 'Bank rules', icon: 'fa fa-magic', route: 'settings/bank-rules'},
             {label: 'Document capture', icon: 'fa fa-camera', route: 'settings/capture'},
@@ -142,6 +145,7 @@ export const FINANCE_ROUTES: Routes = [
             {path: 'products/movements', component: FinanceStockMovementsView, data: {title: 'Stock movements', header: 'Stock movements'}},
             {path: 'products/reports', component: FinanceInventoryReportsView, data: {title: 'Inventory reports', header: 'Inventory reports'}},
             {path: 'products/setup', component: FinanceInventorySetupView, data: {title: 'Products setup', header: 'Products setup'}},
+            {path: 'sales/quotes', component: FinanceQuotesView, data: {title: 'Quotes', header: 'Quotes'}},
             {path: 'purchases/capture', component: FinanceCaptureInboxView, data: {title: 'Scan bills & receipts', header: 'Scan bills & receipts'}},
             {path: 'banking', component: FinanceMoneyAccountsView, data: {title: 'Bank & cash', header: 'Bank & cash'}},
             {path: 'banking/:id', component: FinanceBankStatementView, data: {title: 'Bank statement', header: 'Bank statement'}},
@@ -151,6 +155,7 @@ export const FINANCE_ROUTES: Routes = [
             {path: 'settings/tax-codes', component: FinanceTaxCodesView, data: {title: 'Tax codes', header: 'Tax codes'}},
             {path: 'settings/tax-rules', component: FinanceTaxRulesView, data: {title: 'Tax rules', header: 'Tax rules'}},
             {path: 'settings/invoicing', component: FinanceInvoicingView, data: {title: 'Invoicing', header: 'Invoicing'}},
+            {path: 'settings/quotes', component: FinanceQuoteSettingsView, data: {title: 'Quote settings', header: 'Quote settings'}},
             {path: 'settings/payment-modes', component: FinancePaymentModesView, data: {title: 'Payment modes', header: 'Payment modes'}},
             {path: 'settings/bank-rules', component: FinanceBankRulesView, data: {title: 'Bank rules', header: 'Bank rules'}},
             {path: 'settings/capture', component: FinanceCaptureSettingsView, data: {title: 'Document capture', header: 'Document capture'}},
@@ -165,13 +170,13 @@ export const FINANCE_ROUTES: Routes = [
 
 @NgModule({
     imports: [CommonModule, FormsModule, RouterModule.forChild(FINANCE_ROUTES), GlobalModule, AsidePanelComponent, MoneyPipe, FinanceStatusPipe, FinancePickerComponent],
-    providers: [FINANCE_SERVICES, INVENTORY_SERVICES, BANKING_SERVICES, CAPTURE_SERVICES],
+    providers: [FINANCE_SERVICES, INVENTORY_SERVICES, BANKING_SERVICES, CAPTURE_SERVICES, QUOTE_SERVICES],
     declarations: [
         FinanceShell, FinanceLegacyCreateRedirect, FinanceDashboardView, FinanceDocumentsView, FinanceDocumentEditorComponent, FinanceDocumentDetailComponent,
         FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceTaxRulesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
         FinanceRecurringView, FinanceItemsView, FinanceStockView, FinanceStockMovementsView, FinanceStockDocumentsView, FinanceInventoryReportsView,
         FinanceInventorySetupView, FinanceMoneyAccountsView, FinanceBankStatementView, FinancePaymentModesView, FinanceBankRulesView, FinanceCaptureInboxView,
-        FinanceCaptureSettingsView
+        FinanceCaptureSettingsView, FinanceQuotesView, QuoteEditorComponent, QuoteDetailComponent, FinanceQuoteSettingsView
     ]
 })
 export class FinanceModule {}

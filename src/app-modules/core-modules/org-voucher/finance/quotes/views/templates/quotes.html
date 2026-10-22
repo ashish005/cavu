@@ -1,0 +1,33 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-file-o mr-1"></i><b>Quotes</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" (click)="newQuote()"><i class="fa fa-plus mr-1"></i>New quote</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <div *ngIf="summary as s" class="d-flex flex-wrap mb-2">
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Open</div><b>{{ s.openCount }}</b>
+            <span class="text-xs text-muted ml-1">{{ s.openValue | money:s.currencyCode }}</span></div>
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Weighted pipeline</div><b>{{ s.weightedValue | money:s.currencyCode }}</b></div>
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Won this month</div><b>{{ s.wonThisMonth }}</b>
+            <span class="text-xs text-muted ml-1">{{ s.wonValueThisMonth | money:s.currencyCode }}</span></div>
+        <div class="box p-2 px-3 mr-2 mb-1"><div class="text-xs text-muted">Win rate (90 days)</div><b>{{ s.winRate !== null ? s.winRate + '%' : '—' }}</b></div>
+        <a role="button" class="box p-2 px-3 mr-2 mb-1" (click)="setFilter('expiring')"><div class="text-xs text-muted">Expiring soon</div><b [class.text-warning]="s.expiringSoon">{{ s.expiringSoon }}</b></a>
+        <a role="button" class="box p-2 px-3 mr-2 mb-1" (click)="setFilter('follow_up')"><div class="text-xs text-muted">Follow-ups due</div><b [class.text-warning]="s.followUpsDue">{{ s.followUpsDue }}</b></a>
+        <a role="button" class="box p-2 px-3 mb-1" (click)="setFilter('pending_approval')"><div class="text-xs text-muted">To approve</div><b>{{ s.pendingApproval }}</b></a>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center mb-1">
+        <ul class="nav nav-pills nav-sm mr-2 mb-1 flex-wrap">
+            <li class="nav-item" *ngFor="let f of filters"><a role="button" class="nav-link" [class.active]="coreState.status === f.key" (click)="setFilter(f.key)">{{ f.label }}</a></li>
+        </ul>
+        <input class="form-control form-control-sm mb-1 mr-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Number, customer, title">
+        <label class="text-sm mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="coreState.mine" (change)="search()">Mine</label>
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+        No quotes here. Use <b>New quote</b> to price work for a customer or a prospect; when they accept, turn it into an invoice.</div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<fin-quote-detail *ngIf="quote && !editing && lookups" [quote]="quote" [lookups]="lookups" (closed)="closePanels()" (edit)="editing = {quote: $event}"
+                  (changed)="changed($event)" (openInvoice)="openInvoice($event)"></fin-quote-detail>
+<fin-quote-editor *ngIf="editing && lookups" [quote]="editing.quote" [lookups]="lookups" (closed)="closeEditor()" (saved)="saved($event)"></fin-quote-editor>

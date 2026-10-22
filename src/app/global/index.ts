@@ -71,7 +71,7 @@ export const ADMIN_SETUP_ROUES: Routes = [
                 data: {title: 'Trxn', header: 'Payroll', name: "Payroll", key: 'Payroll'}//code: "ACCESS_VT_MGT",
             },
             {
-                path: 'org-team', loadChildren: () => import('app-modules/admin-modules/org-team-management/manage/index').then(m => m.TeamSetupModule),
+                path: 'org-team', loadChildren: () => import('app-modules/admin-modules/org-team-management/index').then(m => m.TeamSetupModule),
                 data: {icon: "fa fa-money", name: "Money", key: 'layout.team', title: 'Team', header: 'Team'}//code: "TEAM",
             },
             {
@@ -93,7 +93,8 @@ export const EMPLOYEE_COMMON_ROUES = [
     {
         isFLatChildren: false, key: 'Account & Finance',
         children:[
-            { routeTo: ['office-expense'], icon:"fa fa-dashboard", key: "Office Expenses" }
+            { routeTo: ['invoice/sales/quotes'], icon:"fa fa-file-o", key: "Quotes" },
+            { routeTo: ['office-expense'], icon:"fa fa-money", key: "Office Expenses" }
         ]
     },
     {

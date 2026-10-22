@@ -1,0 +1,39 @@
+<div class="d-flex flex-column flex scroll-y"><div class="container-fluid p-3" style="max-width: 1200px">
+<div class="d-flex flex-wrap mb-1">
+    <input class="form-control form-control-sm mb-2 mr-2" style="max-width: 220px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Email, phone or notification">
+    <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 150px" [(ngModel)]="coreState.status" (change)="search()">
+        <option [ngValue]="null">Any result</option><option ngValue="sent">Sent</option><option ngValue="failed">Failed</option>
+        <option ngValue="pending">Waiting</option><option ngValue="cancelled">Switched off</option>
+    </select>
+    <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 220px" [(ngModel)]="coreState.code" (change)="search()">
+        <option [ngValue]="null">All notifications</option><option *ngFor="let k of kinds" [ngValue]="k.code">{{ k.name }}</option>
+    </select>
+    <select class="form-control form-control-sm mb-2 mr-2" style="max-width: 140px" [(ngModel)]="coreState.channel" (change)="search()">
+        <option [ngValue]="null">Any channel</option><option *ngFor="let c of channels" [ngValue]="c">{{ channelLabel[c] }}</option>
+    </select>
+    <input type="date" class="form-control form-control-sm mb-2 mr-1" style="max-width: 150px" [(ngModel)]="coreState.from" (change)="search()" title="From">
+    <input type="date" class="form-control form-control-sm mb-2" style="max-width: 150px" [(ngModel)]="coreState.to" (change)="search()" title="To">
+</div>
+<div *ngIf="errorText && !isLoading" class="alert alert-danger">{{ errorText }}</div>
+<div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">Nothing sent matches.</div>
+<div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+<org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div></div>
+
+<app-aside *ngIf="detail as d" size="lg" [title]="d.kind" [subtitle]="'To ' + d.recipient" (closed)="detail = null">
+    <div class="mb-2 text-sm"><span class="badge mr-2" [ngClass]="tone[d.status]">{{ statusLabel[d.status] }}</span>
+        Queued {{ d.createdAt | date:'medium' }}<span *ngIf="d.completedAt"> · finished {{ d.completedAt | date:'medium' }}</span></div>
+    <div *ngIf="d.status === 'Cancelled'" class="alert alert-secondary text-sm py-2">This notification is switched off for the organisation, so it was not sent.</div>
+    <table *ngIf="d.deliveries.length" class="table table-sm">
+        <thead><tr class="text-xs text-muted"><th>Channel</th><th>To</th><th>Result</th><th class="text-right">Tries</th><th>When</th></tr></thead>
+        <tbody><tr *ngFor="let x of d.deliveries">
+            <td>{{ channelLabel[x.channel] }}</td><td class="text-sm">{{ x.destination === 'channel' ? 'Connected channel' : x.destination }}</td>
+            <td><span class="badge" [ngClass]="tone[x.status]">{{ statusLabel[x.status] }}</span><div *ngIf="x.error" class="text-xs text-danger">{{ x.error }}</div>
+                <div *ngIf="x.nextAttemptAt && x.status === 'Pending'" class="text-xs text-muted">next try {{ x.nextAttemptAt | date:'short' }}</div></td>
+            <td class="text-right">{{ x.attempts }}</td><td class="text-xs">{{ x.sentAt ? (x.sentAt | date:'short') : '' }}</td>
+        </tr></tbody>
+    </table>
+    <div *ngIf="!d.deliveries.length && d.status !== 'Cancelled'" class="text-sm text-muted">No delivery was made: the person has no address for the chosen channels.</div>
+    <div class="d-flex"><span class="flex"></span>
+        <button *ngIf="hasFailed(d)" class="btn btn-sm theme" (click)="retry(d)">Send the failed ones again</button></div>
+</app-aside>

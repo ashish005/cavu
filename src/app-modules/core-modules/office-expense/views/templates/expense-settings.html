@@ -1,0 +1,87 @@
+<ng-template #pageTitleTemplate><div class="no-shadow"><h6 class="mb-0">Expense settings</h6></div></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm theme" (click)="newCategory()"><i class="fa fa-plus mr-1"></i>Category</button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <loader [isLoading]="saving"></loader>
+    <div class="row" style="max-width: 1200px">
+        <!-- Policy -->
+        <div class="col-lg-5 mb-3" *ngIf="policy as p">
+            <div class="box p-3">
+                <h6 class="_600">Policy</h6>
+                <div class="row">
+                    <div class="col-6 form-group"><label class="text-xs _600">Claim numbers start with</label>
+                        <input class="form-control form-control-sm text-uppercase" [(ngModel)]="p.claimPrefix" maxlength="10"></div>
+                    <div class="col-6 form-group"><label class="text-xs _600">Receipt needed above</label>
+                        <input type="number" class="form-control form-control-sm" [(ngModel)]="p.receiptRequiredAbove" min="0" step="any"></div>
+                    <div class="col-6 form-group"><label class="text-xs _600">Late after (days)</label>
+                        <input type="number" class="form-control form-control-sm" [(ngModel)]="p.submitWithinDays" min="1" max="3650"></div>
+                    <div class="col-6 form-group"><label class="text-xs _600">Duplicate window (days)</label>
+                        <input type="number" class="form-control form-control-sm" [(ngModel)]="p.duplicateWindowDays" min="0" max="60"></div>
+                </div>
+                <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="p.requireManagerApproval">The employee's manager approves first</label>
+                <label class="text-sm d-block mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="p.requireJustification">Policy exceptions need an explanation before submitting</label>
+                <div class="form-group"><label class="text-xs _600">Reimbursements paid from</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="p.reimbursementBankAccountId"><option [ngValue]="null">Choose each time</option>
+                        <option *ngFor="let a of lookups?.paymentAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+                <div class="form-group"><label class="text-xs _600">Company card clearing account</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="p.companyCardAccountId"><option [ngValue]="null">None (no card expenses)</option>
+                        <option *ngFor="let a of balanceAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+                <div class="form-group"><label class="text-xs _600">Petty cash account</label>
+                    <select class="form-control form-control-sm" [(ngModel)]="p.pettyCashAccountId"><option [ngValue]="null">None</option>
+                        <option *ngFor="let a of lookups?.paymentAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+                <button class="btn btn-sm theme" [disabled]="saving" (click)="savePolicy()">Save policy</button>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="col-lg-7 mb-3">
+            <div class="box">
+                <div class="p-2 px-3 b-b"><b>Categories</b> <span class="text-xs text-muted">what employees choose; each posts to its expense account</span></div>
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr class="text-xs text-muted"><th>Category</th><th>Account</th><th>Rule</th><th></th></tr></thead>
+                    <tbody><tr *ngFor="let c of categories" [class.text-muted]="!c.isActive">
+                        <td><a role="button" class="_600" (click)="editCategory(c)">{{ c.name }}</a> <span class="text-xs text-muted">{{ c.code }}</span>
+                            <span *ngIf="!c.isActive" class="badge grey ml-1">off</span></td>
+                        <td class="text-sm">{{ c.accountName }}</td>
+                        <td class="text-xs">{{ kindLabel(c.kind) }}<span *ngIf="c.rate"> · {{ c.rate }} per {{ c.unit }}</span>
+                            <span *ngIf="c.limitPerItem"> · max {{ c.limitPerItem | number }}</span><span *ngIf="c.requiresAttendees"> · attendees</span></td>
+                        <td class="text-right"><a role="button" class="text-muted" (click)="editCategory(c)"><i class="fa fa-pencil"></i></a></td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-aside *ngIf="form as f" size="md" [title]="f.id ? f.name : 'New category'" (closed)="form = null">
+    <loader [isLoading]="saving"></loader>
+    <div *ngIf="formError" class="alert alert-danger text-sm py-2">{{ formError }}</div>
+    <div class="row">
+        <div class="col-md-8 form-group"><label class="text-xs _600">Name</label><input class="form-control form-control-sm" [(ngModel)]="f.name" maxlength="100"></div>
+        <div class="col-md-4 form-group"><label class="text-xs _600">Code</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="f.code" maxlength="40"></div>
+    </div>
+    <div class="form-group"><label class="text-xs _600">How the amount is worked out</label>
+        <select class="form-control form-control-sm" [(ngModel)]="f.kind"><option *ngFor="let k of kinds" [ngValue]="k.value">{{ k.label }}</option></select></div>
+    <div class="row" *ngIf="f.kind !== 'Standard'">
+        <div class="col-6 form-group"><label class="text-xs _600">{{ f.kind === 'Mileage' ? 'Rate per unit' : 'Allowance per day' }}</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="f.rate" min="0" step="any"></div>
+        <div class="col-6 form-group" *ngIf="f.kind === 'Mileage'"><label class="text-xs _600">Unit</label>
+            <select class="form-control form-control-sm" [(ngModel)]="f.unit"><option value="km">km</option><option value="mi">miles</option></select></div>
+    </div>
+    <div class="form-group"><label class="text-xs _600">Expense account</label>
+        <select class="form-control form-control-sm" [(ngModel)]="f.accountId"><option *ngFor="let a of expenseAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
+    <div class="form-group" *ngIf="f.kind === 'Standard'"><label class="text-xs _600">Tax usually on the receipt</label>
+        <select class="form-control form-control-sm" [(ngModel)]="f.defaultTaxCodeId"><option [ngValue]="null">None</option>
+            <option *ngFor="let t of lookups?.taxCodes" [ngValue]="t.id">{{ t.code }} ({{ t.rate }}%)</option></select></div>
+    <div class="row">
+        <div class="col-6 form-group"><label class="text-xs _600">Most per expense</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="f.limitPerItem" min="0" step="any" placeholder="No limit"></div>
+        <div class="col-6 form-group" *ngIf="f.kind === 'Standard'"><label class="text-xs _600">Receipt needed above</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="f.receiptRequiredAbove" min="0" step="any" placeholder="Policy amount"></div>
+    </div>
+    <label class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="f.requiresAttendees">Ask who attended (meals, entertainment)</label>
+    <label class="text-sm d-block mb-2"><input type="checkbox" class="mr-1" [(ngModel)]="f.isActive">Offered to employees</label>
+    <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="form = null">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="saving" (click)="saveCategory()">Save</button></div>
+</app-aside>
