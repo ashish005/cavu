@@ -41,7 +41,8 @@
                 <td class="text-sm" [ngClass]="confidenceClass(r.confidence)">{{ r.confidence !== null ? r.confidence + '%' : '' }}</td>
                 <td><span class="badge" [ngClass]="statusTone[r.status]">{{ statusLabel[r.status] }}</span>
                     <span *ngIf="r.isDuplicate && r.status !== 'Converted'" class="badge danger ml-1" title="Looks like a duplicate">duplicate?</span>
-                    <div *ngIf="r.error" class="text-xs text-danger">{{ r.error }}</div></td>
+                    <div *ngIf="r.error" class="text-xs text-danger">{{ r.error }}</div>
+                    <div *ngIf="r.status === 'Discarded' && r.rejectReason" class="text-xs text-muted">{{ rejectLabel(r.rejectReason) }}</div></td>
             </tr></tbody>
         </table>
     </div>
@@ -70,13 +71,18 @@
             <ul class="nav nav-tabs nav-sm mb-2">
                 <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'details'" (click)="tab = 'details'">Details</a></li>
                 <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'compare'" (click)="tab = 'compare'"><i class="fa fa-columns mr-1"></i>Compare readers</a></li>
+                <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'result'" (click)="tab = 'result'"><i class="fa fa-list mr-1"></i>Result</a></li>
+                <li class="nav-item"><a role="button" class="nav-link" [class.active]="tab === 'log'" (click)="showLog()"><i class="fa fa-history mr-1"></i>Log</a></li>
             </ul>
             <capture-compare *ngIf="tab === 'compare'" [captureId]="c.row.id" [editable]="editable" [currency]="c.row.currencyCode || currency" (applied)="onApplied($event)"></capture-compare>
             <div [hidden]="tab !== 'details'">
             <div *ngIf="c.row.status === 'Queued' || c.row.status === 'Processing'" class="alert alert-info text-sm py-2"><i class="fa fa-spinner fa-spin mr-1"></i>
                 Reading the document; this usually takes a few seconds.</div>
             <div *ngIf="c.row.status === 'Failed'" class="alert alert-danger text-sm py-2">{{ c.row.error }} You can type the details in or read it again.</div>
-            <div *ngIf="c.row.status === 'Discarded'" class="alert alert-secondary text-sm py-2">Discarded.</div>
+            <div *ngIf="c.row.status === 'Discarded'" class="alert alert-secondary text-sm py-2">
+                <b>Rejected</b>{{ c.rejectReasonLabel ? ': ' + c.rejectReasonLabel : '' }}<span *ngIf="c.rejectNote"> — {{ c.rejectNote }}</span>
+                <div class="text-xs text-muted">{{ c.rejectedBy ? 'By ' + c.rejectedBy : '' }}{{ c.rejectedAt ? ' on ' + (c.rejectedAt | date:'medium') : '' }}</div>
+                <button class="btn btn-xs white mt-1" [disabled]="busy" (click)="reopen()"><i class="fa fa-undo mr-1"></i>Reopen for review</button></div>
             <div *ngIf="converted" class="alert alert-success text-sm py-2">{{ converted.message }}
                 <a role="button" class="_600 ml-1" (click)="openDocument(converted.voucherId)">Open</a></div>
             <div *ngIf="c.row.status === 'Converted' && !converted" class="alert alert-success text-sm py-2">Recorded.
@@ -92,18 +98,81 @@
                     <div class="row">
                         <div class="col-md-5 form-group"><label class="text-xs _600">Record as</label>
                             <select class="form-control form-control-sm" [(ngModel)]="e.model.purpose"><option *ngFor="let p of purposes" [ngValue]="p">{{ purposeLabel[p] }}</option></select></div>
-                        <div *ngIf="e.model.purpose !== 'Journal'" class="col-md-7 form-group"><label class="text-xs _600">Vendor</label>
-                            <fin-picker [small]="true" [search]="searchVendors" [label]="e.partyLabel" [disabled]="!editable" placeholder="Search vendors"
+                        <div *ngIf="e.model.purpose !== 'Journal'" class="col-md-7 form-group"><label class="text-xs _600 text-capitalize">{{ partyWord }}</label>
+                            <fin-picker [small]="true" [search]="searchVendors" [label]="e.partyLabel" [disabled]="!editable" [placeholder]="'Search ' + partyWord + 's'"
                                         (picked)="e.model.partyAccountId = $event.id; e.partyLabel = $event.label"></fin-picker>
-                            <div *ngIf="e.model.vendorName && !e.model.partyAccountId" class="text-xs text-warning">Read as "{{ e.model.vendorName }}"{{ e.model.vendorTaxId ? ' (' + e.model.vendorTaxId + ')' : '' }}; choose or add the vendor.</div>
-                            <div *ngIf="e.model.partyAccountId && e.model.vendorName && e.partyLabel !== e.model.vendorName" class="text-xs text-muted">Read as "{{ e.model.vendorName }}"</div></div>
+                            <div *ngIf="partyWord === 'vendor' && e.model.vendorName && !e.model.partyAccountId" class="text-xs text-warning">Read as "{{ e.model.vendorName }}"{{ e.model.vendorTaxId ? ' (' + e.model.vendorTaxId + ')' : '' }}.</div>
+                            <div *ngIf="partyWord === 'customer' && e.model.buyerName && !e.model.partyAccountId" class="text-xs text-warning">Read as "{{ e.model.buyerName }}"{{ e.model.buyerTaxId ? ' (' + e.model.buyerTaxId + ')' : '' }}.</div>
+                            <div *ngIf="e.model.partyAccountId && e.model.vendorName && partyWord === 'vendor' && e.partyLabel !== e.model.vendorName" class="text-xs text-muted">Read as "{{ e.model.vendorName }}"</div>
+                            <!-- Matches in the books, or a new party from the document -->
+                            <div *ngIf="editable && partyMatch as pm" class="mt-1">
+                                <ng-container *ngFor="let m of pm.candidates">
+                                    <button *ngIf="m.accountId !== e.model.partyAccountId" type="button" class="btn btn-xs white mr-1 mb-1" (click)="linkParty(m.accountId)" [title]="m.reason">
+                                        <i class="fa fa-link mr-1"></i>{{ m.name }} <span class="text-muted">{{ m.score }}%</span></button>
+                                </ng-container>
+                                <button *ngIf="!e.model.partyAccountId || !pm.candidates.length" type="button" class="btn btn-xs white mb-1" (click)="startNewParty()">
+                                    <i class="fa fa-plus mr-1"></i>Add {{ pm.proposal.displayName || ('new ' + partyWord) }} as a {{ partyWord }}</button>
+                            </div></div>
+                    </div>
+
+                    <!-- New vendor / customer from the document -->
+                    <div *ngIf="newParty as np" class="box p-2 mb-2">
+                        <div class="text-sm _600 mb-1">New {{ partyWord }} from the document</div>
+                        <div class="row">
+                            <div class="col-md-6 form-group"><label class="text-xs _600">Name</label><input class="form-control form-control-sm" [(ngModel)]="np.displayName" maxlength="250"></div>
+                            <div class="col-md-6 form-group"><label class="text-xs _600">Legal name</label><input class="form-control form-control-sm" [(ngModel)]="np.legalName" maxlength="250"></div>
+                            <div class="col-md-2 form-group"><label class="text-xs _600">Country</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="np.countryCode" maxlength="2"></div>
+                            <div class="col-md-5 form-group"><label class="text-xs _600">E-mail</label><input class="form-control form-control-sm" [(ngModel)]="np.email" maxlength="254"></div>
+                            <div class="col-md-5 form-group"><label class="text-xs _600">Phone</label><input class="form-control form-control-sm" [(ngModel)]="np.phone" maxlength="32"></div>
+                        </div>
+                        <div *ngFor="let t of np.taxIds" class="row">
+                            <div class="col-4 col-md-3 form-group"><label class="text-xs _600">Tax ID type</label><input class="form-control form-control-sm" [(ngModel)]="t.type" maxlength="20"></div>
+                            <div class="col-8 col-md-5 form-group"><label class="text-xs _600">Number</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="t.value" maxlength="40"></div>
+                        </div>
+                        <div *ngFor="let a of np.addresses" class="row">
+                            <div class="col-md-6 form-group"><label class="text-xs _600">Address</label><input class="form-control form-control-sm" [(ngModel)]="a.line1" maxlength="200"></div>
+                            <div class="col-md-3 form-group"><label class="text-xs _600">City</label><input class="form-control form-control-sm" [(ngModel)]="a.city" maxlength="100"></div>
+                            <div class="col-6 col-md-1 form-group"><label class="text-xs _600">State</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="a.region" maxlength="10"></div>
+                            <div class="col-6 col-md-2 form-group"><label class="text-xs _600">Postal code</label><input class="form-control form-control-sm" [(ngModel)]="a.postalCode" maxlength="20"></div>
+                        </div>
+                        <div *ngIf="np.notes" class="text-xs text-muted mb-1">{{ np.notes }}</div>
+                        <div class="d-flex align-items-center">
+                            <label class="text-xs mb-0"><input type="checkbox" class="mr-1" [(ngModel)]="allowDuplicateParty">Add even if one with the same tax ID exists</label>
+                            <span class="flex"></span>
+                            <button type="button" class="btn btn-xs white mr-1" (click)="newParty = null">Cancel</button>
+                            <button type="button" class="btn btn-xs theme" [disabled]="busy" (click)="saveNewParty()">Add and link</button>
+                        </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 form-group"><label class="text-xs _600">Number</label><input class="form-control form-control-sm" [(ngModel)]="e.model.documentNumber" maxlength="100"></div>
-                        <div class="col-md-4 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.documentDate"></div>
-                        <div *ngIf="e.model.purpose === 'Bill'" class="col-md-4 form-group"><label class="text-xs _600">Due</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.dueDate"></div>
+                        <div class="col-md-4 form-group"><label class="text-xs _600">Number</label><input class="form-control form-control-sm" [class.is-invalid]="fieldCheck('documentNumber') === 'error'" [class.b-warning]="fieldCheck('documentNumber') === 'warning'" [(ngModel)]="e.model.documentNumber" maxlength="100"></div>
+                        <div class="col-md-4 form-group"><label class="text-xs _600">Date</label><input type="date" class="form-control form-control-sm" [class.is-invalid]="fieldCheck('documentDate') === 'error'" [class.b-warning]="fieldCheck('documentDate') === 'warning'" [(ngModel)]="e.model.documentDate"></div>
+                        <div *ngIf="e.model.purpose === 'Bill' || e.model.purpose === 'SalesInvoice'" class="col-md-4 form-group"><label class="text-xs _600">Due</label><input type="date" class="form-control form-control-sm" [(ngModel)]="e.model.dueDate"></div>
                     </div>
-                    <div *ngIf="e.model.purpose !== 'Bill'" class="row">
+                    <!-- Document details -->
+                    <details class="mb-2" [open]="!!(e.model.placeOfSupply || e.model.buyerName || e.model.poNumber)">
+                        <summary class="text-xs _600">Document details<span class="text-muted ml-1">{{ e.model.documentType || '' }}{{ c.vendorCountry ? ' · seller in ' + c.vendorCountry + (c.vendorRegion ? '/' + c.vendorRegion : '') : '' }}</span></summary>
+                        <div class="row mt-1">
+                            <div class="col-md-4 form-group"><label class="text-xs _600">Document type</label>
+                                <select class="form-control form-control-sm" [(ngModel)]="e.model.documentType"><option [ngValue]="null">—</option>
+                                    <option *ngFor="let t of documentTypes" [ngValue]="t">{{ t }}</option></select></div>
+                            <div class="col-md-4 form-group"><label class="text-xs _600">Place of supply</label><input class="form-control form-control-sm" [(ngModel)]="e.model.placeOfSupply" maxlength="60"></div>
+                            <div class="col-md-4 form-group"><label class="text-xs _600">PO / order</label><input class="form-control form-control-sm" [(ngModel)]="e.model.poNumber" maxlength="100"></div>
+                            <div class="col-md-5 form-group"><label class="text-xs _600">Buyer</label><input class="form-control form-control-sm" [(ngModel)]="e.model.buyerName" maxlength="200"></div>
+                            <div class="col-md-3 form-group"><label class="text-xs _600">Buyer tax ID</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.buyerTaxId" maxlength="40"></div>
+                            <div class="col-md-4 form-group"><label class="text-xs _600">Payment terms</label><input class="form-control form-control-sm" [(ngModel)]="e.model.paymentTerms" maxlength="200"></div>
+                        </div>
+                        <div class="text-xs">
+                            <span *ngIf="c.discount !== null" class="mr-3">Discount {{ c.discount | money:(e.model.currencyCode || currency):false }}</span>
+                            <span *ngIf="c.shipping !== null" class="mr-3">Shipping {{ c.shipping | money:(e.model.currencyCode || currency):false }}</span>
+                            <span *ngIf="c.amountPaid !== null" class="mr-3">Paid {{ c.amountPaid | money:(e.model.currencyCode || currency):false }}</span>
+                            <span *ngIf="c.balanceDue !== null" class="mr-3">Balance due {{ c.balanceDue | money:(e.model.currencyCode || currency):false }}</span>
+                        </div>
+                        <table *ngIf="details.length" class="table table-sm mb-0 mt-1"><tbody>
+                            <tr *ngFor="let d of details" class="text-xs"><td class="text-muted" style="width: 30%">{{ d.label }}</td><td>{{ d.value }}</td></tr>
+                        </tbody></table>
+                    </details>
+
+                    <div *ngIf="e.model.purpose !== 'Bill' && e.model.purpose !== 'SalesInvoice'" class="row">
                         <div class="col-md-6 form-group"><label class="text-xs _600">Paid from</label>
                             <select class="form-control form-control-sm" [(ngModel)]="e.model.moneyAccountId"><option [ngValue]="null">Choose…</option>
                                 <option *ngFor="let a of moneyAccounts" [ngValue]="a.id">{{ a.name }}</option></select></div>
@@ -115,11 +184,13 @@
                     <!-- Lines -->
                     <div class="table-responsive">
                         <table class="table table-sm mb-1">
-                            <thead><tr class="text-xs text-muted"><th style="min-width: 160px">Description</th><th style="width: 70px" class="text-right">Qty</th>
+                            <thead><tr class="text-xs text-muted"><th style="min-width: 160px">Description</th><th style="width: 90px">HSN/SAC/SKU</th><th style="width: 70px" class="text-right">Qty</th>
                                 <th style="width: 100px" class="text-right">Price</th><th style="width: 110px" class="text-right">Amount</th><th style="min-width: 170px">Account</th>
                                 <th style="width: 110px">Tax</th><th style="width: 24px"></th></tr></thead>
                             <tbody><tr *ngFor="let l of e.lines; let i = index">
-                                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500"></td>
+                                <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500">
+                                    <div *ngIf="l.isExempt || l.taxRate !== null" class="text-xs text-muted">{{ l.isExempt ? 'exempt / non-taxable' : 'tax ' + l.taxRate + '% on the document' }}</div></td>
+                                <td><input class="form-control form-control-sm" [(ngModel)]="l.code" maxlength="40"></td>
                                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" (change)="recalc(l)" step="any"></td>
                                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitPrice" (change)="recalc(l)" step="any"></td>
                                 <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.amount" step="any"></td>
@@ -127,7 +198,7 @@
                                                 (picked)="l.accountId = $event.id; l.accountLabel = $event.label"></fin-picker>
                                     <div *ngIf="l.suggestedBy" class="text-xs text-muted">from {{ l.suggestedBy }}</div></td>
                                 <td><select class="form-control form-control-sm" [(ngModel)]="l.taxCodeId"><option [ngValue]="null">None</option>
-                                    <option *ngFor="let t of taxes" [ngValue]="t.id">{{ t.code }}</option></select></td>
+                                    <option *ngFor="let t of lineTaxOptions" [ngValue]="t.id">{{ t.code }}</option></select></td>
                                 <td class="align-middle"><a *ngIf="editable" role="button" class="text-muted" (click)="removeLine(i)" title="Remove"><i class="fa fa-times"></i></a></td>
                             </tr></tbody>
                         </table>
@@ -140,17 +211,61 @@
                     <!-- Totals -->
                     <div class="row">
                         <div class="col-md-3 form-group"><label class="text-xs _600">Currency</label><input class="form-control form-control-sm text-uppercase" [(ngModel)]="e.model.currencyCode" maxlength="3"></div>
-                        <div class="col-md-3 form-group"><label class="text-xs _600">Before tax</label><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="e.model.subTotal" step="any"></div>
-                        <div class="col-md-3 form-group"><label class="text-xs _600">Tax</label><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="e.model.taxAmount" step="any"></div>
-                        <div class="col-md-3 form-group"><label class="text-xs _600">Total</label><input type="number" class="form-control form-control-sm text-right _600" [(ngModel)]="e.model.total" step="any"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Before tax</label><input type="number" class="form-control form-control-sm text-right" [class.is-invalid]="fieldCheck('subTotal') === 'error'" [(ngModel)]="e.model.subTotal" step="any"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Tax</label><input type="number" class="form-control form-control-sm text-right" [class.is-invalid]="fieldCheck('taxes') === 'error'" [(ngModel)]="e.model.taxAmount" step="any"></div>
+                        <div class="col-md-3 form-group"><label class="text-xs _600">Total</label><input type="number" class="form-control form-control-sm text-right _600" [class.is-invalid]="fieldCheck('total') === 'error'" [(ngModel)]="e.model.total" step="any"></div>
                     </div>
                     <div class="text-xs mb-2" [ngClass]="totalGap === 0 ? 'text-muted' : 'text-warning'">Lines {{ linesTotal | money:(e.model.currencyCode || currency):false }}
                         + tax {{ (+(e.model.taxAmount ?? 0)) | money:(e.model.currencyCode || currency):false }} = {{ computedTotal | money:(e.model.currencyCode || currency):false }}
                         <span *ngIf="totalGap !== 0">; {{ totalGap | money:(e.model.currencyCode || currency):false }} off the document's total (small differences are booked as rounding)</span></div>
+                    <!-- Taxes mapped to the books -->
+                    <div *ngIf="c.taxLines.length || c.taxNotes.length" class="mb-2">
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="text-xs _600">Tax breakdown</span><span *ngIf="c.taxSystem" class="text-xs text-muted ml-1">· {{ c.taxSystem }}</span>
+                            <span class="flex"></span>
+                            <button *ngIf="editable && c.taxLines.length" type="button" class="btn btn-xs white" (click)="remapTaxes()" title="Map every tax again">Map again</button>
+                        </div>
+                        <div class="table-responsive"><table class="table table-sm mb-1 text-xs">
+                            <thead><tr class="text-muted"><th>Tax</th><th class="text-right">Rate</th><th class="text-right">On</th><th class="text-right">Amount</th>
+                                <th style="min-width: 150px">Tax code</th><th>Posts to</th><th></th></tr></thead>
+                            <tbody><tr *ngFor="let t of c.taxLines; trackBy: trackTax">
+                                <td class="_600">{{ t.component }}<div *ngIf="t.label && t.label !== t.component" class="text-muted">{{ t.label }}</div></td>
+                                <td class="text-right">{{ t.rate !== null ? t.rate + '%' : '—' }}</td>
+                                <td class="text-right">{{ t.taxableAmount !== null ? (t.taxableAmount | money:(e.model.currencyCode || currency):false) : '—' }}</td>
+                                <td class="text-right">{{ t.amount | money:(e.model.currencyCode || currency):false }}</td>
+                                <td><select class="form-control form-control-sm" [ngModel]="t.taxCodeId" (ngModelChange)="setTaxCode(t, $event)" [disabled]="!editable">
+                                    <option [ngValue]="null">None</option><option *ngFor="let o of taxOptions" [ngValue]="o.id">{{ taxOptionLabel(o) }}</option></select></td>
+                                <td>{{ t.account || '—' }}<div *ngIf="t.accountGroup" class="text-muted">{{ t.accountGroup }}</div></td>
+                                <td><span class="badge" [ngClass]="taxTone[t.status] || 'grey'" [title]="t.note || ''">{{ t.status }}</span></td>
+                            </tr></tbody>
+                        </table></div>
+                        <div *ngFor="let n of c.taxNotes" class="text-xs text-warning"><i class="fa fa-info-circle mr-1"></i>{{ n }}</div>
+                    </div>
                     <div class="form-group"><label class="text-xs _600">Notes</label><textarea class="form-control form-control-sm" rows="2" [(ngModel)]="e.model.notes" maxlength="2000"></textarea></div>
                 </fieldset>
 
                 <div *ngIf="c.problems.length && editable" class="text-xs text-warning mb-2"><i class="fa fa-exclamation-triangle mr-1"></i>{{ c.problems.join(' ') }}</div>
+
+                <!-- Checks: what does not add up or looks wrong -->
+                <div *ngIf="editable && c.checks.length" class="box p-2 mb-2" [ngClass]="checkErrors.length ? 'b-danger' : 'b-warning'">
+                    <div class="text-xs _600 mb-1"><i class="fa fa-check-square-o mr-1"></i>Checks before recording ({{ checkErrors.length }} to fix, {{ c.checks.length - checkErrors.length }} to look at)</div>
+                    <div *ngFor="let x of c.checks" class="text-xs mb-1" [ngClass]="x.severity === 'error' ? 'text-danger' : x.severity === 'warning' ? 'text-warning' : 'text-muted'">
+                        <i class="fa mr-1" [ngClass]="x.severity === 'error' ? 'fa-times-circle' : x.severity === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'"></i>{{ x.message }}</div>
+                    <label *ngIf="checkErrors.length" class="text-xs mb-0 mt-1"><input type="checkbox" class="mr-1" [(ngModel)]="acceptChecks">
+                        I have checked these against the original document; record it as it is</label>
+                </div>
+
+                <!-- Reject with a reason -->
+                <div *ngIf="rejecting as rj" class="box p-2 mb-2 b-danger">
+                    <div class="text-xs _600 mb-1">Reject this document</div>
+                    <select class="form-control form-control-sm mb-1" [(ngModel)]="rj.reason" aria-label="Reason"><option [ngValue]="null">Why?</option>
+                        <option *ngFor="let r of rejectReasons" [ngValue]="r.code">{{ r.label }}</option></select>
+                    <textarea class="form-control form-control-sm mb-1" rows="2" [(ngModel)]="rj.note" maxlength="1000"
+                              [placeholder]="rejectNeedsNote ? 'Say why (required)' : 'Note (optional): what is wrong, who to ask…'"></textarea>
+                    <div class="d-flex"><span class="flex"></span>
+                        <button class="btn btn-xs white mr-1" (click)="rejecting = null">Cancel</button>
+                        <button class="btn btn-xs danger" [disabled]="busy || !rj.reason" (click)="reject()">Reject</button></div>
+                </div>
 
                 <!-- Actions -->
                 <div class="d-flex flex-wrap align-items-center">
@@ -159,26 +274,64 @@
                             <option *ngFor="let p of providers" [ngValue]="p.code">{{ p.label }}{{ p.simulated ? ' (simulated)' : '' }}</option></select>
                         <a role="button" class="text-xs mr-2 mb-1" (click)="tab = 'compare'">compare readers</a>
                         <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="reprocess()"><i class="fa fa-refresh mr-1"></i>Read again</button>
-                        <button *ngIf="c.row.status !== 'Discarded'" class="btn btn-sm white text-danger mr-1 mb-1" [disabled]="busy" (click)="discard()">Discard</button>
+                        <button *ngIf="c.row.status !== 'Discarded' && !rejecting" class="btn btn-sm white text-danger mr-1 mb-1" [disabled]="busy" (click)="startReject()">Reject…</button>
                     </ng-container>
                     <span class="flex"></span>
                     <ng-container *ngIf="editable">
                         <label *ngIf="e.model.purpose === 'Bill'" class="text-sm mr-2 mb-1"><input type="checkbox" class="mr-1" [(ngModel)]="postBill">Post it</label>
                         <button class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="save()">Save</button>
                         <button class="btn btn-sm theme mb-1" [disabled]="busy" (click)="convert()">
-                            {{ e.model.purpose === 'Bill' ? (postBill ? 'Create and post bill' : 'Create bill draft') : e.model.purpose === 'PaidExpense' ? 'Record as paid' : 'Create journal' }}</button>
+                            {{ e.model.purpose === 'Bill' ? (postBill ? 'Create and post bill' : 'Create bill draft') : e.model.purpose === 'SalesInvoice' ? 'Create sales invoice draft'
+                                : e.model.purpose === 'PaidExpense' ? 'Record as paid' : 'Create journal' }}</button>
                     </ng-container>
                 </div>
 
-                <!-- Fields read -->
-                <details *ngIf="c.fields.length" class="mt-2">
-                    <summary class="text-xs text-muted">Fields read ({{ c.fields.length }})</summary>
-                    <table class="table table-sm mb-0"><tbody>
-                        <tr *ngFor="let f of c.fields" class="text-xs"><td class="text-muted">{{ f.label || f.key }}</td><td>{{ f.value }}</td>
-                            <td class="text-right" [ngClass]="confidenceClass(f.confidence)">{{ f.confidence }}%</td></tr>
-                    </tbody></table>
-                </details>
             </ng-container>
+            </div>
+
+            <!-- Everything read -->
+            <div *ngIf="tab === 'result'">
+                <div class="text-xs text-muted mb-2">As read by {{ providerLabel(c.row.provider) }}{{ c.row.confidence !== null ? ', ' + c.row.confidence + '% confidence' : '' }}.</div>
+                <h6 class="text-sm _600">Fields ({{ c.fields.length }})</h6>
+                <div class="table-responsive"><table class="table table-sm mb-2 text-xs">
+                    <thead><tr class="text-muted"><th>Meaning</th><th>Label printed</th><th>Value</th><th class="text-right">Confidence</th></tr></thead>
+                    <tbody><tr *ngFor="let f of c.fields"><td>{{ f.key }}</td><td class="text-muted">{{ f.label }}</td><td>{{ f.value }}</td>
+                        <td class="text-right" [ngClass]="confidenceClass(f.confidence)">{{ f.confidence }}%</td></tr></tbody>
+                </table></div>
+                <h6 *ngIf="c.taxLines.length" class="text-sm _600">Taxes</h6>
+                <table *ngIf="c.taxLines.length" class="table table-sm mb-2 text-xs"><tbody>
+                    <tr *ngFor="let t of c.taxLines; trackBy: trackTax"><td>{{ t.component }} {{ t.rate !== null ? t.rate + '%' : '' }}</td>
+                        <td class="text-right">{{ t.taxableAmount }}</td><td class="text-right">{{ t.amount }}</td><td>{{ t.taxCode || 'not mapped' }}</td></tr>
+                </tbody></table>
+                <h6 class="text-sm _600">Lines ({{ c.lines.length }})</h6>
+                <table class="table table-sm mb-2 text-xs"><tbody>
+                    <tr *ngFor="let l of c.lines"><td>{{ l.description }}</td><td>{{ l.code }}</td><td class="text-right">{{ l.quantity }} × {{ l.unitPrice }}</td>
+                        <td class="text-right">{{ l.amount }}</td><td>{{ l.isExempt ? 'exempt' : l.taxRate !== null ? l.taxRate + '%' : '' }}</td></tr>
+                </tbody></table>
+                <h6 *ngIf="details.length" class="text-sm _600">Details</h6>
+                <table *ngIf="details.length" class="table table-sm mb-2 text-xs"><tbody>
+                    <tr *ngFor="let d of details"><td class="text-muted" style="width: 30%">{{ d.label }}</td><td>{{ d.value }}</td></tr>
+                </tbody></table>
+                <h6 *ngIf="c.text" class="text-sm _600">Text</h6>
+                <pre *ngIf="c.text" class="text-xs p-2 light lt" style="max-height: 320px; overflow: auto; white-space: pre-wrap">{{ c.text }}</pre>
+            </div>
+
+            <!-- OCR calls for this document -->
+            <div *ngIf="tab === 'log'">
+                <div *ngIf="runs === null" class="text-muted text-sm p-2"><i class="fa fa-spinner fa-spin mr-1"></i>Loading…</div>
+                <div *ngIf="runs && !runs.length" class="text-muted text-sm p-2">No provider calls are logged for this document.</div>
+                <div *ngIf="runs?.length" class="table-responsive"><table class="table table-sm text-xs mb-0">
+                    <thead><tr class="text-muted"><th>When</th><th>Reader</th><th>Status</th><th class="text-right">Time</th><th class="text-right">Pages</th><th class="text-right">Tokens</th>
+                        <th class="text-right">Fields · lines · taxes</th><th class="text-right">Total</th></tr></thead>
+                    <tbody><tr *ngFor="let r of runs; trackBy: trackRun">
+                        <td>{{ r.startedAt | date:'short' }}<div class="text-muted">{{ r.operation }}{{ r.readingId ? ' · comparison' : '' }} · try {{ r.attempt }}</div></td>
+                        <td>{{ r.providerLabel }}<div class="text-muted">{{ r.model }}</div></td>
+                        <td><span class="badge" [ngClass]="runTone[r.status]">{{ r.status }}</span><div *ngIf="r.error" class="text-danger">{{ r.error }}</div></td>
+                        <td class="text-right">{{ r.durationMs }} ms</td><td class="text-right">{{ r.pages ?? '' }}</td>
+                        <td class="text-right">{{ r.inputTokens !== null ? r.inputTokens + ' / ' + r.outputTokens : '' }}</td>
+                        <td class="text-right">{{ r.fields }} · {{ r.lineItems }} · {{ r.taxLines }}</td><td class="text-right">{{ r.total ?? '' }}</td>
+                    </tr></tbody>
+                </table></div>
             </div>
         </div>
     </div>

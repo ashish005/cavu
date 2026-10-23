@@ -55,6 +55,15 @@
             </div>
         </ng-container>
 
+        <ng-container *ngIf="r.rejections.length">
+            <h6 class="_600">Rejected documents, by reason</h6>
+            <div class="box table-responsive mb-3">
+                <table class="table table-sm mb-0 text-sm"><tbody>
+                    <tr *ngFor="let x of r.rejections"><td>{{ x.label }}</td><td class="text-right _600" style="width: 90px">{{ x.count }}</td></tr>
+                </tbody></table>
+            </div>
+        </ng-container>
+
         <ng-container *ngIf="r.recent.length">
             <h6 class="_600">Documents</h6>
             <div class="box table-responsive">

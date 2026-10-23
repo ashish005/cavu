@@ -20,7 +20,7 @@ import {
     FinanceInventoryReportsView, FinanceInventorySetupView, FinanceItemsView, FinanceStockDocumentsView, FinanceStockMovementsView, FinanceStockView, INVENTORY_SERVICES
 } from "./inventory";
 import {BANKING_SERVICES, FinanceBankRulesView, FinanceBankStatementView, FinanceMoneyAccountsView, FinancePaymentModesView} from "./banking";
-import {CAPTURE_SERVICES, CaptureCompareComponent, FinanceCaptureInboxView, FinanceCaptureReportView, FinanceCaptureSettingsView} from "./capture";
+import {CAPTURE_SERVICES, CaptureCompareComponent, FinanceCaptureInboxView, FinanceCaptureLogView, FinanceCaptureReportView, FinanceCaptureSettingsView} from "./capture";
 import {FinanceQuoteSettingsView, FinanceQuotesView, QUOTE_SERVICES, QuoteDetailComponent, QuoteEditorComponent} from "./quotes";
 
 interface NavItem { label: string; icon: string; route: string; }
@@ -76,6 +76,7 @@ export class FinanceShell {
             {label: 'Bills', icon: 'fa fa-file-o', route: ROUTE_OF_KIND.Bill},
             {label: 'Scan bills & receipts', icon: 'fa fa-camera', route: 'purchases/capture'},
             {label: 'OCR comparison', icon: 'fa fa-columns', route: 'purchases/capture/report'},
+            {label: 'OCR log', icon: 'fa fa-history', route: 'purchases/capture/log'},
             {label: 'Debit notes', icon: 'fa fa-repeat', route: ROUTE_OF_KIND.DebitNote},
             {label: 'Money out', icon: 'fa fa-arrow-up', route: ROUTE_OF_KIND.Payment}]},
         {title: 'Products & stock', items: [
@@ -149,6 +150,7 @@ export const FINANCE_ROUTES: Routes = [
             {path: 'sales/quotes', component: FinanceQuotesView, data: {title: 'Quotes', header: 'Quotes'}},
             {path: 'purchases/capture', component: FinanceCaptureInboxView, data: {title: 'Scan bills & receipts', header: 'Scan bills & receipts'}},
             {path: 'purchases/capture/report', component: FinanceCaptureReportView, data: {title: 'OCR comparison', header: 'OCR comparison'}},
+            {path: 'purchases/capture/log', component: FinanceCaptureLogView, data: {title: 'OCR log', header: 'OCR log'}},
             {path: 'banking', component: FinanceMoneyAccountsView, data: {title: 'Bank & cash', header: 'Bank & cash'}},
             {path: 'banking/:id', component: FinanceBankStatementView, data: {title: 'Bank statement', header: 'Bank statement'}},
             {path: 'accounting/chart', component: FinanceChartView, data: {title: 'Chart of accounts', header: 'Chart of accounts'}},
@@ -178,7 +180,7 @@ export const FINANCE_ROUTES: Routes = [
         FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceTaxRulesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
         FinanceRecurringView, FinanceItemsView, FinanceStockView, FinanceStockMovementsView, FinanceStockDocumentsView, FinanceInventoryReportsView,
         FinanceInventorySetupView, FinanceMoneyAccountsView, FinanceBankStatementView, FinancePaymentModesView, FinanceBankRulesView, FinanceCaptureInboxView,
-        FinanceCaptureSettingsView, FinanceCaptureReportView, CaptureCompareComponent, FinanceQuotesView, QuoteEditorComponent, QuoteDetailComponent, FinanceQuoteSettingsView
+        FinanceCaptureSettingsView, FinanceCaptureReportView, FinanceCaptureLogView, CaptureCompareComponent, FinanceQuotesView, QuoteEditorComponent, QuoteDetailComponent, FinanceQuoteSettingsView
     ]
 })
 export class FinanceModule {}

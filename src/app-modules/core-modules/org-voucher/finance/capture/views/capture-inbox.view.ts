@@ -11,12 +11,15 @@ import {ROUTE_OF_KIND} from "../../views/documents.view";
 import {CaptureApiService} from "../capture-api.service";
 import {
     CAPTURE_ACCEPT, CAPTURE_PURPOSE_LABEL, CAPTURE_STATUS_LABEL, CAPTURE_STATUS_TONE, Capture, CaptureInput, CaptureProvider, CapturePurpose, CaptureRow,
-    CaptureView
+    CaptureCheck, CaptureTaxCodeOption, CaptureTaxLine, CaptureView, OcrRun, PartyMatch, PartyProposal, RUN_STATUS_TONE, RejectReason, TAX_STATUS_TONE
 } from "../capture.models";
 
 /** An editor line: the request plus the account's name for the picker. */
 interface EditLine { description: string; quantity: number; unitPrice: number; amount: number; accountId: string | null; accountLabel: string | null; taxCodeId: string | null;
-    itemId: string | null; suggestedBy: string | null; }
+    itemId: string | null; suggestedBy: string | null; code: string | null; unit: string | null; taxRate: number | null; isExempt: boolean; }
+
+/** Document types the readers tell apart. */
+export const DOCUMENT_TYPES = ['Invoice', 'Receipt', 'CreditNote', 'DebitNote', 'Proforma', 'Quotation', 'PurchaseOrder', 'BillOfSupply'];
 
 const POLL_MS = 4000;
 
@@ -33,13 +36,29 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
     accept = CAPTURE_ACCEPT;
     maxFileMb = 50;
     /** Review panel: the editable details, or the readers compared side by side. */
-    tab: 'details' | 'compare' = 'details';
+    tab: 'details' | 'compare' | 'result' | 'log' = 'details';
+    readonly documentTypes = DOCUMENT_TYPES;
+    readonly taxTone = TAX_STATUS_TONE;
+    readonly runTone = RUN_STATUS_TONE;
+    /** Who the document is from (or to): candidates in the books and a new party prefilled from the document. */
+    partyMatch: PartyMatch | null = null;
+    newParty: PartyProposal | null = null;
+    allowDuplicateParty = false;
+    taxOptions: CaptureTaxCodeOption[] = [];
+    runs: OcrRun[] | null = null;
+    rejectReasons: RejectReason[] = [];
+    /** The reject form while open. */
+    rejecting: {reason: string | null; note: string} | null = null;
+    /** The reviewer has looked at the failed checks (needed to convert with errors). */
+    acceptChecks = false;
+    /** Details read (addresses, contacts, bank…), cached for the template. */
+    details: {label: string; value: string}[] = [];
     readonly purposeLabel = CAPTURE_PURPOSE_LABEL;
     readonly purposes = Object.keys(CAPTURE_PURPOSE_LABEL) as CapturePurpose[];
     readonly statusLabel = CAPTURE_STATUS_LABEL;
     readonly statusTone = CAPTURE_STATUS_TONE;
     readonly views: {key: CaptureView; label: string}[] = [
-        {key: 'inbox', label: 'Inbox'}, {key: 'review', label: 'To review'}, {key: 'converted', label: 'Done'}, {key: 'discarded', label: 'Discarded'}, {key: 'all', label: 'All'}
+        {key: 'inbox', label: 'Inbox'}, {key: 'review', label: 'To review'}, {key: 'converted', label: 'Done'}, {key: 'discarded', label: 'Rejected'}, {key: 'all', label: 'All'}
     ];
     view: CaptureView = 'inbox';
     search: string | null = null;
@@ -88,6 +107,7 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
             next: l => { this.taxes = l.taxCodes.filter(t => t.scope !== 'Sales'); this.modes = l.paymentModes; this.moneyAccounts = l.bankAccounts; this.currency = l.functionalCurrency; },
             error: () => {}
         });
+        this.api.rejectReasons().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: r => this.rejectReasons = r, error: () => {}});
         this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(q => {
             const id = q.get('capture');
             if (id && id !== this.current?.row.id) { this.open(id); }
@@ -175,7 +195,12 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
                 const sameFile = this.current?.row.id === c.row.id;
                 this.current = c;
                 if (!keepEdits || !this.edit || c.row.status !== 'Review') { this.fill(c); }
-                if (!sameFile) { this.converted = null; this.allowDuplicate = false; this.showText = false; this.tab = 'details'; this.loadFile(c.row.id); }
+                if (!sameFile) {
+                    this.converted = null; this.allowDuplicate = false; this.showText = false; this.tab = 'details'; this.runs = null; this.newParty = null;
+                    this.rejecting = null; this.acceptChecks = false;
+                    this.loadFile(c.row.id);
+                }
+                this.loadBooks(c);
                 this.schedulePoll();
             },
             error: e => this.alerts.showMessage('Capture', financeErrorOf(e, 'The document could not be opened.'), MessageSeverity.error)
@@ -184,6 +209,7 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
 
     private fill(c: Capture) {
         const r = c.row;
+        this.details = Object.entries(c.details ?? {}).map(([label, value]) => ({label, value}));
         this.reprocessWith = r.provider;
         this.postBill = false;
         this.edit = {
@@ -191,10 +217,13 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
             model: {
                 purpose: r.purpose, vendorName: r.vendorName, vendorTaxId: c.vendorTaxId, documentNumber: r.documentNumber, documentDate: r.documentDate, dueDate: c.dueDate,
                 currencyCode: r.currencyCode ?? this.currency, currencyRate: c.currencyRate, subTotal: c.subTotal, taxAmount: c.taxAmount, total: r.total,
-                partyAccountId: c.partyAccountId, moneyAccountId: c.moneyAccountId, paymentModeId: c.paymentModeId, notes: c.notes
+                partyAccountId: c.partyAccountId, moneyAccountId: c.moneyAccountId, paymentModeId: c.paymentModeId, notes: c.notes,
+                buyerName: c.buyerName, buyerTaxId: c.buyerTaxId, documentType: c.documentType, placeOfSupply: c.placeOfSupply, poNumber: c.poNumber,
+                paymentTerms: c.paymentTerms
             },
             lines: c.lines.map(l => ({description: l.description, quantity: l.quantity, unitPrice: l.unitPrice, amount: l.amount, accountId: l.accountId,
-                accountLabel: l.account, taxCodeId: l.taxCodeId, itemId: l.itemId, suggestedBy: l.suggestedBy}))
+                accountLabel: l.account, taxCodeId: l.taxCodeId, itemId: l.itemId, suggestedBy: l.suggestedBy, code: l.code, unit: l.unit, taxRate: l.taxRate,
+                isExempt: l.isExempt}))
         };
     }
 
@@ -232,13 +261,110 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
 
     openRow(r: CaptureRow) { this.router.navigate([], {relativeTo: this.route, queryParams: {capture: r.id}, queryParamsHandling: 'merge'}); }
 
+    /** Vendors, or customers when the document is our own sales invoice. */
     searchVendors = (term: string | null): Observable<PickerOption[]> =>
-        this.finance.parties('Bill', term).pipe(map((list: PartyOption[]) => list.map(p => ({id: p.accountId, label: p.name, sub: p.number}))));
+        this.finance.parties(this.edit?.model.purpose === 'SalesInvoice' ? 'Invoice' : 'Bill', term)
+            .pipe(map((list: PartyOption[]) => list.map(p => ({id: p.accountId, label: p.name, sub: p.number}))));
+
+    get partyWord() { return this.edit?.model.purpose === 'SalesInvoice' ? 'customer' : 'vendor'; }
+
+    // ---------- Parties, taxes and the log ----------
+
+    /** Party candidates and the tax codes for this document (only while it can be changed). */
+    private loadBooks(c: Capture) {
+        if (c.row.status !== 'Review' && c.row.status !== 'Failed') { this.partyMatch = null; this.taxOptions = []; return; }
+        this.api.parties(c.row.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: m => this.partyMatch = m, error: () => this.partyMatch = null});
+        this.api.taxCodes(c.row.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: o => this.taxOptions = o, error: () => this.taxOptions = []});
+    }
+
+    /** The document as the server now has it (after linking, adding a party or changing taxes). */
+    private applied(c: Capture, message: string) {
+        this.current = c;
+        this.fill(c);
+        this.loadBooks(c);
+        this.load(true);
+        this.alerts.showMessage('Capture', message, MessageSeverity.success);
+    }
+
+    linkParty(accountId: string) {
+        const c = this.current;
+        if (!c) { return; }
+        this.busy = true;
+        this.api.linkParty(c.row.id, accountId).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => this.applied(r, `The ${this.partyWord} is linked.`),
+            error: e => this.formError = financeErrorOf(e, 'It could not be linked.')
+        });
+    }
+
+    /** Opens the form with the party as the document describes it. */
+    startNewParty() {
+        const p = this.partyMatch?.proposal;
+        if (!p) { return; }
+        this.allowDuplicateParty = false;
+        this.newParty = {...p, addresses: p.addresses.length ? p.addresses.map(a => ({...a}))
+                : [{line1: '', line2: null, city: '', region: null, postalCode: null, countryCode: p.countryCode, isPrimary: true}],
+            taxIds: p.taxIds.map(t => ({...t}))};
+    }
+
+    saveNewParty() {
+        const c = this.current;
+        const p = this.newParty;
+        if (!c || !p) { return; }
+        if (!(p.displayName ?? '').trim()) { this.formError = `Enter the ${this.partyWord}'s name.`; return; }
+        const body: PartyProposal = {
+            ...p, displayName: p.displayName.trim(), countryCode: (p.countryCode ?? '').trim().toUpperCase(),
+            addresses: p.addresses.filter(a => (a.line1 ?? '').trim() && (a.city ?? '').trim()),
+            taxIds: p.taxIds.filter(t => (t.value ?? '').trim())
+        };
+        this.busy = true;
+        this.formError = null;
+        this.api.createParty(c.row.id, body, this.allowDuplicateParty).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => { this.newParty = null; this.applied(r, `${body.displayName} added as a ${this.partyWord} and linked.`); },
+            error: e => this.formError = financeErrorOf(e, `The ${this.partyWord} could not be added.`)
+        });
+    }
+
+    setTaxCode(t: CaptureTaxLine, taxCodeId: string | null) {
+        const c = this.current;
+        if (!c) { return; }
+        this.busy = true;
+        this.api.setTaxCodes(c.row.id, [{id: t.id, taxCodeId}]).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => this.applied(r, 'Tax code changed; the lines follow it.'),
+            error: e => this.formError = financeErrorOf(e, 'The tax code could not be changed.')
+        });
+    }
+
+    remapTaxes() {
+        const c = this.current;
+        if (!c) { return; }
+        this.busy = true;
+        this.api.remapTaxes(c.row.id).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: r => this.applied(r, 'Taxes mapped again.'),
+            error: e => this.formError = financeErrorOf(e, 'The taxes could not be mapped.')
+        });
+    }
+
+    showLog() {
+        this.tab = 'log';
+        const c = this.current;
+        if (!c) { return; }
+        this.api.documentLog(c.row.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({next: l => this.runs = l.entities, error: () => this.runs = []});
+    }
+
+    /** Line tax codes: the document's side (purchase or sales) once loaded, else the purchase codes. */
+    get lineTaxOptions(): {id: string; code: string}[] { return this.taxOptions.length ? this.taxOptions : this.taxes; }
+
+    taxOptionLabel(o: CaptureTaxCodeOption) { return `${o.code} · ${o.components || o.name}`; }
+    trackTax = (_: number, t: CaptureTaxLine) => t.id;
+    trackRun = (_: number, r: OcrRun) => r.id;
 
     searchAccounts = (term: string | null): Observable<PickerOption[]> =>
         this.finance.accountOptions('expense', term).pipe(map((list: AccountOption[]) => list.map(a => ({id: a.id, label: a.name, sub: [a.code, a.group].filter(Boolean).join(' · ')}))));
 
-    addLine() { this.edit?.lines.push({description: '', quantity: 1, unitPrice: 0, amount: 0, accountId: null, accountLabel: null, taxCodeId: null, itemId: null, suggestedBy: null}); }
+    addLine() {
+        this.edit?.lines.push({description: '', quantity: 1, unitPrice: 0, amount: 0, accountId: null, accountLabel: null, taxCodeId: null, itemId: null, suggestedBy: null,
+            code: null, unit: null, taxRate: null, isExempt: false});
+    }
     removeLine(i: number) { this.edit?.lines.splice(i, 1); }
     recalc(l: EditLine) { l.amount = Math.round((+l.quantity || 0) * (+l.unitPrice || 0) * 100) / 100; }
 
@@ -249,7 +375,8 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
         const net = e.model.subTotal ?? ((e.model.total ?? 0) - (e.model.taxAmount ?? 0));
         const first = e.lines[0];
         e.lines = [{description: e.model.vendorName ? `Purchase from ${e.model.vendorName}` : 'Purchase', quantity: 1, unitPrice: +net, amount: +net,
-            accountId: first?.accountId ?? null, accountLabel: first?.accountLabel ?? null, taxCodeId: first?.taxCodeId ?? null, itemId: null, suggestedBy: null}];
+            accountId: first?.accountId ?? null, accountLabel: first?.accountLabel ?? null, taxCodeId: first?.taxCodeId ?? null, itemId: null, suggestedBy: null,
+            code: null, unit: null, taxRate: null, isExempt: false}];
     }
 
     private body(): CaptureInput {
@@ -260,7 +387,7 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
             currencyCode: (e.model.currencyCode ?? '').trim().toUpperCase() || null,
             lines: e.lines.filter(l => (l.description ?? '').trim() || +l.amount).map(l => ({
                 description: (l.description ?? '').trim() || 'Line', quantity: +l.quantity || 1, unitPrice: +l.unitPrice || 0, amount: +l.amount || 0,
-                accountId: l.accountId, taxCodeId: l.taxCodeId, itemId: l.itemId
+                accountId: l.accountId, taxCodeId: l.taxCodeId, itemId: l.itemId, code: (l.code ?? '').trim() || null, unit: l.unit, taxRate: l.taxRate, isExempt: l.isExempt
             }))
         };
     }
@@ -282,7 +409,8 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
             if (!c) { return; }
             if (c.problems.length) { this.formError = c.problems.join(' '); return; }
             this.busy = true;
-            this.api.convert(c.row.id, this.allowDuplicate, this.postBill).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            if (this.checkErrors.length && !this.acceptChecks) { this.formError = 'Check the differences listed below against the original, then tick that you have.'; return; }
+            this.api.convert(c.row.id, this.allowDuplicate, this.postBill, this.acceptChecks).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
                 next: r => {
                     this.current = r.capture;
                     this.converted = {voucherId: r.voucherId, message: r.message};
@@ -294,14 +422,45 @@ export class FinanceCaptureInboxView implements OnInit, OnDestroy {
         });
     }
 
-    discard() {
+    // ---------- Reject ----------
+
+    startReject() { this.rejecting = {reason: null, note: ''}; this.formError = null; }
+
+    get rejectNeedsNote() { return this.rejectReasons.find(r => r.code === this.rejecting?.reason)?.needsNote ?? false; }
+
+    reject() {
         const c = this.current;
-        if (!c || !confirm('Discard this document? The file is kept; nothing is recorded.')) { return; }
+        const r = this.rejecting;
+        if (!c || !r) { return; }
+        if (!r.reason) { this.formError = 'Choose why the document is rejected.'; return; }
+        if (this.rejectNeedsNote && !r.note.trim()) { this.formError = 'Say why the document is rejected.'; return; }
         this.busy = true;
-        this.api.discard(c.row.id).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
-            next: () => { this.close(); this.load(true); },
-            error: e => this.formError = financeErrorOf(e, 'The document could not be discarded.')
+        this.api.reject(c.row.id, r.reason, r.note.trim() || null).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: d => { this.rejecting = null; this.current = d; this.fill(d); this.load(true); this.alerts.showMessage('Capture', `Rejected: ${d.rejectReasonLabel}.`, MessageSeverity.success); },
+            error: e => this.formError = financeErrorOf(e, 'The document could not be rejected.')
         });
+    }
+
+    reopen() {
+        const c = this.current;
+        if (!c) { return; }
+        this.busy = true;
+        this.api.reopen(c.row.id).pipe(finalize(() => this.busy = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: d => { this.current = d; this.fill(d); this.loadBooks(d); this.load(true); },
+            error: e => this.formError = financeErrorOf(e, 'The document could not be reopened.')
+        });
+    }
+
+    rejectLabel(code: string | null) { return this.rejectReasons.find(r => r.code === code)?.label ?? code ?? ''; }
+
+    // ---------- Checks ----------
+
+    get checkErrors(): CaptureCheck[] { return this.current?.checks.filter(x => x.severity === 'error') ?? []; }
+
+    /** The worst check on a field, for highlighting its input. */
+    fieldCheck(field: string): 'error' | 'warning' | null {
+        const checks = this.current?.checks.filter(x => x.field === field) ?? [];
+        return checks.some(x => x.severity === 'error') ? 'error' : checks.length ? 'warning' : null;
     }
 
     reprocess() {
