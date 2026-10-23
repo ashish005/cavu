@@ -1,0 +1,50 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-history mr-1"></i><b>OCR log</b></span></ng-template>
+<ng-template #actionTemplate><button class="btn btn-sm white" [disabled]="loading" (click)="load()"><i class="fa fa-refresh"></i></button></ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-3">
+    <!-- Per reader -->
+    <div *ngIf="stats.length" class="row mb-2">
+        <div *ngFor="let s of stats" class="col-sm-6 col-lg-3 mb-2"><div class="box p-2">
+            <div class="text-sm _600">{{ s.label }}</div>
+            <div class="text-xs text-muted">{{ s.calls }} calls · {{ successRate(s) }}% succeeded{{ s.failed ? ' · ' + s.failed + ' failed' : '' }}</div>
+            <div class="text-xs text-muted">{{ s.avgMs !== null ? 'avg ' + s.avgMs + ' ms' : '' }}{{ s.pages ? ' · ' + s.pages + ' pages' : '' }}
+                {{ s.inputTokens ? ' · ' + s.inputTokens + ' / ' + s.outputTokens + ' tokens' : '' }}</div>
+        </div></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="d-flex flex-wrap align-items-center mb-2">
+        <select class="form-control form-control-sm mr-1 mb-1" style="max-width: 220px" [(ngModel)]="filter.provider" (change)="search()" aria-label="Reader">
+            <option [ngValue]="null">All readers</option><option *ngFor="let p of providers" [ngValue]="p.code">{{ p.label }}</option></select>
+        <select class="form-control form-control-sm mr-1 mb-1" style="max-width: 140px" [(ngModel)]="filter.status" (change)="search()" aria-label="Status">
+            <option [ngValue]="null">Any status</option><option *ngFor="let s of statuses" [ngValue]="s">{{ s }}</option></select>
+        <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="filter.from" (change)="search()" aria-label="From">
+        <input type="date" class="form-control form-control-sm mr-1 mb-1" style="max-width: 150px" [(ngModel)]="filter.to" (change)="search()" aria-label="To">
+        <input class="form-control form-control-sm mb-1" style="max-width: 220px" [(ngModel)]="filter.search" (keyup.enter)="search()" placeholder="File or error">
+    </div>
+
+    <loader [isLoading]="loading"></loader>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="!loading && !error && !runs.length" class="text-center text-muted p-4">No OCR calls match.</div>
+
+    <div *ngIf="runs.length" class="box table-responsive mb-1">
+        <table class="table table-sm table-hover mb-0 text-sm">
+            <thead><tr class="text-xs text-muted"><th>When</th><th>Document</th><th>Reader</th><th>Status</th><th class="text-right">Time</th><th class="text-right">Pages</th>
+                <th class="text-right">Tokens</th><th class="text-right">Fields · lines · taxes</th><th class="text-right">Confidence</th><th class="text-right">Total</th></tr></thead>
+            <tbody><tr *ngFor="let r of runs; trackBy: trackRun" role="button" (click)="open(r)">
+                <td class="text-nowrap">{{ r.startedAt | date:'short' }}<div class="text-xs text-muted">{{ r.operation }} · try {{ r.attempt }}{{ r.readingId ? ' · comparison' : '' }}</div></td>
+                <td>{{ r.fileName }}<div class="text-xs text-muted">{{ r.contentType }} {{ size(r.sizeBytes) }}</div></td>
+                <td>{{ r.providerLabel }}<div class="text-xs text-muted">{{ r.model }}</div></td>
+                <td><span class="badge" [ngClass]="tone[r.status]">{{ r.status }}</span><div *ngIf="r.retries" class="text-xs text-muted">{{ r.retries }} page retries</div>
+                    <div *ngIf="r.error" class="text-xs text-danger">{{ r.error }}</div></td>
+                <td class="text-right">{{ r.durationMs }} ms</td>
+                <td class="text-right">{{ r.pages ?? '' }}</td>
+                <td class="text-right">{{ r.inputTokens !== null ? r.inputTokens + ' / ' + r.outputTokens : '' }}</td>
+                <td class="text-right">{{ r.fields }} · {{ r.lineItems }} · {{ r.taxLines }}</td>
+                <td class="text-right">{{ r.confidence !== null ? r.confidence + '%' : '' }}</td>
+                <td class="text-right">{{ r.total ?? '' }}</td>
+            </tr></tbody>
+        </table>
+    </div>
+    <org-grid-pagination [count]="page.count" [perPage]="page.take" [page]="page.page" (cb)="toPage($event)"></org-grid-pagination>
+</div>
