@@ -1,0 +1,62 @@
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-truck mr-1"></i><b>Vendor quotes</b></span></ng-template>
+<ng-template #actionTemplate>
+    <input #scanFile type="file" class="d-none" (change)="scan(scanFile)">
+    <button class="btn btn-sm white mr-1" [disabled]="!!scanning" (click)="scanFile.click()"><i class="fa mr-1" [ngClass]="scanning ? 'fa-spinner fa-spin' : 'fa-camera'"></i>Scan a quotation</button>
+    <button class="btn btn-sm white mr-1" (click)="startCompare()"><i class="fa fa-columns mr-1"></i>Compare</button>
+    <button class="btn btn-sm theme" (click)="newVendorQuote()"><i class="fa fa-plus mr-1"></i>New vendor quote</button>
+</ng-template>
+
+<div class="d-flex flex-column flex scroll-y p-2">
+    <div *ngIf="scanning" class="alert alert-info text-sm py-2"><i class="fa fa-spinner fa-spin mr-1"></i>{{ scanning }} This can take a minute for a long quotation.</div>
+    <div class="d-flex flex-wrap align-items-center mb-1">
+        <ul class="nav nav-pills nav-sm mr-2 mb-1 flex-wrap">
+            <li class="nav-item" *ngFor="let f of filters"><a role="button" class="nav-link" [class.active]="coreState.status === f.key" (click)="setFilter(f.key)">{{ f.label }}</a></li>
+        </ul>
+        <input class="form-control form-control-sm mb-1 mr-2" style="max-width: 240px" [(ngModel)]="coreState.search" (keyup.enter)="search()" placeholder="Number, vendor, reference">
+    </div>
+    <div *ngIf="errorText && !isLoading" class="alert alert-danger">{{ errorText }}</div>
+    <div *ngIf="!isLoading && !errorText && !gridData?.length" class="text-center text-muted p-4">
+        No vendor quotes here. Record a supplier's quotation (or <b>scan</b> it), compare it with others, then price it into a client quote with your markup and charges.</div>
+    <div class="d-flex flex-column box mb-0 bg-transparent"><org-grid [data]="gridData" [options]="gridOptions" [isLoading]="isLoading"></org-grid></div>
+    <org-grid-pagination [count]="gridOptions?.total" [perPage]="coreState?.take" [page]="coreState?.page" (cb)="moveToPage($event)"></org-grid-pagination>
+</div>
+
+<!-- Pick vendor quotes to compare -->
+<app-aside *ngIf="comparePicker" size="md" title="Compare vendor quotes" subtitle="Pick two or more quotes for the same request" (closed)="comparePicker = null">
+    <div *ngIf="!comparePicker.length" class="text-sm text-muted">No open vendor quotes.</div>
+    <table class="table table-sm text-sm"><tbody>
+        <tr *ngFor="let v of comparePicker"><td style="width: 24px"><input type="checkbox" [checked]="compareIds.has(v.id)" (change)="toggleCompare(v.id)"></td>
+            <td><b>{{ v.number }}</b> {{ v.vendorName }}<div class="text-xs text-muted">{{ v.subject }}</div></td>
+            <td class="text-right">{{ v.total | money:v.currencyCode }}</td></tr>
+    </tbody></table>
+    <div aside-footer><span class="mr-auto"></span>
+        <button class="btn btn-sm theme" [disabled]="compareIds.size < 2" (click)="compareSelected()">Compare {{ compareIds.size }}</button></div>
+</app-aside>
+
+<!-- Side by side -->
+<app-aside *ngIf="comparison as c" size="xl" title="Vendor quotes side by side" [subtitle]="'Unit costs in ' + c.currency + '; the cheapest is marked'" (closed)="closePanels()">
+    <div *ngIf="!c.quotes.length" class="text-sm text-muted">No vendor quotes to compare.</div>
+    <div class="table-responsive" *ngIf="c.quotes.length">
+        <table class="table table-sm text-sm">
+            <thead><tr><th>Item</th><th class="text-right">Qty</th>
+                <th *ngFor="let q of c.quotes" class="text-right"><a role="button" class="_600" (click)="openRow(q.id)">{{ q.number }}</a>
+                    <div class="text-xs _400">{{ q.vendorName }}</div>
+                    <div class="text-xs _400 text-muted"><span *ngIf="q.leadTimeDays !== null">{{ q.leadTimeDays }} d · </span>{{ q.currencyCode }}<span *ngIf="q.expired" class="text-danger"> · expired</span></div></th></tr></thead>
+            <tbody>
+                <tr *ngFor="let i of c.items"><td>{{ i.description }}</td><td class="text-right">{{ i.quantity | number:'1.0-4' }}</td>
+                    <td *ngFor="let q of c.quotes" class="text-right" [class.text-success]="i.bestVendorQuoteId === q.id" [class._600]="i.bestVendorQuoteId === q.id">
+                        <ng-container *ngIf="cell(i, q.id) as x; else none">{{ x.baseUnitCost | money:c.currency:false }}
+                            <div class="text-xs text-muted">{{ x.baseAmount | money:c.currency:false }}</div></ng-container>
+                        <ng-template #none><span class="text-muted">—</span></ng-template></td></tr>
+                <tr class="_600"><td colspan="2">Total of the items</td>
+                    <td *ngFor="let q of c.quotes" class="text-right">{{ quoteTotal(q.id) | money:c.currency }}
+                        <div *ngIf="missing(q.id)" class="text-xs text-warning _400">{{ missing(q.id) }} item(s) not quoted</div></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="text-xs text-muted">Items are matched by description. Open a vendor quote to select it and price it into the client quote.</div>
+</app-aside>
+
+<fin-vendor-quote-detail *ngIf="vendorQuote && !editing && lookups" [vendorQuote]="vendorQuote" [lookups]="lookups" (closed)="closePanels()"
+                         (edit)="editing = {vendorQuote: $event}" (changed)="changed($event)" (openQuote)="openQuote($event)"></fin-vendor-quote-detail>
+<fin-vendor-quote-editor *ngIf="editing && lookups" [vendorQuote]="editing.vendorQuote" [lookups]="lookups" (closed)="closeEditor()" (saved)="saved($event)"></fin-vendor-quote-editor>

@@ -6,12 +6,12 @@ import {todayIso, addDaysIso, PartyOption} from "../../domains/finance.models";
 import {FinanceApiService, financeErrorOf} from "../../services/finance-api.service";
 import {PickerOption} from "../../views/finance-picker.component";
 import {QuoteAction, QuoteApiService} from "../quote-api.service";
-import {DECLINE_LABEL, QUOTE_STATUS_LABEL, QUOTE_STATUS_TONE, Quote, QuoteLookups} from "../quote.models";
+import {DECLINE_LABEL, QUOTE_STATUS_LABEL, QUOTE_STATUS_TONE, Quote, QuoteApprovalStep, QuoteLookups, VENDOR_QUOTE_STATUS_LABEL} from "../quote.models";
 
 type Panel = 'send' | 'approve' | 'accept' | 'decline' | 'convert' | 'revise' | 'cancel' | 'extend' | 'follow' | null;
 
 /**
- * One quote: what it offers, its totals and margin, approval, sending and the customer's answer, the invoice made from it,
+ * One quote: what it offers (items, vendor-priced items, charges), its totals and margin, the approval steps, sending and the customer's answer, the invoice made from it,
  * revisions and the timeline — with the actions its state allows.
  */
 @Component({selector: 'fin-quote-detail', standalone: false, templateUrl: './templates/quote-detail.html'})
@@ -22,11 +22,14 @@ export class QuoteDetailComponent implements OnChanges {
     @Output() edit = new EventEmitter<Quote>();
     @Output() changed = new EventEmitter<Quote | null>();
     @Output() openInvoice = new EventEmitter<string>();
+    /** Open a vendor quote, or compare those of this quote (null). */
+    @Output() openVendorQuote = new EventEmitter<string | null>();
 
     private readonly destroyRef = inject(DestroyRef);
     readonly statusLabel = QUOTE_STATUS_LABEL;
     readonly tone = QUOTE_STATUS_TONE;
     readonly declineLabel = DECLINE_LABEL;
+    readonly vendorStatusLabel = VENDOR_QUOTE_STATUS_LABEL as Record<string, string>;
 
     panel: Panel = null;
     busy = false;
@@ -46,6 +49,13 @@ export class QuoteDetailComponent implements OnChanges {
     ngOnChanges() { this.panel = null; this.error = null; }
 
     get optionalLines() { return this.quote.lines.filter(l => l.isOptional); }
+    get charges() { return this.quote.lines.filter(l => l.lineType === 'Charge'); }
+    /** The latest approval round first; earlier rounds (rejected, resubmitted) after it. */
+    get approvalRounds(): {round: number; steps: QuoteApprovalStep[]}[] {
+        const rounds = [...new Set(this.quote.approvals.map(a => a.round))].sort((a, b) => b - a);
+        return rounds.map(round => ({round, steps: this.quote.approvals.filter(a => a.round === round).sort((a, b) => a.step - b.step)}));
+    }
+    readonly stepIcon: Record<string, string> = {pending: 'fa-clock-o text-muted', approved: 'fa-check-circle text-success', rejected: 'fa-times-circle text-danger', skipped: 'fa-minus-circle text-muted'};
 
     open(panel: Panel) {
         this.error = null;
@@ -55,6 +65,7 @@ export class QuoteDetailComponent implements OnChanges {
         if (panel === 'accept') { this.accept = {acceptedByName: q.contactName ?? '', customerPoNumber: '', note: '', optional: Object.fromEntries(this.optionalLines.map(l => [l.id, l.isSelected]))}; }
         if (panel === 'extend') { this.extendTo = addDaysIso(todayIso(), this.lookups.settings.defaultValidityDays); }
         if (panel === 'follow') { this.follow = {date: q.followUpDate ?? addDaysIso(todayIso(), 3), note: ''}; }
+        if (panel === 'approve') { this.approveNote = ''; }
         if (panel === 'convert') { this.convert = {customerAccountId: q.customerAccountId, customerLabel: null, invoiceDate: todayIso(), post: false}; }
         this.reason = '';
     }
@@ -75,7 +86,7 @@ export class QuoteDetailComponent implements OnChanges {
     }
     submit() { this.run(this.api.submit(this.quote.id)); }
     doApprove(approve: boolean) {
-        if (!approve && !this.approveNote.trim()) { this.error = 'Say what should change.'; return; }
+        if (!approve && !this.approveNote.trim()) { this.error = 'Give the reason for rejecting it; the preparer sees it.'; return; }
         this.run(this.api.approve(this.quote.id, approve, this.approveNote.trim() || null));
     }
     doAccept() {

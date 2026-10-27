@@ -1,0 +1,56 @@
+<app-aside size="lg" [title]="vendorQuote ? 'Edit ' + vendorQuote.row.number : 'New vendor quote'" subtitle="A third party's quotation, to cost a client quote" (closed)="closed.emit()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+    <div *ngIf="used" class="alert alert-info text-sm py-2">{{ used }} line(s) are priced into client quotes; changing their cost changes those quotes when they are next saved.</div>
+
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label class="text-xs _600 d-flex">Vendor
+                <a role="button" class="ml-auto _400" (click)="setNewVendor(!newVendor)">{{ newVendor ? 'Choose a supplier' : 'Not a supplier yet?' }}</a></label>
+            <fin-picker *ngIf="!newVendor" [small]="true" [search]="searchVendors" [label]="vendorLabel" placeholder="Search suppliers" (picked)="pickVendor($event)"></fin-picker>
+            <input *ngIf="newVendor" class="form-control form-control-sm" [(ngModel)]="model.vendorName" maxlength="200" placeholder="Vendor name">
+        </div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Their quote no.</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.vendorReference" maxlength="100"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">For</label>
+            <input class="form-control form-control-sm" [(ngModel)]="model.subject" maxlength="200" placeholder="What was asked for"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Quote date</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.quoteDate"></div>
+        <div class="col-md-3 form-group"><label class="text-xs _600">Valid until</label><input type="date" class="form-control form-control-sm" [(ngModel)]="model.validUntil" [min]="model.quoteDate"></div>
+        <div class="col-md-2 form-group"><label class="text-xs _600">Lead time (days)</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="model.leadTimeDays" min="0" max="3650"></div>
+        <div class="col-md-2 form-group"><label class="text-xs _600">Currency</label>
+            <input class="form-control form-control-sm text-uppercase" [(ngModel)]="model.currencyCode" maxlength="3"></div>
+        <div *ngIf="currency !== lookups.functionalCurrency" class="col-md-2 form-group"><label class="text-xs _600">Rate to {{ lookups.functionalCurrency }}</label>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="model.currencyRate" min="0" step="any"></div>
+    </div>
+
+    <table class="table table-sm mb-1">
+        <thead><tr class="text-xs text-muted"><th>Item</th><th style="width: 90px">Code</th><th style="width: 80px" class="text-right">Qty</th><th style="width: 70px">Unit</th>
+            <th style="width: 110px" class="text-right">Unit cost</th><th style="width: 75px" class="text-right">Tax %</th><th style="width: 110px" class="text-right">Amount</th><th style="width: 30px"></th></tr></thead>
+        <tbody><tr *ngFor="let l of lines; let i = index">
+            <td><input class="form-control form-control-sm" [(ngModel)]="l.description" maxlength="500"></td>
+            <td><input class="form-control form-control-sm" [(ngModel)]="l.code" maxlength="40"></td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.quantity" min="0" step="any"></td>
+            <td><input class="form-control form-control-sm" [(ngModel)]="l.unit" maxlength="20"></td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.unitCost" min="0" step="any"></td>
+            <td><input type="number" class="form-control form-control-sm text-right" [(ngModel)]="l.taxRate" min="0" max="100" step="any"></td>
+            <td class="text-right align-middle">{{ net(l) | money:currency:false }}</td>
+            <td class="align-middle"><a role="button" class="text-muted" (click)="lines.splice(i, 1)"><i class="fa fa-times"></i></a></td>
+        </tr></tbody>
+    </table>
+    <div class="d-flex mb-2">
+        <button type="button" class="btn btn-xs white" (click)="addLine()"><i class="fa fa-plus mr-1"></i>Line</button><span class="flex"></span>
+        <div class="text-right text-sm">Subtotal {{ subTotal | money:currency }} · tax {{ taxTotal | money:currency }}
+            <div class="_600">{{ subTotal + taxTotal | money:currency }}</div></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 form-group"><label class="text-xs _600">Payment terms</label><input class="form-control form-control-sm" [(ngModel)]="model.paymentTerms" maxlength="200"></div>
+        <div class="col-md-6 form-group"><label class="text-xs _600">Notes</label><input class="form-control form-control-sm" [(ngModel)]="model.notes" maxlength="4000"></div>
+    </div>
+
+    <div aside-footer>
+        <span class="mr-auto"></span>
+        <button class="btn btn-sm white mr-1" (click)="closed.emit()">Cancel</button>
+        <button class="btn btn-sm theme" [disabled]="busy" (click)="save()">Save</button>
+    </div>
+</app-aside>

@@ -15,14 +15,38 @@
             <div class="h4 mb-0 _600">{{ quote.total | money:quote.currencyCode }}</div>
             <div class="text-xs text-muted">subtotal {{ quote.subTotal | money:quote.currencyCode:false }} · tax {{ quote.taxTotal | money:quote.currencyCode:false }}
                 <span *ngIf="quote.discountTotal"> · discount {{ quote.discountTotal | money:quote.currencyCode:false }}</span></div>
-            <div class="text-xs" *ngIf="quote.marginPercent !== null">Margin {{ quote.marginPercent }}% ({{ quote.marginTotal | money:quote.currencyCode:false }})</div>
+            <div class="text-xs text-muted" *ngIf="quote.chargesTotal">incl. charges {{ quote.chargesTotal | money:quote.currencyCode:false }}</div>
+            <div class="text-xs" *ngIf="quote.marginPercent !== null" [class.text-danger]="quote.marginPercent < 0">Margin {{ quote.marginPercent }}%
+                ({{ quote.marginTotal | money:quote.currencyCode:false }} on cost {{ quote.costTotal | money:quote.currencyCode:false }})</div>
             <div class="text-xs text-muted" *ngIf="quote.optionalTotal">Optional extras {{ quote.optionalTotal | money:quote.currencyCode:false }}</div>
         </div>
     </div>
 
-    <div *ngIf="quote.approvalReasons.length" class="alert alert-info text-sm py-2">Needs approval before it is sent: {{ quote.approvalReasons.join(' ') }}</div>
-    <div *ngIf="quote.status === 'pending_approval'" class="alert alert-warning text-sm py-2">Waiting for approval: {{ quote.approvalReason }}</div>
-    <div *ngIf="quote.changesRequested" class="alert alert-warning text-sm py-2">Changes requested: {{ quote.approvalNote }}</div>
+    <div *ngIf="quote.status === 'draft' && quote.approvalReasons.length" class="alert alert-info text-sm py-2">Needs approval before it is sent:
+        <div *ngFor="let r of quote.approvalReasons">{{ r }}</div></div>
+    <div *ngIf="quote.status === 'pending_approval'" class="alert alert-warning text-sm py-2">Waiting for <b>{{ quote.currentStep || 'approval' }}</b>
+        <span *ngIf="quote.canApprove"> — it is yours to decide.</span></div>
+    <div *ngIf="quote.changesRequested" class="alert alert-danger text-sm py-2"><b>Rejected:</b> {{ quote.approvalNote }}. Edit it and send it for approval again.</div>
+
+    <!-- Approval flow -->
+    <div *ngIf="approvalRounds.length" class="box p-2 mb-2">
+        <div class="text-xs text-muted text-uppercase mb-1">Approval flow</div>
+        <ng-container *ngFor="let r of approvalRounds; let first = first">
+            <div *ngIf="!first" class="text-xs text-muted mt-2">Round {{ r.round }} (earlier)</div>
+            <div class="d-flex flex-wrap align-items-start" [class.text-muted]="!first">
+                <ng-container *ngFor="let s of r.steps; let last = last">
+                    <div class="mr-2 mb-1 p-1 px-2 rounded text-sm" [class.b-a]="s.isCurrent" [class.b-warning]="s.isCurrent" style="min-width: 170px">
+                        <i class="fa mr-1" [ngClass]="stepIcon[s.status]"></i><b>{{ s.name }}</b>
+                        <div class="text-xs text-muted">{{ s.approverRole || 'Approvers' }}<span *ngIf="s.isCurrent"> · waiting</span></div>
+                        <div class="text-xs text-muted" [title]="s.reason">{{ s.reason }}</div>
+                        <div *ngIf="s.decidedByName" class="text-xs">{{ s.status === 'rejected' ? 'Rejected' : 'Approved' }} by {{ s.decidedByName }} · {{ s.decidedAt | date:'medium' }}</div>
+                        <div *ngIf="s.note" class="text-xs" [class.text-danger]="s.status === 'rejected'">“{{ s.note }}”</div>
+                    </div>
+                    <i *ngIf="!last" class="fa fa-angle-right text-muted mr-2 mt-2"></i>
+                </ng-container>
+            </div>
+        </ng-container>
+    </div>
     <div *ngIf="quote.status === 'expired'" class="alert alert-danger text-sm py-2">Expired. Extend the valid-until date to send it again or record the answer.</div>
     <div *ngIf="quote.status === 'declined'" class="alert alert-secondary text-sm py-2">Declined: {{ declineLabel[quote.declineReason ?? ''] || quote.declineReason }}
         <span *ngIf="quote.lostToCompetitor"> (to {{ quote.lostToCompetitor }})</span><span *ngIf="quote.declineNote"> — {{ quote.declineNote }}</span></div>
@@ -35,7 +59,7 @@
     <div class="d-flex flex-wrap mb-2">
         <button *ngIf="quote.canEdit" class="btn btn-sm white mr-1 mb-1" (click)="edit.emit(quote)"><i class="fa fa-pencil mr-1"></i>Edit</button>
         <button *ngIf="quote.canSubmit" class="btn btn-sm theme mr-1 mb-1" [disabled]="busy" (click)="submit()">Send for approval</button>
-        <button *ngIf="quote.canApprove" class="btn btn-sm theme mr-1 mb-1" (click)="open('approve')">Approve…</button>
+        <button *ngIf="quote.canApprove" class="btn btn-sm theme mr-1 mb-1" (click)="open('approve')"><i class="fa fa-gavel mr-1"></i>Decide{{ quote.currentStep ? ': ' + quote.currentStep : '' }}</button>
         <button *ngIf="quote.canSend" class="btn btn-sm theme mr-1 mb-1" (click)="open('send')"><i class="fa fa-paper-plane mr-1"></i>{{ quote.sentCount ? 'Send again' : 'Send' }}</button>
         <button *ngIf="quote.canDecide" class="btn btn-sm white mr-1 mb-1" (click)="open('accept')"><i class="fa fa-check mr-1"></i>Accepted</button>
         <button *ngIf="quote.canDecide" class="btn btn-sm white mr-1 mb-1" (click)="open('decline')"><i class="fa fa-times mr-1"></i>Declined</button>
@@ -64,8 +88,12 @@
             <button class="btn btn-sm theme" [disabled]="busy" (click)="doSend()">{{ send.email ? 'Send' : 'Mark as sent' }}</button></div>
     </div>
     <div *ngIf="panel === 'approve'" class="box p-2 mb-2">
-        <div class="form-group"><label class="text-xs _600">Note</label><input class="form-control form-control-sm" [(ngModel)]="approveNote" maxlength="1000" placeholder="Required when asking for changes"></div>
-        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" [disabled]="busy" (click)="doApprove(false)">Ask for changes</button>
+        <div class="text-sm mb-1"><b>{{ quote.currentStep }}</b> · total {{ quote.total | money:quote.currencyCode }}
+            <span *ngIf="quote.marginPercent !== null"> · margin {{ quote.marginPercent }}%</span><span *ngIf="quote.maxDiscountRate"> · max discount {{ quote.maxDiscountRate }}%</span></div>
+        <div class="form-group"><label class="text-xs _600">Note / reason</label>
+            <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="approveNote" maxlength="1000" placeholder="Optional to approve; required to reject"></textarea></div>
+        <div class="d-flex"><span class="text-xs text-muted align-self-center">Rejecting sends it back to the preparer as a draft; the remaining steps are skipped.</span><span class="flex"></span>
+            <button class="btn btn-sm white text-danger mr-1" [disabled]="busy" (click)="doApprove(false)">Reject</button>
             <button class="btn btn-sm theme" [disabled]="busy" (click)="doApprove(true)">Approve</button></div>
     </div>
     <div *ngIf="panel === 'accept'" class="box p-2 mb-2">
@@ -126,8 +154,14 @@
         <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">Qty</th><th class="text-right">Price</th><th class="text-right">Disc</th>
             <th>Tax</th><th class="text-right">Amount</th></tr></thead>
         <tbody><tr *ngFor="let l of quote.lines" [class._600]="l.lineType === 'Section'" [class.text-muted]="l.isOptional && !l.isSelected">
-            <ng-container *ngIf="l.lineType === 'Item'; else section">
-                <td>{{ l.description }} <span *ngIf="l.isOptional" class="badge light">optional</span><div *ngIf="l.details" class="text-xs text-muted">{{ l.details }}</div></td>
+            <ng-container *ngIf="l.lineType !== 'Section'; else section">
+                <td><i *ngIf="l.lineType === 'Charge'" class="fa fa-plus-square-o text-muted mr-1" title="Charge"></i>{{ l.description }}
+                    <span *ngIf="l.isOptional" class="badge light">optional</span>
+                    <span *ngIf="l.lineType === 'Charge' && l.chargeBasis !== 'fixed'" class="text-xs text-muted">{{ l.chargeRate }}% of {{ l.chargeBasis === 'percent_cost' ? 'cost' : 'the items' }}</span>
+                    <div *ngIf="l.details" class="text-xs text-muted">{{ l.details }}</div>
+                    <div *ngIf="l.vendorQuoteId" class="text-xs text-muted"><i class="fa fa-truck mr-1"></i>
+                        <a role="button" (click)="openVendorQuote.emit(l.vendorQuoteId)">{{ l.vendorQuoteNumber }}</a> {{ l.vendorName }}
+                        · cost {{ l.unitCost | money:quote.currencyCode:false }}<span *ngIf="l.markupPercent !== null"> + {{ l.markupPercent }}%</span></div></td>
                 <td class="text-right">{{ l.quantity | number:'1.0-4' }} {{ l.unit }}</td>
                 <td class="text-right">{{ l.unitPrice | money:quote.currencyCode:false }}</td>
                 <td class="text-right">{{ l.discountRate ? l.discountRate + '%' : '' }}</td>
@@ -139,6 +173,13 @@
     </table>
     <div *ngIf="quote.taxes.length" class="text-xs text-muted mb-2">
         <span *ngFor="let t of quote.taxes" class="mr-3">{{ t.component }} {{ t.rate }}% on {{ t.taxable | money:quote.currencyCode:false }}: {{ t.tax | money:quote.currencyCode:false }}</span></div>
+    <div *ngIf="quote.vendorQuotes.length" class="mb-2">
+        <div class="d-flex align-items-center"><span class="text-xs text-muted text-uppercase">Vendor quotes</span>
+            <a *ngIf="quote.vendorQuotes.length > 1" role="button" class="text-xs ml-2" (click)="openVendorQuote.emit(null)">Compare</a></div>
+        <div *ngFor="let v of quote.vendorQuotes" class="text-sm"><a role="button" class="_600" (click)="openVendorQuote.emit(v.id)">{{ v.number }}</a>
+            {{ v.vendorName }} · {{ v.total | money:v.currencyCode }} · <span class="text-muted">{{ vendorStatusLabel[v.status] }}</span>
+            <span *ngIf="v.expired" class="badge danger ml-1">expired</span></div>
+    </div>
     <div *ngIf="quote.notes" class="text-sm mb-2"><b class="text-xs text-muted d-block">Notes</b><span style="white-space: pre-wrap">{{ quote.notes }}</span></div>
     <div *ngIf="quote.terms" class="text-sm mb-2"><b class="text-xs text-muted d-block">Terms</b><span style="white-space: pre-wrap">{{ quote.terms }}</span></div>
     <div *ngIf="quote.internalNote" class="text-sm mb-2"><b class="text-xs text-muted d-block">Internal note</b>{{ quote.internalNote }}</div>

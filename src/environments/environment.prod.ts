@@ -1,4 +1,3 @@
-const svcUrl = 'https://connect.enrator.com';
 export const environment = {
     production: true,
     identityServer: {
@@ -7,6 +6,6 @@ export const environment = {
       issuer: null as string | null,
       clientId: 'localhost-spa'
     },
-  authBaseUrl: svcUrl,
-  tenantUrl: svcUrl
+  authBaseUrl: 'https://auth.enrator.com',
+  tenantUrl: 'https://api.enrator.com'
 };

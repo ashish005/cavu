@@ -29,7 +29,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/silent-refresh.html"
+              "src/silent-refresh.html",
+              { "glob": "web.config", "input": "src", "output": "/" }
             ],
             "styles": [
               "src/styles.css",

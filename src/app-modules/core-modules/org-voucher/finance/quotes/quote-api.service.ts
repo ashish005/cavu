@@ -2,7 +2,10 @@ import {Injectable, Injector} from "@angular/core";
 import {HttpParams} from "@angular/common/http";
 import {Observable, catchError, map, shareReplay} from "rxjs";
 import {CoreEndpointBase, OrgResourceService} from "@app-global";
-import {QUOTE_SERIALIZER, Quote, QuoteCustomer, QuoteInput, QuoteLookups, QuoteRow, QuoteSettings, QuoteSummary} from "./quote.models";
+import {
+    QUOTE_SERIALIZER, Quote, QuoteCustomer, QuoteInput, QuoteLookups, QuoteRow, QuoteSettings, QuoteSummary, VENDOR_QUOTE_SERIALIZER, VendorLinesToQuoteInput,
+    VendorQuote, VendorQuoteComparison, VendorQuoteInput, VendorQuoteRow
+} from "./quote.models";
 
 const unwrap = <T>(resp: any): T => {
     if (resp && resp.isSuccess === false) { throw {status: 200, error: resp, message: resp.message || 'The request was rejected.'}; }
@@ -73,6 +76,12 @@ export class QuoteApiService extends CoreEndpointBase {
         return this.httpClient.get(`${this.root}/${quoteId}/files/${fileId}`, this.getFileDownloadRequestHeaders).pipe(
             map((blob: any) => URL.createObjectURL(blob as Blob)), catchError(e => this.handleError(e, () => this.fileUrl(quoteId, fileId))));
     }
+    /** Draft quotes (new vendor lines can be priced into them). */
+    drafts(search: string | null): Observable<QuoteRow[]> {
+        return this.httpClient.get(this.root, {...this.requestHeaders, params: params({status: 'draft', search, take: 30})}).pipe(
+            map((r: any) => ((r?.entities ?? []) as any[]).map(j => QUOTE_SERIALIZER.fromJson(j) as QuoteRow)),
+            catchError(e => this.handleError(e, () => this.drafts(search))));
+    }
     settings() { return this.get<QuoteSettings>('settings'); }
     saveSettings(body: QuoteSettings) { return this.request<QuoteSettings>('PUT', 'settings', body); }
 }
@@ -83,4 +92,54 @@ export class QuoteGridService extends OrgResourceService<QuoteRow> {
     constructor(public override injector: Injector) { super(injector, 'v1/sales/quotes', QUOTE_SERIALIZER); }
 }
 
-export const QUOTE_SERVICES = [QuoteApiService, QuoteGridService];
+/** Tenant API `api/v1/sales/vendor-quotes/*`: third parties' quotations. Errors read with `financeErrorOf`. */
+@Injectable()
+export class VendorQuoteApiService extends CoreEndpointBase {
+    constructor(public override injector: Injector) { super(injector); }
+
+    private get root() { return `${this.baseSectorAPIUrl}/v1/sales/vendor-quotes`; }
+
+    private get<T>(path: string, query: HttpParams = new HttpParams()): Observable<T> {
+        return this.httpClient.get(`${this.root}${path ? '/' + path : ''}`, {...this.requestHeaders, params: query}).pipe(
+            map(r => unwrap<T>(r)), catchError(e => this.handleError(e, () => this.get<T>(path, query))));
+    }
+
+    private request<T>(method: 'POST' | 'PUT' | 'DELETE', path: string, body: any = {}): Observable<T> {
+        return this.httpClient.request(method, `${this.root}${path ? '/' + path : ''}`, {...this.requestHeaders, body}).pipe(
+            map(r => unwrap<T>(r)), catchError(e => this.handleError(e, () => this.request<T>(method, path, body))));
+    }
+
+    /** Open vendor quotes (for pickers), optionally of one client quote. */
+    open(salesQuoteId: string | null = null, search: string | null = null) {
+        const query = params({status: 'open', salesQuoteId, search, take: 100});
+        return this.httpClient.get(this.root, {...this.requestHeaders, params: query}).pipe(
+            map((r: any) => ((r?.entities ?? []) as any[]).map(j => VENDOR_QUOTE_SERIALIZER.fromJson(j) as VendorQuoteRow)),
+            catchError(e => this.handleError(e, () => this.open(salesQuoteId, search))));
+    }
+    quote(id: string) { return this.get<VendorQuote>(id); }
+    save(id: string | null, body: VendorQuoteInput) { return id ? this.request<VendorQuote>('PUT', id, body) : this.request<VendorQuote>('POST', '', body); }
+    delete(id: string) { return this.request<void>('DELETE', id); }
+    setStatus(id: string, status: string, reason: string | null = null) { return this.request<VendorQuote>('POST', `${id}/status`, {status, reason}); }
+    fromCapture(captureId: string, salesQuoteId: string | null, subject: string | null) {
+        return this.request<VendorQuote>('POST', 'from-capture', {captureId, salesQuoteId, subject});
+    }
+    toClientQuote(id: string, body: VendorLinesToQuoteInput) { return this.request<Quote>('POST', `${id}/to-client-quote`, body); }
+    compare(salesQuoteId: string | null, ids: string[]) {
+        let q = params({salesQuoteId});
+        ids.forEach(i => q = q.append('ids', i));
+        return this.get<VendorQuoteComparison>('compare', q);
+    }
+    attach(id: string, fileIds: string[]) { return this.request<VendorQuote>('POST', `${id}/files`, fileIds); }
+    fileUrl(id: string, fileId: string): Observable<string> {
+        return this.httpClient.get(`${this.root}/${id}/files/${fileId}`, this.getFileDownloadRequestHeaders).pipe(
+            map((blob: any) => URL.createObjectURL(blob as Blob)), catchError(e => this.handleError(e, () => this.fileUrl(id, fileId))));
+    }
+}
+
+/** Paged `GET v1/sales/vendor-quotes`. */
+@Injectable()
+export class VendorQuoteGridService extends OrgResourceService<VendorQuoteRow> {
+    constructor(public override injector: Injector) { super(injector, 'v1/sales/vendor-quotes', VENDOR_QUOTE_SERIALIZER); }
+}
+
+export const QUOTE_SERVICES = [QuoteApiService, QuoteGridService, VendorQuoteApiService, VendorQuoteGridService];

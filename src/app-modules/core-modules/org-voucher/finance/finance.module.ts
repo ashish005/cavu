@@ -21,7 +21,10 @@ import {
 } from "./inventory";
 import {BANKING_SERVICES, FinanceBankRulesView, FinanceBankStatementView, FinanceMoneyAccountsView, FinancePaymentModesView} from "./banking";
 import {CAPTURE_SERVICES, CaptureCompareComponent, FinanceCaptureInboxView, FinanceCaptureLogView, FinanceCaptureReportView, FinanceCaptureSettingsView} from "./capture";
-import {FinanceQuoteSettingsView, FinanceQuotesView, QUOTE_SERVICES, QuoteDetailComponent, QuoteEditorComponent} from "./quotes";
+import {
+    FinanceQuoteSettingsView, FinanceQuotesView, FinanceVendorQuotesView, QUOTE_SERVICES, QuoteDetailComponent, QuoteEditorComponent, VendorQuoteDetailComponent,
+    VendorQuoteEditorComponent
+} from "./quotes";
 
 interface NavItem { label: string; icon: string; route: string; }
 interface NavSection { title: string; items: NavItem[]; }
@@ -67,8 +70,12 @@ export class FinanceShell {
     actionTemplate: TemplateRef<any> | null = null;
     readonly nav: NavSection[] = [
         {title: 'Overview', items: [{label: 'Dashboard', icon: 'fa fa-line-chart', route: 'dashboard'}]},
+        {title: 'Quotations', items: [
+            {label: 'Client quotes', icon: 'fa fa-file-o', route: 'sales/quotes'},
+            {label: 'Vendor quotes', icon: 'fa fa-truck', route: 'sales/vendor-quotes'},
+            {label: 'Awaiting my approval', icon: 'fa fa-gavel', route: 'sales/approvals'},
+            {label: 'Quote settings', icon: 'fa fa-cog', route: 'settings/quotes'}]},
         {title: 'Sales', items: [
-            {label: 'Quotes', icon: 'fa fa-file-o', route: 'sales/quotes'},
             {label: 'Invoices', icon: 'fa fa-file-text-o', route: ROUTE_OF_KIND.Invoice},
             {label: 'Credit notes', icon: 'fa fa-undo', route: ROUTE_OF_KIND.CreditNote},
             {label: 'Money in', icon: 'fa fa-arrow-down', route: ROUTE_OF_KIND.Receipt}]},
@@ -97,7 +104,6 @@ export class FinanceShell {
             {label: 'Tax codes', icon: 'fa fa-percent', route: 'settings/tax-codes'},
             {label: 'Tax rules', icon: 'fa fa-random', route: 'settings/tax-rules'},
             {label: 'Invoicing', icon: 'fa fa-file-text', route: 'settings/invoicing'},
-            {label: 'Quotes', icon: 'fa fa-file-o', route: 'settings/quotes'},
             {label: 'Payment modes', icon: 'fa fa-credit-card', route: 'settings/payment-modes'},
             {label: 'Bank rules', icon: 'fa fa-magic', route: 'settings/bank-rules'},
             {label: 'Document capture', icon: 'fa fa-camera', route: 'settings/capture'},
@@ -147,7 +153,9 @@ export const FINANCE_ROUTES: Routes = [
             {path: 'products/movements', component: FinanceStockMovementsView, data: {title: 'Stock movements', header: 'Stock movements'}},
             {path: 'products/reports', component: FinanceInventoryReportsView, data: {title: 'Inventory reports', header: 'Inventory reports'}},
             {path: 'products/setup', component: FinanceInventorySetupView, data: {title: 'Products setup', header: 'Products setup'}},
-            {path: 'sales/quotes', component: FinanceQuotesView, data: {title: 'Quotes', header: 'Quotes'}},
+            {path: 'sales/quotes', component: FinanceQuotesView, data: {title: 'Client quotes', header: 'Client quotes'}},
+            {path: 'sales/approvals', component: FinanceQuotesView, data: {title: 'Quotes awaiting my approval', header: 'Awaiting my approval', awaitingMe: true}},
+            {path: 'sales/vendor-quotes', component: FinanceVendorQuotesView, data: {title: 'Vendor quotes', header: 'Vendor quotes'}},
             {path: 'purchases/capture', component: FinanceCaptureInboxView, data: {title: 'Scan bills & receipts', header: 'Scan bills & receipts'}},
             {path: 'purchases/capture/report', component: FinanceCaptureReportView, data: {title: 'OCR comparison', header: 'OCR comparison'}},
             {path: 'purchases/capture/log', component: FinanceCaptureLogView, data: {title: 'OCR log', header: 'OCR log'}},
@@ -180,7 +188,8 @@ export const FINANCE_ROUTES: Routes = [
         FinanceChartView, FinanceReportsView, FinanceTaxCodesView, FinanceTaxRulesView, FinanceInvoicingView, FinanceDocumentTypesView, FinanceAccountingView, FinancePostingView,
         FinanceRecurringView, FinanceItemsView, FinanceStockView, FinanceStockMovementsView, FinanceStockDocumentsView, FinanceInventoryReportsView,
         FinanceInventorySetupView, FinanceMoneyAccountsView, FinanceBankStatementView, FinancePaymentModesView, FinanceBankRulesView, FinanceCaptureInboxView,
-        FinanceCaptureSettingsView, FinanceCaptureReportView, FinanceCaptureLogView, CaptureCompareComponent, FinanceQuotesView, QuoteEditorComponent, QuoteDetailComponent, FinanceQuoteSettingsView
+        FinanceCaptureSettingsView, FinanceCaptureReportView, FinanceCaptureLogView, CaptureCompareComponent, FinanceQuotesView, QuoteEditorComponent, QuoteDetailComponent, FinanceQuoteSettingsView,
+        FinanceVendorQuotesView, VendorQuoteEditorComponent, VendorQuoteDetailComponent
     ]
 })
 export class FinanceModule {}

@@ -1,4 +1,4 @@
-<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-file-o mr-1"></i><b>Quotes</b></span></ng-template>
+<ng-template #pageTitleTemplate><span class="navbar-text"><i class="fa fa-file-o mr-1"></i><b>Quote settings</b></span></ng-template>
 <ng-template #actionTemplate><button class="btn btn-sm theme" [disabled]="!model || saving" (click)="save()">Save</button></ng-template>
 
 <div class="d-flex flex-column flex scroll-y p-3">
@@ -14,16 +14,64 @@
             <div class="col-md-4 form-group"><label class="text-sm _600">Warn before expiry (days)</label>
                 <input type="number" class="form-control" [(ngModel)]="m.expiryWarningDays" min="1" max="60"></div>
         </div>
-        <h6 class="_600 mt-2">Approval</h6>
-        <p class="text-sm text-muted">A quote needs someone with the "Change sales quotes" permission to approve it before it is sent when any of these is exceeded. Leave empty for no limit.</p>
-        <div class="row">
-            <div class="col-md-4 form-group"><label class="text-sm _600">Total above ({{ currency }})</label>
-                <input type="number" class="form-control" [(ngModel)]="m.approvalAmount" min="0" step="any"></div>
-            <div class="col-md-4 form-group"><label class="text-sm _600">Any discount above (%)</label>
-                <input type="number" class="form-control" [(ngModel)]="m.maxDiscountWithoutApproval" min="0" max="100" step="any"></div>
-            <div class="col-md-4 form-group"><label class="text-sm _600">Margin below (%)</label>
-                <input type="number" class="form-control" [(ngModel)]="m.minMarginPercent" min="-100" max="100" step="any"></div>
+        <h6 class="_600 mt-2">Approval flow</h6>
+        <p class="text-sm text-muted">A quote goes through the steps that apply to it, in order, before it can be sent. A step applies when any of its conditions holds.
+            Only members with the step's role (or administrators) approve it; with no role, anyone allowed to change quotes. Rejecting needs a reason and sends the quote back to its preparer.</p>
+        <ng-container *ngIf="!m.approvalSteps.length">
+            <p class="text-sm">Simple rule — one approval step when any of these is exceeded (leave empty for no limit):</p>
+            <div class="row">
+                <div class="col-md-4 form-group"><label class="text-sm _600">Total at or above ({{ currency }})</label>
+                    <input type="number" class="form-control" [(ngModel)]="m.approvalAmount" min="0" step="any"></div>
+                <div class="col-md-4 form-group"><label class="text-sm _600">Any discount above (%)</label>
+                    <input type="number" class="form-control" [(ngModel)]="m.maxDiscountWithoutApproval" min="0" max="100" step="any"></div>
+                <div class="col-md-4 form-group"><label class="text-sm _600">Margin below (%)</label>
+                    <input type="number" class="form-control" [(ngModel)]="m.minMarginPercent" min="-100" max="100" step="any"></div>
+            </div>
+        </ng-container>
+        <div *ngIf="m.approvalSteps.length" class="table-responsive">
+            <table class="table table-sm">
+                <thead><tr class="text-xs text-muted"><th style="width: 30px">#</th><th>Step</th><th style="width: 120px">Total ≥ ({{ currency }})</th>
+                    <th style="width: 95px">Margin &lt; %</th><th style="width: 95px">Discount &gt; %</th><th style="width: 70px">Every quote</th><th style="width: 170px">Approved by</th><th style="width: 70px"></th></tr></thead>
+                <tbody><tr *ngFor="let st of m.approvalSteps; let i = index">
+                    <td class="align-middle">{{ i + 1 }}</td>
+                    <td><input class="form-control form-control-sm" [(ngModel)]="st.name" maxlength="100"></td>
+                    <td><input type="number" class="form-control form-control-sm" [(ngModel)]="st.totalAtLeast" min="0" step="any" [disabled]="st.always"></td>
+                    <td><input type="number" class="form-control form-control-sm" [(ngModel)]="st.marginBelow" min="-100" max="100" step="any" [disabled]="st.always"></td>
+                    <td><input type="number" class="form-control form-control-sm" [(ngModel)]="st.discountAbove" min="0" max="100" step="any" [disabled]="st.always"></td>
+                    <td class="align-middle text-center"><input type="checkbox" [(ngModel)]="st.always"></td>
+                    <td><select class="form-control form-control-sm" [(ngModel)]="st.approverRoleId"><option [ngValue]="null">Anyone who can change quotes</option>
+                        <option *ngFor="let r of lookups?.roles" [ngValue]="r.code">{{ r.label }}</option></select></td>
+                    <td class="align-middle text-nowrap">
+                        <a role="button" class="text-muted mr-1" (click)="moveStep(i, -1)"><i class="fa fa-arrow-up"></i></a>
+                        <a role="button" class="text-muted mr-1" (click)="moveStep(i, 1)"><i class="fa fa-arrow-down"></i></a>
+                        <a role="button" class="text-muted" (click)="m.approvalSteps.splice(i, 1)"><i class="fa fa-times"></i></a></td>
+                </tr></tbody>
+            </table>
         </div>
+        <button class="btn btn-sm white mb-3" (click)="addStep()"><i class="fa fa-plus mr-1"></i>{{ m.approvalSteps.length ? 'Add a step' : 'Set up a multi-step flow' }}</button>
+
+        <h6 class="_600 mt-2">Pricing</h6>
+        <div class="row">
+            <div class="col-md-4 form-group"><label class="text-sm _600">Default markup on vendor costs (%)</label>
+                <input type="number" class="form-control" [(ngModel)]="m.defaultMarkupPercent" min="-100" step="any" placeholder="none"></div>
+        </div>
+        <label class="text-sm _600 d-block">Standard charges</label>
+        <p class="text-xs text-muted mb-1">Offered with one click on every quote (and when pricing a vendor quote into a client quote).</p>
+        <table *ngIf="m.standardCharges.length" class="table table-sm">
+            <thead><tr class="text-xs text-muted"><th style="width: 160px">Type</th><th>Shown as</th><th style="width: 150px">Based on</th><th style="width: 110px">Amount / %</th>
+                <th style="width: 120px">Tax</th><th style="width: 30px"></th></tr></thead>
+            <tbody><tr *ngFor="let c of m.standardCharges; let i = index">
+                <td><select class="form-control form-control-sm" [(ngModel)]="c.type"><option *ngFor="let t of lookups?.chargeTypes" [ngValue]="t.code">{{ t.label }}</option></select></td>
+                <td><input class="form-control form-control-sm" [(ngModel)]="c.label" maxlength="100"></td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="c.basis"><option *ngFor="let b of lookups?.chargeBases" [ngValue]="b.code">{{ b.label }}</option></select></td>
+                <td><input type="number" class="form-control form-control-sm" [(ngModel)]="c.rate" min="0" step="any"></td>
+                <td><select class="form-control form-control-sm" [(ngModel)]="c.taxCodeId"><option [ngValue]="null">Default</option>
+                    <option *ngFor="let t of salesTaxes" [ngValue]="t.id">{{ t.code }}</option></select></td>
+                <td class="align-middle"><a role="button" class="text-muted" (click)="m.standardCharges.splice(i, 1)"><i class="fa fa-times"></i></a></td>
+            </tr></tbody>
+        </table>
+        <button class="btn btn-sm white mb-3" (click)="addCharge()"><i class="fa fa-plus mr-1"></i>Standard charge</button>
+
         <h6 class="_600 mt-2">On new quotes</h6>
         <div class="form-group"><label class="text-sm _600">Notes</label><textarea class="form-control" rows="3" [(ngModel)]="m.defaultNotes" maxlength="4000"></textarea></div>
         <div class="form-group"><label class="text-sm _600">Terms and conditions</label><textarea class="form-control" rows="5" [(ngModel)]="m.defaultTerms" maxlength="8000"></textarea></div>

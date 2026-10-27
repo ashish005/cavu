@@ -10,8 +10,9 @@ import {QuoteNumberCell, QuoteStatusCell} from "../quote-cells";
 import {Quote, QuoteLookups, QuoteQueryOptions, QuoteRow, QuoteSummary} from "../quote.models";
 
 /**
- * Sales quotes of the branch: the pipeline at a glance, filters (open, expiring, follow-ups due…), the list, and a
- * quote's detail (send, record the customer's answer, convert to an invoice) or editor in a side panel.
+ * Client quotes of the branch: the pipeline at a glance, filters (open, expiring, follow-ups due…), the list, and a
+ * quote's detail (approval steps, send, record the customer's answer, convert to an invoice) or editor in a side panel.
+ * With route data `awaitingMe` it is the approver's inbox: only quotes whose current step the member can approve.
  * Deep links `?quote=<id>`, `?new=1`.
  */
 @Component({standalone: false, templateUrl: './templates/quotes.html'})
@@ -27,6 +28,8 @@ export class FinanceQuotesView extends ViewExtender<QuoteRow> implements OnInit 
     summary: QuoteSummary | null = null;
     quote: Quote | null = null;
     editing: {quote: Quote | null} | null = null;
+    /** The approver's inbox (route `sales/approvals`). */
+    awaitingMe = false;
 
     constructor(public override service: QuoteGridService, public override activatedRoute: ActivatedRoute, private api: QuoteApiService,
                 private events: FinanceGridEvents, private alerts: AlertService, private router: Router) {
@@ -48,6 +51,9 @@ export class FinanceQuotesView extends ViewExtender<QuoteRow> implements OnInit 
     get errorText() { return this.errorMsg ? financeErrorOf(this.errorMsg, 'Quotes could not be loaded.') : null; }
 
     ngOnInit() {
+        this.awaitingMe = !!this.activatedRoute.snapshot.data['awaitingMe'];
+        this.coreState.awaitingMe = this.awaitingMe;
+        if (this.awaitingMe) { this.coreState.status = 'pending_approval'; }
         this.api.lookups().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: l => this.lookups = l,
             error: e => this.alerts.showMessage('Quotes', financeErrorOf(e, 'Quotes could not be loaded.'), MessageSeverity.error)
@@ -99,6 +105,12 @@ export class FinanceQuotesView extends ViewExtender<QuoteRow> implements OnInit 
         if (!q) { this.closePanels(); }
         this.refreshGrid();
         this.loadSummary();
+    }
+
+    /** A vendor quote (id), or the comparison of this quote's vendor quotes (null). */
+    openVendorQuote(id: string | null) {
+        const queryParams = id ? {vq: id} : {compare: this.quote?.id};
+        this.router.navigate(['sales/vendor-quotes'], {relativeTo: this.activatedRoute.parent, queryParams});
     }
 
     /** Opens the invoice made from a quote in the invoices list. */

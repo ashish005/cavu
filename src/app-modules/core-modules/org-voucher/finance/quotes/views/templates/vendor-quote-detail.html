@@ -1,0 +1,81 @@
+<app-aside size="lg" [title]="row.number + ' · ' + row.vendorName" [subtitle]="row.subject" (closed)="closed.emit()">
+    <loader [isLoading]="busy"></loader>
+    <div *ngIf="error" class="alert alert-danger text-sm py-2">{{ error }}</div>
+
+    <div class="d-flex flex-wrap align-items-start mb-2">
+        <div class="mr-4 mb-2"><span class="badge" [ngClass]="tone[row.status]">{{ statusLabel[row.status] }}</span>
+            <span *ngIf="row.expired" class="badge danger ml-1">expired</span>
+            <div class="text-xs text-muted mt-1">Their no. {{ row.vendorReference || '—' }} · {{ row.quoteDate }}<span *ngIf="row.validUntil"> · valid until {{ row.validUntil }}</span></div>
+            <div class="text-xs text-muted"><span *ngIf="row.leadTimeDays !== null">Lead time {{ row.leadTimeDays }} days · </span>{{ vendorQuote.paymentTerms }}</div>
+            <div class="text-xs" *ngIf="row.salesQuoteId">For client quote <a role="button" class="_600" (click)="openQuote.emit(row.salesQuoteId!)">{{ row.salesQuoteNumber }}</a></div></div>
+        <div class="ml-auto text-right mb-2">
+            <div class="h4 mb-0 _600">{{ row.total | money:row.currencyCode }}</div>
+            <div class="text-xs text-muted">subtotal {{ vendorQuote.subTotal | money:row.currencyCode:false }} · tax {{ vendorQuote.taxTotal | money:row.currencyCode:false }}</div>
+            <div class="text-xs text-muted" *ngIf="row.currencyCode !== lookups.functionalCurrency">{{ row.baseTotal | money:lookups.functionalCurrency }} at {{ vendorQuote.currencyRate }}</div>
+        </div>
+    </div>
+    <div *ngIf="row.status === 'rejected'" class="alert alert-secondary text-sm py-2">Rejected: {{ vendorQuote.rejectReason }}</div>
+
+    <div class="d-flex flex-wrap mb-2">
+        <button *ngIf="row.status !== 'rejected'" class="btn btn-sm theme mr-1 mb-1" (click)="open('price')"><i class="fa fa-calculator mr-1"></i>Price into a client quote</button>
+        <button *ngIf="row.status === 'received'" class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="setStatus('shortlisted')"><i class="fa fa-star-o mr-1"></i>Shortlist</button>
+        <button *ngIf="row.status === 'received' || row.status === 'shortlisted'" class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="setStatus('selected')"><i class="fa fa-check mr-1"></i>Select</button>
+        <button *ngIf="row.status !== 'received'" class="btn btn-sm white mr-1 mb-1" [disabled]="busy" (click)="setStatus('received')">Back to received</button>
+        <button *ngIf="row.status !== 'rejected'" class="btn btn-sm white text-danger mr-1 mb-1" (click)="open('reject')">Reject</button>
+        <button class="btn btn-sm white mr-1 mb-1" (click)="edit.emit(vendorQuote)"><i class="fa fa-pencil mr-1"></i>Edit</button>
+        <button *ngIf="canDelete" class="btn btn-sm white text-danger mb-1" (click)="remove()">Delete</button>
+    </div>
+
+    <div *ngIf="panel === 'reject'" class="box p-2 mb-2">
+        <div class="form-group"><label class="text-xs _600">Why it is rejected</label>
+            <input class="form-control form-control-sm" [(ngModel)]="rejectReason" maxlength="500" placeholder="Too expensive, lead time too long, not to specification…"></div>
+        <div class="d-flex"><span class="flex"></span><button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm danger" [disabled]="busy" (click)="setStatus('rejected')">Reject</button></div>
+    </div>
+
+    <div *ngIf="panel === 'price'" class="box p-2 mb-2">
+        <label class="text-sm mr-3"><input type="radio" name="priceTarget" class="mr-1" value="new" [(ngModel)]="price.target">A new client quote</label>
+        <label class="text-sm"><input type="radio" name="priceTarget" class="mr-1" value="existing" [(ngModel)]="price.target">Add to a draft quote</label>
+        <div class="row mt-1">
+            <ng-container *ngIf="price.target === 'new'">
+                <div class="col-md-6 form-group"><label class="text-xs _600">Customer</label>
+                    <fin-picker [small]="true" [search]="searchCustomers" [label]="price.customerLabel" placeholder="Search customers"
+                                (picked)="price.customerAccountId = $event.id; price.customerLabel = $event.label"></fin-picker>
+                    <input *ngIf="!price.customerAccountId" class="form-control form-control-sm mt-1" [(ngModel)]="price.prospect" maxlength="200" placeholder="…or a prospect's name"></div>
+                <div class="col-md-6 form-group"><label class="text-xs _600">Title</label><input class="form-control form-control-sm" [(ngModel)]="price.title" maxlength="200"></div>
+            </ng-container>
+            <div *ngIf="price.target === 'existing'" class="col-md-6 form-group"><label class="text-xs _600">Draft quote</label>
+                <fin-picker [small]="true" [search]="searchDrafts" [label]="price.salesQuoteLabel" placeholder="Search draft quotes"
+                            (picked)="price.salesQuoteId = $event.id; price.salesQuoteLabel = $event.label"></fin-picker></div>
+            <div class="col-md-3 form-group"><label class="text-xs _600">Markup %</label>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="price.markup" step="any" placeholder="none"></div>
+        </div>
+        <table class="table table-sm mb-1 text-sm"><tbody>
+            <tr *ngFor="let l of vendorQuote.lines"><td style="width: 24px"><input type="checkbox" [(ngModel)]="price.lines[l.id]"></td>
+                <td>{{ l.description }} <span *ngIf="l.usedOnQuotes" class="badge light">on {{ l.usedOnQuotes }} quote(s)</span></td>
+                <td class="text-right">{{ l.quantity }} {{ l.unit }}</td><td class="text-right">{{ l.unitCost | money:row.currencyCode:false }}</td>
+                <td class="text-right text-muted" *ngIf="price.markup !== null && $any(price.markup) !== ''">→ {{ l.unitCost * (1 + +price.markup / 100) | money:row.currencyCode:false }}</td></tr>
+        </tbody></table>
+        <label *ngIf="lookups.settings.standardCharges?.length" class="text-sm d-block"><input type="checkbox" class="mr-1" [(ngModel)]="price.charges">Add the standard charges
+            <span class="text-xs text-muted">({{ lookups.settings.standardCharges.length }})</span></label>
+        <div class="d-flex"><span class="text-xs text-muted align-self-center">The vendor quote is marked selected; the client quote opens for review.</span><span class="flex"></span>
+            <button class="btn btn-sm white mr-1" (click)="panel = null">Close</button>
+            <button class="btn btn-sm theme" [disabled]="busy" (click)="toClientQuote()">Prepare client quote</button></div>
+    </div>
+
+    <table class="table table-sm mb-2">
+        <thead><tr class="text-xs text-muted"><th>Item</th><th class="text-right">Qty</th><th class="text-right">Unit cost</th><th class="text-right">Tax</th><th class="text-right">Amount</th></tr></thead>
+        <tbody><tr *ngFor="let l of vendorQuote.lines">
+            <td>{{ l.description }} <span *ngIf="l.code" class="text-xs text-muted">{{ l.code }}</span>
+                <span *ngIf="l.usedOnQuotes" class="badge light ml-1">quoted</span></td>
+            <td class="text-right">{{ l.quantity | number:'1.0-4' }} {{ l.unit }}</td>
+            <td class="text-right">{{ l.unitCost | money:row.currencyCode:false }}</td>
+            <td class="text-right text-xs">{{ l.taxRate ? l.taxRate + '%' : '' }}</td>
+            <td class="text-right">{{ l.netAmount | money:row.currencyCode:false }}</td>
+        </tr></tbody>
+    </table>
+    <div *ngIf="vendorQuote.notes" class="text-sm mb-2"><b class="text-xs text-muted d-block">Notes</b>{{ vendorQuote.notes }}</div>
+    <div *ngIf="vendorQuote.files.length" class="text-sm mb-2"><b class="text-xs text-muted d-block">Files</b>
+        <a *ngFor="let f of vendorQuote.files" role="button" class="mr-3" (click)="file(f.id)"><i class="fa fa-paperclip mr-1"></i>{{ f.fileName }}</a></div>
+    <div *ngIf="vendorQuote.captureId" class="text-xs text-muted">Read from a scanned document.</div>
+</app-aside>

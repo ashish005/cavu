@@ -9,3 +9,9 @@
 /playwright-report/
 /playwright/.cache/
 /blob-report/
+
+# Deployment: server logins and release builds are never committed (templates *.example are)
+.env
+.env.*
+!.env.*.example
+/Release

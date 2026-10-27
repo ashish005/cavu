@@ -93,9 +93,16 @@ export const ADMIN_SETUP_ROUES: Routes = [
 
 export const EMPLOYEE_COMMON_ROUES = [
     {
+        isFLatChildren: false, key: 'Quotations',
+        children:[
+            { routeTo: ['invoice/sales/quotes'], icon:"fa fa-file-o", key: "Client Quotes" },
+            { routeTo: ['invoice/sales/vendor-quotes'], icon:"fa fa-truck", key: "Vendor Quotes" },
+            { routeTo: ['invoice/sales/approvals'], icon:"fa fa-gavel", key: "Quote Approvals" }
+        ]
+    },
+    {
         isFLatChildren: false, key: 'Account & Finance',
         children:[
-            { routeTo: ['invoice/sales/quotes'], icon:"fa fa-file-o", key: "Quotes" },
             { routeTo: ['office-expense'], icon:"fa fa-money", key: "Office Expenses" }
         ]
     },
