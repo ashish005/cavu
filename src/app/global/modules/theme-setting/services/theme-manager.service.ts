@@ -30,6 +30,7 @@ export const DEFAULT_APPEARANCE: Appearance = {
 /** Built-in catalog, used until (or if) the API's catalog arrives. Kept in step with AppearanceCatalogs in the API. */
 export const APPEARANCE_STYLES: AppearanceStyle[] = [
     {code: 'default', name: 'Navy (default)', swatch: '#26437d', accent: '#2196f3', href: null},
+    {code: 'aurora', name: 'Aurora', swatch: '#4f46e5', accent: '#0d9488', href: 'aurora.css'},
     {code: 'ocean', name: 'Ocean', swatch: '#1d4ed8', accent: '#0ea5e9', href: 'ocean.css'},
     {code: 'slate', name: 'Slate', swatch: '#334155', accent: '#64748b', href: 'slate.css'},
     {code: 'forest', name: 'Forest', swatch: '#15803d', accent: '#65a30d', href: 'forest.css'},
@@ -163,7 +164,10 @@ export class ThemeManagerService {
         html.classList.add(`fs-${a.fontScale}`);
         body.style.setProperty('--app-font', this.fonts.find(f => f.code === a.font)?.stack ?? APPEARANCE_FONTS[0].stack);
 
-        this.installStyle(this.styles.find(s => s.code === a.style) ?? null);
+        const style = this.styles.find(s => s.code === a.style) ?? null;
+        this.installStyle(style);
+        // Browser chrome (mobile address bar, PWA title bar) in the style's colour.
+        this.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? '#0b1020' : (style?.swatch ?? APPEARANCE_STYLES[0].swatch));
         this.selectedThemeOption = a.style;
         this.current$.next(a);
     }
