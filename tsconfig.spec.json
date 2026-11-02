@@ -5,7 +5,16 @@
     "outDir": "./out-tsc/spec",
     "types": [
       "jasmine"
-    ]
+    ],
+    "strict": false,
+    "noImplicitAny": false,
+    "baseUrl": "./src",
+    "paths": {
+      "@app-global": ["app/global/index.ts"],
+      "@app-environments": ["environments/environment.ts"],
+      "@app-third-party": ["app/third-party/index.ts"],
+      "app-modules/*": ["app-modules/*"]
+    }
   },
   "include": [
     "src/**/*.spec.ts",

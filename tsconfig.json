@@ -4,7 +4,10 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@app-global": ["src/app/global/index.ts"]
+      "@app-global": ["src/app/global/index.ts"],
+      "@app-environments": ["src/environments/environment.ts"],
+      "@app-third-party": ["src/app/third-party/index.ts"],
+      "app-modules/*": ["src/app-modules/*"]
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

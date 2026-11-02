@@ -45,7 +45,7 @@ export function getAuthConfig(injector: Injector): AuthConfig {
     sessionChecksEnabled: false,
     silentRefreshRedirectUri: `${origin}/silent-refresh.html`,
     useSilentRefresh: true,
-    requireHttps: environment.production,
+    requireHttps: false,
     
     // Additional production security
     strictDiscoveryDocumentValidation: true,
