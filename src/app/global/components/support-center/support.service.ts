@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable, Subscription, catchError, filter, map, of, 
 import {CoreEndpointBase} from "../../services/endpoint-base.service";
 import {BellSummary, InboxRow, SupportLookups, TicketAttachment, TicketDetail, TicketRow, TicketSeverity, TicketType, FeedbackKind} from "./support.models";
 import {ClientContext} from "./diagnostics.service";
+import {AuthService} from "../../../third-party/identity/auth.service";
 
 export const supportErrorOf = (e: any, fallback: string): string => {
     const body = e?.error;
@@ -87,13 +88,15 @@ export class SupportUiService implements OnDestroy {
     private poll?: Subscription;
     private readonly onVisible = () => { if (!document.hidden) { this.refresh(); } };
 
-    constructor(private api: SupportApiService, private router: Router, private zone: NgZone) {}
+    constructor(private api: SupportApiService, private router: Router, private zone: NgZone, private auth: AuthService) {}
 
     get badge() { return this.summary$.value?.badgeCount ?? 0; }
 
     /** Starts polling; safe to call more than once. */
     start() {
         if (this.poll) { return; }
+        // Root portal users have no organisation; the bell is per-tenant per-user and not applicable.
+        if (!this.auth.orgId) { return; }
         document.addEventListener('visibilitychange', this.onVisible);
         this.poll = timer(0, 60_000).pipe(
             filter(() => !document.hidden && navigator.onLine),
@@ -101,7 +104,10 @@ export class SupportUiService implements OnDestroy {
         ).subscribe(s => { if (s) { this.summary$.next(s); } });
     }
 
-    refresh() { this.api.summary().pipe(catchError(() => of(null))).subscribe(s => { if (s) { this.summary$.next(s); } }); }
+    refresh() {
+        if (!this.auth.orgId) { return; }
+        this.api.summary().pipe(catchError(() => of(null))).subscribe(s => { if (s) { this.summary$.next(s); } });
+    }
 
     open(panel: SupportPanel, ticketId: string | null = null) {
         this.ticketId = ticketId;
