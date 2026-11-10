@@ -10,5 +10,6 @@ export const environment = {
     clientId: 'localhost-spa'
   },
   authBaseUrl: 'http://localhost:8090',
-  tenantUrl: 'http://localhost:8080'
+  tenantUrl: 'http://localhost:8080',
+  leadUrl: 'http://localhost:5260'
 };

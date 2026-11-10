@@ -69,7 +69,8 @@ export const setupRoutesFactory = (setupService: AppSetupService) => {
                           break;
                         case ORG_SECTOR.REAL_ESTATE:
                           if (userMasterType === ORG_USER_TYPE.EMPLOYEE) {
-                            return import('portals/real-estate/employee-portal/index').then(m => m.REEmployeePortal);
+                            return import('portals/lead-gen-ai/index').then(m => m.LeadGenAiPortal);
+                            //return import('portals/real-estate/employee-portal/index').then(m => m.REEmployeePortal);
                           } else if (userMasterType === ORG_USER_TYPE.VENDOR) {
                             return import('portals/real-estate/vendor-portal/index').then(m => m.VendorPortal);
                           } else if (userMasterType === ORG_USER_TYPE.CLIENT) {

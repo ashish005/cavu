@@ -1,0 +1,192 @@
+<main class="leadgen-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">BUSINESS WORKSPACE</p>
+      <h1>Lead generation</h1>
+      <p class="subtitle">Discovery and prospect operations</p>
+    </div>
+    <div class="heading-actions">
+      <span class="connection-pill" [class.connected]="connectionState === 'connected'" [class.unavailable]="connectionState === 'unavailable'">
+        <span class="connection-dot" aria-hidden="true"></span>
+        <ng-container [ngSwitch]="connectionState">
+          <span *ngSwitchCase="'checking'">Checking API</span>
+          <span *ngSwitchCase="'connected'">API connected</span>
+          <span *ngSwitchDefault>API unavailable</span>
+        </ng-container>
+      </span>
+      <button class="icon-button" type="button" title="Refresh API status" aria-label="Refresh API status" [disabled]="connectionState === 'checking'" (click)="refreshConnection()">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+      </button>
+      <a *ngIf="showOpenApi" class="docs-link" [href]="openApiUrl" target="_blank" rel="noopener">API schema <i class="fa fa-external-link" aria-hidden="true"></i></a>
+    </div>
+  </header>
+
+  <section class="workspace-grid" aria-label="Lead generation setup status">
+    <article class="status-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SYSTEM STATUS</p>
+          <h2>Workspace readiness</h2>
+        </div>
+        <span class="checked-at" *ngIf="lastChecked">Checked {{ lastChecked | date:'shortTime' }}</span>
+      </div>
+
+      <div class="status-row">
+        <div class="status-icon api-icon"><i class="fa fa-server" aria-hidden="true"></i></div>
+        <div class="status-copy">
+          <h3>Lead Gen API</h3>
+          <p>Application and PostgreSQL readiness</p>
+        </div>
+        <span class="state-label" [class.state-good]="connectionState === 'connected'" [class.state-bad]="connectionState === 'unavailable'">
+          {{ connectionState === 'connected' ? 'Connected' : connectionState === 'checking' ? 'Checking' : 'Unavailable' }}
+        </span>
+      </div>
+
+      <div class="status-row">
+        <div class="status-icon source-icon"><i class="fa fa-database" aria-hidden="true"></i></div>
+        <div class="status-copy">
+          <h3>Discovery source</h3>
+          <p>Authorized source connection</p>
+        </div>
+        <span class="state-label state-pending">Not configured</span>
+      </div>
+
+      <div class="status-row">
+        <div class="status-icon policy-icon"><i class="fa fa-shield" aria-hidden="true"></i></div>
+        <div class="status-copy">
+          <h3>Contact policy</h3>
+          <p>Eligibility and suppression controls</p>
+        </div>
+        <span class="state-label state-pending">Not configured</span>
+      </div>
+    </article>
+
+    <aside class="next-section">
+      <p class="eyebrow">LEAD OPERATIONS</p>
+      <h2>Discovery queue</h2>
+      <div class="empty-state">
+        <div class="empty-mark"><i class="fa fa-search" aria-hidden="true"></i></div>
+        <p class="empty-title">Source not configured</p>
+        <p class="empty-copy">Manual prospect entry is available. External discovery stays disabled until an approved source is connected.</p>
+      </div>
+      <div class="queue-footer">
+        <span><i class="fa fa-clock-o" aria-hidden="true"></i> {{ totalProspects }} prospects in this branch</span>
+        <span class="region-tag">United States</span>
+      </div>
+    </aside>
+  </section>
+
+  <section class="prospects-section" aria-labelledby="prospects-heading">
+    <div class="section-heading prospects-heading">
+      <div>
+        <p class="eyebrow">BRANCH PIPELINE</p>
+        <h2 id="prospects-heading">Prospects</h2>
+      </div>
+      <button class="text-button" type="button" [disabled]="isLoadingProspects" (click)="loadProspects()">
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+        Refresh list
+      </button>
+    </div>
+
+    <div class="prospect-workspace">
+      <section class="capture-panel" aria-labelledby="capture-heading">
+        <h3 id="capture-heading">Add a prospect</h3>
+        <form [formGroup]="prospectForm" (ngSubmit)="createProspect()" novalidate>
+          <label class="field-label" for="prospect-type">Record type</label>
+          <select id="prospect-type" formControlName="type" (change)="onProspectTypeChange()">
+            <option value="B2B">Business (B2B)</option>
+            <option value="B2C">Individual (B2C)</option>
+          </select>
+
+          <label class="field-label" for="prospect-name">{{ prospectForm.controls.type.value === 'B2B' ? 'Business name' : 'Person name' }}</label>
+          <input id="prospect-name" type="text" formControlName="name" maxlength="200" autocomplete="organization" placeholder="Name" />
+          <span class="field-error" *ngIf="prospectForm.controls.name.touched && prospectForm.controls.name.invalid">Enter a name up to 200 characters.</span>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label" for="prospect-email">Email</label>
+              <input id="prospect-email" type="email" formControlName="email" maxlength="320" autocomplete="email" placeholder="name@example.com" />
+              <span class="field-error" *ngIf="prospectForm.controls.email.touched && prospectForm.controls.email.invalid">Enter a valid email address.</span>
+            </div>
+            <div class="form-field">
+              <label class="field-label" for="prospect-phone">Phone</label>
+              <input id="prospect-phone" type="tel" formControlName="phone" maxlength="50" autocomplete="tel" placeholder="Optional" />
+            </div>
+          </div>
+
+          <ng-container *ngIf="prospectForm.controls.type.value === 'B2B'">
+            <label class="field-label" for="prospect-website">Website</label>
+            <input id="prospect-website" type="url" formControlName="website" maxlength="500" placeholder="https://example.com" />
+            <label class="field-label" for="prospect-industry">Industry</label>
+            <input id="prospect-industry" type="text" formControlName="industry" maxlength="120" placeholder="Optional" />
+          </ng-container>
+
+          <p class="feedback feedback-error" role="alert" *ngIf="saveError">{{ saveError }}</p>
+          <p class="feedback feedback-success" role="status" *ngIf="successMessage">{{ successMessage }}</p>
+
+          <section class="duplicate-warning" role="alert" *ngIf="duplicateMatches.length > 0">
+            <p>{{ duplicateWarning }}</p>
+            <ul>
+              <li *ngFor="let match of duplicateMatches">
+                <strong>{{ match.name }}</strong>
+                <span>{{ match.type }} · matched on {{ match.matchingIdentifiers.join(', ') }}</span>
+              </li>
+            </ul>
+            <div class="duplicate-actions">
+              <button type="button" class="submit-button" [disabled]="isSavingProspect" (click)="createProspect(true)">
+                {{ isSavingProspect ? 'Adding prospect' : 'Create anyway' }}
+              </button>
+              <button type="button" class="text-button" (click)="duplicateMatches = []; duplicateWarning = ''">
+                Edit details
+              </button>
+            </div>
+          </section>
+
+          <button class="submit-button" type="submit" [disabled]="prospectForm.invalid || isSavingProspect || connectionState !== 'connected' || duplicateMatches.length > 0">
+            <i class="fa" [class.fa-plus]="!isSavingProspect" [class.fa-spinner]="isSavingProspect" [class.fa-spin]="isSavingProspect" aria-hidden="true"></i>
+            {{ isSavingProspect ? 'Adding prospect' : 'Add prospect' }}
+          </button>
+        </form>
+      </section>
+
+      <section class="prospect-list-panel" aria-label="Prospect list">
+        <div class="list-heading">
+          <div>
+            <h3>Recent prospects</h3>
+            <p>{{ totalProspects }} total in this branch</p>
+          </div>
+        </div>
+
+        <p class="feedback feedback-error" role="alert" *ngIf="prospectsError">{{ prospectsError }}</p>
+        <p class="list-state" *ngIf="isLoadingProspects">Loading prospects…</p>
+        <p class="list-state" *ngIf="!isLoadingProspects && !prospectsError && prospects.length === 0">No prospects in this branch yet.</p>
+
+        <div class="table-scroll" *ngIf="!isLoadingProspects && prospects.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Industry</th>
+                <th scope="col">Source</th>
+                <th scope="col">Added</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let prospect of prospects">
+                <td>
+                  <span class="prospect-name">{{ prospect.name }}</span>
+                  <span class="prospect-email" *ngIf="prospect.email">{{ prospect.email }}</span>
+                </td>
+                <td><span class="type-tag" [class.type-b2c]="prospect.type === 'B2C'">{{ prospect.type }}</span></td>
+                <td>{{ prospect.industry || '—' }}</td>
+                <td>{{ prospect.source }}</td>
+                <td>{{ prospect.createdAt | date:'mediumDate' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>

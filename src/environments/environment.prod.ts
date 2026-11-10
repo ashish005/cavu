@@ -7,5 +7,6 @@ export const environment = {
       clientId: 'localhost-spa'
     },
   authBaseUrl: 'https://auth.enrator.com',
-  tenantUrl: 'https://api.enrator.com'
+    tenantUrl: 'https://api.enrator.com',
+    leadUrl: 'https://api.enrator.com'
 };

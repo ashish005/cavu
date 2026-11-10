@@ -1,0 +1,1 @@
+export { LeadGenAiPortal } from './lead-gen-ai.module';
