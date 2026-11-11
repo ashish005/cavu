@@ -8,6 +8,7 @@ import {
   CampaignReport,
   AiAgent,
   AgentExecution,
+  ConversationItem,
   AgentVersion,
   Appointment,
   AppointmentType,
@@ -40,7 +41,7 @@ import {
 } from '../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../services/workspace-context.service';
 
-type OpsTab = 'campaigns' | 'agents' | 'ai-monitor' | 'appointments' | 'workflows' | 'integrations' | 'inbound' | 'duplicates' | 'prospects' | 'discovery' | 'voice' | 'communication' | 'billing' | 'notifications' | 'audit';
+type OpsTab = 'campaigns' | 'conversations' | 'schedule' | 'ai' | 'prospecting' | 'system';
 
 @Component({
   selector: 'lead-gen-ops',
@@ -61,6 +62,7 @@ export class LeadGenOpsComponent implements OnInit {
   campaignReport?: CampaignReport;
   selectedCampaignId = '';
   leads: Lead[] = [];
+  conversations: ConversationItem[] = [];
   agents: AiAgent[] = [];
   agentVersions: AgentVersion[] = [];
   agentExecutions: AgentExecution[] = [];
@@ -117,18 +119,10 @@ export class LeadGenOpsComponent implements OnInit {
 
   get tabGroups(): { label: string; tabs: { key: OpsTab; label: string }[] }[] {
     return [
-      { label: 'Engage', tabs: [
-        { key: 'campaigns', label: 'Campaigns' }, { key: 'inbound', label: 'Inbound' },
-        { key: 'communication', label: 'Comms' }, { key: 'voice', label: 'Voice' } ] },
-      { label: 'Schedule', tabs: [
-        { key: 'appointments', label: 'Appointments' }, { key: 'workflows', label: 'Workflows' },
-        { key: 'agents', label: 'Agents' }, { key: 'ai-monitor', label: 'AI Monitor' } ] },
-      { label: 'Pipeline', tabs: [
-        { key: 'prospects', label: 'Prospect Ops' }, { key: 'discovery', label: 'Discovery' },
-        { key: 'duplicates', label: 'Duplicates' } ] },
-      { label: 'System', tabs: [
-        { key: 'integrations', label: 'Integrations' }, { key: 'billing', label: 'Billing' },
-        { key: 'notifications', label: 'Notifications' }, { key: 'audit', label: 'Audit' } ] }
+      { label: '', tabs: [
+        { key: 'campaigns', label: 'Campaigns' }, { key: 'conversations', label: 'Conversations' },
+        { key: 'schedule', label: 'Schedule' }, { key: 'ai', label: 'AI' },
+        { key: 'prospecting', label: 'Prospecting' }, { key: 'system', label: 'System' } ] }
     ];
   }
 
@@ -154,14 +148,14 @@ export class LeadGenOpsComponent implements OnInit {
   onBusinessChange(id: string): void {
     this.clientBusinessId = id;
     this.loadForBusiness();
-    if (this.activeTab === 'ai-monitor') this.refreshAiMonitoring();
+    if (this.activeTab === 'ai') this.refreshAiMonitoring();
   }
 
   get hasBusiness(): boolean { return !!this.clientBusinessId; }
 
   setTab(tab: OpsTab): void {
     this.activeTab = tab;
-    if (tab === 'ai-monitor') this.refreshAiMonitoring();
+    if (tab === 'ai') this.refreshAiMonitoring();
   }
 
   get aiProviderConnections(): IntegrationConnection[] {
@@ -203,6 +197,7 @@ export class LeadGenOpsComponent implements OnInit {
     this.api.listLeads(cb).subscribe({ next: (l) => this.leads = l, error: () => undefined });
     this.api.listCampaigns(cb).subscribe({ next: (c) => this.campaigns = c, error: () => undefined });
     this.api.listAgents(cb).subscribe({ next: (a) => this.agents = a, error: () => undefined });
+    this.api.listConversations(cb).subscribe({ next: (c) => this.conversations = c, error: () => undefined });
     this.api.listAppointmentTypes(cb).subscribe({ next: (t) => this.appointmentTypes = t, error: () => undefined });
     this.api.listAppointments(cb).subscribe({ next: (a) => this.appointments = a, error: () => undefined });
     this.api.listWorkflows(cb).subscribe({ next: (w) => this.workflows = w, error: () => undefined });

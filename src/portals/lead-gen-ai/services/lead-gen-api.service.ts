@@ -18,6 +18,10 @@ export interface OfferingRequest { kind: string; name: string; description?: str
 export interface TargetIndustry { id: string; industry: string; isActive: boolean; createdAt: string; }
 export interface OperatingHour { dayOfWeek: string; isClosed: boolean; openMinute?: number; closeMinute?: number; }
 export interface IndustryTemplate { key: string; name: string; description: string; suggestedQuestions: string[]; workflowHints: string[]; }
+export interface IndustryPack extends IndustryTemplate { workflowNames: string[]; installed: boolean; }
+export interface IndustryPackInstallResult { key: string; createdCount: number; created: string[]; }
+export interface TimelineItem { kind: string; refId: string; title: string; detail?: string; status?: string; at: string; }
+export interface ConversationItem { kind: string; refId: string; contact: string; contactInfo?: string; preview?: string; status?: string; meta?: string; at: string; leadId?: string; }
 
 // ---------- EP-04 ----------
 export interface UpdateProspectRequest { name: string; email?: string; phone?: string; website?: string; industry?: string; }
@@ -719,6 +723,20 @@ export class LeadGenApiService {
   restoreLead(clientBusinessId: string, leadId: string): Observable<Lead> {
     return this.http.post<Lead>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/leads/${leadId}/restore`, {}, { headers: this.authorizationHeaders() });
   }
+  // ---------- industry packs & timeline ----------
+  listIndustryPacks(clientBusinessId: string): Observable<IndustryPack[]> {
+    return this.http.get<IndustryPack[]>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/industry-packs`, { headers: this.authorizationHeaders() });
+  }
+  installIndustryPack(clientBusinessId: string, key: string): Observable<IndustryPackInstallResult> {
+    return this.http.post<IndustryPackInstallResult>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/industry-packs/${key}/install`, {}, { headers: this.authorizationHeaders() });
+  }
+  listConversations(clientBusinessId: string): Observable<ConversationItem[]> {
+    return this.http.get<ConversationItem[]>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/conversations`, { headers: this.authorizationHeaders() });
+  }
+  getLeadTimeline(clientBusinessId: string, leadId: string): Observable<TimelineItem[]> {
+    return this.http.get<TimelineItem[]>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/leads/${leadId}/timeline`, { headers: this.authorizationHeaders() });
+  }
+
   seedDemoData(clientBusinessId: string): Observable<{ recordsCreated: number }> {
     return this.http.post<{ recordsCreated: number }>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/seed-demo`, {}, { headers: this.authorizationHeaders() });
   }

@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { finalize, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import {
-  BusinessProfile, ClientBusiness, CreateClientBusinessRequest, CreateWorkspaceRequest,
+  BusinessProfile, ClientBusiness, CreateClientBusinessRequest, CreateWorkspaceRequest, IndustryPack,
   LeadGenApiService, OfferingRequest, Organization, TargetIndustry, Workspace
 } from '../services/lead-gen-api.service';
 
@@ -71,6 +71,8 @@ export class LeadGenSetupComponent implements OnInit {
     description: ['']
   });
   industryInput = '';
+  industryPacks: IndustryPack[] = [];
+  installingPack = '';
 
   // Step 5 — launch
   seeding = false;
@@ -242,8 +244,9 @@ export class LeadGenSetupComponent implements OnInit {
         description: p?.description ?? '', industry: p?.industry ?? '', category: p?.category ?? ''
       });
     });
-    this.api.listOfferings(cb).subscribe(o => this.offerings = o.map(x => ({ id: x.id, name: x.name, kind: x.kind })));
-    this.api.listTargetIndustries(cb).subscribe(i => this.industries = i);
+    this.api.listOfferings(cb).pipe(catchError(() => of([]))).subscribe(o => this.offerings = o.map(x => ({ id: x.id, name: x.name, kind: x.kind })));
+    this.api.listTargetIndustries(cb).pipe(catchError(() => of([]))).subscribe(i => this.industries = i);
+    this.api.listIndustryPacks(cb).pipe(catchError(() => of([]))).subscribe(p => this.industryPacks = p);
   }
 
   saveProfile(): void {
@@ -274,6 +277,20 @@ export class LeadGenSetupComponent implements OnInit {
       this.industryInput = '';
       this.loadConfiguration();
     });
+  }
+
+  installPack(pack: IndustryPack): void {
+    if (!this.selectedBusinessId || this.installingPack) return;
+    this.installingPack = pack.key;
+    this.api.installIndustryPack(this.selectedBusinessId, pack.key)
+      .pipe(finalize(() => this.installingPack = ''))
+      .subscribe({
+        next: r => {
+          this.message = `Installed "${pack.name}" — ${r.createdCount} items created.`;
+          this.loadConfiguration();
+        },
+        error: () => this.error = 'Could not install the industry pack.'
+      });
   }
 
   removeIndustry(id: string): void {

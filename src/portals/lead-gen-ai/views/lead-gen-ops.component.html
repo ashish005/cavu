@@ -60,7 +60,7 @@
   </section>
 
   <!-- Agents -->
-  <section *ngIf="activeTab === 'agents'">
+  <section *ngIf="activeTab === 'ai'">
     <h2>AI Agents</h2>
 
     <form class="agent-create" (ngSubmit)="createAgent()">
@@ -121,7 +121,7 @@
     </div>
   </section>
 
-  <section *ngIf="activeTab === 'ai-monitor'">
+  <section *ngIf="activeTab === 'ai'">
     <h2>AI monitoring</h2>
     <div class="inline-form">
       <label for="ai-monitor-range">Time range</label>
@@ -198,7 +198,7 @@
   </section>
 
   <!-- Appointments -->
-  <section *ngIf="activeTab === 'appointments'">
+  <section *ngIf="activeTab === 'schedule'">
     <h2>Appointments</h2>
     <h3>Types</h3>
     <ul *ngIf="appointmentTypes.length > 0">
@@ -237,7 +237,7 @@
   </section>
 
   <!-- Workflows -->
-  <section *ngIf="activeTab === 'workflows'">
+  <section *ngIf="activeTab === 'schedule'">
     <h2>Workflows</h2>
     <div class="table-scroll" *ngIf="workflows.length > 0">
       <table>
@@ -274,7 +274,7 @@
   </section>
 
   <!-- Integrations -->
-  <section *ngIf="activeTab === 'integrations'">
+  <section *ngIf="activeTab === 'system'">
     <h2>Integrations</h2>
     <h3>Providers</h3>
     <ul *ngIf="providers.length > 0">
@@ -298,7 +298,31 @@
   </section>
 
   <!-- Inbound -->
-  <section *ngIf="activeTab === 'inbound'">
+  <!-- Inbox -->
+  <section *ngIf="activeTab === 'conversations'">
+    <h2>Conversations</h2>
+    <p class="muted">Unified feed of inbound enquiries, voice calls, and campaign messages.</p>
+    <div class="table-scroll" *ngIf="conversations.length > 0">
+      <table>
+        <thead><tr><th>Channel</th><th>Contact</th><th>Preview</th><th>Status</th><th>When</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let c of conversations">
+            <td><span class="conv-kind" [class]="'ck-' + c.kind">{{ c.kind }}</span></td>
+            <td>
+              <strong>{{ c.contact }}</strong>
+              <div class="muted" *ngIf="c.contactInfo">{{ c.contactInfo }}</div>
+            </td>
+            <td class="cell-clip">{{ c.preview || '—' }}</td>
+            <td><span class="status-badge" [class]="'status-' + (c.status || '').toLowerCase()">{{ c.status }}</span></td>
+            <td class="muted">{{ c.at | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="conversations.length === 0">No conversations yet — enquiries, calls, and messages will appear here.</p>
+  </section>
+
+  <section *ngIf="activeTab === 'conversations'">
     <h2>Inbound enquiries</h2>
     <h3>Channels</h3>
     <ul *ngIf="channels.length > 0">
@@ -323,7 +347,7 @@
   </section>
 
   <!-- Duplicates -->
-  <section *ngIf="activeTab === 'duplicates'">
+  <section *ngIf="activeTab === 'prospecting'">
     <h2>Duplicate candidates</h2>
     <div class="table-scroll" *ngIf="duplicates.length > 0">
       <table>
@@ -346,7 +370,7 @@
   </section>
 
   <!-- Prospect ops -->
-  <section *ngIf="activeTab === 'prospects'">
+  <section *ngIf="activeTab === 'prospecting'">
     <h2>Prospect operations</h2>
     <p>Enrichment, qualification, quality, and ingestion for a selected prospect.</p>
     <div class="table-scroll" *ngIf="prospects.length > 0">
@@ -399,7 +423,7 @@
   </section>
 
   <!-- Discovery -->
-  <section *ngIf="activeTab === 'discovery'">
+  <section *ngIf="activeTab === 'prospecting'">
     <h2>Discovery</h2>
     <h3>Jobs</h3>
     <div class="table-scroll" *ngIf="jobs.length > 0">
@@ -430,7 +454,7 @@
   </section>
 
   <!-- Voice -->
-  <section *ngIf="activeTab === 'voice'">
+  <section *ngIf="activeTab === 'conversations'">
     <h2>Voice interactions</h2>
     <div class="table-scroll" *ngIf="voiceInteractions.length > 0">
       <table>
@@ -451,7 +475,7 @@
   </section>
 
   <!-- Communication -->
-  <section *ngIf="activeTab === 'communication'">
+  <section *ngIf="activeTab === 'conversations'">
     <h2>Communication preferences</h2>
     <h3>Channel preferences</h3>
     <div class="table-scroll" *ngIf="preferences.length > 0">
@@ -488,7 +512,7 @@
   </section>
 
   <!-- Billing -->
-  <section *ngIf="activeTab === 'billing'">
+  <section *ngIf="activeTab === 'system'">
     <h2>Billing & entitlements</h2>
     <div *ngIf="entitlements" class="report-card">
       <h3>Current plan</h3>
@@ -518,7 +542,7 @@
   </section>
 
   <!-- Notifications -->
-  <section *ngIf="activeTab === 'notifications'">
+  <section *ngIf="activeTab === 'system'">
     <h2>Notifications</h2>
     <div class="table-scroll" *ngIf="notifications.length > 0">
       <table>
@@ -535,7 +559,7 @@
   </section>
 
   <!-- Audit -->
-  <section *ngIf="activeTab === 'audit'">
+  <section *ngIf="activeTab === 'system'">
     <h2>Audit events</h2>
     <div class="table-scroll" *ngIf="auditEvents.length > 0">
       <table>

@@ -118,6 +118,25 @@
         <button class="btn-secondary" type="button" (click)="addIndustry()">Add</button>
       </div>
     </div>
+
+    <div class="sub-block" *ngIf="industryPacks.length">
+      <h3>Industry workflow packs</h3>
+      <p class="hint">One-click installs that create workflows, appointment types, and qualification criteria for your industry.</p>
+      <div class="pack-grid">
+        <div class="pack-card" *ngFor="let pack of industryPacks">
+          <div class="pack-head">
+            <strong>{{ pack.name }}</strong>
+            <span class="status-badge" [class.installed]="pack.installed">{{ pack.installed ? 'Installed' : 'Available' }}</span>
+          </div>
+          <p class="pack-desc">{{ pack.description }}</p>
+          <p class="pack-hints">{{ pack.workflowHints.join(' · ') }}</p>
+          <button class="btn-secondary" type="button" (click)="installPack(pack)"
+                  [disabled]="pack.installed || installingPack === pack.key">
+            {{ pack.installed ? 'Installed' : installingPack === pack.key ? 'Installing…' : 'Install pack' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Step 5: Launch -->

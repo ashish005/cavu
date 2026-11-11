@@ -78,3 +78,11 @@ ul { padding-left: 1.2rem; }
 }
 .cell-clip { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
 .text-danger { color: #b91c1c; }
+
+.conv-kind {
+  display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 999px; background: #f1f5f9; color: #64748b;
+  &.ck-enquiry { background: #eff6ff; color: #1d4ed8; }
+  &.ck-voice { background: #fdf4ff; color: #a21caf; }
+  &.ck-message { background: #fef3c7; color: #b45309; }
+}

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  LeadGenApiService, Lead, LeadStage, LeadActivity, ClientBusiness
+  LeadGenApiService, Lead, LeadStage, LeadActivity, ClientBusiness, TimelineItem
 } from '../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../services/workspace-context.service';
 
@@ -23,8 +23,10 @@ export class LeadGenLeadsComponent implements OnInit {
   search = '';
   stageFilter = '';
   showForm = false;
+  view: 'list' | 'board' = 'list';
   seeding = false;
   activities: Record<string, LeadActivity[]> = {};
+  timelines: Record<string, TimelineItem[]> = {};
   expandedLeadId = '';
 
   readonly leadForm = this.fb.nonNullable.group({
@@ -52,7 +54,8 @@ export class LeadGenLeadsComponent implements OnInit {
   get filteredLeads(): Lead[] {
     const q = this.search.trim().toLowerCase();
     return this.leads.filter(l => {
-      if (this.stageFilter && l.stageKey !== this.stageFilter) return false;
+      if (this.stageFilter === '__won__') { if (l.status !== 'Qualified') return false; }
+      else if (this.stageFilter && l.stageKey !== this.stageFilter) return false;
       if (q && !(l.name.toLowerCase().includes(q) || (l.email ?? '').toLowerCase().includes(q) || (l.phone ?? '').includes(q))) return false;
       return true;
     });
@@ -136,6 +139,10 @@ export class LeadGenLeadsComponent implements OnInit {
     if (!this.activities[lead.id]) {
       this.api.listLeadActivities(this.clientBusinessId, lead.id).subscribe({
         next: (a) => this.activities[lead.id] = a,
+        error: () => undefined
+      });
+      this.api.getLeadTimeline(this.clientBusinessId, lead.id).subscribe({
+        next: (items) => this.timelines[lead.id] = items,
         error: () => undefined
       });
     }

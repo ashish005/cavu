@@ -25,6 +25,11 @@
   </div>
 </div>
 <ng-template #navbarRightTemplate>
+    <li class="nav-item d-flex align-items-center px-2" *ngIf="scopeOptions.length">
+      <select class="form-control form-control-sm" style="min-width:220px" [ngModel]="selectedScope" (ngModelChange)="onScopeChange($event)" aria-label="Workspace / client business">
+        <option *ngFor="let o of scopeOptions" [value]="o.value">{{ o.label }}</option>
+      </select>
+    </li>
     <!--<li class="nav-item dropdown d-flex align-items-center px-2">
         <button class="btn btn-sm btn-outline border text-theme b-theme dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
             <span class="hidden-folded d-inline">External</span>

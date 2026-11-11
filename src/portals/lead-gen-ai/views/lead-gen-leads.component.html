@@ -2,103 +2,143 @@
   <header class="page-header">
     <div>
       <h1>Leads</h1>
-      <p>{{ businessName }}</p>
+      <p class="subtitle">{{ businessName }}</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
         <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
       </select>
-      <button type="button" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
-      <button type="button" class="primary" (click)="showForm = !showForm">{{ showForm ? 'Close' : '+ New lead' }}</button>
+      <button type="button" class="btn-secondary" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Demo data' }}</button>
+      <div class="view-toggle">
+        <button type="button" [class.active]="view === 'list'" (click)="view = 'list'">List</button>
+        <button type="button" [class.active]="view === 'board'" (click)="view = 'board'">Board</button>
+      </div>
+      <button type="button" class="btn-primary" *ngIf="view === 'list'" (click)="showForm = !showForm">{{ showForm ? 'Close' : '+ New lead' }}</button>
     </div>
   </header>
 
-  <p class="form-error" *ngIf="error">{{ error }}</p>
-  <p class="form-success" *ngIf="message">{{ message }}</p>
+  <ng-container *ngIf="view === 'list'">
+  <p class="alert alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert alert-success" *ngIf="message">{{ message }}</p>
 
-  <!-- Summary cards -->
-  <div class="stats">
-    <div class="stat"><span class="stat-num">{{ activeCount }}</span><span class="stat-label">Active</span></div>
-    <div class="stat won"><span class="stat-num">{{ wonCount }}</span><span class="stat-label">Won</span></div>
-    <div class="stat"><span class="stat-num">{{ archivedCount }}</span><span class="stat-label">Archived</span></div>
-    <div class="stat" *ngFor="let s of stageCounts.slice(0, 4)">
+  <!-- Pipeline stats -->
+  <div class="stat-grid" *ngIf="leads.length > 0">
+    <button type="button" class="stat-card" [class.active]="!stageFilter" (click)="stageFilter = ''">
+      <span class="stat-num">{{ activeCount }}</span><span class="stat-label">Active</span>
+    </button>
+    <button type="button" class="stat-card won" [class.active]="stageFilter === '__won__'" (click)="stageFilter = stageFilter === '__won__' ? '' : '__won__'">
+      <span class="stat-num">{{ wonCount }}</span><span class="stat-label">Won</span>
+    </button>
+    <button type="button" class="stat-card" *ngFor="let s of stageCounts" [class.active]="stageFilter === s.key"
+            (click)="stageFilter = stageFilter === s.key ? '' : s.key">
       <span class="stat-num">{{ s.count }}</span><span class="stat-label">{{ s.label }}</span>
-    </div>
+    </button>
   </div>
 
   <!-- New lead -->
-  <form *ngIf="showForm" [formGroup]="leadForm" (ngSubmit)="createLead()" class="lead-form">
-    <select formControlName="type">
-      <option value="Organization">Organization</option>
-      <option value="Individual">Individual</option>
-    </select>
-    <input formControlName="name" placeholder="Name *" />
-    <input formControlName="email" placeholder="Email" type="email" />
-    <input formControlName="phone" placeholder="Phone" />
-    <input formControlName="industry" placeholder="Industry" />
-    <button type="submit" class="primary" [disabled]="leadForm.invalid">Add</button>
+  <form *ngIf="showForm" [formGroup]="leadForm" (ngSubmit)="createLead()" class="card lead-form">
+    <div class="form-row">
+      <select formControlName="type" aria-label="Lead type">
+        <option value="Organization">Organization</option>
+        <option value="Individual">Individual</option>
+      </select>
+      <input formControlName="name" placeholder="Name *" />
+      <input formControlName="email" placeholder="Email" type="email" />
+      <input formControlName="phone" placeholder="Phone" />
+      <input formControlName="industry" placeholder="Industry" />
+      <button type="submit" class="btn-primary" [disabled]="leadForm.invalid">Add lead</button>
+    </div>
   </form>
 
-  <!-- Filters -->
-  <div class="toolbar">
-    <input [(ngModel)]="search" placeholder="Search name, email, phone…" />
-    <select [(ngModel)]="stageFilter">
+  <!-- Toolbar -->
+  <div class="toolbar card" *ngIf="leads.length > 0">
+    <input [(ngModel)]="search" placeholder="Search name, email, phone…" aria-label="Search leads" />
+    <select [(ngModel)]="stageFilter" aria-label="Filter by stage">
       <option value="">All stages</option>
       <option *ngFor="let s of stages" [value]="s.key">{{ s.label }}</option>
+      <option value="__won__">Won</option>
     </select>
-    <button type="button" (click)="load()">Refresh</button>
+    <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+  </div>
+
+  <!-- Empty state -->
+  <div class="card empty-state" *ngIf="!loading && leads.length === 0">
+    <h2>No leads yet</h2>
+    <p>Start by loading demo data to explore the pipeline, or add your first real lead.</p>
+    <div class="empty-actions">
+      <button type="button" class="btn-primary" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
+      <button type="button" class="btn-secondary" (click)="showForm = true">Add first lead</button>
+    </div>
   </div>
 
   <!-- Table -->
-  <div class="table-scroll" *ngIf="!loading">
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Contact</th><th>Source</th><th>Stage</th><th>Status</th><th>Updated</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let lead of filteredLeads" [class.archived]="lead.status === 'Archived'">
-          <td>
-            <strong>{{ lead.name }}</strong>
-            <span class="tag">{{ lead.type }}</span>
-            <div class="activity-panel" *ngIf="expandedLeadId === lead.id">
-              <form [formGroup]="activityForm" (ngSubmit)="addActivity(lead)" class="activity-form">
-                <select formControlName="kind">
-                  <option value="Note">Note</option><option value="Call">Call</option>
-                  <option value="Email">Email</option><option value="Meeting">Meeting</option>
-                </select>
-                <input formControlName="summary" placeholder="Log activity…" />
-                <button type="submit" [disabled]="activityForm.invalid">Save</button>
-              </form>
-              <ul *ngIf="activities[lead.id]?.length">
-                <li *ngFor="let a of activities[lead.id]">
-                  <strong>{{ a.kind }}</strong> {{ a.summary }} <span class="muted">{{ a.occurredAt | date:'short' }}</span>
-                </li>
-              </ul>
-            </div>
-          </td>
-          <td>
-            <div *ngIf="lead.email">{{ lead.email }}</div>
-            <div *ngIf="lead.phone" class="muted">{{ lead.phone }}</div>
-            <div *ngIf="lead.industry" class="muted">{{ lead.industry }}</div>
-          </td>
-          <td>{{ lead.source }}</td>
-          <td>
-            <select [value]="lead.stageKey" (change)="moveStage(lead, $any($event.target).value)" [disabled]="lead.status === 'Archived'">
-              <option *ngFor="let s of stages" [value]="s.key">{{ s.label }}</option>
-            </select>
-          </td>
-          <td><span class="status-tag" [class.won]="lead.status === 'Qualified'" [class.archived]="lead.status === 'Archived'">{{ lead.status }}</span></td>
-          <td class="muted">{{ lead.updatedAt | date:'shortDate' }}</td>
-          <td class="row-actions">
-            <button type="button" (click)="toggleActivities(lead)">Log</button>
-            <button type="button" class="primary" (click)="convert(lead)" *ngIf="lead.status !== 'Qualified' && lead.status !== 'Archived'">Convert</button>
-            <button type="button" (click)="archive(lead)" *ngIf="lead.status !== 'Archived'">Archive</button>
-            <button type="button" (click)="restore(lead)" *ngIf="lead.status === 'Archived'">Restore</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="empty" *ngIf="filteredLeads.length === 0">No leads found.</p>
+  <div class="card table-card" *ngIf="!loading && leads.length > 0">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Contact</th><th>Source</th><th>Stage</th><th>Status</th><th>Updated</th><th class="col-actions"></th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lead of filteredLeads" [class.row-archived]="lead.status === 'Archived'">
+            <td>
+              <div class="lead-name">
+                <strong>{{ lead.name }}</strong>
+                <span class="tag">{{ lead.type }}</span>
+              </div>
+              <div class="activity-panel" *ngIf="expandedLeadId === lead.id">
+                <form [formGroup]="activityForm" (ngSubmit)="addActivity(lead)" class="activity-form">
+                  <select formControlName="kind">
+                    <option value="Note">Note</option><option value="Call">Call</option>
+                    <option value="Email">Email</option><option value="Meeting">Meeting</option>
+                  </select>
+                  <input formControlName="summary" placeholder="Log activity…" />
+                  <button type="submit" class="btn-primary btn-sm" [disabled]="activityForm.invalid">Save</button>
+                </form>
+                <div class="timeline" *ngIf="timelines[lead.id]?.length">
+                  <div class="timeline-item" *ngFor="let item of timelines[lead.id].slice(0, 10)">
+                    <span class="timeline-kind" [class]="'tk-' + item.kind">{{ item.kind }}</span>
+                    <div class="timeline-body">
+                      <span class="timeline-title">{{ item.title }}</span>
+                      <span class="timeline-detail" *ngIf="item.detail">{{ item.detail }}</span>
+                    </div>
+                    <span class="muted">{{ item.at | date:'short' }}</span>
+                  </div>
+                </div>
+                <ul class="activity-list" *ngIf="activities[lead.id]?.length">
+                  <li *ngFor="let a of activities[lead.id]">
+                    <strong>{{ a.kind }}</strong> {{ a.summary }} <span class="muted">{{ a.occurredAt | date:'short' }}</span>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div *ngIf="lead.email" class="contact-line">{{ lead.email }}</div>
+              <div *ngIf="lead.phone" class="contact-line muted">{{ lead.phone }}</div>
+              <div *ngIf="lead.industry" class="contact-line muted">{{ lead.industry }}</div>
+              <span class="muted" *ngIf="!lead.email && !lead.phone && !lead.industry">—</span>
+            </td>
+            <td><span class="source-tag">{{ lead.source }}</span></td>
+            <td>
+              <select class="stage-select" [value]="lead.stageKey" (change)="moveStage(lead, $any($event.target).value)" [disabled]="lead.status === 'Archived'" aria-label="Stage">
+                <option *ngFor="let s of stages" [value]="s.key">{{ s.label }}</option>
+              </select>
+            </td>
+            <td><span class="status-badge" [class.sb-won]="lead.status === 'Qualified'" [class.sb-archived]="lead.status === 'Archived'">{{ lead.status }}</span></td>
+            <td class="muted">{{ lead.updatedAt | date:'shortDate' }}</td>
+            <td class="row-actions">
+              <button type="button" class="btn-ghost" (click)="toggleActivities(lead)">Log</button>
+              <button type="button" class="btn-ghost btn-primary-text" (click)="convert(lead)" *ngIf="lead.status !== 'Qualified' && lead.status !== 'Archived'">Convert</button>
+              <button type="button" class="btn-ghost" (click)="archive(lead)" *ngIf="lead.status !== 'Archived'">Archive</button>
+              <button type="button" class="btn-ghost" (click)="restore(lead)" *ngIf="lead.status === 'Archived'">Restore</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="empty" *ngIf="filteredLeads.length === 0">No leads match the current filters.</p>
+    </div>
   </div>
-  <p *ngIf="loading" class="muted">Loading…</p>
+  <p *ngIf="loading" class="muted loading-note">Loading…</p>
+  </ng-container>
+
+  <lead-gen-pipeline *ngIf="view === 'board'"></lead-gen-pipeline>
 </main>
