@@ -1,0 +1,161 @@
+<div class="setup-page">
+  <header class="setup-header">
+    <div>
+      <h1>Setup wizard</h1>
+      <p class="subtitle">Five quick steps from organization to your first lead.</p>
+    </div>
+    <button class="btn-secondary" (click)="loadAll()" [disabled]="loading">Refresh</button>
+  </header>
+
+  <!-- Stepper -->
+  <ol class="stepper">
+    <li *ngFor="let s of steps; let i = index"
+        [class.done]="completedSteps.has(s.key)"
+        [class.current]="i === currentStep"
+        [class.locked]="i > currentStep && !completedSteps.has(s.key)"
+        (click)="goTo(i)">
+      <span class="step-num">{{ completedSteps.has(s.key) ? '✓' : i + 1 }}</span>
+      <span class="step-text"><strong>{{ s.title }}</strong><small>{{ s.subtitle }}</small></span>
+    </li>
+  </ol>
+
+  <p class="error-text" *ngIf="error">{{ error }}</p>
+  <p class="success-text" *ngIf="message">{{ message }}</p>
+
+  <!-- Step 1: Organization -->
+  <section class="card" *ngIf="step === 'organization'">
+    <h2>{{ organization ? 'Organization profile' : 'Create your organization' }}</h2>
+    <p class="hint" *ngIf="organization">Review or update your top-level company profile.</p>
+    <p class="hint" *ngIf="!organization">This is your top-level company account. You can rename it later.</p>
+    <form [formGroup]="orgForm" class="form-grid">
+      <label>Name<input formControlName="name" placeholder="Acme Corp" /></label>
+      <label>Slug<input formControlName="slug" placeholder="acme-corp" /></label>
+      <label>Time zone<input formControlName="defaultTimeZoneId" placeholder="America/New_York" /></label>
+      <div class="form-actions" *ngIf="organization">
+        <span class="hint" *ngIf="organization.isOwner">You are the owner.</span>
+        <button class="btn-secondary" type="button" (click)="saveOrganization()" [disabled]="saving || orgForm.invalid">Save changes</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Step 2: Client business -->
+  <section class="card" *ngIf="step === 'business'">
+    <h2>Client business</h2>
+    <p class="hint">A client business is a company you generate leads for. Pick an existing one or create a new one.</p>
+    <div class="row" *ngIf="businesses.length > 0">
+      <select [(ngModel)]="selectedBusinessId">
+        <option value="">— Select existing —</option>
+        <option *ngFor="let b of businesses" [value]="b.id">{{ b.name }} ({{ b.status }})</option>
+      </select>
+    </div>
+    <p class="hint" *ngIf="businesses.length === 0">No client businesses yet — create your first one below.</p>
+
+    <div class="sub-block">
+      <h3>{{ businesses.length > 0 ? 'Or create a new business' : 'Create your client business' }}</h3>
+      <form [formGroup]="businessForm" class="form-grid">
+        <label>Name<input formControlName="name" placeholder="Acme Realty" /></label>
+        <label>Slug<input formControlName="slug" placeholder="acme-realty" /></label>
+        <label>Country<input formControlName="countryCode" maxlength="2" /></label>
+        <label>Time zone<input formControlName="defaultTimeZoneId" /></label>
+        <div class="form-actions"><button class="btn-primary" type="button" (click)="saveBusiness()" [disabled]="saving || businessForm.invalid">Create business</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Step 3: Workspace -->
+  <section class="card" *ngIf="step === 'workspace'">
+    <h2>Workspace</h2>
+    <p class="hint">Workspaces group client businesses for your team. A workspace is created automatically linked to "{{ selectedBusiness?.name }}".</p>
+    <div class="row" *ngIf="workspaces.length > 0">
+      <select [(ngModel)]="selectedWorkspaceId">
+        <option value="">— Select existing —</option>
+        <option *ngFor="let w of workspaces" [value]="w.id">{{ w.name }}</option>
+      </select>
+    </div>
+    <p class="hint" *ngIf="workspaces.length === 0">No workspaces yet — create your first one below.</p>
+
+    <div class="sub-block">
+      <h3>{{ workspaces.length > 0 ? 'Or create a new workspace' : 'Create your workspace' }}</h3>
+      <form [formGroup]="workspaceForm" class="form-grid">
+        <label>Name<input formControlName="name" placeholder="Sales Team" /></label>
+        <label>Time zone<input formControlName="timeZoneId" /></label>
+        <div class="form-actions"><button class="btn-primary" type="button" (click)="saveWorkspace()" [disabled]="saving || workspaceForm.invalid || !selectedBusinessId">Create workspace</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Step 4: Configure -->
+  <section class="card" *ngIf="step === 'configure'">
+    <h2>Business configuration</h2>
+    <p class="hint">Optional but recommended — helps AI agents qualify leads for "{{ selectedBusiness?.name }}". You can skip and do this later on the Dashboard.</p>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="form-grid">
+      <label class="wide">What does the business do?<textarea formControlName="description" rows="2" maxlength="2000" placeholder="We help…"></textarea></label>
+      <label>Industry<input formControlName="industry" maxlength="120" placeholder="Real Estate" /></label>
+      <label>Category<input formControlName="category" maxlength="120" placeholder="B2B Services" /></label>
+      <div class="form-actions"><button class="btn-secondary" type="submit" [disabled]="saving">Save profile</button></div>
+    </form>
+
+    <div class="sub-block">
+      <h3>Offerings</h3>
+      <ul class="chip-list" *ngIf="offerings.length">
+        <li *ngFor="let o of offerings" class="chip">{{ o.name }} <small>{{ o.kind }}</small></li>
+      </ul>
+      <form [formGroup]="offeringForm" (ngSubmit)="addOffering()" class="inline-row">
+        <input formControlName="name" placeholder="Offering name" />
+        <select formControlName="kind"><option>Service</option><option>Product</option><option>Package</option></select>
+        <button class="btn-secondary" type="submit">Add</button>
+      </form>
+    </div>
+
+    <div class="sub-block">
+      <h3>Target industries</h3>
+      <ul class="chip-list" *ngIf="industries.length">
+        <li *ngFor="let i of industries" class="chip">{{ i.industry }} <button type="button" class="chip-x" (click)="removeIndustry(i.id)">×</button></li>
+      </ul>
+      <div class="inline-row">
+        <input [(ngModel)]="industryInput" placeholder="e.g. Healthcare" (keyup.enter)="addIndustry()" />
+        <button class="btn-secondary" type="button" (click)="addIndustry()">Add</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 5: Launch -->
+  <section class="card" *ngIf="step === 'launch'">
+    <h2>You're ready to go</h2>
+    <p class="hint">Load sample data to explore every feature, or create your first real lead.</p>
+
+    <div class="launch-grid">
+      <div class="launch-option">
+        <h3>Explore with demo data</h3>
+        <p>Seeds leads, pipeline stages, a campaign, appointment types, a workflow, an AI agent, inbound enquiries, and a discovery source for "{{ selectedBusiness?.name }}". Safe to run repeatedly.</p>
+        <button class="btn-primary" (click)="seedDemo()" [disabled]="seeding || !canSeed || seededCount !== null">
+          {{ seeding ? 'Seeding…' : seededCount !== null ? 'Demo data loaded' : 'Load demo data' }}
+        </button>
+        <p class="hint" *ngIf="!canSeed">You need Editor or ClientAdmin role to seed data.</p>
+        <p class="success-text" *ngIf="seededCount !== null">{{ seededCount }} records created.</p>
+      </div>
+
+      <div class="launch-option">
+        <h3>Add your first lead</h3>
+        <form [formGroup]="leadForm" (ngSubmit)="createFirstLead()" class="form-grid">
+          <label>Name<input formControlName="name" placeholder="Company or person name" /></label>
+          <label>Email<input formControlName="email" placeholder="name@company.com" /></label>
+          <label>Phone<input formControlName="phone" /></label>
+          <label>Industry<input formControlName="industry" /></label>
+          <div class="form-actions"><button class="btn-secondary" type="submit" [disabled]="saving || leadForm.invalid || leadCreated">{{ leadCreated ? 'Lead created' : 'Create lead' }}</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer nav -->
+  <footer class="wizard-footer">
+    <button class="btn-secondary" (click)="back()" [disabled]="currentStep === 0 || saving">Back</button>
+    <div class="footer-right">
+      <span class="hint" *ngIf="!canContinue() && step !== 'configure'">Complete this step to continue.</span>
+      <button *ngIf="currentStep < steps.length - 1" class="btn-primary" (click)="next()" [disabled]="saving || loading">Continue</button>
+      <a *ngIf="currentStep === steps.length - 1 && (seededCount !== null || leadCreated)" routerLink="/leads" class="btn-primary finish-link">Open Leads pipeline</a>
+    </div>
+  </footer>
+</div>

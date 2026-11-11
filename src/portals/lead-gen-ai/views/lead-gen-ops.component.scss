@@ -39,3 +39,42 @@ ul { padding-left: 1.2rem; }
 .tab-group-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-right: .35rem; }
 .empty-note { color: var(--lg-muted); font-style: italic; padding: .5rem 0; }
 .page-header select { margin-top: .5rem; }
+
+.agent-create, .run-form {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 16px;
+  flex-wrap: wrap;
+  input, select {
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  input { flex: 1; min-width: 160px; }
+  button {
+    background: #2563eb; color: #fff; border: none; border-radius: 6px;
+    padding: 7px 14px; font-size: 13px; cursor: pointer;
+  }
+}
+.agent-detail {
+  margin-top: 18px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+  h3 { margin: 0 0 10px; font-size: 15px; color: #0f172a; }
+  h4 { margin: 14px 0 8px; font-size: 13px; color: #475569; text-transform: uppercase; letter-spacing: .04em; }
+}
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  &.status-succeeded, &.status-completed, &.status-active { background: #dcfce7; color: #15803d; }
+  &.status-failed { background: #fee2e2; color: #b91c1c; }
+  &.status-running, &.status-pending { background: #fef3c7; color: #b45309; }
+}
+.cell-clip { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.text-danger { color: #b91c1c; }

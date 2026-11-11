@@ -170,6 +170,22 @@ export class LeadGenAiDashboardComponent implements OnInit {
     return this.clientBusinesses.some(business => business.canManage);
   }
 
+  get activeLeadCount(): number {
+    return this.leads.filter(l => l.status !== 'Archived').length;
+  }
+
+  get manageableBusinesses(): ClientBusiness[] {
+    return this.clientBusinesses.filter(b => b.canManage);
+  }
+
+  refresh(): void {
+    this.loadOrganization();
+    this.loadClientBusinesses();
+    this.loadWorkspaces();
+    this.loadOrgMembers();
+    this.loadLeads();
+  }
+
   ngOnInit(): void {
     this.acceptInvitationFromUrl();
     this.refreshConnection();

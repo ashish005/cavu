@@ -62,19 +62,63 @@
   <!-- Agents -->
   <section *ngIf="activeTab === 'agents'">
     <h2>AI Agents</h2>
+
+    <form class="agent-create" (ngSubmit)="createAgent()">
+      <input [(ngModel)]="agentForm.name" name="agentName" placeholder="Agent name" required />
+      <input [(ngModel)]="agentForm.purpose" name="agentPurpose" placeholder="Purpose (e.g. Qualify inbound leads)" required />
+      <button type="submit">Create agent</button>
+    </form>
+
     <div class="table-scroll" *ngIf="agents.length > 0">
       <table>
         <thead><tr><th>Name</th><th>Purpose</th><th>Status</th><th>Version</th><th>Actions</th></tr></thead>
         <tbody>
           <tr *ngFor="let a of agents" [class.selected]="selectedAgentId === a.id">
             <td><button type="button" class="link" (click)="selectAgent(a)">{{ a.name }}</button></td>
-            <td>{{ a.purpose }}</td><td>{{ a.status }}</td><td>{{ a.currentVersionId ? 'active' : '—' }}</td>
+            <td>{{ a.purpose }}</td><td><span class="status-badge" [class]="'status-' + a.status.toLowerCase()">{{ a.status }}</span></td><td>{{ a.currentVersionId ? 'active' : '—' }}</td>
             <td><button type="button" (click)="runAgent(a)">Run</button></td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p *ngIf="agents.length === 0">No agents configured.</p>
+    <p *ngIf="agents.length === 0">No agents configured — create one above.</p>
+
+    <div class="agent-detail" *ngIf="selectedAgent">
+      <h3>{{ selectedAgent.name }} — {{ selectedAgent.purpose }}</h3>
+
+      <form class="run-form" (ngSubmit)="runAgent(selectedAgent)">
+        <select [(ngModel)]="runForm.kind" name="runKind">
+          <option value="qualification">Qualification</option>
+          <option value="summary">Summary</option>
+          <option value="classification">Classification</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input [(ngModel)]="runForm.input" name="runInput" placeholder="Input / prompt (optional)" />
+        <button type="submit">Run agent</button>
+      </form>
+
+      <h4>Execution history</h4>
+      <div class="table-scroll" *ngIf="agentExecutions.length > 0">
+        <table>
+          <thead><tr><th>Status</th><th>Kind</th><th>Input</th><th>Output / Response</th><th>Started</th><th>Completed</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let x of agentExecutions">
+              <td><span class="status-badge" [class]="'status-' + x.status.toLowerCase()">{{ x.status }}</span></td>
+              <td>{{ x.kind }}</td>
+              <td class="cell-clip">{{ x.inputSummary || '—' }}</td>
+              <td class="cell-clip">
+                <span *ngIf="x.outputSummary">{{ x.outputSummary }}</span>
+                <span class="text-danger" *ngIf="x.failureReason">{{ x.failureReason }}</span>
+                <span *ngIf="!x.outputSummary && !x.failureReason">—</span>
+              </td>
+              <td>{{ x.startedAt | date:'short' }}</td>
+              <td>{{ x.completedAt ? (x.completedAt | date:'short') : '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p *ngIf="agentExecutions.length === 0">No executions yet — run the agent above.</p>
+    </div>
   </section>
 
   <section *ngIf="activeTab === 'ai-monitor'">

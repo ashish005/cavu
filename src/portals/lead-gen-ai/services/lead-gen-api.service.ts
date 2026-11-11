@@ -823,6 +823,9 @@ export class LeadGenApiService {
   runAgent(clientBusinessId: string, agentId: string, kind?: string, input?: string): Observable<AgentExecution> {
     return this.http.post<AgentExecution>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/agents/${agentId}/executions`, { kind, input }, { headers: this.authorizationHeaders() });
   }
+  listAgentExecutions(clientBusinessId: string, agentId: string): Observable<AgentExecution[]> {
+    return this.http.get<AgentExecution[]>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/agents/${agentId}/executions`, { headers: this.authorizationHeaders() });
+  }
 
   // ---------- EP-15 voice ----------
   getVoiceProvider(clientBusinessId: string): Observable<VoiceProviderConfig> {

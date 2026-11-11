@@ -7,6 +7,7 @@ import {
   CampaignMessage,
   CampaignReport,
   AiAgent,
+  AgentExecution,
   AgentVersion,
   Appointment,
   AppointmentType,
@@ -62,6 +63,10 @@ export class LeadGenOpsComponent implements OnInit {
   leads: Lead[] = [];
   agents: AiAgent[] = [];
   agentVersions: AgentVersion[] = [];
+  agentExecutions: AgentExecution[] = [];
+  selectedAgent?: AiAgent;
+  agentForm = { name: '', purpose: '' };
+  runForm = { kind: 'qualification', input: '' };
   selectedAgentId = '';
   aiMonitoring?: AiMonitoringReport;
   aiMonitoringDays = 30;
@@ -230,6 +235,19 @@ export class LeadGenOpsComponent implements OnInit {
   // agents
   selectAgent(a: AiAgent): void {
     this.selectedAgentId = a.id;
+    this.selectedAgent = a;
+    const cb = this.cb(); if (!cb) return;
+    this.api.listAgentExecutions(cb, a.id).subscribe({ next: (x) => this.agentExecutions = x, error: () => undefined });
+  }
+  createAgent(): void {
+    const cb = this.cb(); if (!cb || !this.agentForm.name.trim() || !this.agentForm.purpose.trim()) return;
+    this.api.createAgent(cb, {
+      name: this.agentForm.name.trim(), purpose: this.agentForm.purpose.trim(),
+      behaviourJson: '{}', permissionsJson: '{"canSendEmail":false,"canUpdateLeads":false}'
+    }).subscribe({
+      next: (a) => { this.agentForm = { name: '', purpose: '' }; this.message = `Agent "${a.name}" created.`; this.loadForBusiness(); this.selectAgent(a); },
+      error: (e) => this.error = this.err(e)
+    });
   }
   activateAgent(a: AiAgent, versionId: string): void { const cb = this.cb(); if (cb) this.api.activateAgent(cb, a.id, versionId).subscribe({ next: () => this.loadForBusiness(), error: (e) => this.error = this.err(e) }); }
 
@@ -265,7 +283,16 @@ export class LeadGenOpsComponent implements OnInit {
     if (cb) this.api.listProspects().subscribe({ next: (p) => { /* placeholder for prospect pick */ }, error: () => undefined });
   }
   executeJob(job: DiscoveryJob): void { this.api.executeDiscoveryJob(job.id).subscribe({ next: (x) => this.message = `Execution ${x.status}: ${x.newResults} new.`, error: (e) => this.error = this.err(e) }); }
-  runAgent(a: AiAgent): void { const cb = this.cb(); if (cb) this.api.runAgent(cb, a.id).subscribe({ next: (x) => this.message = `Agent execution ${x.status}.`, error: (e) => this.error = this.err(e) }); }
+  runAgent(a: AiAgent): void {
+    const cb = this.cb(); if (!cb) return;
+    this.api.runAgent(cb, a.id, this.runForm.kind, this.runForm.input || undefined).subscribe({
+      next: (x) => {
+        this.message = `Execution ${x.status}${x.outputSummary ? ' — ' + x.outputSummary : ''}${x.failureReason ? ' — ' + x.failureReason : ''}`;
+        this.selectAgent(a);
+      },
+      error: (e) => this.error = this.err(e)
+    });
+  }
   assessProspect(prospectId: string): void {
     const cb = this.cb(); if (!cb || !prospectId) return;
     this.selectedProspectId = prospectId;
