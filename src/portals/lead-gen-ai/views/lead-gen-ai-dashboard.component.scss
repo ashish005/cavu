@@ -40,6 +40,308 @@
   margin-bottom: 28px;
 }
 
+.organization-section {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.client-business-section {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.workspace-context-section {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.workspace-context-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+  align-items: end;
+}
+
+.workspace-context-controls select,
+.create-workspace-form input,
+.create-workspace-form select {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #cbd8db;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.workspace-context-controls .active-context-note {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.create-workspace-panel {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.create-workspace-panel h3 {
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.create-workspace-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+  align-items: end;
+}
+
+.create-workspace-form .submit-button {
+  justify-self: start;
+  margin: 15px 0 0;
+}
+
+.create-workspace-form .workspace-client-selection {
+  grid-column: 1 / -1;
+}
+
+.create-workspace-form select[multiple] {
+  height: auto;
+  min-height: 104px;
+}
+
+.locations-panel,
+.invitation-panel {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.locations-panel h3,
+.invitation-panel h3 {
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.location-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 14px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.invitation-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+  align-items: end;
+}
+
+.invitation-form .submit-button {
+  justify-self: start;
+  margin: 15px 0 0;
+}
+
+.location-form input,
+.location-form textarea,
+.invitation-form input,
+.invitation-form select,
+.prospect-workspace select {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #cbd8db;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.location-form textarea {
+  resize: vertical;
+}
+
+.location-hours,
+.location-form-actions {
+  grid-column: 1 / -1;
+}
+
+.location-form-actions,
+.location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.location-form-actions {
+  margin: 14px 0;
+}
+
+.location-form-actions .submit-button {
+  margin-top: 0;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.client-business-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.client-business-list select,
+.employee-form select,
+.employee-form input,
+.create-client-form input {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #cbd8db;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.assignment-panel,
+.create-client-panel {
+  min-width: 0;
+  padding-top: 6px;
+}
+
+.assignment-panel h3,
+.create-client-panel h3 {
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.panel-description {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.employee-form,
+.create-client-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+  align-items: end;
+}
+
+.employee-form .submit-button,
+.create-client-form .submit-button {
+  justify-self: start;
+  margin: 15px 0 0;
+}
+
+.create-client-panel {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.revoke-button {
+  min-height: 30px;
+  color: #a63c36;
+}
+
+.organization-section .section-heading {
+  margin-bottom: 4px;
+}
+
+.organization-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.organization-section fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.organization-section fieldset:disabled {
+  opacity: .7;
+}
+
+.organization-fields .field-label {
+  margin-top: 12px;
+}
+
+.organization-fields input {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #cbd8db;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.organization-fields input:focus {
+  border-color: var(--teal);
+  outline: 2px solid rgba(22, 124, 121, .16);
+  outline-offset: 1px;
+}
+
+.organization-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.organization-actions .submit-button {
+  margin-top: 14px;
+}
+
+.deactivate-button {
+  margin-top: 14px;
+  color: #a63c36;
+}
+
+.owner-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .eyebrow {
   margin: 0 0 7px;
   color: var(--teal);
@@ -92,6 +394,55 @@ h1 {
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
+}
+
+.client-report-section {
+  margin-top: 36px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.report-filter {
+  max-width: 360px;
+}
+
+.report-filter select {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #cbd8db;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.report-totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.report-totals div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.report-totals strong {
+  font-size: 20px;
+}
+
+.report-totals span {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .prospects-section {
@@ -556,6 +907,17 @@ h2 {
     flex-direction: column;
   }
 
+  .client-business-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-context-controls,
+  .create-workspace-form,
+  .location-form,
+  .invitation-form {
+    grid-template-columns: 1fr;
+  }
+
   .workspace-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 30px;
@@ -576,8 +938,26 @@ h2 {
     border-bottom: 1px solid var(--line);
   }
 
+  .employee-form,
+  .create-client-form {
+    grid-template-columns: 1fr;
+  }
+
+  .location-hours,
+  .location-form-actions {
+    grid-column: auto;
+  }
+
   .heading-actions {
     width: 100%;
+  }
+
+  .organization-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .report-totals {
+    grid-template-columns: 1fr;
   }
 }
 

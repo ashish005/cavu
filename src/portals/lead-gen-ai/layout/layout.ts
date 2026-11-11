@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router, RouterLink, RouterModule} from "@angular/router";
 import { AppPermissionService, OrgLookupService, OrgLookup } from "@app-global";
-import {GlobalModule, EMPLOYEE_COMMON_ROUES} from "@app-global";
 
 @Component({
   templateUrl: './templates/layout.html',
@@ -10,7 +9,15 @@ import {GlobalModule, EMPLOYEE_COMMON_ROUES} from "@app-global";
 })
 export class MainLayout implements OnInit {
   public navList: Array<any> = this.permService.getEmployeeNavList([
-
+    {
+      isFLatChildren: true, key: 'mainLayout.heading.main',
+      children:[
+        { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
+        { routeTo: ['leads'], icon:"fa fa-users", key: 'leads' },
+        { routeTo: ['operations'], icon:"fa fa-bell", key: 'operations' },
+        { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' }
+      ]
+    }
   ]);
 
   orgLookup: OrgLookup;

@@ -1,0 +1,119 @@
+<main class="candidate-page">
+  <header class="page-header">
+    <h1>Candidate</h1>
+    <p>Jobs, alerts, applications, and resumes for your candidate profile.</p>
+  </header>
+
+  <p *ngIf="!profile" class="empty-note">No candidate profile found. Create one from the dashboard or API first.</p>
+
+  <nav class="tab-bar" aria-label="Candidate sections">
+    <button *ngFor="let t of tabs" type="button" [class.active]="tab === t.key" (click)="setTab(t.key)">{{ t.label }}</button>
+  </nav>
+
+  <p class="form-error" *ngIf="error">{{ error }}</p>
+  <p class="form-success" *ngIf="message">{{ message }}</p>
+
+  <section *ngIf="tab === 'jobs'">
+    <h2>Job listings</h2>
+    <div class="toolbar">
+      <input [(ngModel)]="jobSearch" placeholder="Search title or company" (keyup.enter)="loadJobs()" />
+      <label><input type="checkbox" [(ngModel)]="savedOnly" (change)="loadJobs()" /> Saved only</label>
+      <button type="button" (click)="loadJobs()">Search</button>
+    </div>
+    <div class="inline-form">
+      <input [(ngModel)]="newJobTitle" placeholder="Job title" />
+      <input [(ngModel)]="newJobCompany" placeholder="Company" />
+      <input [(ngModel)]="newJobLocation" placeholder="Location" />
+      <button type="button" (click)="addJob()" [disabled]="!newJobTitle.trim()">Add job</button>
+    </div>
+    <div class="table-scroll" *ngIf="jobs.length > 0">
+      <table>
+        <thead><tr><th>Title</th><th>Company</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let j of jobs">
+            <td>{{ j.title }}</td>
+            <td>{{ j.company || '—' }}</td>
+            <td>{{ j.location || '—' }}</td>
+            <td>{{ j.status }}<span *ngIf="j.isSaved"> · saved</span></td>
+            <td>
+              <button type="button" (click)="toggleSave(j)">{{ j.isSaved ? 'Unsave' : 'Save' }}</button>
+              <button type="button" (click)="assessMatch(j)">Assess</button>
+              <button type="button" (click)="applyToJob(j)">Apply</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="jobs.length === 0 && !loading">No jobs found.</p>
+    <ng-container *ngFor="let j of jobs">
+      <div class="match-card" *ngIf="matches[j.id]?.length">
+        <h4>Matches for {{ j.title }}</h4>
+        <ul>
+          <li *ngFor="let m of matches[j.id]">
+            <strong>{{ m.assessment }}</strong> — {{ m.explanation }}
+            <span class="prospect-email">{{ m.assessedAt | date:'short' }}</span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </section>
+
+  <section *ngIf="tab === 'alerts'">
+    <h2>Job alerts</h2>
+    <div class="inline-form">
+      <input [(ngModel)]="newAlertName" placeholder="Alert name" />
+      <input [(ngModel)]="newAlertCriteria" placeholder='Criteria JSON, e.g. {"keywords":["engineer"]}' />
+      <button type="button" (click)="addAlert()" [disabled]="!newAlertName.trim() || !newAlertCriteria.trim()">Create alert</button>
+    </div>
+    <ul *ngIf="alerts.length > 0">
+      <li *ngFor="let a of alerts">
+        {{ a.name }} — {{ a.frequency }} — {{ a.status }}
+        <button type="button" (click)="pauseAlert(a)">{{ a.status === 'Active' ? 'Pause' : 'Resume' }}</button>
+      </li>
+    </ul>
+    <p *ngIf="alerts.length === 0">No alerts.</p>
+  </section>
+
+  <section *ngIf="tab === 'applications'">
+    <h2>Applications</h2>
+    <div class="table-scroll" *ngIf="applications.length > 0">
+      <table>
+        <thead><tr><th>Job</th><th>Stage</th><th>Applied</th><th>Outcome</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let a of applications">
+            <td>{{ a.jobListingId }}</td><td>{{ a.stage }}</td>
+            <td>{{ a.appliedAt ? (a.appliedAt | date:'mediumDate') : '—' }}</td>
+            <td>{{ a.outcome || '—' }}</td>
+            <td>
+              <button type="button" (click)="advanceApplication(a, 'Applied')" *ngIf="a.stage !== 'Applied'">Mark applied</button>
+              <button type="button" (click)="advanceApplication(a, 'Interview')" *ngIf="a.stage === 'Applied'">Interview</button>
+              <button type="button" (click)="advanceApplication(a, 'Offer')" *ngIf="a.stage === 'Interview'">Offer</button>
+              <button type="button" (click)="recordOutcome(a)">Outcome</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="applications.length === 0">No applications tracked.</p>
+  </section>
+
+  <section *ngIf="tab === 'resumes'">
+    <h2>Resumes</h2>
+    <div class="inline-form">
+      <input [(ngModel)]="newResumeName" placeholder="File name" />
+      <input [(ngModel)]="newResumeRef" placeholder="Storage reference" />
+      <button type="button" (click)="addResume()" [disabled]="!newResumeName.trim() || !newResumeRef.trim()">Upload</button>
+    </div>
+    <div class="table-scroll" *ngIf="resumes.length > 0">
+      <table>
+        <thead><tr><th>File</th><th>Status</th><th>Added</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let r of resumes">
+            <td>{{ r.fileName }}</td><td>{{ r.status }}</td><td>{{ r.createdAt | date:'mediumDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="resumes.length === 0">No resumes.</p>
+  </section>
+</main>
