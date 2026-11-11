@@ -986,3 +986,80 @@ h2 {
     font-size: 10px;
   }
 }
+.btn-small {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn-small:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.btn-danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 5px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.member-add-form {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  align-items: flex-end;
+}
+
+.member-add-form select {
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+details.dash-collapsible,
+details.client-report-section,
+details.client-business-section {
+  summary.dash-summary {
+    list-style: none;
+    cursor: pointer;
+    display: block;
+  }
+  summary.dash-summary::-webkit-details-marker { display: none; }
+  summary.dash-summary::after {
+    content: '\f078';
+    font-family: FontAwesome;
+    float: right;
+    color: #64748b;
+    transition: transform .15s;
+  }
+  &[open] > summary.dash-summary::after { transform: rotate(180deg); }
+}

@@ -8,6 +8,7 @@
       <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)">
         <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
       </select>
+      <button type="button" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
       <button type="button" class="primary" (click)="showForm = !showForm">{{ showForm ? 'Close' : '+ New lead' }}</button>
     </div>
   </header>

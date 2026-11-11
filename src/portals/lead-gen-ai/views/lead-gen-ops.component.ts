@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   LeadGenApiService,
+  ClientBusiness,
   Campaign,
   CampaignMessage,
   CampaignReport,
@@ -49,6 +50,7 @@ type OpsTab = 'campaigns' | 'agents' | 'ai-monitor' | 'appointments' | 'workflow
 export class LeadGenOpsComponent implements OnInit {
   activeTab: OpsTab = 'campaigns';
   clientBusinessId = '';
+  clientBusinesses: ClientBusiness[] = [];
   error = '';
   message = '';
   loading = false;
@@ -108,21 +110,33 @@ export class LeadGenOpsComponent implements OnInit {
 
   constructor(private readonly api: LeadGenApiService, private readonly workspaceContext: WorkspaceContextService) {}
 
-  get tabs(): { key: OpsTab; label: string }[] {
+  get tabGroups(): { label: string; tabs: { key: OpsTab; label: string }[] }[] {
     return [
-      { key: 'campaigns', label: 'Campaigns' }, { key: 'agents', label: 'Agents' },
-      { key: 'ai-monitor', label: 'AI Monitor' },
-      { key: 'appointments', label: 'Appointments' }, { key: 'workflows', label: 'Workflows' },
-      { key: 'integrations', label: 'Integrations' }, { key: 'inbound', label: 'Inbound' },
-      { key: 'duplicates', label: 'Duplicates' }, { key: 'prospects', label: 'Prospect Ops' },
-      { key: 'discovery', label: 'Discovery' }, { key: 'voice', label: 'Voice' },
-      { key: 'communication', label: 'Communication' }, { key: 'billing', label: 'Billing' },
-      { key: 'notifications', label: 'Notifications' }, { key: 'audit', label: 'Audit' }
+      { label: 'Engage', tabs: [
+        { key: 'campaigns', label: 'Campaigns' }, { key: 'inbound', label: 'Inbound' },
+        { key: 'communication', label: 'Comms' }, { key: 'voice', label: 'Voice' } ] },
+      { label: 'Schedule', tabs: [
+        { key: 'appointments', label: 'Appointments' }, { key: 'workflows', label: 'Workflows' },
+        { key: 'agents', label: 'Agents' }, { key: 'ai-monitor', label: 'AI Monitor' } ] },
+      { label: 'Pipeline', tabs: [
+        { key: 'prospects', label: 'Prospect Ops' }, { key: 'discovery', label: 'Discovery' },
+        { key: 'duplicates', label: 'Duplicates' } ] },
+      { label: 'System', tabs: [
+        { key: 'integrations', label: 'Integrations' }, { key: 'billing', label: 'Billing' },
+        { key: 'notifications', label: 'Notifications' }, { key: 'audit', label: 'Audit' } ] }
     ];
   }
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.api.listClientBusinesses().subscribe({
+      next: (bs) => {
+        this.clientBusinesses = bs;
+        if (!this.clientBusinessId && bs.length > 0) this.clientBusinessId = bs[0].id;
+        this.loadForBusiness();
+      },
+      error: () => { if (this.clientBusinessId) this.loadForBusiness(); }
+    });
     this.api.listIntegrationProviders().subscribe({ next: (p) => this.providers = p, error: () => undefined });
     this.api.listNotifications().subscribe({ next: (n) => this.notifications = n, error: () => undefined });
     this.api.listAuditEvents({ take: 100 }).subscribe({ next: (a) => this.auditEvents = a, error: () => undefined });
@@ -131,6 +145,14 @@ export class LeadGenOpsComponent implements OnInit {
     this.api.getEntitlements().subscribe({ next: (e) => this.entitlements = e, error: () => undefined });
     this.loadForBusiness();
   }
+
+  onBusinessChange(id: string): void {
+    this.clientBusinessId = id;
+    this.loadForBusiness();
+    if (this.activeTab === 'ai-monitor') this.refreshAiMonitoring();
+  }
+
+  get hasBusiness(): boolean { return !!this.clientBusinessId; }
 
   setTab(tab: OpsTab): void {
     this.activeTab = tab;

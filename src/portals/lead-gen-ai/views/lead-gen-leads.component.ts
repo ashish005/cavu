@@ -23,6 +23,7 @@ export class LeadGenLeadsComponent implements OnInit {
   search = '';
   stageFilter = '';
   showForm = false;
+  seeding = false;
   activities: Record<string, LeadActivity[]> = {};
   expandedLeadId = '';
 
@@ -150,6 +151,20 @@ export class LeadGenLeadsComponent implements OnInit {
         this.message = 'Activity logged.';
       },
       error: (e: HttpErrorResponse) => this.error = this.err(e)
+    });
+  }
+
+  seedDemo(): void {
+    if (this.seeding) return;
+    if (!this.clientBusinessId) {
+      this.error = 'Select a client business first.';
+      return;
+    }
+    this.seeding = true;
+    this.error = '';
+    this.api.seedDemoData(this.clientBusinessId).subscribe({
+      next: (r) => { this.seeding = false; this.message = `Demo data loaded (${r.recordsCreated} records).`; this.load(); },
+      error: (e: HttpErrorResponse) => { this.seeding = false; this.error = this.err(e); }
     });
   }
 

@@ -13,6 +13,7 @@ export class MainLayout implements OnInit {
       isFLatChildren: true, key: 'mainLayout.heading.main',
       children:[
         { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'dashboard' },
+        { routeTo: ['setup'], icon:"fa fa-magic", key: 'setup' },
         { routeTo: ['leads'], icon:"fa fa-users", key: 'leads' },
         { routeTo: ['operations'], icon:"fa fa-bell", key: 'operations' },
         { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' }

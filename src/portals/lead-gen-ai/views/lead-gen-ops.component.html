@@ -2,7 +2,12 @@
   <header class="page-header">
     <h1>Operations</h1>
     <p>Campaigns, agents, appointments, workflows, integrations, inbound, duplicates, billing, notifications, and audit.</p>
+    <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+      <option value="">Select client business…</option>
+      <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+    </select>
   </header>
+  <p class="empty-note" *ngIf="!hasBusiness">Select a client business above to load data.</p>
 
   <nav class="tab-bar" aria-label="Operations sections">
     <div class="tab-group" *ngFor="let group of tabGroups">

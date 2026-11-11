@@ -719,6 +719,10 @@ export class LeadGenApiService {
   restoreLead(clientBusinessId: string, leadId: string): Observable<Lead> {
     return this.http.post<Lead>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/leads/${leadId}/restore`, {}, { headers: this.authorizationHeaders() });
   }
+  seedDemoData(clientBusinessId: string): Observable<{ recordsCreated: number }> {
+    return this.http.post<{ recordsCreated: number }>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/seed-demo`, {}, { headers: this.authorizationHeaders() });
+  }
+
   convertLead(clientBusinessId: string, leadId: string): Observable<Lead> {
     return this.http.post<Lead>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/leads/${leadId}/convert`, {}, { headers: this.authorizationHeaders() });
   }

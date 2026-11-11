@@ -793,6 +793,8 @@ export class LeadGenAiDashboardComponent implements OnInit {
 
   // ---------- EP-01/03/10/05/21 dashboard panels ----------
   orgMembers: OrgMember[] = [];
+  memberRoleDrafts: Record<string, string> = {};
+  isSavingMember = false;
   permissions?: PermissionsResponse;
   isLoadingMembers = false;
   membersError = '';
@@ -861,14 +863,72 @@ export class LeadGenAiDashboardComponent implements OnInit {
   });
 
   // ---------- loaders ----------
+  readonly memberForm = this.formBuilder.nonNullable.group({
+    userId: ['', [Validators.required, Validators.pattern(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)]],
+    role: this.formBuilder.nonNullable.control<'Admin' | 'Member'>('Member')
+  });
+
   loadOrgMembers(): void {
     this.isLoadingMembers = true;
     this.membersError = '';
+    this.memberMessage = '';
     this.api.listOrganizationMembers().pipe(finalize(() => this.isLoadingMembers = false)).subscribe({
-      next: (members) => this.orgMembers = members,
+      next: (members) => {
+        this.orgMembers = members;
+        this.memberRoleDrafts = {};
+        members.forEach(m => this.memberRoleDrafts[m.userId] = m.role === 'Owner' ? 'Admin' : m.role);
+      },
       error: (error: HttpErrorResponse) => this.membersError = this.getRequestError(error)
     });
     this.api.getPermissions().subscribe({ next: (p) => this.permissions = p, error: () => undefined });
+  }
+
+  saveMemberRole(member: OrgMember): void {
+    const role = this.memberRoleDrafts[member.userId];
+    if (!role || role === member.role || this.isSavingMember) return;
+    this.isSavingMember = true;
+    this.memberMessage = '';
+    this.membersError = '';
+    this.api.assignOrganizationMember(member.userId, role)
+      .pipe(finalize(() => this.isSavingMember = false))
+      .subscribe({
+        next: () => { this.memberMessage = `Role updated for ${member.userId}.`; this.loadOrgMembers(); },
+        error: (error: HttpErrorResponse) => this.membersError = this.getRequestError(error)
+      });
+  }
+
+  addMember(): void {
+    if (this.memberForm.invalid || this.isSavingMember) {
+      this.memberForm.markAllAsTouched();
+      return;
+    }
+    const { userId, role } = this.memberForm.getRawValue();
+    this.isSavingMember = true;
+    this.memberMessage = '';
+    this.membersError = '';
+    this.api.assignOrganizationMember(userId.trim(), role)
+      .pipe(finalize(() => this.isSavingMember = false))
+      .subscribe({
+        next: () => {
+          this.memberForm.reset({ userId: '', role: 'Member' });
+          this.memberMessage = 'Member added.';
+          this.loadOrgMembers();
+        },
+        error: (error: HttpErrorResponse) => this.membersError = this.getRequestError(error)
+      });
+  }
+
+  revokeMember(member: OrgMember): void {
+    if (this.isSavingMember) return;
+    this.isSavingMember = true;
+    this.memberMessage = '';
+    this.membersError = '';
+    this.api.revokeOrganizationMember(member.userId)
+      .pipe(finalize(() => this.isSavingMember = false))
+      .subscribe({
+        next: () => { this.memberMessage = `Access revoked for ${member.userId}.`; this.loadOrgMembers(); },
+        error: (error: HttpErrorResponse) => this.membersError = this.getRequestError(error)
+      });
   }
 
   loadBusinessConfig(): void {

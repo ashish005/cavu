@@ -7,10 +7,11 @@ import { LeadGenAiDashboardComponent } from './views/lead-gen-ai-dashboard.compo
 import { LeadGenOpsComponent } from './views/lead-gen-ops.component';
 import { LeadGenCandidateComponent } from './views/lead-gen-candidate.component';
 import { LeadGenLeadsComponent } from './views/lead-gen-leads.component';
+import { LeadGenSetupComponent } from './views/lead-gen-setup.component';
 import {MainLayout} from "./layout/layout";
 
 @NgModule({
-  declarations: [MainLayout, LeadGenAiDashboardComponent, LeadGenOpsComponent, LeadGenCandidateComponent, LeadGenLeadsComponent],
+  declarations: [MainLayout, LeadGenAiDashboardComponent, LeadGenOpsComponent, LeadGenCandidateComponent, LeadGenLeadsComponent, LeadGenSetupComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -25,7 +26,8 @@ import {MainLayout} from "./layout/layout";
           { path: 'dashboard', component: LeadGenAiDashboardComponent },
           { path: 'operations', component: LeadGenOpsComponent },
           { path: 'candidate', component: LeadGenCandidateComponent },
-          { path: 'leads', component: LeadGenLeadsComponent }
+          { path: 'leads', component: LeadGenLeadsComponent },
+          { path: 'setup', component: LeadGenSetupComponent }
         ]
       }
     ])

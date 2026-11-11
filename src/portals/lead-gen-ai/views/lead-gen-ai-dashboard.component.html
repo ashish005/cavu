@@ -446,7 +446,8 @@
     </aside>
   </section>
 
-  <section class="client-report-section" aria-labelledby="client-report-heading">
+<details class="client-report-section" >
+    <summary class="dash-summary">
     <div class="section-heading">
       <div>
         <p class="eyebrow">CLIENT PORTFOLIO</p>
@@ -457,6 +458,7 @@
         Refresh report
       </button>
     </div>
+    </summary>
     <div class="form-field report-filter">
       <label class="field-label" for="report-client-filter">Client filter</label>
       <select id="report-client-filter" [value]="reportClientBusinessId" (change)="selectReportClientBusiness($event)">
@@ -497,7 +499,7 @@
       </div>
       <p class="list-state" *ngIf="clientBusinessReport.clients.length === 0">No assigned client businesses are available for this report.</p>
     </div>
-  </section>
+  </details>
 
   <section class="prospects-section" aria-labelledby="prospects-heading">
     <div class="section-heading prospects-heading">
@@ -624,38 +626,67 @@
     </div>
   </section>
 
-  <section class="client-business-section" aria-labelledby="org-members-heading" *ngIf="permissions">
+<details class="client-business-section"  *ngIf="permissions">
+    <summary class="dash-summary">
     <div class="section-heading">
       <div>
         <h2 id="org-members-heading">Organization members</h2>
         <p>Your role: {{ permissions.role }} · {{ permissions.isOrganizationManager ? 'Manager' : 'Member' }}</p>
       </div>
     </div>
+    </summary>
     <p class="form-error" *ngIf="membersError">{{ membersError }}</p>
     <p class="form-success" *ngIf="memberMessage">{{ memberMessage }}</p>
     <div class="table-scroll" *ngIf="!isLoadingMembers && orgMembers.length > 0">
       <table>
-        <thead><tr><th scope="col">User</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Assigned</th></tr></thead>
+        <thead><tr><th scope="col">User</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Assigned</th><th scope="col" *ngIf="permissions?.isOrganizationManager">Actions</th></tr></thead>
         <tbody>
           <tr *ngFor="let member of orgMembers">
             <td>{{ member.userId }}</td>
-            <td>{{ member.role }}</td>
+            <td>
+              <select *ngIf="permissions?.isOrganizationManager && member.role !== 'Owner'"
+                      [(ngModel)]="memberRoleDrafts[member.userId]">
+                <option value="Admin">Admin</option>
+                <option value="Member">Member</option>
+              </select>
+              <span *ngIf="!permissions?.isOrganizationManager || member.role === 'Owner'">{{ member.role }}</span>
+            </td>
             <td>{{ member.isActive ? 'Active' : 'Revoked' }}</td>
             <td>{{ member.assignedAt | date:'mediumDate' }}</td>
+            <td *ngIf="permissions?.isOrganizationManager">
+              <button type="button" class="btn-small" *ngIf="member.role !== 'Owner' && member.isActive"
+                      [disabled]="isSavingMember || memberRoleDrafts[member.userId] === member.role"
+                      (click)="saveMemberRole(member)">Save role</button>
+              <button type="button" class="btn-small btn-danger" *ngIf="member.isActive && member.role !== 'Owner'"
+                      [disabled]="isSavingMember" (click)="revokeMember(member)">Revoke</button>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
     <p *ngIf="!isLoadingMembers && orgMembers.length === 0">No members found.</p>
-  </section>
 
-  <section class="client-business-section" aria-labelledby="business-config-heading" *ngIf="selectedClientBusinessId">
+    <form *ngIf="permissions?.isOrganizationManager" [formGroup]="memberForm" (ngSubmit)="addMember()" class="inline-form member-add-form">
+      <label>User ID <input formControlName="userId" placeholder="00000000-0000-0000-0000-000000000000" /></label>
+      <label>Role
+        <select formControlName="role">
+          <option value="Member">Member</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </label>
+      <button type="submit" class="btn-primary" [disabled]="isSavingMember || memberForm.invalid">Add member</button>
+    </form>
+  </details>
+
+<details class="client-business-section"  *ngIf="selectedClientBusinessId">
+    <summary class="dash-summary">
     <div class="section-heading">
       <div>
         <h2 id="business-config-heading">Business configuration</h2>
         <p>Profile, offerings, and target industries for {{ selectedClientBusiness?.name }}</p>
       </div>
     </div>
+    </summary>
     <p class="form-error" *ngIf="businessConfigError">{{ businessConfigError }}</p>
     <p class="form-success" *ngIf="businessConfigMessage">{{ businessConfigMessage }}</p>
     <form [formGroup]="profileForm" (ngSubmit)="saveBusinessProfile()" class="inline-form">
@@ -696,7 +727,7 @@
         <button type="button" (click)="removeTargetIndustry(industry)">Remove</button>
       </li>
     </ul>
-  </section>
+  </details>
 
   <section class="client-business-section" aria-labelledby="leads-heading" *ngIf="selectedClientBusinessId">
     <div class="section-heading">
@@ -741,13 +772,15 @@
     <p *ngIf="!isLoadingLeads && leads.length === 0">No leads yet.</p>
   </section>
 
-  <section class="client-business-section" aria-labelledby="discovery-heading">
+<details class="client-business-section" >
+    <summary class="dash-summary">
     <div class="section-heading">
       <div>
         <h2 id="discovery-heading">Discovery</h2>
         <p>Prospect discovery jobs and sources</p>
       </div>
     </div>
+    </summary>
     <p class="form-error" *ngIf="discoveryError">{{ discoveryError }}</p>
     <p class="form-success" *ngIf="discoveryMessage">{{ discoveryMessage }}</p>
     <form [formGroup]="discoveryJobForm" (ngSubmit)="createDiscoveryJob()" class="inline-form">
@@ -776,15 +809,17 @@
     <ul *ngIf="discoverySources.length > 0">
       <li *ngFor="let source of discoverySources">{{ source.name }} ({{ source.provider }}) — {{ source.isEnabled ? 'enabled' : 'disabled' }}</li>
     </ul>
-  </section>
+  </details>
 
-  <section class="client-business-section" aria-labelledby="candidate-heading">
+<details class="client-business-section" >
+    <summary class="dash-summary">
     <div class="section-heading">
       <div>
         <h2 id="candidate-heading">Candidate profile</h2>
         <p>Your candidate domain profile and job preferences</p>
       </div>
     </div>
+    </summary>
     <p class="form-error" *ngIf="candidateError">{{ candidateError }}</p>
     <p class="form-success" *ngIf="candidateMessage">{{ candidateMessage }}</p>
     <form [formGroup]="candidateProfileForm" (ngSubmit)="saveCandidateProfile()" class="inline-form" *ngIf="candidateProfile">
@@ -808,5 +843,5 @@
       <label>Min compensation <input formControlName="minCompensation" type="number" min="0" /></label>
       <button type="submit">Save preferences</button>
     </form>
-  </section>
+  </details>
 </main>
