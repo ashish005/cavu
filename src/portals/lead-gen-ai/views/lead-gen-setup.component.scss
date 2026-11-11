@@ -63,7 +63,13 @@
       border-color: #86efac;
       &::after { border-left-color: #86efac; }
     }
-    &.locked { opacity: .5; cursor: default; }
+    &.locked {
+      background: #f8fafc;
+      cursor: default;
+      .step-num { background: #e2e8f0; color: #94a3b8; }
+      .step-text strong { color: #94a3b8; }
+      .step-text small { color: #cbd5e1; }
+    }
   }
 
   .step-num {
@@ -100,6 +106,7 @@
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 12px rgba(15, 23, 42, 0.04);
   padding: 24px;
   margin-bottom: 16px;
+  opacity: 1;
 
   h2 {
     margin: 0 0 4px;

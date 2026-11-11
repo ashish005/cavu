@@ -47,17 +47,28 @@
         <option value="">— Select existing —</option>
         <option *ngFor="let b of businesses" [value]="b.id">{{ b.name }} ({{ b.status }})</option>
       </select>
+      <button class="btn-secondary" type="button" *ngIf="selectedBusiness && !editingBusiness" (click)="editBusiness()">Edit selected</button>
+      <button class="btn-secondary" type="button" *ngIf="editingBusiness" (click)="cancelEditBusiness()">Cancel edit</button>
+    </div>
+    <div class="row" *ngIf="selectedBusiness">
+      <label class="hint" style="margin:0">Status:
+        <select [ngModel]="selectedBusiness.status" (ngModelChange)="changeBusinessStatus($event)">
+          <option *ngFor="let st of ['Draft','Onboarding','Active','Suspended','Inactive']" [value]="st">{{ st }}</option>
+        </select>
+      </label>
     </div>
     <p class="hint" *ngIf="businesses.length === 0">No client businesses yet — create your first one below.</p>
 
     <div class="sub-block">
-      <h3>{{ businesses.length > 0 ? 'Or create a new business' : 'Create your client business' }}</h3>
+      <h3>{{ editingBusiness ? 'Edit client business' : businesses.length > 0 ? 'Or create a new business' : 'Create your client business' }}</h3>
       <form [formGroup]="businessForm" class="form-grid">
         <label>Name<input formControlName="name" placeholder="Acme Realty" /></label>
         <label>Slug<input formControlName="slug" placeholder="acme-realty" /></label>
         <label>Country<input formControlName="countryCode" maxlength="2" /></label>
         <label>Time zone<input formControlName="defaultTimeZoneId" /></label>
-        <div class="form-actions"><button class="btn-primary" type="button" (click)="saveBusiness()" [disabled]="saving || businessForm.invalid">Create business</button></div>
+        <div class="form-actions">
+          <button class="btn-primary" type="button" (click)="saveBusiness()" [disabled]="saving || businessForm.invalid">{{ editingBusiness ? 'Save changes' : 'Create business' }}</button>
+        </div>
       </form>
     </div>
   </section>

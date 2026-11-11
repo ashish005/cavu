@@ -390,6 +390,12 @@ export class LeadGenApiService {
     });
   }
 
+  updateClientBusiness(clientBusinessId: string, request: CreateClientBusinessRequest): Observable<ClientBusiness> {
+    return this.http.put<ClientBusiness>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}`, request, { headers: this.authorizationHeaders() });
+  }
+  changeClientBusinessStatus(clientBusinessId: string, status: ClientBusiness['status']): Observable<ClientBusiness> {
+    return this.http.put<ClientBusiness>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/status`, { status }, { headers: this.authorizationHeaders() });
+  }
   createClientBusiness(request: CreateClientBusinessRequest): Observable<ClientBusiness> {
     return this.http.post<ClientBusiness>(`${this.baseUrl}/api/v1/client-businesses`, request, {
       headers: this.authorizationHeaders()

@@ -196,21 +196,55 @@ export class LeadGenSetupComponent implements OnInit {
       });
   }
 
+  editingBusiness = false;
+
+  editBusiness(): void {
+    const b = this.selectedBusiness;
+    if (!b) return;
+    this.businessForm.patchValue({ name: b.name, slug: b.slug, countryCode: b.countryCode, defaultTimeZoneId: b.defaultTimeZoneId });
+    this.editingBusiness = true;
+  }
+
+  cancelEditBusiness(): void {
+    this.editingBusiness = false;
+    this.businessForm.reset({ name: '', slug: '', countryCode: '', defaultTimeZoneId: '' });
+  }
+
   saveBusiness(): void {
     if (this.businessForm.invalid) { this.businessForm.markAllAsTouched(); return; }
     this.saving = true;
     const request: CreateClientBusinessRequest = this.businessForm.getRawValue();
-    this.api.createClientBusiness(request)
-      .pipe(finalize(() => this.saving = false))
+    const call = this.editingBusiness && this.selectedBusinessId
+      ? this.api.updateClientBusiness(this.selectedBusinessId, request)
+      : this.api.createClientBusiness(request);
+    call.pipe(finalize(() => this.saving = false))
       .subscribe({
         next: business => {
-          this.businesses = [...this.businesses, business];
+          this.businesses = this.editingBusiness
+            ? this.businesses.map(b => b.id === business.id ? business : b)
+            : [...this.businesses, business];
           this.selectedBusinessId = business.id;
+          this.editingBusiness = false;
+          this.businessForm.reset({ name: '', slug: '', countryCode: '', defaultTimeZoneId: '' });
           this.completedSteps.add('business');
-          this.message = `Client business "${business.name}" created.`;
-          this.currentStep++;
+          this.message = `Client business "${business.name}" ${this.editingBusiness ? 'updated' : 'created'}.`;
+          if (!this.editingBusiness && this.currentStep === 1) this.currentStep++;
         },
-        error: () => this.error = 'Could not create the client business. The slug may already be in use.'
+        error: () => this.error = this.editingBusiness
+          ? 'Could not update the client business. The slug may already be in use.'
+          : 'Could not create the client business. The slug may already be in use.'
+      });
+  }
+
+  changeBusinessStatus(status: ClientBusiness['status']): void {
+    if (!this.selectedBusinessId) return;
+    this.api.changeClientBusinessStatus(this.selectedBusinessId, status)
+      .subscribe({
+        next: b => {
+          this.businesses = this.businesses.map(x => x.id === b.id ? b : x);
+          this.message = `"${b.name}" is now ${b.status}.`;
+        },
+        error: () => this.error = 'Could not change the business status.'
       });
   }
 
