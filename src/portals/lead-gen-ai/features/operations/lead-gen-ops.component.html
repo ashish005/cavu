@@ -1,0 +1,193 @@
+<main class="ops-page">
+  <header class="page-header">
+    <h1>Operations</h1>
+    <p>Campaigns, agents, appointments, workflows, integrations, inbound, duplicates, billing, notifications, and audit.</p>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option value="">Select client business…</option>
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <button type="button" class="btn-secondary" (click)="seedDemo()" [disabled]="!hasBusiness || seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
+    </div>
+  </header>
+  <p class="empty-note" *ngIf="!hasBusiness">Select a client business above to load data.</p>
+
+  <nav class="tab-bar" aria-label="Operations sections">
+    <div class="tab-group" *ngFor="let group of tabGroups">
+      <span class="tab-group-label">{{ group.label }}</span>
+      <button *ngFor="let tab of group.tabs" type="button" [class.active]="activeTab === tab.key" (click)="setTab(tab.key)">{{ tab.label }}</button>
+    </div>
+  </nav>
+
+  <p class="form-error" *ngIf="error">{{ error }}</p>
+  <p class="form-success" *ngIf="message">{{ message }}</p>
+
+  <!-- Campaigns -->
+  
+
+  <!-- Agents -->
+  
+
+  <section *ngIf="activeTab === 'ai'">
+    <h2>AI monitoring</h2>
+    <div class="inline-form">
+      <label for="ai-monitor-range">Time range</label>
+      <select id="ai-monitor-range" [(ngModel)]="aiMonitoringDays" (ngModelChange)="refreshAiMonitoring()">
+        <option [ngValue]="7">Last 7 days</option>
+        <option [ngValue]="30">Last 30 days</option>
+        <option [ngValue]="90">Last 90 days</option>
+      </select>
+      <button type="button" (click)="refreshAiMonitoring()" [disabled]="aiMonitoringLoading">
+        {{ aiMonitoringLoading ? 'Refreshing…' : 'Refresh' }}
+      </button>
+    </div>
+
+    <p *ngIf="aiMonitoringLoading">Loading AI activity…</p>
+    <ng-container *ngIf="aiMonitoring as monitor">
+      <div class="monitor-cards">
+        <article class="report-card"><span>Agent runs</span><strong>{{ monitor.agentExecutions }}</strong><small>{{ monitor.agentSucceeded }} succeeded · {{ monitor.agentFailed }} failed · {{ monitor.agentRunning }} running</small></article>
+        <article class="report-card"><span>AI evaluations</span><strong>{{ monitor.aiEvaluations }}</strong><small>{{ monitor.aiEvaluationsSatisfied }} satisfied · {{ monitor.aiEvaluationsFailed }} failed · {{ monitor.aiEvaluationsUnavailable }} unavailable</small></article>
+        <article class="report-card"><span>AI provider calls</span><strong>{{ monitor.aiProviderExecutions }}</strong><small>{{ monitor.aiProviderFailures }} failed · {{ monitor.averageAiProviderLatencyMs == null ? 'No latency data' : (monitor.averageAiProviderLatencyMs | number:'1.0-0') + ' ms average' }}</small></article>
+      </div>
+      <p class="monitor-notice">
+        Observed window: {{ monitor.from | date:'medium' }} – {{ monitor.to | date:'medium' }}.
+        Token usage and cost are not recorded yet. Agent runs marked as stubs do not represent live model calls.
+        Connection checks only verify configuration; they do not contact the provider.
+      </p>
+      <p *ngIf="monitor.stubAgentExecutions > 0" class="monitor-warning">
+        {{ monitor.stubAgentExecutions }} agent run(s) used the stub provider. No live model performance can be inferred from those runs.
+      </p>
+
+      <h3>AI provider connections</h3>
+      <div class="table-scroll" *ngIf="aiProviderConnections.length > 0">
+        <table>
+          <thead><tr><th>Provider</th><th>Status</th><th>Last configuration check</th><th>Issue</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let c of aiProviderConnections">
+              <td>{{ c.providerKey || c.providerId }}</td>
+              <td>{{ c.status }}</td>
+              <td>{{ c.lastCheckedAt ? (c.lastCheckedAt | date:'short') : 'Never' }}</td>
+              <td>{{ c.lastError || '—' }}</td>
+              <td><button type="button" (click)="checkConnection(c)">Check configuration</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p *ngIf="aiProviderConnections.length === 0">No AI provider connections are configured for this client.</p>
+
+      <h3>Recent AI activity</h3>
+      <div class="table-scroll" *ngIf="monitor.recentEvents.length > 0">
+        <table>
+          <thead><tr><th>When</th><th>Kind</th><th>Operation</th><th>Provider</th><th>Status</th><th>Latency</th><th>Result / error</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let event of monitor.recentEvents">
+              <td>{{ event.startedAt | date:'short' }}</td>
+              <td>{{ event.kind }}</td>
+              <td>{{ event.operation }}</td>
+              <td>{{ event.provider }}</td>
+              <td>{{ event.status }}<span *ngIf="event.httpStatusCode"> (HTTP {{ event.httpStatusCode }})</span></td>
+              <td>{{ event.latencyMs == null ? '—' : (event.latencyMs | number:'1.0-0') + ' ms' }}</td>
+              <td>
+                <details *ngIf="event.resultSummary || event.error || event.inputSummary">
+                  <summary>{{ event.error ? 'View error' : 'View details' }}</summary>
+                  <p *ngIf="event.inputSummary"><strong>Input</strong>: {{ event.inputSummary }}</p>
+                  <p *ngIf="event.resultSummary"><strong>Result</strong>: {{ event.resultSummary }}</p>
+                  <p *ngIf="event.error" class="form-error"><strong>Error</strong>: {{ event.error }}</p>
+                </details>
+                <span *ngIf="!event.resultSummary && !event.error && !event.inputSummary">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p *ngIf="monitor.recentEvents.length === 0">No AI activity was recorded in this time range.</p>
+    </ng-container>
+  </section>
+
+  <!-- Appointments -->
+  
+
+  <!-- Workflows -->
+  
+
+  <!-- Integrations -->
+  
+
+  <!-- Inbound -->
+  <!-- Inbox -->
+  
+
+  
+
+  <!-- Duplicates -->
+  <section *ngIf="activeTab === 'prospecting'">
+    <h2>Duplicate candidates</h2>
+    <div class="table-scroll" *ngIf="duplicates.length > 0">
+      <table>
+        <thead><tr><th>Prospect A</th><th>Prospect B</th><th>Fields</th><th>Decision</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let d of duplicates">
+            <td>{{ d.prospectAId }}</td><td>{{ d.prospectBId }}</td>
+            <td>{{ d.matchingFieldsJson }}</td><td>{{ d.decision }}</td>
+            <td>
+              <button type="button" (click)="decideDuplicate(d, 'Duplicate')">Duplicate</button>
+              <button type="button" (click)="decideDuplicate(d, 'NotDuplicate')">Not duplicate</button>
+              <button type="button" (click)="mergeDuplicate(d, d.prospectAId)">Merge → A</button>
+              <button type="button" (click)="mergeDuplicate(d, d.prospectBId)">Merge → B</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="duplicates.length === 0">No duplicate candidates.</p>
+  </section>
+
+  <!-- Prospect ops -->
+  
+
+  <!-- Discovery -->
+  
+
+  <!-- Voice -->
+  
+
+  <!-- Communication -->
+  
+
+  <!-- Billing -->
+  
+
+  <!-- Notifications -->
+  <section *ngIf="activeTab === 'system'">
+    <h2>Notifications</h2>
+    <div class="table-scroll" *ngIf="notifications.length > 0">
+      <table>
+        <thead><tr><th>Subject</th><th>Kind</th><th>Channel</th><th>Status</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let n of notifications">
+            <td>{{ n.subject }}</td><td>{{ n.kind }}</td><td>{{ n.channel }}</td>
+            <td>{{ n.status }}</td><td>{{ n.createdAt | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="notifications.length === 0">No notifications.</p>
+  </section>
+
+  <!-- Audit -->
+  <section *ngIf="activeTab === 'system'">
+    <h2>Audit events</h2>
+    <div class="table-scroll" *ngIf="auditEvents.length > 0">
+      <table>
+        <thead><tr><th>When</th><th>Actor</th><th>Entity</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let a of auditEvents">
+            <td>{{ a.occurredAt | date:'short' }}</td><td>{{ a.actorUserId || 'system' }}</td>
+            <td>{{ a.entityType }}</td><td>{{ a.action }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="auditEvents.length === 0">No audit events.</p>
+  </section>
+</main>

@@ -1,0 +1,54 @@
+<main class="wf-page">
+  <header class="page-header">
+    <div>
+      <h1>Workflows</h1>
+      <p class="subtitle">Automation definitions, triggers and run history</p>
+    </div>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <button type="button" class="btn-primary" (click)="create()">+ New workflow</button>
+      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+    </div>
+  </header>
+
+  <p class="alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert-success" *ngIf="message">{{ message }}</p>
+  <p class="muted" *ngIf="loading">Loading…</p>
+
+  <div class="panels">
+    <section class="panel">
+      <h3>Definitions</h3>
+      <ul class="wf-list" *ngIf="workflows.length">
+        <li *ngFor="let w of workflows" [class.selected]="selectedId === w.id" (click)="select(w)">
+          <div class="wf-info">
+            <strong>{{ w.name }}</strong>
+            <span class="muted">v{{ w.version }} · {{ w.isActive ? 'active' : 'inactive' }}</span>
+          </div>
+          <button type="button" class="btn-secondary" *ngIf="w.isActive" (click)="runNow(w); $event.stopPropagation()">Run</button>
+        </li>
+      </ul>
+      <p class="muted" *ngIf="!workflows.length && !loading">No workflows yet.</p>
+    </section>
+
+    <section class="panel" *ngIf="selectedId">
+      <h3>Run history</h3>
+      <div class="table-scroll" *ngIf="runs.length">
+        <table>
+          <thead><tr><th>Trigger</th><th>Status</th><th>Attempts</th><th>Started</th><th>Error</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let r of runs">
+              <td>{{ r.triggerKind }}</td>
+              <td><span class="status" [class]="'st-' + r.status.toLowerCase()">{{ r.status }}</span></td>
+              <td>{{ r.attemptCount }}</td>
+              <td>{{ r.startedAt | date:'short' }}</td>
+              <td class="err-cell">{{ r.error || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" *ngIf="!runs.length">No runs yet — trigger this workflow to see history.</p>
+    </section>
+  </div>
+</main>

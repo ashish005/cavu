@@ -1,0 +1,44 @@
+.appt-page { padding: 20px 16px 48px; min-height: calc(100vh - 120px); }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.page-header h1 { margin: 0 0 4px; font-size: 24px; color: #0f172a; }
+.subtitle { margin: 0; color: #64748b; font-size: 14px; }
+.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: #fff; }
+}
+.alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; }
+.alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; }
+.muted { color: #94a3b8; font-size: 13px; }
+
+.panels { display: grid; grid-template-columns: 1fr 340px; gap: 16px; align-items: start; }
+@media (max-width: 900px) { .panels { grid-template-columns: 1fr; } }
+.panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; }
+.panel h3 { margin: 0 0 14px; font-size: 14px; font-weight: 700; color: #0f172a; }
+.types-head { margin-top: 20px; }
+
+.day-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.day-head strong { flex: 1; text-align: center; font-size: 15px; color: #0f172a; }
+
+.day-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.day-list li {
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px;
+  &.cancelled { opacity: .55; }
+}
+.time { font-weight: 700; font-size: 14px; color: #2457D6; flex: 0 0 70px; }
+.appt-info { flex: 1; display: flex; flex-direction: column; gap: 2px;
+  strong { font-size: 14px; color: #0f172a; }
+  span { font-size: 12px; color: #64748b; }
+  em { color: #16a34a; font-style: normal; }
+}
+.appt-actions { display: flex; gap: 6px; }
+
+.upcoming { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-direction: column; gap: 8px; }
+.upcoming li { display: flex; gap: 10px; align-items: baseline; font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+.upcoming-date { color: #64748b; font-size: 12px; flex: 0 0 130px; }
+.upcoming-name { font-weight: 600; color: #0f172a; flex: 1; }
+.upcoming-type { color: #94a3b8; font-size: 12px; }
+.types { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+
+.btn-primary { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-secondary { background: #fff; color: #334155; border: 1px solid #cbd5e1; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
+.btn-danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }

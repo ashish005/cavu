@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   LeadGenApiService, Lead, LeadStage, LeadActivity, ClientBusiness, TimelineItem
-} from '../services/lead-gen-api.service';
-import { WorkspaceContextService } from '../services/workspace-context.service';
+} from '../../services/lead-gen-api.service';
+import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { PopupService } from '@app-global';
+import { LeadGenLeadFormPopupComponent } from '../shared/popups/lead-gen-lead-form-popup.component';
 
 @Component({
   selector: 'lead-gen-leads',
@@ -44,7 +47,8 @@ export class LeadGenLeadsComponent implements OnInit {
   constructor(
     private readonly api: LeadGenApiService,
     private readonly fb: FormBuilder,
-    private readonly workspaceContext: WorkspaceContextService
+    private readonly workspaceContext: WorkspaceContextService,
+    private readonly popupService: PopupService, private readonly route: ActivatedRoute
   ) {}
 
   get businessName(): string {
@@ -73,6 +77,8 @@ export class LeadGenLeadsComponent implements OnInit {
   get archivedCount(): number { return this.leads.filter(l => l.status === 'Archived').length; }
 
   ngOnInit(): void {
+    const view = this.route.snapshot.data['view'];
+    if (view === 'board' || view === 'list') this.view = view;
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
@@ -173,6 +179,21 @@ export class LeadGenLeadsComponent implements OnInit {
       next: (r) => { this.seeding = false; this.message = `Demo data loaded (${r.recordsCreated} records).`; this.load(); },
       error: (e: HttpErrorResponse) => { this.seeding = false; this.error = this.err(e); }
     });
+  }
+
+  openLeadPopup(): void {
+    if (!this.clientBusinessId) { this.error = 'Select a client business first.'; return; }
+    const parameters = {
+      clientBusinessId: this.clientBusinessId,
+      onCreated: (lead: Lead) => {
+        this.leads = [lead, ...this.leads];
+        this.popupService.destroy();
+        this.message = 'Lead created.';
+      },
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenLeadFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
   }
 
   createLead(): void {

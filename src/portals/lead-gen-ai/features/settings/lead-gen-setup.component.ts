@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import {
   BusinessProfile, ClientBusiness, CreateClientBusinessRequest, CreateWorkspaceRequest, IndustryPack,
   LeadGenApiService, OfferingRequest, Organization, TargetIndustry, Workspace
-} from '../services/lead-gen-api.service';
+} from '../../services/lead-gen-api.service';
 
 type StepKey = 'organization' | 'business' | 'workspace' | 'configure' | 'launch';
 

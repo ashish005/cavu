@@ -1,0 +1,63 @@
+<main class="appt-page">
+  <header class="page-header">
+    <div>
+      <h1>Appointments</h1>
+      <p class="subtitle">Calendar, booking, reminders and appointment types</p>
+    </div>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <button type="button" class="btn-secondary" (click)="newType()">+ Type</button>
+      <button type="button" class="btn-primary" (click)="book()">+ Book</button>
+      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+    </div>
+  </header>
+
+  <p class="alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert-success" *ngIf="message">{{ message }}</p>
+
+  <div class="panels">
+    <section class="panel day-panel">
+      <div class="day-head">
+        <button type="button" class="btn-secondary" (click)="shiftDay(-1)">‹</button>
+        <strong>{{ viewDate | date:'fullDate' }}</strong>
+        <button type="button" class="btn-secondary" (click)="shiftDay(1)">›</button>
+        <button type="button" class="btn-secondary" (click)="today()">Today</button>
+      </div>
+      <ul class="day-list" *ngIf="dayAppointments.length">
+        <li *ngFor="let a of dayAppointments" [class.cancelled]="a.status === 'Cancelled'">
+          <span class="time">{{ a.startAt | date:'shortTime' }}</span>
+          <div class="appt-info">
+            <strong>{{ a.attendeeName }}</strong>
+            <span>{{ typeName(a.appointmentTypeId) }} · {{ a.status }}<em *ngIf="a.reminderSent"> · reminded</em></span>
+          </div>
+          <div class="appt-actions" *ngIf="a.status !== 'Cancelled' && a.status !== 'Completed'">
+            <button type="button" class="btn-secondary" (click)="reschedule(a)">Reschedule</button>
+            <button type="button" class="btn-secondary" (click)="remind(a)">Remind</button>
+            <button type="button" class="btn-danger" (click)="cancel(a)">Cancel</button>
+          </div>
+        </li>
+      </ul>
+      <p class="muted" *ngIf="!dayAppointments.length">Nothing scheduled this day.</p>
+    </section>
+
+    <section class="panel">
+      <h3>Upcoming</h3>
+      <ul class="upcoming" *ngIf="upcoming.length">
+        <li *ngFor="let a of upcoming">
+          <span class="upcoming-date">{{ a.startAt | date:'MMM d, h:mm a' }}</span>
+          <span class="upcoming-name">{{ a.attendeeName }}</span>
+          <span class="upcoming-type">{{ typeName(a.appointmentTypeId) }}</span>
+        </li>
+      </ul>
+      <p class="muted" *ngIf="!upcoming.length">No upcoming appointments.</p>
+      <h3 class="types-head">Appointment types</h3>
+      <ul class="types" *ngIf="types.length">
+        <li *ngFor="let t of types"><strong>{{ t.name }}</strong> — {{ t.durationMinutes }}m <span class="muted">{{ t.isActive ? 'active' : 'inactive' }}</span></li>
+      </ul>
+      <p class="muted" *ngIf="!types.length">No types yet — create one to enable booking.</p>
+    </section>
+  </div>
+  <p class="muted" *ngIf="loading">Loading…</p>
+</main>

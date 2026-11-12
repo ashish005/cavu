@@ -1,0 +1,66 @@
+<main class="voice-page">
+  <header class="page-header">
+    <div>
+      <h1>Voice AI</h1>
+      <p class="subtitle">Provider configuration, call log, transcripts and escalation</p>
+    </div>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="load()" aria-label="Status filter">
+        <option value="">All statuses</option>
+        <option>Completed</option><option>InProgress</option><option>Failed</option><option>Escalated</option>
+      </select>
+      <button type="button" class="btn-primary" (click)="logCall()">+ Log call</button>
+      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+    </div>
+  </header>
+
+  <p class="alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert-success" *ngIf="message">{{ message }}</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><span class="stat-num">{{ stats.total }}</span><span class="stat-label">Calls</span></div>
+    <div class="stat-card"><span class="stat-num">{{ stats.inbound }}</span><span class="stat-label">Inbound</span></div>
+    <div class="stat-card"><span class="stat-num">{{ stats.outbound }}</span><span class="stat-label">Outbound</span></div>
+    <div class="stat-card"><span class="stat-num">{{ stats.escalated }}</span><span class="stat-label">Escalated</span></div>
+    <div class="stat-card"><span class="stat-num">{{ stats.failed }}</span><span class="stat-label">Failed</span></div>
+  </div>
+
+  <section class="panel">
+    <h3>Provider configuration</h3>
+    <div class="provider-grid">
+      <label>Provider<input [(ngModel)]="providerForm.providerName" placeholder="twilio / telnyx / custom" /></label>
+      <label>Credential reference<input [(ngModel)]="providerForm.credentialReference" placeholder="vault://voice/api-key" /></label>
+      <label class="wide">Settings JSON<textarea [(ngModel)]="providerForm.settingsJson" rows="3"></textarea></label>
+      <label class="check"><input type="checkbox" [(ngModel)]="providerForm.isEnabled" /> Enabled</label>
+      <div class="form-actions"><button class="btn-primary" (click)="saveProvider()" [disabled]="saving">{{ saving ? 'Saving…' : 'Save provider' }}</button></div>
+    </div>
+    <p class="muted" *ngIf="provider">Last updated {{ provider.updatedAt | date:'medium' }}</p>
+  </section>
+
+  <section class="panel">
+    <h3>Call log</h3>
+    <div class="table-scroll" *ngIf="interactions.length">
+      <table>
+        <thead><tr><th>Direction</th><th>Party</th><th>Status</th><th>Summary</th><th>Started</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let v of interactions">
+            <td><span class="dir" [class.in]="v.direction === 'Inbound'">{{ v.direction }}</span></td>
+            <td>{{ v.remoteParty || '—' }}</td>
+            <td><span class="status" [class.failed]="v.status === 'Failed'" [class.esc]="!!v.escalatedToUserId">{{ v.escalatedToUserId ? 'Escalated' : v.status }}</span></td>
+            <td class="summary-cell">{{ v.transcriptSummary || '—' }}</td>
+            <td>{{ v.startedAt | date:'short' }}</td>
+            <td class="actions">
+              <button type="button" class="btn-secondary" (click)="addSummary(v)">Summary</button>
+              <button type="button" class="btn-secondary" *ngIf="!v.escalatedToUserId" (click)="escalate(v)">Escalate</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" *ngIf="!interactions.length && !loading">No calls recorded. Use "+ Log call" or connect a voice provider.</p>
+    <p class="muted" *ngIf="loading">Loading…</p>
+  </section>
+</main>

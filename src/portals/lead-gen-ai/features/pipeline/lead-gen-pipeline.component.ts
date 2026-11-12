@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { LeadGenApiService, Lead, LeadStage, ClientBusiness } from '../services/lead-gen-api.service';
-import { WorkspaceContextService } from '../services/workspace-context.service';
+import { LeadGenApiService, Lead, LeadStage, ClientBusiness } from '../../services/lead-gen-api.service';
+import { WorkspaceContextService } from '../../services/workspace-context.service';
 
 @Component({
   selector: 'lead-gen-pipeline',

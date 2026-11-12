@@ -17,6 +17,7 @@ export * from './lookups';
 export * from "./services";
 export * from "./pipes";
 export * from "./popup-module/app-popup.enum";
+export { PopupService } from "./popup-module/popup.service";
 
 export * from "./modules";
 

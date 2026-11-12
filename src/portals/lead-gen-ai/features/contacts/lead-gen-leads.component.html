@@ -13,7 +13,7 @@
         <button type="button" [class.active]="view === 'list'" (click)="view = 'list'">List</button>
         <button type="button" [class.active]="view === 'board'" (click)="view = 'board'">Board</button>
       </div>
-      <button type="button" class="btn-primary" *ngIf="view === 'list'" (click)="showForm = !showForm">{{ showForm ? 'Close' : '+ New lead' }}</button>
+      <button type="button" class="btn-primary" (click)="openLeadPopup()">+ New lead</button>
     </div>
   </header>
 
@@ -82,7 +82,7 @@
           <tr *ngFor="let lead of filteredLeads" [class.row-archived]="lead.status === 'Archived'">
             <td>
               <div class="lead-name">
-                <strong>{{ lead.name }}</strong>
+                <a class="lead-link" [routerLink]="['/leads', lead.id]">{{ lead.name }}</a>
                 <span class="tag">{{ lead.type }}</span>
               </div>
               <div class="activity-panel" *ngIf="expandedLeadId === lead.id">

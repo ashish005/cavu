@@ -32,8 +32,8 @@ import {
   DiscoverySource,
   CandidateProfile,
   CandidatePreferences
-} from '../services/lead-gen-api.service';
-import { WorkspaceContextService } from '../services/workspace-context.service';
+} from '../../services/lead-gen-api.service';
+import { WorkspaceContextService } from '../../services/workspace-context.service';
 
 type ConnectionState = 'checking' | 'connected' | 'unavailable';
 

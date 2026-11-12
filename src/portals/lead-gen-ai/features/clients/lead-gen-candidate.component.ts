@@ -10,7 +10,7 @@ import {
   CandidateProfile,
   CandidatePreferences,
   JobSource
-} from '../services/lead-gen-api.service';
+} from '../../services/lead-gen-api.service';
 
 @Component({
   selector: 'lead-gen-candidate',

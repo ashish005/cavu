@@ -1,0 +1,78 @@
+<main class="prospect-page">
+  <header class="page-header">
+    <div>
+      <h1>Prospecting</h1>
+      <p class="subtitle">Prospect database and automated discovery</p>
+    </div>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option value="">All businesses</option>
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+    </div>
+  </header>
+
+  <p class="alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert-success" *ngIf="message">{{ message }}</p>
+
+  <div class="tab-row">
+    <button type="button" [class.active]="tab === 'prospects'" (click)="tab = 'prospects'">Prospects ({{ prospects.length }})</button>
+    <button type="button" [class.active]="tab === 'discovery'" (click)="tab = 'discovery'">Discovery ({{ jobs.length }})</button>
+  </div>
+
+  <section class="panel" *ngIf="tab === 'prospects'">
+    <div class="panel-head">
+      <input class="search" [(ngModel)]="search" placeholder="Search name, email, industry…" />
+      <button type="button" class="btn-primary" (click)="addProspect()">+ Add prospect</button>
+    </div>
+    <div class="table-scroll" *ngIf="filteredProspects.length">
+      <table>
+        <thead><tr><th>Name</th><th>Type</th><th>Contact</th><th>Industry</th><th>Source</th><th>Added</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let p of filteredProspects">
+            <td><strong>{{ p.name }}</strong></td>
+            <td><span class="tag">{{ p.type }}</span></td>
+            <td>{{ p.email || p.phone || '—' }}</td>
+            <td>{{ p.industry || '—' }}</td>
+            <td>{{ p.source }}</td>
+            <td>{{ p.createdAt | date:'shortDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" *ngIf="!filteredProspects.length && !loading">No prospects found.</p>
+    <p class="muted" *ngIf="loading">Loading…</p>
+  </section>
+
+  <section class="panel" *ngIf="tab === 'discovery'">
+    <div class="panel-head">
+      <h3 class="inline">Discovery jobs</h3>
+      <button type="button" class="btn-primary" (click)="newJob()">+ New job</button>
+    </div>
+    <div class="table-scroll" *ngIf="jobs.length">
+      <table>
+        <thead><tr><th>Name</th><th>Type</th><th>Active</th><th>Created</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let j of jobs">
+            <td><strong>{{ j.name }}</strong></td>
+            <td>{{ j.type }}</td>
+            <td>{{ j.isActive ? 'Yes' : 'No' }}</td>
+            <td>{{ j.createdAt | date:'shortDate' }}</td>
+            <td><button type="button" class="btn-secondary" (click)="runJob(j)">Run</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" *ngIf="!jobs.length">No discovery jobs yet.</p>
+
+    <h3 class="sub">Sources</h3>
+    <ul class="source-list" *ngIf="sources.length">
+      <li *ngFor="let s of sources">
+        <div><strong>{{ s.name }}</strong> <span class="muted">{{ s.provider }} · {{ s.kind }}</span></div>
+        <button type="button" class="btn-secondary" (click)="toggleSource(s)">{{ s.isEnabled ? 'Disable' : 'Enable' }}</button>
+      </li>
+    </ul>
+    <p class="muted" *ngIf="lastExecution">Last run: {{ lastExecution.newResults }} new · {{ lastExecution.duplicateResults }} dup · {{ lastExecution.failedResults }} failed</p>
+  </section>
+</main>

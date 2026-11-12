@@ -1,0 +1,61 @@
+<main class="billing-page">
+  <header class="page-header">
+    <div>
+      <h1>Billing</h1>
+      <p class="subtitle">Plans, subscriptions and usage entitlements</p>
+    </div>
+    <div class="header-actions">
+      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
+        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
+      </select>
+      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+    </div>
+  </header>
+
+  <p class="alert-error" *ngIf="error">{{ error }}</p>
+  <p class="alert-success" *ngIf="message">{{ message }}</p>
+  <p class="muted" *ngIf="loading">Loading…</p>
+
+  <section class="panel" *ngIf="entitlements">
+    <h3>Current plan & usage</h3>
+    <p class="plan-line" *ngIf="entitlements.planName"><strong>{{ entitlements.planName }}</strong> · {{ entitlements.planKey }} · {{ entitlements.subscription?.status }}</p>
+    <div class="usage-grid" *ngIf="entitlements.usage?.length">
+      <div class="usage-item" *ngFor="let u of entitlements.usage">
+        <span class="num">{{ u.total }}</span><span class="lbl">{{ u.metric }}</span>
+      </div>
+    </div>
+    <p class="muted" *ngIf="!entitlements.usage?.length">No usage recorded yet.</p>
+  </section>
+
+  <section class="panel">
+    <h3>Subscriptions</h3>
+    <div class="table-scroll" *ngIf="subscriptions.length">
+      <table>
+        <thead><tr><th>Plan</th><th>Scope</th><th>Status</th><th>Period end</th><th>Created</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let s of subscriptions">
+            <td><strong>{{ planName(s.planId) }}</strong></td>
+            <td>{{ s.scope }}</td>
+            <td><span class="status">{{ s.status }}</span></td>
+            <td>{{ s.currentPeriodEnd ? (s.currentPeriodEnd | date:'mediumDate') : '—' }}</td>
+            <td>{{ s.createdAt | date:'shortDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" *ngIf="!subscriptions.length && !loading">No subscriptions yet.</p>
+  </section>
+
+  <section class="panel">
+    <h3>Available plans</h3>
+    <div class="plan-grid">
+      <div class="plan-card" *ngFor="let p of plans">
+        <div class="plan-head"><strong>{{ p.displayName }}</strong><span class="price" *ngIf="p.monthlyPrice">{{ p.currency || 'USD' }} {{ p.monthlyPrice }}/mo</span></div>
+        <span class="muted">{{ p.key }} · {{ p.isActive ? 'active' : 'inactive' }}</span>
+        <p class="limits" *ngIf="p.limitsJson">{{ p.limitsJson }}</p>
+        <button type="button" class="btn-primary" *ngIf="p.isActive" (click)="subscribe(p)">Subscribe</button>
+      </div>
+    </div>
+    <p class="muted" *ngIf="!plans.length">No plans available.</p>
+  </section>
+</main>

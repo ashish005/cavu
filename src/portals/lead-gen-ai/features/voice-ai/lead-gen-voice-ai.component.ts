@@ -1,0 +1,139 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {
+  LeadGenApiService, ClientBusiness, VoiceProviderConfig, VoiceInteraction
+} from '../../services/lead-gen-api.service';
+import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { PopupService } from '@app-global';
+import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+
+@Component({
+  selector: 'lead-gen-voice-ai',
+  templateUrl: './lead-gen-voice-ai.component.html',
+  styleUrls: ['./lead-gen-voice-ai.component.scss'],
+  standalone: false
+})
+export class LeadGenVoiceAiComponent implements OnInit {
+  clientBusinessId = '';
+  clientBusinesses: ClientBusiness[] = [];
+  provider?: VoiceProviderConfig;
+  interactions: VoiceInteraction[] = [];
+  loading = false;
+  saving = false;
+  error = '';
+  message = '';
+  statusFilter = '';
+
+  providerForm = { providerName: '', credentialReference: '', settingsJson: '{}', isEnabled: true };
+
+  constructor(
+    private readonly api: LeadGenApiService,
+    private readonly workspaceContext: WorkspaceContextService,
+    private readonly popupService: PopupService
+  ) {}
+
+  get stats() {
+    const total = this.interactions.length;
+    const inbound = this.interactions.filter(i => i.direction === 'Inbound').length;
+    const escalated = this.interactions.filter(i => i.escalatedToUserId).length;
+    const failed = this.interactions.filter(i => i.status === 'Failed').length;
+    return { total, inbound, outbound: total - inbound, escalated, failed };
+  }
+
+  ngOnInit(): void {
+    this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.api.listClientBusinesses().subscribe({
+      next: (bs) => {
+        this.clientBusinesses = bs;
+        if (!this.clientBusinessId && bs.length) this.clientBusinessId = bs[0].id;
+        this.load();
+      },
+      error: (e: HttpErrorResponse) => this.error = this.err(e)
+    });
+  }
+
+  onBusinessChange(id: string): void { this.clientBusinessId = id; this.load(); }
+
+  load(): void {
+    const cb = this.clientBusinessId;
+    if (!cb) return;
+    this.loading = true;
+    this.error = '';
+    this.api.getVoiceProvider(cb).subscribe({
+      next: (p) => {
+        this.provider = p;
+        this.providerForm = {
+          providerName: p.providerName, credentialReference: p.credentialReference ?? '',
+          settingsJson: p.settingsJson ?? '{}', isEnabled: p.isEnabled
+        };
+      },
+      error: (e) => { if (e.status !== 404) this.error = this.err(e); }
+    });
+    this.api.listVoiceInteractions(cb, this.statusFilter || undefined).subscribe({
+      next: (v) => { this.interactions = v; this.loading = false; },
+      error: (e) => { this.error = this.err(e); this.loading = false; }
+    });
+  }
+
+  saveProvider(): void {
+    const cb = this.clientBusinessId;
+    if (!cb) return;
+    this.saving = true;
+    this.api.setVoiceProvider(cb, {
+      providerName: this.providerForm.providerName.trim() || 'default',
+      credentialReference: this.providerForm.credentialReference || undefined,
+      settingsJson: this.providerForm.settingsJson || '{}',
+      isEnabled: this.providerForm.isEnabled
+    }).subscribe({
+      next: (p) => { this.provider = p; this.saving = false; this.message = 'Voice provider saved.'; },
+      error: (e: HttpErrorResponse) => { this.saving = false; this.error = this.err(e); }
+    });
+  }
+
+  openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
+    const parameters = {
+      fields, submitLabel,
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        run(values).subscribe({
+          next: () => { this.popupService.destroy(); onDone?.(); resolve(); },
+          error: (e: HttpErrorResponse) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+  }
+
+  logCall(): void {
+    const cb = this.clientBusinessId;
+    if (!cb) return;
+    this.openPopup([
+      { key: 'direction', label: 'Direction', type: 'select', required: true, options: [{ value: 'Inbound', label: 'Inbound' }, { value: 'Outbound', label: 'Outbound' }] },
+      { key: 'remoteParty', label: 'Remote party (phone/name)', required: true }
+    ], 'Log call', (v) => this.api.createVoiceInteraction(cb, { direction: v['direction'], remoteParty: v['remoteParty'] }),
+      () => { this.message = 'Call logged.'; this.load(); });
+  }
+
+  addSummary(v: VoiceInteraction): void {
+    const cb = this.clientBusinessId;
+    if (!cb) return;
+    this.openPopup([{ key: 'summary', label: 'Call summary / transcript', type: 'textarea', required: true }],
+      'Save summary', (vals) => this.api.recordVoiceSummary(cb, v.id, vals['summary']),
+      () => { this.message = 'Summary saved.'; this.load(); });
+  }
+
+  escalate(v: VoiceInteraction): void {
+    const cb = this.clientBusinessId;
+    if (!cb) return;
+    this.api.escalateVoiceInteraction(cb, v.id).subscribe({
+      next: () => { this.message = 'Escalated to human agent.'; this.load(); },
+      error: (e) => this.error = this.err(e)
+    });
+  }
+
+  private err(e: HttpErrorResponse): string {
+    return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';
+  }
+}
