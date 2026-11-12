@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   LeadGenApiService, ClientBusiness, VoiceProviderConfig, VoiceInteraction
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
 
@@ -15,6 +16,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenVoiceAiComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   provider?: VoiceProviderConfig;
@@ -156,5 +158,15 @@ export class LeadGenVoiceAiComponent implements OnInit {
 
   private err(e: HttpErrorResponse): string {
     return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';
+  }
+
+  pages: Record<string, number> = {};
+  pageSize = 10;
+  pagedRows(rows: any[], key: string): any[] {
+    const p = this.pages[key] || 1;
+    return rows.slice((p - 1) * this.pageSize, p * this.pageSize);
+  }
+  onPage(key: string, e: any): void {
+    this.pages[key] = Math.floor(e.skip / e.take) + 1;
   }
 }

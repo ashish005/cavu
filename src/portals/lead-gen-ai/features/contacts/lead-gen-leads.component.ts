@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -6,6 +6,7 @@ import {
   LeadGenApiService, Lead, LeadStage, LeadActivity, ClientBusiness, TimelineItem
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenLeadFormPopupComponent } from '../shared/popups/lead-gen-lead-form-popup.component';
 
@@ -16,6 +17,7 @@ import { LeadGenLeadFormPopupComponent } from '../shared/popups/lead-gen-lead-fo
   standalone: false
 })
 export class LeadGenLeadsComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   leads: Lead[] = [];

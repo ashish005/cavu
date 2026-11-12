@@ -22,10 +22,13 @@ import { LeadGenConversationsComponent } from './features/conversations/lead-gen
 import { LeadGenIntegrationsComponent } from './features/integrations/lead-gen-integrations.component';
 import { LeadGenProspectingComponent } from './features/prospecting/lead-gen-prospecting.component';
 import { LeadGenBillingComponent } from './features/billing/lead-gen-billing.component';
+import { LeadGenHelpComponent } from './features/help/lead-gen-help.component';
+import { LeadGenTeamComponent } from './features/team/lead-gen-team.component';
+import { LeadGenAgencyComponent } from './features/agency/lead-gen-agency.component';
 import {MainLayout} from "./layouts/workspace-layout/layout";
 
 @NgModule({
-  declarations: [MainLayout, LeadGenAiDashboardComponent, LeadGenOpsComponent, LeadGenCandidateComponent, LeadGenLeadsComponent, LeadGenPipelineComponent, LeadGenLeadFormPopupComponent, LeadGenEntityFormPopupComponent, LeadGenSetupComponent, LeadGenLeadDetailComponent, LeadGenAnalyticsComponent, LeadGenVoiceAiComponent, LeadGenAppointmentsComponent, LeadGenCampaignsComponent, LeadGenWorkflowsComponent, LeadGenAiAgentsComponent, LeadGenConversationsComponent, LeadGenIntegrationsComponent, LeadGenProspectingComponent, LeadGenBillingComponent],
+  declarations: [MainLayout, LeadGenAiDashboardComponent, LeadGenOpsComponent, LeadGenCandidateComponent, LeadGenLeadsComponent, LeadGenPipelineComponent, LeadGenLeadFormPopupComponent, LeadGenEntityFormPopupComponent, LeadGenSetupComponent, LeadGenLeadDetailComponent, LeadGenAnalyticsComponent, LeadGenVoiceAiComponent, LeadGenAppointmentsComponent, LeadGenCampaignsComponent, LeadGenWorkflowsComponent, LeadGenAiAgentsComponent, LeadGenConversationsComponent, LeadGenIntegrationsComponent, LeadGenProspectingComponent, LeadGenBillingComponent, LeadGenHelpComponent, LeadGenTeamComponent, LeadGenAgencyComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -49,6 +52,9 @@ import {MainLayout} from "./layouts/workspace-layout/layout";
           { path: 'integrations', component: LeadGenIntegrationsComponent },
           { path: 'prospecting', component: LeadGenProspectingComponent },
           { path: 'billing', component: LeadGenBillingComponent },
+          { path: 'help', component: LeadGenHelpComponent },
+          { path: 'team', component: LeadGenTeamComponent },
+          { path: 'agency', component: LeadGenAgencyComponent },
           { path: 'agents', component: LeadGenAiAgentsComponent },
           { path: 'leads/:id', component: LeadGenLeadDetailComponent },
           { path: 'leads', component: LeadGenLeadsComponent },

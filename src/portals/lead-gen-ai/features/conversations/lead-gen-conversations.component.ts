@@ -123,4 +123,14 @@ export class LeadGenConversationsComponent implements OnInit {
   private err(e: HttpErrorResponse): string {
     return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';
   }
+
+  pages: Record<string, number> = {};
+  pageSize = 10;
+  pagedRows(rows: any[], key: string): any[] {
+    const p = this.pages[key] || 1;
+    return rows.slice((p - 1) * this.pageSize, p * this.pageSize);
+  }
+  onPage(key: string, e: any): void {
+    this.pages[key] = Math.floor(e.skip / e.take) + 1;
+  }
 }

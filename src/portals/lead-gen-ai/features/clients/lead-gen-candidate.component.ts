@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import {
   LeadGenApiService,
   JobListing,
@@ -21,6 +22,7 @@ import {
   standalone: false
 })
 export class LeadGenCandidateComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   tab: 'jobs' | 'alerts' | 'applications' | 'resumes' = 'jobs';
   error = '';
   message = '';
@@ -108,19 +110,42 @@ export class LeadGenCandidateComponent implements OnInit {
   }
 
   addJob(): void {
-    if (!this.newJobTitle.trim()) return;
-    this.api.createJobListing({ title: this.newJobTitle, company: this.newJobCompany || undefined, location: this.newJobLocation || undefined }).subscribe({
-      next: (j) => { this.jobs = [j, ...this.jobs]; this.newJobTitle = ''; this.newJobCompany = ''; this.newJobLocation = ''; this.message = 'Job added.'; },
-      error: (e) => this.error = this.err(e)
-    });
+    const parameters = {
+      fields: [
+        { key: 'title', label: 'Job title', required: true },
+        { key: 'company', label: 'Company' },
+        { key: 'location', label: 'Location' }
+      ] as EntityFormField[],
+      submitLabel: 'Add job',
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        this.api.createJobListing({ title: values['title'], company: values['company'] || undefined, location: values['location'] || undefined }).subscribe({
+          next: (j) => { this.jobs = [j, ...this.jobs]; this.popupService.destroy(); this.message = 'Job added.'; resolve(); },
+          error: (e) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
   }
 
   addAlert(): void {
-    if (!this.newAlertName.trim() || !this.newAlertCriteria.trim()) return;
-    this.api.createJobAlert({ name: this.newAlertName, criteriaJson: this.newAlertCriteria, frequency: 'Daily' }).subscribe({
-      next: (a) => { this.alerts = [...this.alerts, a]; this.newAlertName = ''; this.newAlertCriteria = ''; this.message = 'Alert created.'; },
-      error: (e) => this.error = this.err(e)
-    });
+    const parameters = {
+      fields: [
+        { key: 'name', label: 'Alert name', required: true },
+        { key: 'criteriaJson', label: 'Criteria JSON', required: true, placeholder: '{"keywords":["engineer"]}' }
+      ] as EntityFormField[],
+      submitLabel: 'Create alert',
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        this.api.createJobAlert({ name: values['name'], criteriaJson: values['criteriaJson'], frequency: 'Daily' }).subscribe({
+          next: (a) => { this.alerts = [a, ...this.alerts]; this.popupService.destroy(); this.message = 'Alert created.'; resolve(); },
+          error: (e) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
   }
 
   pauseAlert(alert: JobAlert): void {
@@ -164,10 +189,31 @@ export class LeadGenCandidateComponent implements OnInit {
   }
 
   addResume(): void {
-    if (!this.newResumeName.trim() || !this.newResumeRef.trim()) return;
-    this.api.createResume({ fileName: this.newResumeName, storageReference: this.newResumeRef }).subscribe({
-      next: (r) => { this.resumes = [...this.resumes, r]; this.newResumeName = ''; this.newResumeRef = ''; this.message = 'Resume uploaded.'; },
-      error: (e) => this.error = this.err(e)
-    });
+    const parameters = {
+      fields: [
+        { key: 'fileName', label: 'File name', required: true },
+        { key: 'storageReference', label: 'Storage reference', required: true }
+      ] as EntityFormField[],
+      submitLabel: 'Upload',
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        this.api.createResume({ fileName: values['fileName'], storageReference: values['storageReference'] }).subscribe({
+          next: (r) => { this.resumes = [r, ...this.resumes]; this.popupService.destroy(); this.message = 'Resume uploaded.'; resolve(); },
+          error: (e) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+  }
+
+  pages: Record<string, number> = {};
+  pageSize = 10;
+  pagedRows(rows: any[], key: string): any[] {
+    const p = this.pages[key] || 1;
+    return rows.slice((p - 1) * this.pageSize, p * this.pageSize);
+  }
+  onPage(key: string, e: any): void {
+    this.pages[key] = Math.floor(e.skip / e.take) + 1;
   }
 }

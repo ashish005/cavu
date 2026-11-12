@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   LeadGenApiService, ClientBusiness, AppointmentType, Appointment
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
 
@@ -15,6 +16,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenAppointmentsComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   types: AppointmentType[] = [];

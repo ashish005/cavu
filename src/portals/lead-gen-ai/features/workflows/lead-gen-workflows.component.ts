@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   LeadGenApiService, ClientBusiness, WorkflowDefinition, WorkflowRun
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
 
@@ -15,6 +16,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenWorkflowsComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   workflows: WorkflowDefinition[] = [];
@@ -117,7 +119,51 @@ export class LeadGenWorkflowsComponent implements OnInit {
     });
   }
 
+  // ---- visual designer ----
+  designing = false;
+  wfName = '';
+  triggerType = 'lead.created';
+  actionRows: { type: string; config: string }[] = [];
+  conditionRows: { field: string; op: string; value: string }[] = [];
+
+  readonly triggerOptions = ['lead.created', 'lead.updated', 'appointment.booked', 'campaign.completed', 'manual'];
+  readonly actionOptions = ['send.email', 'send.sms', 'create.task', 'update.lead', 'book.appointment', 'notify.user', 'wait'];
+  readonly conditionOps = ['equals', 'contains', 'greaterThan', 'lessThan', 'exists'];
+
+  startDesign(): void { this.designing = true; this.wfName = ''; this.actionRows = [{ type: 'send.email', config: '{}' }]; this.conditionRows = []; }
+  cancelDesign(): void { this.designing = false; }
+  addAction(): void { this.actionRows.push({ type: 'send.email', config: '{}' }); }
+  removeAction(i: number): void { this.actionRows.splice(i, 1); }
+  addCondition(): void { this.conditionRows.push({ field: '', op: 'equals', value: '' }); }
+  removeCondition(i: number): void { this.conditionRows.splice(i, 1); }
+
+  saveDesign(): void {
+    const cb = this.clientBusinessId;
+    if (!cb || !this.wfName.trim()) { this.error = 'Workflow name is required.'; return; }
+    const actionsJson = JSON.stringify({ steps: this.actionRows.map(a => ({ type: a.type, ...(this.safeJson(a.config)) })) });
+    const conditionsJson = JSON.stringify({ rules: this.conditionRows.filter(c => c.field).map(c => ({ field: c.field, op: c.op, value: c.value })) });
+    this.api.createWorkflow(cb, {
+      name: this.wfName.trim(), triggerJson: JSON.stringify({ type: this.triggerType }),
+      conditionsJson, actionsJson, isActive: true
+    }).subscribe({
+      next: () => { this.designing = false; this.message = 'Workflow created.'; this.load(); },
+      error: (e) => this.error = this.err(e)
+    });
+  }
+
+  private safeJson(s: string): any { try { return JSON.parse(s || '{}'); } catch { return {}; } }
+
   private err(e: HttpErrorResponse): string {
     return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';
+  }
+
+  pages: Record<string, number> = {};
+  pageSize = 10;
+  pagedRows(rows: any[], key: string): any[] {
+    const p = this.pages[key] || 1;
+    return rows.slice((p - 1) * this.pageSize, p * this.pageSize);
+  }
+  onPage(key: string, e: any): void {
+    this.pages[key] = Math.floor(e.skip / e.take) + 1;
   }
 }

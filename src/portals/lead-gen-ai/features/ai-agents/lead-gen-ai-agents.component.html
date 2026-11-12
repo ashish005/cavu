@@ -8,7 +8,7 @@
       <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
         <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
       </select>
-      <button type="button" class="btn-primary" (click)="create()">+ New agent</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="create()">+ New agent</button>
       <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>

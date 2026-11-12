@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { environment } from '@app-environments';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -34,6 +34,7 @@ import {
   CandidatePreferences
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 
 type ConnectionState = 'checking' | 'connected' | 'unavailable';
 
@@ -44,6 +45,7 @@ type ConnectionState = 'checking' | 'connected' | 'unavailable';
   standalone: false
 })
 export class LeadGenAiDashboardComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   connectionState: ConnectionState = 'checking';
   lastChecked?: Date;
   prospects: Prospect[] = [];
@@ -187,6 +189,7 @@ export class LeadGenAiDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadAgencyStats();
     this.acceptInvitationFromUrl();
     this.refreshConnection();
     this.loadOrganization();
@@ -822,6 +825,7 @@ export class LeadGenAiDashboardComponent implements OnInit {
   businessConfigError = '';
   businessConfigMessage = '';
   leads: Lead[] = [];
+  agencyStats = { businesses: 0, activeBusinesses: 0, members: 0, subscriptions: 0 };
 
   recentLeadGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
     columnDefs: [{headerName:'Name',field:'name'},{headerName:'Stage',field:'stageKey'},{headerName:'Status',field:'status'},{headerName:'Source',field:'source'}] };
@@ -1178,4 +1182,23 @@ export class LeadGenAiDashboardComponent implements OnInit {
     }
     return 'The request could not be completed. Review the fields and try again.';
   }
+  private loadAgencyStats(): void {
+    if (!this.perms.isOrganizationManager) return;
+    this.api.listClientBusinesses().subscribe({
+      next: (bs) => {
+        this.agencyStats.businesses = bs.length;
+        this.agencyStats.activeBusinesses = bs.filter(b => b.status === 'Active').length;
+      },
+      error: () => undefined
+    });
+    this.api.listOrganizationMembers().subscribe({
+      next: (m) => this.agencyStats.members = m.filter(x => x.isActive).length,
+      error: () => undefined
+    });
+    this.api.listSubscriptions().subscribe({
+      next: (s) => this.agencyStats.subscriptions = s.filter(x => x.status === 'Active').length,
+      error: () => undefined
+    });
+  }
+
 }

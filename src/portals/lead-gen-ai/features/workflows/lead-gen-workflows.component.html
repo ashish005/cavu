@@ -8,7 +8,8 @@
       <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
         <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
       </select>
-      <button type="button" class="btn-primary" (click)="create()">+ New workflow</button>
+      <button type="button" class="btn-secondary" (click)="startDesign()">Designer</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="create()">+ New workflow</button>
       <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>
@@ -16,6 +17,39 @@
   <p class="alert-error" *ngIf="error">{{ error }}</p>
   <p class="alert-success" *ngIf="message">{{ message }}</p>
   <p class="muted" *ngIf="loading">Loading…</p>
+
+  <section class="panel designer" *ngIf="designing">
+    <h3>Workflow designer</h3>
+    <div class="design-grid">
+      <label>Name<input [(ngModel)]="wfName" placeholder="e.g. New lead welcome" /></label>
+      <label>Trigger
+        <select [(ngModel)]="triggerType">
+          <option *ngFor="let t of triggerOptions" [value]="t">{{ t }}</option>
+        </select>
+      </label>
+    </div>
+
+    <h4>Conditions <button type="button" class="btn-link" (click)="addCondition()">+ add</button></h4>
+    <div class="cond-row" *ngFor="let c of conditionRows; let i = index">
+      <input [(ngModel)]="c.field" placeholder="field" />
+      <select [(ngModel)]="c.op"><option *ngFor="let o of conditionOps" [value]="o">{{ o }}</option></select>
+      <input [(ngModel)]="c.value" placeholder="value" />
+      <button type="button" class="btn-link" (click)="removeCondition(i)">✕</button>
+    </div>
+    <p class="muted" *ngIf="!conditionRows.length">No conditions — runs on every trigger.</p>
+
+    <h4>Actions <button type="button" class="btn-link" (click)="addAction()">+ add</button></h4>
+    <div class="action-row" *ngFor="let a of actionRows; let i = index">
+      <select [(ngModel)]="a.type"><option *ngFor="let t of actionOptions" [value]="t">{{ t }}</option></select>
+      <input [(ngModel)]="a.config" placeholder='config JSON, e.g. {"to":"lead.email"}' />
+      <button type="button" class="btn-link" (click)="removeAction(i)">✕</button>
+    </div>
+
+    <div class="design-actions">
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="saveDesign()">Save workflow</button>
+      <button type="button" class="btn-secondary" (click)="cancelDesign()">Cancel</button>
+    </div>
+  </section>
 
   <div class="panels">
     <section class="panel">
@@ -34,7 +68,8 @@
 
     <section class="panel" *ngIf="selectedId">
       <h3>Run history</h3>
-      <org-grid [data]="runRows" [options]="runGridOptions"></org-grid>
+      <org-grid [data]="pagedRows(runRows, 'runs')" [options]="runGridOptions"></org-grid>
+      <org-grid-pagination [count]="runRows.length" [perPage]="pageSize" [page]="pages['runs'] || 1" [loading]="loading" (cb)="onPage('runs', $event)"></org-grid-pagination>
       <p class="muted" *ngIf="!runs.length">No runs yet — trigger this workflow to see history.</p>
     </section>
   </div>

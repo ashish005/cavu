@@ -40,7 +40,8 @@
   </section>
 
   <section class="panel" *ngIf="tab === 'enquiries'">
-        <org-grid [data]="enquiryRows" [options]="enquiryGridOptions" [isLoading]="loading" (cb)="selectEnquiry($event)"></org-grid>
+        <org-grid [data]="pagedRows(enquiryRows, 'enq')" [options]="enquiryGridOptions" [isLoading]="loading" (cb)="selectEnquiry($event)"></org-grid>
+      <org-grid-pagination [count]="enquiryRows.length" [perPage]="pageSize" [page]="pages['enq'] || 1" [loading]="loading" (cb)="onPage('enq', $event)"></org-grid-pagination>
     <div class="enquiry-actions" *ngIf="selectedEnquiry">
       <strong>{{ selectedEnquiry.requesterName }}</strong>
       <button type="button" class="btn-secondary" (click)="respond(selectedEnquiry)">Respond</button>

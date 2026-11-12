@@ -57,8 +57,8 @@ export class LeadGenEntityFormPopupComponent implements OnInit {
     const p = this.parameters ?? {};
     this.fields = p.fields ?? [];
     this.submitLabel = p.submitLabel ?? 'Save';
-    this.values = {};
-    this.fields.forEach(f => this.values[f.key] = '');
+    this.values = { ...(p.initialValues ?? {}) };
+    this.fields.forEach(f => { if (this.values[f.key] === undefined) this.values[f.key] = ''; });
   }
 
   submit(): void {

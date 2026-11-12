@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   LeadGenApiService, Lead, LeadActivity, LeadStage, TimelineItem, ClientBusiness, ConversationItem
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { PopupService } from '@app-global';
+import { Observable } from 'rxjs';
+import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 
 @Component({
   selector: 'lead-gen-lead-detail',
@@ -13,6 +17,7 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
   standalone: false
 })
 export class LeadGenLeadDetailComponent implements OnInit {
+  readonly perms = inject(LeadGenPermissionsService);
   lead: Lead | null = null;
   stages: LeadStage[] = [];
   activities: LeadActivity[] = [];
@@ -30,7 +35,8 @@ export class LeadGenLeadDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     public readonly router: Router,
     private readonly api: LeadGenApiService,
-    private readonly workspaceContext: WorkspaceContextService
+    private readonly workspaceContext: WorkspaceContextService,
+    private readonly popupService: PopupService
   ) {}
 
   get leadConversations(): ConversationItem[] {
@@ -93,6 +99,46 @@ export class LeadGenLeadDetailComponent implements OnInit {
     this.api.setLeadStage(this.clientBusinessId, this.lead.id, key).subscribe({
       next: (u) => { this.lead = u; },
       error: (e: HttpErrorResponse) => { if (this.lead) this.lead.stageKey = prev; this.error = this.err(e); }
+    });
+  }
+
+  editLead(): void {
+    if (!this.lead) return;
+    const l = this.lead;
+    const parameters = {
+      fields: [
+        { key: 'name', label: 'Name', required: true },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Phone' },
+        { key: 'website', label: 'Website' },
+        { key: 'industry', label: 'Industry' },
+        { key: 'source', label: 'Source' }
+      ] as EntityFormField[],
+      submitLabel: 'Save changes',
+      initialValues: { name: l.name, email: l.email ?? '', phone: l.phone ?? '', website: l.website ?? '', industry: l.industry ?? '', source: l.source },
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        this.api.updateLead(this.clientBusinessId, l.id, {
+          type: l.type, name: values['name'],
+          email: values['email'] || undefined, phone: values['phone'] || undefined,
+          website: values['website'] || undefined, industry: values['industry'] || undefined,
+          source: values['source'] || l.source
+        }).subscribe({
+          next: (u) => { this.lead = u; this.popupService.destroy(); resolve(); },
+          error: (e: HttpErrorResponse) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+  }
+
+  archiveLead(): void {
+    if (!this.lead) return;
+    if (!confirm(`Archive "${this.lead.name}"? It will be hidden from active lists.`)) return;
+    this.api.archiveLead(this.clientBusinessId, this.lead.id).subscribe({
+      next: () => this.router.navigate(['/leads']),
+      error: (e: HttpErrorResponse) => this.error = this.err(e)
     });
   }
 

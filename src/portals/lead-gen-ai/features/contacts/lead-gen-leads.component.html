@@ -13,7 +13,7 @@
         <button type="button" [class.active]="view === 'list'" (click)="view = 'list'">List</button>
         <button type="button" [class.active]="view === 'board'" (click)="view = 'board'">Board</button>
       </div>
-      <button type="button" class="btn-primary" (click)="openLeadPopup()">+ New lead</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="openLeadPopup()">+ New lead</button>
     </div>
   </header>
 
@@ -66,7 +66,7 @@
     <h2>No leads yet</h2>
     <p>Start by loading demo data to explore the pipeline, or add your first real lead.</p>
     <div class="empty-actions">
-      <button type="button" class="btn-primary" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
       <button type="button" class="btn-secondary" (click)="showForm = true">Add first lead</button>
     </div>
   </div>

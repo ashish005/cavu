@@ -60,7 +60,6 @@ export class MainLayout implements OnInit {
         { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'overview' },
         { routeTo: ['leads'], icon:"fa fa-users", key: 'contactsLeads' },
         { routeTo: ['conversations'], icon:"fa fa-comments", key: 'conversations' },
-        { routeTo: ['pipeline'], icon:"fa fa-columns", key: 'pipeline' },
         { routeTo: ['appointments'], icon:"fa fa-calendar", key: 'appointments' },
         { routeTo: ['agents'], icon:"fa fa-robot", key: 'aiAgents' },
         { routeTo: ['workflows'], icon:"fa fa-random", key: 'workflows' },
@@ -72,7 +71,9 @@ export class MainLayout implements OnInit {
         { routeTo: ['billing'], icon:"fa fa-credit-card", key: 'billing' },
         { routeTo: ['operations'], icon:"fa fa-sliders", key: 'operations' },
         { routeTo: ['setup'], icon:"fa fa-cog", key: 'settings' },
-        { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' }
+        { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' },
+        { routeTo: ['team'], icon:"fa fa-user-shield", key: 'team' },
+        { routeTo: ['help'], icon:"fa fa-question-circle", key: 'help' }
       ]
     }
   ]);
@@ -81,6 +82,7 @@ export class MainLayout implements OnInit {
   workspaces: Workspace[] = [];
   scopeOptions: { value: string; label: string; workspaceId: string; clientBusinessId: string }[] = [];
   selectedScope = '';
+  darkMode = false;
 
   constructor(public router: Router, public activatedRoute: ActivatedRoute,
               public cdref: ChangeDetectorRef,
@@ -91,6 +93,8 @@ export class MainLayout implements OnInit {
   }
 
   ngOnInit() {
+    this.darkMode = localStorage.getItem('leadgen-theme') === 'dark';
+    this.applyTheme();
     this.api.listWorkspaces().subscribe({
       next: (ws) => {
         this.workspaces = ws;
@@ -107,6 +111,16 @@ export class MainLayout implements OnInit {
       },
       error: () => undefined
     });
+  }
+
+  toggleTheme(): void {
+    this.darkMode = !this.darkMode;
+    localStorage.setItem('leadgen-theme', this.darkMode ? 'dark' : 'light');
+    this.applyTheme();
+  }
+
+  private applyTheme(): void {
+    document.documentElement.setAttribute('data-theme', this.darkMode ? 'dark' : 'light');
   }
 
   onScopeChange(value: string): void {

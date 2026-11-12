@@ -501,4 +501,14 @@ export class LeadGenOpsComponent implements OnInit {
     const cb = this.cb(); if (!cb) return;
     this.api.escalateVoiceInteraction(cb, v.id).subscribe({ next: () => this.loadForBusiness(), error: (e) => this.error = this.err(e) });
   }
+
+  pages: Record<string, number> = {};
+  pageSize = 10;
+  pagedRows(rows: any[], key: string): any[] {
+    const p = this.pages[key] || 1;
+    return rows.slice((p - 1) * this.pageSize, p * this.pageSize);
+  }
+  onPage(key: string, e: any): void {
+    this.pages[key] = Math.floor(e.skip / e.take) + 1;
+  }
 }

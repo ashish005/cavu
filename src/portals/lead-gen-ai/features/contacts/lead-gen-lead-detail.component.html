@@ -5,9 +5,13 @@
       <h1 *ngIf="lead">{{ lead.name }}</h1>
       <p class="subtitle" *ngIf="lead">{{ lead.type }} · {{ lead.source }} · {{ lead.status }}</p>
     </div>
-    <select *ngIf="lead" [ngModel]="lead.stageKey" (ngModelChange)="moveStage($event)" aria-label="Stage">
-      <option *ngFor="let s of stages" [value]="s.key">{{ s.label }}</option>
-    </select>
+    <div class="header-actions" *ngIf="lead">
+      <button type="button" class="btn-secondary" [disabled]="!perms.canWrite" (click)="editLead()">Edit</button>
+      <button type="button" class="btn-danger" [disabled]="!perms.canWrite" (click)="archiveLead()">Archive</button>
+      <select [ngModel]="lead.stageKey" (ngModelChange)="moveStage($event)" aria-label="Stage">
+        <option *ngFor="let s of stages" [value]="s.key">{{ s.label }}</option>
+      </select>
+    </div>
   </header>
 
   <p class="alert-error" *ngIf="error">{{ error }}</p>
@@ -38,7 +42,7 @@
           <option>Note</option><option>Call</option><option>Email</option><option>Meeting</option>
         </select>
         <input [(ngModel)]="noteText" placeholder="Log a note, call, email or meeting…" (keyup.enter)="addNote()" />
-        <button type="button" class="btn-primary" (click)="addNote()" [disabled]="noteSending || !noteText.trim()">Log</button>
+        <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="addNote()" [disabled]="noteSending || !noteText.trim()">Log</button>
       </div>
       <ol class="timeline">
         <li *ngFor="let t of timeline" [class]="'tl-' + t.kind">

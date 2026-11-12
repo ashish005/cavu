@@ -21,12 +21,10 @@
       <button type="button" (click)="loadJobs()">Search</button>
     </div>
     <div class="inline-form">
-      <input [(ngModel)]="newJobTitle" placeholder="Job title" />
-      <input [(ngModel)]="newJobCompany" placeholder="Company" />
-      <input [(ngModel)]="newJobLocation" placeholder="Location" />
-      <button type="button" (click)="addJob()" [disabled]="!newJobTitle.trim()">Add job</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="addJob()">+ Add job</button>
     </div>
-    <org-grid [data]="jobRows" [options]="jobGridOptions" (cb)="selectJobRow($event)"></org-grid>
+    <org-grid [data]="pagedRows(jobRows, 'jobs')" [options]="jobGridOptions" (cb)="selectJobRow($event)"></org-grid>
+      <org-grid-pagination [count]="jobRows.length" [perPage]="pageSize" [page]="pages['jobs'] || 1" [loading]="loading" (cb)="onPage('jobs', $event)"></org-grid-pagination>
       <div class="row-actions" *ngIf="selectedJob">
         <strong>{{ selectedJob.title }}</strong>
         <button type="button" (click)="toggleSave(selectedJob)">{{ selectedJob.isSaved ? 'Unsave' : 'Save' }}</button>
@@ -50,9 +48,7 @@
   <section *ngIf="tab === 'alerts'">
     <h2>Job alerts</h2>
     <div class="inline-form">
-      <input [(ngModel)]="newAlertName" placeholder="Alert name" />
-      <input [(ngModel)]="newAlertCriteria" placeholder='Criteria JSON, e.g. {"keywords":["engineer"]}' />
-      <button type="button" (click)="addAlert()" [disabled]="!newAlertName.trim() || !newAlertCriteria.trim()">Create alert</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="addAlert()">+ Create alert</button>
     </div>
     <ul *ngIf="alerts.length > 0">
       <li *ngFor="let a of alerts">
@@ -65,7 +61,8 @@
 
   <section *ngIf="tab === 'applications'">
     <h2>Applications</h2>
-    <org-grid [data]="applicationRows" [options]="appGridOptions" (cb)="selectApplicationRow($event)"></org-grid>
+    <org-grid [data]="pagedRows(applicationRows, 'apps')" [options]="appGridOptions" (cb)="selectApplicationRow($event)"></org-grid>
+      <org-grid-pagination [count]="applicationRows.length" [perPage]="pageSize" [page]="pages['apps'] || 1" [loading]="loading" (cb)="onPage('apps', $event)"></org-grid-pagination>
       <div class="row-actions" *ngIf="selectedApplication">
         <strong>Application</strong>
         <button type="button" *ngIf="selectedApplication.stage !== 'Applied'" (click)="advanceApplication(selectedApplication, 'Applied')">Mark applied</button>
@@ -79,11 +76,10 @@
   <section *ngIf="tab === 'resumes'">
     <h2>Resumes</h2>
     <div class="inline-form">
-      <input [(ngModel)]="newResumeName" placeholder="File name" />
-      <input [(ngModel)]="newResumeRef" placeholder="Storage reference" />
-      <button type="button" (click)="addResume()" [disabled]="!newResumeName.trim() || !newResumeRef.trim()">Upload</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="addResume()">+ Upload resume</button>
     </div>
-    <org-grid [data]="resumeRows" [options]="resumeGridOptions"></org-grid>
+    <org-grid [data]="pagedRows(resumeRows, 'res')" [options]="resumeGridOptions"></org-grid>
+      <org-grid-pagination [count]="resumeRows.length" [perPage]="pageSize" [page]="pages['res'] || 1" [loading]="loading" (cb)="onPage('res', $event)"></org-grid-pagination>
     <p *ngIf="resumes.length === 0">No resumes.</p>
   </section>
 </main>

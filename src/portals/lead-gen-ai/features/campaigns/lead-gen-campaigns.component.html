@@ -12,7 +12,7 @@
         <option value="">All statuses</option>
         <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
       </select>
-      <button type="button" class="btn-primary" (click)="create()">+ New campaign</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="create()">+ New campaign</button>
       <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>
@@ -24,7 +24,8 @@
   <div class="panels">
     <section class="panel">
       <h3>Campaigns</h3>
-      <org-grid [data]="campaignRows" [options]="campaignGridOptions" [isLoading]="loading" (cb)="selectRow($event)"></org-grid>
+      <org-grid [data]="pagedRows(campaignRows, 'camp')" [options]="campaignGridOptions" [isLoading]="loading" (cb)="selectRow($event)"></org-grid>
+      <org-grid-pagination [count]="campaignRows.length" [perPage]="pageSize" [page]="pages['camp'] || 1" [loading]="loading" (cb)="onPage('camp', $event)"></org-grid-pagination>
       <div class="row-actions" *ngIf="selectedCampaign">
         <button type="button" class="btn-secondary" *ngIf="selectedCampaign.status === 'Scheduled' || selectedCampaign.status === 'Paused'" (click)="act(selectedCampaign, 'start')">Start</button>
         <button type="button" class="btn-secondary" *ngIf="selectedCampaign.status === 'Running'" (click)="act(selectedCampaign, 'pause')">Pause</button>
@@ -46,7 +47,8 @@
       <p class="muted" *ngIf="!report">Loading report…</p>
 
       <h3 class="sub">Messages</h3>
-      <org-grid [data]="messageRows" [options]="messageGridOptions"></org-grid>
+      <org-grid [data]="pagedRows(messageRows, 'msg')" [options]="messageGridOptions"></org-grid>
+      <org-grid-pagination [count]="messageRows.length" [perPage]="pageSize" [page]="pages['msg'] || 1" [loading]="loading" (cb)="onPage('msg', $event)"></org-grid-pagination>
       <p class="muted" *ngIf="!messages.length">No messages yet.</p>
     </section>
   </div>

@@ -8,7 +8,7 @@
       <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
         <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
       </select>
-      <button type="button" class="btn-primary" (click)="connect()">+ Connect provider</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="connect()">+ Connect provider</button>
       <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>
@@ -19,7 +19,8 @@
 
   <section class="panel">
     <h3>Connections</h3>
-    <org-grid [data]="connectionRows" [options]="connectionGridOptions" [isLoading]="loading" (cb)="selectConnectionRow($event)"></org-grid>
+    <org-grid [data]="pagedRows(connectionRows, 'conn')" [options]="connectionGridOptions" [isLoading]="loading" (cb)="selectConnectionRow($event)"></org-grid>
+      <org-grid-pagination [count]="connectionRows.length" [perPage]="pageSize" [page]="pages['conn'] || 1" [loading]="loading" (cb)="onPage('conn', $event)"></org-grid-pagination>
       <div class="row-actions" *ngIf="selectedConnection">
         <strong>{{ providerName(selectedConnection.providerId) }}</strong>
         <button type="button" class="btn-secondary" (click)="check(selectedConnection)">Check health</button>

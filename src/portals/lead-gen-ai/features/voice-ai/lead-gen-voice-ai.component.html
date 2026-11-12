@@ -12,7 +12,7 @@
         <option value="">All statuses</option>
         <option>Completed</option><option>InProgress</option><option>Failed</option><option>Escalated</option>
       </select>
-      <button type="button" class="btn-primary" (click)="logCall()">+ Log call</button>
+      <button type="button" class="btn-primary" [disabled]="!perms.canWrite" (click)="logCall()">+ Log call</button>
       <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>
@@ -42,7 +42,8 @@
 
   <section class="panel">
     <h3>Call log</h3>
-    <org-grid [data]="callRows" [options]="callGridOptions" [isLoading]="loading" (cb)="selectCallRow($event)"></org-grid>
+    <org-grid [data]="pagedRows(callRows, 'calls')" [options]="callGridOptions" [isLoading]="loading" (cb)="selectCallRow($event)"></org-grid>
+      <org-grid-pagination [count]="callRows.length" [perPage]="pageSize" [page]="pages['calls'] || 1" [loading]="loading" (cb)="onPage('calls', $event)"></org-grid-pagination>
       <div class="row-actions" *ngIf="selectedCall">
         <strong>{{ selectedCall.remoteParty || 'Call' }}</strong>
         <button type="button" class="btn-secondary" (click)="addSummary(selectedCall)">Summary</button>

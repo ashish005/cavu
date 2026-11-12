@@ -29,7 +29,8 @@
 
   <section class="panel">
     <h3>Subscriptions</h3>
-    <org-grid [data]="subRows" [options]="subGridOptions"></org-grid>
+    <org-grid [data]="pagedRows(subRows, 'subs')" [options]="subGridOptions"></org-grid>
+      <org-grid-pagination [count]="subRows.length" [perPage]="pageSize" [page]="pages['subs'] || 1" [loading]="loading" (cb)="onPage('subs', $event)"></org-grid-pagination>
     <p class="muted" *ngIf="!subscriptions.length && !loading">No subscriptions yet.</p>
   </section>
 
@@ -40,7 +41,7 @@
         <div class="plan-head"><strong>{{ p.displayName }}</strong><span class="price" *ngIf="p.monthlyPrice">{{ p.currency || 'USD' }} {{ p.monthlyPrice }}/mo</span></div>
         <span class="muted">{{ p.key }} · {{ p.isActive ? 'active' : 'inactive' }}</span>
         <p class="limits" *ngIf="p.limitsJson">{{ p.limitsJson }}</p>
-        <button type="button" class="btn-primary" *ngIf="p.isActive" (click)="subscribe(p)">Subscribe</button>
+        <button type="button" class="btn-primary" [disabled]="!perms.canWrite" *ngIf="p.isActive" (click)="subscribe(p)">Subscribe</button>
       </div>
     </div>
     <p class="muted" *ngIf="!plans.length">No plans available.</p>
