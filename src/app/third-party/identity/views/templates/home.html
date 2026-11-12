@@ -1,6 +1,6 @@
 <header class="app-header">
   <div class="container">
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand">
       <!-- Brand -->
       <a [routerLink]="['/']" class="navbar-brand d-flex align-items-center">
         <div class="brand-logo">
@@ -8,20 +8,9 @@
         </div>
       </a>
 
-      <!-- Mobile Toggle -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <button class="btn btn-primary" (click)='login()'>
+        <i class="fa fa-sign-in-alt me-2"></i>Login
       </button>
-
-      <!-- Navigation -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <div class="navbar-nav ms-auto">
-            <button class="btn btn-primary" (click)='login()'>
-                <i class="fa fa-sign-in-alt me-2"></i>Login
-            </button>
-        </div>
-      </div>
     </nav>
   </div>
 </header>

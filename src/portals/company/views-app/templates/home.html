@@ -7,24 +7,10 @@
                     <span class="brand-text">EnRator</span>
                 </div>
             </a>
-
-            <!-- Mobile Toggle -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navigation -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" *ngIf="app">
-                        <div class="navbar-nav ms-auto">
-                            <button class="btn btn-primary" (click)='login()'>
-                                <i class="fa fa-sign-in-alt me-2"></i>Login
-                            </button>
-                        </div>
-                    </li>
-                </ul>
+            <div class="navbar-nav ms-auto float-right right" *ngIf="app">
+                <button class="btn btn-xs btn-primary" (click)='login()'>
+                    <i class="fa fa-sign-in-alt me-2"></i>Login
+                </button>
             </div>
         </nav>
     </div>
