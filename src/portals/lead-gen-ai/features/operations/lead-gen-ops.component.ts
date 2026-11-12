@@ -93,6 +93,27 @@ export class LeadGenOpsComponent implements OnInit {
   entitlements?: Entitlements;
   notifications: AppNotification[] = [];
   auditEvents: AuditEntry[] = [];
+  selectedConnection?: IntegrationConnection;
+  selectedDuplicate?: DuplicateCandidate;
+
+  connectionGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Provider',field:'provider'},{headerName:'Status',field:'status'},{headerName:'Last check',field:'checked'},{headerName:'Issue',field:'issue'}] };
+  eventGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'When',field:'when'},{headerName:'Kind',field:'kind'},{headerName:'Operation',field:'operation'},{headerName:'Provider',field:'provider'},{headerName:'Status',field:'status'},{headerName:'Latency',field:'latency'},{headerName:'Result / error',field:'detail'}] };
+  duplicateGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Prospect A',field:'a'},{headerName:'Prospect B',field:'b'},{headerName:'Fields',field:'fields'},{headerName:'Decision',field:'decision'}] };
+  notificationGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Subject',field:'subject'},{headerName:'Kind',field:'kind'},{headerName:'Channel',field:'channel'},{headerName:'Status',field:'status'},{headerName:'Created',field:'created'}] };
+  auditGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'When',field:'when'},{headerName:'Actor',field:'actor'},{headerName:'Entity',field:'entity'},{headerName:'Action',field:'action'}] };
+
+  get connectionRows(): any[] { return this.aiProviderConnections.map(c => ({...c, provider: c.providerKey || c.providerId, checked: c.lastCheckedAt ? new Date(c.lastCheckedAt).toLocaleString() : 'Never', issue: c.lastError || '—'})); }
+  get eventRows(): any[] { return (this.aiMonitoring?.recentEvents ?? []).map(e => ({...e, when: new Date(e.startedAt).toLocaleString(), latency: e.latencyMs == null ? '—' : e.latencyMs + ' ms', detail: e.error || e.resultSummary || '—'})); }
+  get duplicateRows(): any[] { return this.duplicates.map(d => ({...d, a: d.prospectAId.slice(0,8)+'…', b: d.prospectBId.slice(0,8)+'…', fields: d.matchingFieldsJson})); }
+  get notificationRows(): any[] { return this.notifications.map(n => ({...n, created: new Date(n.createdAt).toLocaleString()})); }
+  get auditRows(): any[] { return this.auditEvents.map(a => ({...a, when: new Date(a.occurredAt).toLocaleString(), actor: a.actorUserId?.slice(0,8) || 'system', entity: a.entityType + '/' + a.entityId.slice(0,8)})); }
+  selectConnectionRow(r:any){ this.selectedConnection = this.aiProviderConnections.find(c=>c.id===r.id); }
+  selectDuplicateRow(r:any){ this.selectedDuplicate = this.duplicates.find(d=>d.id===r.id); }
   discoveryResults: DiscoveryResult[] = [];
   selectedJobId = '';
   voiceInteractions: VoiceInteraction[] = [];

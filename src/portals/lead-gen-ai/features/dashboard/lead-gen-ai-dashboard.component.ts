@@ -822,6 +822,11 @@ export class LeadGenAiDashboardComponent implements OnInit {
   businessConfigError = '';
   businessConfigMessage = '';
   leads: Lead[] = [];
+
+  recentLeadGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Name',field:'name'},{headerName:'Stage',field:'stageKey'},{headerName:'Status',field:'status'},{headerName:'Source',field:'source'}] };
+
+  get recentLeadRows(): any[] { return this.leads.slice(0, 8); }
   leadStages: LeadStage[] = [];
   isLoadingLeads = false;
   leadsError = '';

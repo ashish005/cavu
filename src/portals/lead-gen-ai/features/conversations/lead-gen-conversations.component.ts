@@ -5,6 +5,9 @@ import {
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { PopupService } from '@app-global';
+import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
 
 @Component({
   selector: 'lead-gen-conversations',
@@ -22,11 +25,36 @@ export class LeadGenConversationsComponent implements OnInit {
   message = '';
   kindFilter = '';
   tab: 'all' | 'enquiries' = 'all';
+  selectedEnquiry?: InboundEnquiry;
+
+  enquiryGridOptions: any = {
+    header: { title: null as any, desc: null as any, add: false, refresh: false, edit: false, delete: false },
+    total: 0,
+    hasNext: false,
+    hasPrevious: false,
+    isOrderable: false,
+    columnDefs: [
+      { headerName: 'From', field: 'requesterName' },
+      { headerName: 'Contact', field: 'contact' },
+      { headerName: 'Message', field: 'message' },
+      { headerName: 'Status', field: 'status' },
+      { headerName: 'Received', field: 'received' }
+    ]
+  };
+
+  get enquiryRows(): any[] {
+    return this.enquiries.map(e => ({
+      ...e,
+      contact: e.requesterEmail || e.requesterPhone || '—',
+      received: new Date(e.receivedAt).toLocaleString()
+    }));
+  }
 
   constructor(
     private readonly api: LeadGenApiService,
     private readonly workspaceContext: WorkspaceContextService,
-    public readonly router: Router
+    public readonly router: Router,
+    private readonly popupService: PopupService
   ) {}
 
   get kinds(): string[] { return [...new Set(this.conversations.map(c => c.kind))]; }
@@ -58,13 +86,29 @@ export class LeadGenConversationsComponent implements OnInit {
     this.api.listInboundEnquiries(cb).subscribe({ next: (e) => { this.enquiries = e; this.loading = false; }, error: (e) => { this.error = this.err(e); this.loading = false; } });
   }
 
+  selectEnquiry(row: any): void {
+    this.selectedEnquiry = this.enquiries.find(e => e.id === row.id);
+  }
+
   respond(e: InboundEnquiry): void {
-    const summary = window.prompt('Response summary:');
-    if (!summary) return;
-    this.api.respondInboundEnquiry(this.clientBusinessId, e.id, summary).subscribe({
-      next: () => { this.message = 'Response recorded.'; this.load(); },
-      error: (err) => this.error = this.err(err)
-    });
+    this.openPopup([{ key: 'summary', label: 'Response summary', type: 'textarea', required: true }],
+      'Send response', (v) => this.api.respondInboundEnquiry(this.clientBusinessId, e.id, v['summary']),
+      () => { this.message = 'Response recorded.'; this.load(); });
+  }
+
+  openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
+    const parameters = {
+      fields, submitLabel,
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        run(values).subscribe({
+          next: () => { this.popupService.destroy(); onDone?.(); resolve(); },
+          error: (err: HttpErrorResponse) => reject(new Error(this.err(err)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
   }
 
   convert(e: InboundEnquiry): void {

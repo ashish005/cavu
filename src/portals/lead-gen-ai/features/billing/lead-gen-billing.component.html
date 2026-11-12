@@ -29,20 +29,7 @@
 
   <section class="panel">
     <h3>Subscriptions</h3>
-    <div class="table-scroll" *ngIf="subscriptions.length">
-      <table>
-        <thead><tr><th>Plan</th><th>Scope</th><th>Status</th><th>Period end</th><th>Created</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let s of subscriptions">
-            <td><strong>{{ planName(s.planId) }}</strong></td>
-            <td>{{ s.scope }}</td>
-            <td><span class="status">{{ s.status }}</span></td>
-            <td>{{ s.currentPeriodEnd ? (s.currentPeriodEnd | date:'mediumDate') : '—' }}</td>
-            <td>{{ s.createdAt | date:'shortDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="subRows" [options]="subGridOptions"></org-grid>
     <p class="muted" *ngIf="!subscriptions.length && !loading">No subscriptions yet.</p>
   </section>
 

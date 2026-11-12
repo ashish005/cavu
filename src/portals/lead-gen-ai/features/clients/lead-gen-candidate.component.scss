@@ -33,3 +33,4 @@ input:focus { outline: none; border-color: var(--lg-primary); box-shadow: 0 0 0 
 .prospect-email { display: block; color: var(--lg-muted); font-size: .8rem; }
 h2 { font-size: 1.25rem; margin: 1.25rem 0 .5rem; }
 ul { padding-left: 1.2rem; }
+.row-actions { display:flex; gap:8px; align-items:center; margin-top:12px; padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; background:#f8fafc; strong{font-size:13px;color:#0f172a;margin-right:auto;} button{border:1px solid #cbd5e1;background:#fff;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;} }

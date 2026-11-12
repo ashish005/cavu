@@ -26,6 +26,36 @@ export class LeadGenCampaignsComponent implements OnInit {
   message = '';
   statusFilter = '';
 
+  campaignGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Name', field: 'name' },
+      { headerName: 'Channel', field: 'channel' },
+      { headerName: 'Status', field: 'status' },
+      { headerName: 'Scheduled', field: 'scheduled' }
+    ]
+  };
+  messageGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Lead', field: 'lead' },
+      { headerName: 'Status', field: 'status' },
+      { headerName: 'Sent', field: 'sent' },
+      { headerName: 'Response', field: 'response' }
+    ]
+  };
+
+  get campaignRows(): any[] {
+    return this.filtered.map(c => ({ ...c, scheduled: c.scheduledAt ? new Date(c.scheduledAt).toLocaleString() : '—' }));
+  }
+  get messageRows(): any[] {
+    return this.messages.map(m => ({ ...m, lead: (m.leadId ?? '').slice(0, 8) + '…', sent: m.sentAt ? new Date(m.sentAt).toLocaleString() : '—', response: m.responseSummary || '—' }));
+  }
+
+  selectRow(row: any): void { this.select(row as Campaign); }
+
   constructor(
     private readonly api: LeadGenApiService,
     private readonly workspaceContext: WorkspaceContextService,
@@ -35,6 +65,8 @@ export class LeadGenCampaignsComponent implements OnInit {
   get filtered(): Campaign[] {
     return this.statusFilter ? this.campaigns.filter(c => c.status === this.statusFilter) : this.campaigns;
   }
+
+  get selectedCampaign(): Campaign | null { return this.campaigns.find(c => c.id === this.selectedId) ?? null; }
 
   get statuses(): string[] { return [...new Set(this.campaigns.map(c => c.status))]; }
 

@@ -36,3 +36,4 @@ tbody tr { cursor: pointer; &:hover { background: #f8fafc; } &.selected { backgr
 .btn-primary { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .btn-secondary { background: #fff; color: #334155; border: 1px solid #cbd5e1; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
 .btn-danger { background: #fff; color: #b91c1c; border: 1px solid #fecaca; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
+.row-actions { display: flex; gap: 8px; margin-top: 12px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }

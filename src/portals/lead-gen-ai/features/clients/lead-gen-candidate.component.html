@@ -26,24 +26,13 @@
       <input [(ngModel)]="newJobLocation" placeholder="Location" />
       <button type="button" (click)="addJob()" [disabled]="!newJobTitle.trim()">Add job</button>
     </div>
-    <div class="table-scroll" *ngIf="jobs.length > 0">
-      <table>
-        <thead><tr><th>Title</th><th>Company</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let j of jobs">
-            <td>{{ j.title }}</td>
-            <td>{{ j.company || '—' }}</td>
-            <td>{{ j.location || '—' }}</td>
-            <td>{{ j.status }}<span *ngIf="j.isSaved"> · saved</span></td>
-            <td>
-              <button type="button" (click)="toggleSave(j)">{{ j.isSaved ? 'Unsave' : 'Save' }}</button>
-              <button type="button" (click)="assessMatch(j)">Assess</button>
-              <button type="button" (click)="applyToJob(j)">Apply</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="jobRows" [options]="jobGridOptions" (cb)="selectJobRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedJob">
+        <strong>{{ selectedJob.title }}</strong>
+        <button type="button" (click)="toggleSave(selectedJob)">{{ selectedJob.isSaved ? 'Unsave' : 'Save' }}</button>
+        <button type="button" (click)="assessMatch(selectedJob)">Assess</button>
+        <button type="button" (click)="applyToJob(selectedJob)">Apply</button>
+      </div>
     <p *ngIf="jobs.length === 0 && !loading">No jobs found.</p>
     <ng-container *ngFor="let j of jobs">
       <div class="match-card" *ngIf="matches[j.id]?.length">
@@ -76,24 +65,14 @@
 
   <section *ngIf="tab === 'applications'">
     <h2>Applications</h2>
-    <div class="table-scroll" *ngIf="applications.length > 0">
-      <table>
-        <thead><tr><th>Job</th><th>Stage</th><th>Applied</th><th>Outcome</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let a of applications">
-            <td>{{ a.jobListingId }}</td><td>{{ a.stage }}</td>
-            <td>{{ a.appliedAt ? (a.appliedAt | date:'mediumDate') : '—' }}</td>
-            <td>{{ a.outcome || '—' }}</td>
-            <td>
-              <button type="button" (click)="advanceApplication(a, 'Applied')" *ngIf="a.stage !== 'Applied'">Mark applied</button>
-              <button type="button" (click)="advanceApplication(a, 'Interview')" *ngIf="a.stage === 'Applied'">Interview</button>
-              <button type="button" (click)="advanceApplication(a, 'Offer')" *ngIf="a.stage === 'Interview'">Offer</button>
-              <button type="button" (click)="recordOutcome(a)">Outcome</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="applicationRows" [options]="appGridOptions" (cb)="selectApplicationRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedApplication">
+        <strong>Application</strong>
+        <button type="button" *ngIf="selectedApplication.stage !== 'Applied'" (click)="advanceApplication(selectedApplication, 'Applied')">Mark applied</button>
+        <button type="button" *ngIf="selectedApplication.stage === 'Applied'" (click)="advanceApplication(selectedApplication, 'Interview')">Interview</button>
+        <button type="button" *ngIf="selectedApplication.stage === 'Interview'" (click)="advanceApplication(selectedApplication, 'Offer')">Offer</button>
+        <button type="button" (click)="recordOutcome(selectedApplication)">Outcome</button>
+      </div>
     <p *ngIf="applications.length === 0">No applications tracked.</p>
   </section>
 
@@ -104,16 +83,7 @@
       <input [(ngModel)]="newResumeRef" placeholder="Storage reference" />
       <button type="button" (click)="addResume()" [disabled]="!newResumeName.trim() || !newResumeRef.trim()">Upload</button>
     </div>
-    <div class="table-scroll" *ngIf="resumes.length > 0">
-      <table>
-        <thead><tr><th>File</th><th>Status</th><th>Added</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let r of resumes">
-            <td>{{ r.fileName }}</td><td>{{ r.status }}</td><td>{{ r.createdAt | date:'mediumDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="resumeRows" [options]="resumeGridOptions"></org-grid>
     <p *ngIf="resumes.length === 0">No resumes.</p>
   </section>
 </main>

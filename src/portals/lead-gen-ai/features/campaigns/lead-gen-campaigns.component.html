@@ -24,24 +24,12 @@
   <div class="panels">
     <section class="panel">
       <h3>Campaigns</h3>
-      <div class="table-scroll" *ngIf="filtered.length">
-        <table>
-          <thead><tr><th>Name</th><th>Channel</th><th>Status</th><th>Scheduled</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let c of filtered" [class.selected]="selectedId === c.id" (click)="select(c)">
-              <td><strong>{{ c.name }}</strong></td>
-              <td>{{ c.channel }}</td>
-              <td><span class="status" [class]="'status-' + c.status.toLowerCase()">{{ c.status }}</span></td>
-              <td>{{ c.scheduledAt ? (c.scheduledAt | date:'short') : '—' }}</td>
-              <td class="actions" (click)="$event.stopPropagation()">
-                <button type="button" class="btn-secondary" *ngIf="c.status === 'Scheduled' || c.status === 'Paused'" (click)="act(c, 'start')">Start</button>
-                <button type="button" class="btn-secondary" *ngIf="c.status === 'Running'" (click)="act(c, 'pause')">Pause</button>
-                <button type="button" class="btn-secondary" *ngIf="c.status === 'Running'" (click)="act(c, 'dispatch')">Dispatch</button>
-                <button type="button" class="btn-danger" *ngIf="c.status !== 'Completed' && c.status !== 'Cancelled'" (click)="act(c, 'cancel')">Cancel</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <org-grid [data]="campaignRows" [options]="campaignGridOptions" [isLoading]="loading" (cb)="selectRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedCampaign">
+        <button type="button" class="btn-secondary" *ngIf="selectedCampaign.status === 'Scheduled' || selectedCampaign.status === 'Paused'" (click)="act(selectedCampaign, 'start')">Start</button>
+        <button type="button" class="btn-secondary" *ngIf="selectedCampaign.status === 'Running'" (click)="act(selectedCampaign, 'pause')">Pause</button>
+        <button type="button" class="btn-secondary" *ngIf="selectedCampaign.status === 'Running'" (click)="act(selectedCampaign, 'dispatch')">Dispatch</button>
+        <button type="button" class="btn-danger" *ngIf="selectedCampaign.status !== 'Completed' && selectedCampaign.status !== 'Cancelled'" (click)="act(selectedCampaign, 'cancel')">Cancel</button>
       </div>
       <p class="muted" *ngIf="!filtered.length && !loading">No campaigns yet — create one to start outreach.</p>
     </section>
@@ -58,18 +46,7 @@
       <p class="muted" *ngIf="!report">Loading report…</p>
 
       <h3 class="sub">Messages</h3>
-      <div class="table-scroll" *ngIf="messages.length">
-        <table>
-          <thead><tr><th>Lead</th><th>Status</th><th>Sent</th><th>Response</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let m of messages">
-              <td>{{ m.leadId | slice:0:8 }}…</td><td>{{ m.status }}</td>
-              <td>{{ m.sentAt ? (m.sentAt | date:'short') : '—' }}</td>
-              <td>{{ m.responseSummary || '—' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <org-grid [data]="messageRows" [options]="messageGridOptions"></org-grid>
       <p class="muted" *ngIf="!messages.length">No messages yet.</p>
     </section>
   </div>

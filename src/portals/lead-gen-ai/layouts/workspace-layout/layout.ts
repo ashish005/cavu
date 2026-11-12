@@ -69,6 +69,8 @@ export class MainLayout implements OnInit {
         { routeTo: ['prospecting'], icon:"fa fa-search", key: 'prospecting' },
         { routeTo: ['analytics'], icon:"fa fa-chart-line", key: 'analytics' },
         { routeTo: ['integrations'], icon:"fa fa-plug", key: 'integrations' },
+        { routeTo: ['billing'], icon:"fa fa-credit-card", key: 'billing' },
+        { routeTo: ['operations'], icon:"fa fa-sliders", key: 'operations' },
         { routeTo: ['setup'], icon:"fa fa-cog", key: 'settings' },
         { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' }
       ]

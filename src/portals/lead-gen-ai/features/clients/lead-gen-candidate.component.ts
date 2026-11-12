@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PopupService } from '@app-global';
+import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
 import {
   LeadGenApiService,
   JobListing,
@@ -29,6 +31,21 @@ export class LeadGenCandidateComponent implements OnInit {
   alerts: JobAlert[] = [];
   applications: JobApplication[] = [];
   resumes: Resume[] = [];
+  selectedJob?: JobListing;
+  selectedApplication?: JobApplication;
+
+  jobGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Title',field:'title'},{headerName:'Company',field:'company'},{headerName:'Location',field:'location'},{headerName:'Status',field:'status'}] };
+  appGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'Job',field:'job'},{headerName:'Stage',field:'stage'},{headerName:'Applied',field:'applied'},{headerName:'Outcome',field:'outcome'}] };
+  resumeGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{headerName:'File',field:'fileName'},{headerName:'Status',field:'status'},{headerName:'Added',field:'added'}] };
+
+  get jobRows(): any[] { return this.jobs.map(j => ({...j, company: j.company||'—', location: j.location||'—', status: j.status + (j.isSaved?' · saved':'')})); }
+  get applicationRows(): any[] { return this.applications.map(a => ({...a, job: a.jobListingId.slice(0,8)+'…', applied: a.appliedAt ? new Date(a.appliedAt).toLocaleDateString() : '—', outcome: a.outcome||'—'})); }
+  get resumeRows(): any[] { return this.resumes.map(r => ({...r, added: new Date(r.createdAt).toLocaleDateString()})); }
+  selectJobRow(r:any){ this.selectedJob = this.jobs.find(j=>j.id===r.id); }
+  selectApplicationRow(r:any){ this.selectedApplication = this.applications.find(a=>a.id===r.id); }
   jobSources: JobSource[] = [];
   profile?: CandidateProfile;
   prefs?: CandidatePreferences;
@@ -42,7 +59,7 @@ export class LeadGenCandidateComponent implements OnInit {
   newResumeName = '';
   newResumeRef = '';
 
-  constructor(private readonly api: LeadGenApiService) {}
+  constructor(private readonly api: LeadGenApiService, private readonly popupService: PopupService) {}
 
   ngOnInit(): void {
     this.api.getCandidateProfile().subscribe({ next: (p) => this.profile = p, error: (e) => { if (e.status !== 404) this.error = this.err(e); } });
@@ -128,12 +145,22 @@ export class LeadGenCandidateComponent implements OnInit {
   }
 
   recordOutcome(app: JobApplication): void {
-    const outcome = window.prompt('Outcome (e.g. Rejected, Offer, Withdrawn):');
-    if (!outcome) return;
-    this.api.recordApplicationOutcome(app.id, outcome).subscribe({
-      next: (updated) => this.applications = this.applications.map(a => a.id === updated.id ? updated : a),
-      error: (e) => this.error = this.err(e)
-    });
+    const parameters = {
+      fields: [{ key: 'outcome', label: 'Outcome (e.g. Rejected, Offer, Withdrawn)', required: true }] as EntityFormField[],
+      submitLabel: 'Save outcome',
+      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
+        this.api.recordApplicationOutcome(app.id, values['outcome']).subscribe({
+          next: (updated) => {
+            this.applications = this.applications.map(a => a.id === updated.id ? updated : a);
+            this.popupService.destroy(); resolve();
+          },
+          error: (e) => reject(new Error(this.err(e)))
+        });
+      }),
+      onCancel: () => this.popupService.destroy()
+    };
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
+      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
   }
 
   addResume(): void {

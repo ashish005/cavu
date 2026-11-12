@@ -19,20 +19,11 @@
 
   <section class="panel">
     <h3>Connections</h3>
-    <div class="table-scroll" *ngIf="connections.length">
-      <table>
-        <thead><tr><th>Provider</th><th>Status</th><th>Last checked</th><th>Error</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let c of connections">
-            <td><strong>{{ providerName(c.providerId) }}</strong><br /><small class="muted">{{ c.providerKey || '' }}</small></td>
-            <td><span class="status" [class]="'st-' + c.status.toLowerCase()">{{ c.status }}</span></td>
-            <td>{{ c.lastCheckedAt ? (c.lastCheckedAt | date:'short') : '—' }}</td>
-            <td class="err-cell">{{ c.lastError || '—' }}</td>
-            <td><button type="button" class="btn-secondary" (click)="check(c)">Check</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="connectionRows" [options]="connectionGridOptions" [isLoading]="loading" (cb)="selectConnectionRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedConnection">
+        <strong>{{ providerName(selectedConnection.providerId) }}</strong>
+        <button type="button" class="btn-secondary" (click)="check(selectedConnection)">Check health</button>
+      </div>
     <p class="muted" *ngIf="!connections.length && !loading">No connections yet — connect a provider to enable integrations.</p>
   </section>
 

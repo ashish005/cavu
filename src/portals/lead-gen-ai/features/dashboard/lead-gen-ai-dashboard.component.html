@@ -69,17 +69,7 @@
       <h2>Recent leads</h2>
       <a routerLink="/leads" class="link-more">View all</a>
     </div>
-    <table class="mini-table">
-      <thead><tr><th>Name</th><th>Stage</th><th>Status</th><th>Source</th></tr></thead>
-      <tbody>
-        <tr *ngFor="let l of leads.slice(0, 8)">
-          <td>{{ l.name }}</td>
-          <td>{{ l.stageKey }}</td>
-          <td>{{ l.status }}</td>
-          <td>{{ l.source }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <org-grid [data]="recentLeadRows" [options]="recentLeadGridOptions"></org-grid>
   </section>
 
   <p class="empty-note" *ngIf="!isLoadingOrganization && !organization">

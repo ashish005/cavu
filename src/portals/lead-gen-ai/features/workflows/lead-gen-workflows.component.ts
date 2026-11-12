@@ -24,6 +24,23 @@ export class LeadGenWorkflowsComponent implements OnInit {
   error = '';
   message = '';
 
+  runGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Trigger', field: 'trigger' }, { headerName: 'Status', field: 'status' },
+      { headerName: 'Attempts', field: 'attempts' }, { headerName: 'Started', field: 'started' },
+      { headerName: 'Error', field: 'error' }
+    ]
+  };
+
+  get runRows(): any[] {
+    return this.runs.map(r => ({
+      ...r, trigger: r.triggerKind, attempts: r.attemptCount,
+      started: new Date(r.startedAt).toLocaleString(), error: r.error || '—'
+    }));
+  }
+
   constructor(
     private readonly api: LeadGenApiService,
     private readonly workspaceContext: WorkspaceContextService,

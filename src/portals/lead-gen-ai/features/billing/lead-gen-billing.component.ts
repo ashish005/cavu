@@ -24,6 +24,24 @@ export class LeadGenBillingComponent implements OnInit {
   error = '';
   message = '';
 
+  subGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Plan', field: 'plan' }, { headerName: 'Scope', field: 'scope' },
+      { headerName: 'Status', field: 'status' }, { headerName: 'Period end', field: 'periodEnd' },
+      { headerName: 'Created', field: 'created' }
+    ]
+  };
+
+  get subRows(): any[] {
+    return this.subscriptions.map(s => ({
+      ...s, plan: this.planName(s.planId),
+      periodEnd: s.currentPeriodEnd ? new Date(s.currentPeriodEnd).toLocaleDateString() : '—',
+      created: new Date(s.createdAt).toLocaleDateString()
+    }));
+  }
+
   constructor(
     private readonly api: LeadGenApiService,
     private readonly workspaceContext: WorkspaceContextService,

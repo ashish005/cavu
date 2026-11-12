@@ -26,6 +26,36 @@ export class LeadGenProspectingComponent implements OnInit {
   message = '';
   search = '';
   tab: 'prospects' | 'discovery' = 'prospects';
+  selectedJob?: DiscoveryJob;
+
+  prospectGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Name', field: 'name' }, { headerName: 'Type', field: 'type' },
+      { headerName: 'Contact', field: 'contact' }, { headerName: 'Industry', field: 'industry' },
+      { headerName: 'Source', field: 'source' }, { headerName: 'Added', field: 'added' }
+    ]
+  };
+  jobGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Name', field: 'name' }, { headerName: 'Type', field: 'type' },
+      { headerName: 'Active', field: 'active' }, { headerName: 'Created', field: 'created' }
+    ]
+  };
+
+  get prospectRows(): any[] {
+    return this.filteredProspects.map(p => ({
+      ...p, contact: p.email || p.phone || '—', industry: p.industry || '—',
+      added: new Date(p.createdAt).toLocaleDateString()
+    }));
+  }
+  get jobRows(): any[] {
+    return this.jobs.map(j => ({ ...j, active: j.isActive ? 'Yes' : 'No', created: new Date(j.createdAt).toLocaleDateString() }));
+  }
+  selectJobRow(row: any): void { this.selectedJob = this.jobs.find(j => j.id === row.id); }
 
   constructor(
     private readonly api: LeadGenApiService,

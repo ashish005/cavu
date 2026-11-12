@@ -24,6 +24,27 @@ export class LeadGenVoiceAiComponent implements OnInit {
   error = '';
   message = '';
   statusFilter = '';
+  selectedCall?: VoiceInteraction;
+
+  callGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Direction', field: 'direction' }, { headerName: 'Party', field: 'party' },
+      { headerName: 'Status', field: 'statusLabel' }, { headerName: 'Summary', field: 'summary' },
+      { headerName: 'Started', field: 'started' }
+    ]
+  };
+
+  get callRows(): any[] {
+    return this.interactions.map(v => ({
+      ...v, party: v.remoteParty || '—',
+      statusLabel: v.escalatedToUserId ? 'Escalated' : v.status,
+      summary: v.transcriptSummary || '—',
+      started: new Date(v.startedAt).toLocaleString()
+    }));
+  }
+  selectCallRow(row: any): void { this.selectedCall = this.interactions.find(v => v.id === row.id); }
 
   providerForm = { providerName: '', credentialReference: '', settingsJson: '{}', isEnabled: true };
 

@@ -40,23 +40,12 @@
   </section>
 
   <section class="panel" *ngIf="tab === 'enquiries'">
-    <div class="table-scroll" *ngIf="enquiries.length">
-      <table>
-        <thead><tr><th>From</th><th>Message</th><th>Status</th><th>Received</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let e of enquiries">
-            <td><strong>{{ e.requesterName }}</strong><br /><small class="muted">{{ e.requesterEmail || e.requesterPhone || '—' }}</small></td>
-            <td class="msg-cell">{{ e.message }}</td>
-            <td><span class="status">{{ e.status }}</span></td>
-            <td>{{ e.receivedAt | date:'short' }}</td>
-            <td class="actions">
-              <button type="button" class="btn-secondary" (click)="respond(e)">Respond</button>
-              <button type="button" class="btn-secondary" *ngIf="!e.createdLeadId && !e.matchedLeadId" (click)="convert(e)">Convert</button>
-              <button type="button" class="btn-link" *ngIf="e.matchedLeadId || e.createdLeadId" (click)="openLead(e.matchedLeadId || e.createdLeadId)">Lead</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <org-grid [data]="enquiryRows" [options]="enquiryGridOptions" [isLoading]="loading" (cb)="selectEnquiry($event)"></org-grid>
+    <div class="enquiry-actions" *ngIf="selectedEnquiry">
+      <strong>{{ selectedEnquiry.requesterName }}</strong>
+      <button type="button" class="btn-secondary" (click)="respond(selectedEnquiry)">Respond</button>
+      <button type="button" class="btn-secondary" *ngIf="!selectedEnquiry.createdLeadId && !selectedEnquiry.matchedLeadId" (click)="convert(selectedEnquiry)">Convert to lead</button>
+      <button type="button" class="btn-link" *ngIf="selectedEnquiry.matchedLeadId || selectedEnquiry.createdLeadId" (click)="openLead(selectedEnquiry.matchedLeadId || selectedEnquiry.createdLeadId)">Open lead</button>
     </div>
     <p class="muted" *ngIf="!enquiries.length && !loading">No inbound enquiries yet.</p>
     <p class="muted" *ngIf="loading">Loading…</p>

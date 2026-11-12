@@ -42,24 +42,12 @@
 
   <section class="panel">
     <h3>Call log</h3>
-    <div class="table-scroll" *ngIf="interactions.length">
-      <table>
-        <thead><tr><th>Direction</th><th>Party</th><th>Status</th><th>Summary</th><th>Started</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let v of interactions">
-            <td><span class="dir" [class.in]="v.direction === 'Inbound'">{{ v.direction }}</span></td>
-            <td>{{ v.remoteParty || '—' }}</td>
-            <td><span class="status" [class.failed]="v.status === 'Failed'" [class.esc]="!!v.escalatedToUserId">{{ v.escalatedToUserId ? 'Escalated' : v.status }}</span></td>
-            <td class="summary-cell">{{ v.transcriptSummary || '—' }}</td>
-            <td>{{ v.startedAt | date:'short' }}</td>
-            <td class="actions">
-              <button type="button" class="btn-secondary" (click)="addSummary(v)">Summary</button>
-              <button type="button" class="btn-secondary" *ngIf="!v.escalatedToUserId" (click)="escalate(v)">Escalate</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="callRows" [options]="callGridOptions" [isLoading]="loading" (cb)="selectCallRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedCall">
+        <strong>{{ selectedCall.remoteParty || 'Call' }}</strong>
+        <button type="button" class="btn-secondary" (click)="addSummary(selectedCall)">Summary</button>
+        <button type="button" class="btn-secondary" *ngIf="!selectedCall.escalatedToUserId" (click)="escalate(selectedCall)">Escalate</button>
+      </div>
     <p class="muted" *ngIf="!interactions.length && !loading">No calls recorded. Use "+ Log call" or connect a voice provider.</p>
     <p class="muted" *ngIf="loading">Loading…</p>
   </section>

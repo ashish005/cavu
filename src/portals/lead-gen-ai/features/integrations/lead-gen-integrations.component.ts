@@ -22,6 +22,25 @@ export class LeadGenIntegrationsComponent implements OnInit {
   loading = false;
   error = '';
   message = '';
+  selectedConnection?: IntegrationConnection;
+
+  connectionGridOptions: any = {
+    header: { title: null, desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { headerName: 'Provider', field: 'provider' }, { headerName: 'Status', field: 'status' },
+      { headerName: 'Last checked', field: 'checked' }, { headerName: 'Error', field: 'error' }
+    ]
+  };
+
+  get connectionRows(): any[] {
+    return this.connections.map(c => ({
+      ...c, provider: this.providerName(c.providerId),
+      checked: c.lastCheckedAt ? new Date(c.lastCheckedAt).toLocaleString() : '—',
+      error: c.lastError || '—'
+    }));
+  }
+  selectConnectionRow(row: any): void { this.selectedConnection = this.connections.find(c => c.id === row.id); }
 
   constructor(
     private readonly api: LeadGenApiService,

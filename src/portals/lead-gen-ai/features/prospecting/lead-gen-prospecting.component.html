@@ -26,21 +26,7 @@
       <input class="search" [(ngModel)]="search" placeholder="Search name, email, industry…" />
       <button type="button" class="btn-primary" (click)="addProspect()">+ Add prospect</button>
     </div>
-    <div class="table-scroll" *ngIf="filteredProspects.length">
-      <table>
-        <thead><tr><th>Name</th><th>Type</th><th>Contact</th><th>Industry</th><th>Source</th><th>Added</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let p of filteredProspects">
-            <td><strong>{{ p.name }}</strong></td>
-            <td><span class="tag">{{ p.type }}</span></td>
-            <td>{{ p.email || p.phone || '—' }}</td>
-            <td>{{ p.industry || '—' }}</td>
-            <td>{{ p.source }}</td>
-            <td>{{ p.createdAt | date:'shortDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="prospectRows" [options]="prospectGridOptions"></org-grid>
     <p class="muted" *ngIf="!filteredProspects.length && !loading">No prospects found.</p>
     <p class="muted" *ngIf="loading">Loading…</p>
   </section>
@@ -50,20 +36,11 @@
       <h3 class="inline">Discovery jobs</h3>
       <button type="button" class="btn-primary" (click)="newJob()">+ New job</button>
     </div>
-    <div class="table-scroll" *ngIf="jobs.length">
-      <table>
-        <thead><tr><th>Name</th><th>Type</th><th>Active</th><th>Created</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let j of jobs">
-            <td><strong>{{ j.name }}</strong></td>
-            <td>{{ j.type }}</td>
-            <td>{{ j.isActive ? 'Yes' : 'No' }}</td>
-            <td>{{ j.createdAt | date:'shortDate' }}</td>
-            <td><button type="button" class="btn-secondary" (click)="runJob(j)">Run</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <org-grid [data]="jobRows" [options]="jobGridOptions" (cb)="selectJobRow($event)"></org-grid>
+      <div class="row-actions" *ngIf="selectedJob">
+        <strong>{{ selectedJob.name }}</strong>
+        <button type="button" class="btn-secondary" (click)="runJob(selectedJob)">Run discovery</button>
+      </div>
     <p class="muted" *ngIf="!jobs.length">No discovery jobs yet.</p>
 
     <h3 class="sub">Sources</h3>
