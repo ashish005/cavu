@@ -60,6 +60,7 @@ export class PopupNormalComponent {
     }
 
     hide() {
+        this.onCancel.emit(null);
         this.document.body.classList.remove('modal-open');
         this.style = { 'display': 'none' };
         this.hideBackdrop();

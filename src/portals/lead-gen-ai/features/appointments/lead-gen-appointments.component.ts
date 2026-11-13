@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +8,10 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenReschedulePopupComponent } from '../shared/popups/entity/reschedule-popup.component';
+import { LeadGenBookingPopupComponent } from '../shared/popups/entity/booking-popup.component';
+import { LeadGenAppointmentTypePopupComponent } from '../shared/popups/entity/appointment-type-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-appointments',
@@ -16,6 +20,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenAppointmentsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -48,6 +53,10 @@ export class LeadGenAppointmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -79,6 +88,7 @@ export class LeadGenAppointmentsComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -88,47 +98,29 @@ export class LeadGenAppointmentsComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   book(): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'appointmentTypeId', label: 'Type', type: 'select', required: true,
-        options: this.types.map(t => ({ value: t.id, label: `${t.name} (${t.durationMinutes}m)` })) },
-      { key: 'attendeeName', label: 'Attendee name', required: true },
-      { key: 'attendeeEmail', label: 'Email' },
-      { key: 'attendeePhone', label: 'Phone' },
-      { key: 'startAt', label: 'Start', type: 'datetime', required: true }
-    ], 'Book', (v) => this.api.createAppointment(cb, {
-      appointmentTypeId: v['appointmentTypeId'], attendeeName: v['attendeeName'],
-      attendeeEmail: v['attendeeEmail'] || undefined, attendeePhone: v['attendeePhone'] || undefined,
-      startAt: new Date(v['startAt']).toISOString()
-    }), () => { this.message = 'Appointment booked.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenBookingPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   newType(): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'name', label: 'Type name', required: true, placeholder: 'Consultation' },
-      { key: 'durationMinutes', label: 'Duration (minutes)', required: true, placeholder: '30' },
-      { key: 'description', label: 'Description', type: 'textarea' }
-    ], 'Create type', (v) => this.api.createAppointmentType(cb, {
-      name: v['name'], durationMinutes: parseInt(v['durationMinutes'], 10) || 30,
-      description: v['description'] || undefined, isActive: true
-    }), () => { this.message = 'Appointment type created.'; this.load(); });
+    if (!this.clientBusinessId) return;
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenAppointmentTypePopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   reschedule(a: Appointment): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([{ key: 'startAt', label: 'New start', type: 'datetime', required: true }], 'Reschedule',
-      (v) => this.api.rescheduleAppointment(cb, a.id, new Date(v['startAt']).toISOString()),
-      () => { this.message = 'Appointment rescheduled.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, appointmentId: a.id };
+    this.popupService.showCustomPopup(LeadGenReschedulePopupComponent, { header: { text: 'Reschedule' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
+
 
   cancel(a: Appointment): void {
     const cb = this.clientBusinessId;

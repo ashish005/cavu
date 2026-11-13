@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -7,8 +7,9 @@ import {
 import { WorkspaceContextService } from '../../services/workspace-context.service';
 import { PopupService } from '@app-global';
 import { Observable } from 'rxjs';
-import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenLeadEntityPopupComponent } from '../shared/popups/entity/lead-form-popup.component';
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-lead-detail',
@@ -17,6 +18,7 @@ import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.s
   standalone: false
 })
 export class LeadGenLeadDetailComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   lead: Lead | null = null;
   stages: LeadStage[] = [];
@@ -30,6 +32,8 @@ export class LeadGenLeadDetailComponent implements OnInit {
   noteKind = 'Note';
   noteText = '';
   noteSending = false;
+  aiInsight = '';
+  aiLoading = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -66,6 +70,10 @@ export class LeadGenLeadDetailComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(this.route.snapshot.paramMap.get('id') ?? ''); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -105,32 +113,27 @@ export class LeadGenLeadDetailComponent implements OnInit {
   editLead(): void {
     if (!this.lead) return;
     const l = this.lead;
-    const parameters = {
-      fields: [
-        { key: 'name', label: 'Name', required: true },
-        { key: 'email', label: 'Email' },
-        { key: 'phone', label: 'Phone' },
-        { key: 'website', label: 'Website' },
-        { key: 'industry', label: 'Industry' },
-        { key: 'source', label: 'Source' }
-      ] as EntityFormField[],
-      submitLabel: 'Save changes',
-      initialValues: { name: l.name, email: l.email ?? '', phone: l.phone ?? '', website: l.website ?? '', industry: l.industry ?? '', source: l.source },
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.updateLead(this.clientBusinessId, l.id, {
-          type: l.type, name: values['name'],
-          email: values['email'] || undefined, phone: values['phone'] || undefined,
-          website: values['website'] || undefined, industry: values['industry'] || undefined,
-          source: values['source'] || l.source
-        }).subscribe({
-          next: (u) => { this.lead = u; this.popupService.destroy(); resolve(); },
-          error: (e: HttpErrorResponse) => reject(new Error(this.err(e)))
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, lead: this.lead };
+    this.popupService.showCustomPopup(LeadGenLeadEntityPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then((lead: any) => { if (lead) this.lead = lead; this.popupService.destroy(); }, () => { this.popupService.destroy(); if (this.lead) this.load(this.lead.id); });
+  }
+
+  askAi(): void {
+    if (!this.lead) return;
+    this.aiLoading = true;
+    this.api.listAgents(this.clientBusinessId).subscribe({
+      next: (agents) => {
+        if (!agents.length) { this.aiLoading = false; this.error = 'No AI agent configured — create one under AI Agents first.'; return; }
+        const agent = agents[0];
+        const l = this.lead!;
+        const input = `Lead: ${l.name} (${l.type}). Email: ${l.email ?? 'n/a'}. Phone: ${l.phone ?? 'n/a'}. Industry: ${l.industry ?? 'n/a'}. Source: ${l.source}. Stage: ${l.stageKey}. Status: ${l.status}. Recent activity: ${this.activities.slice(0, 3).map(a => a.summary).join(' | ') || 'none'}. Provide: qualification assessment, recommended next action, and a suggested follow-up message.`;
+        this.api.runAgent(this.clientBusinessId, agent.id, 'summary', input).subscribe({
+          next: (x) => { this.aiInsight = x.outputSummary || x.failureReason || 'No output.'; this.aiLoading = false; },
+          error: (e: HttpErrorResponse) => { this.aiLoading = false; this.error = this.err(e); }
         });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+      },
+      error: (e: HttpErrorResponse) => { this.aiLoading = false; this.error = this.err(e); }
+    });
   }
 
   archiveLead(): void {

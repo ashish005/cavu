@@ -144,6 +144,8 @@ export interface DomainReport { domain: string; primaryCount?: number; secondary
 // ---------- EP-20 ----------
 export interface SubscriptionPlan { id: string; key: string; displayName: string; limitsJson: string; monthlyPrice?: number; currency?: string; isActive: boolean; }
 export interface Subscription { id: string; planId: string; organizationId: string; scope: string; clientBusinessId?: string; status: string; currentPeriodEnd?: string; createdAt: string; }
+export interface BusinessConfigSummary { clientBusinessId: string; hasProfile: boolean; offerings: number; installedPacks: number; targetIndustries: number; }
+export interface BusinessConfiguration { profile?: BusinessProfile; offerings: Offering[]; targetIndustries: TargetIndustry[]; industryPacks: IndustryPack[]; }
 export interface Entitlements { subscription?: Subscription; planKey?: string; planName?: string; limitsJson?: string; usage: { metric: string; total: number }[]; }
 
 // ---------- EP-21..27 ----------
@@ -276,6 +278,7 @@ export interface Workspace {
   clientBusinesses: WorkspaceClient[];
 }
 
+export interface UpdateWorkspaceRequest { name: string; timeZoneId: string; }
 export interface CreateWorkspaceRequest {
   name: string;
   timeZoneId: string;
@@ -468,6 +471,10 @@ export class LeadGenApiService {
     });
   }
 
+  updateWorkspace(workspaceId: string, request: UpdateWorkspaceRequest): Observable<Workspace> {
+    return this.http.put<Workspace>(`${this.baseUrl}/api/v1/workspaces/${workspaceId}`, request, { headers: this.authorizationHeaders() });
+  }
+
   createWorkspace(request: CreateWorkspaceRequest): Observable<Workspace> {
     return this.http.post<Workspace>(`${this.baseUrl}/api/v1/workspaces`, request, {
       headers: this.authorizationHeaders()
@@ -570,6 +577,14 @@ export class LeadGenApiService {
   }
 
   // ---------- EP-03 business configuration ----------
+  getBusinessConfigurationSummary(): Observable<BusinessConfigSummary[]> {
+    return this.http.get<BusinessConfigSummary[]>(`${this.baseUrl}/api/v1/client-businesses/configuration-summary`, { headers: this.authorizationHeaders() });
+  }
+
+  getBusinessConfiguration(clientBusinessId: string): Observable<BusinessConfiguration> {
+    return this.http.get<BusinessConfiguration>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/configuration`, { headers: this.authorizationHeaders() });
+  }
+
   getBusinessProfile(clientBusinessId: string): Observable<BusinessProfile> {
     return this.http.get<BusinessProfile>(`${this.baseUrl}/api/v1/client-businesses/${clientBusinessId}/profile`, { headers: this.authorizationHeaders() });
   }

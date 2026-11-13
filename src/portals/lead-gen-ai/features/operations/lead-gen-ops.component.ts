@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -44,6 +44,12 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { PopupService } from '@app-global';
 import { Observable } from 'rxjs';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenEnrichPopupComponent } from '../shared/popups/entity/enrich-popup.component';
+import { LeadGenSuppressionPopupComponent } from '../shared/popups/entity/suppression-popup.component';
+import { LeadGenWorkflowFormPopupComponent } from '../shared/popups/entity/workflow-form-popup.component';
+import { LeadGenBookingPopupComponent } from '../shared/popups/entity/booking-popup.component';
+import { LeadGenAgentFormPopupComponent } from '../shared/popups/entity/agent-form-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 type OpsTab = 'campaigns' | 'conversations' | 'schedule' | 'ai' | 'prospecting' | 'system';
 
@@ -54,6 +60,7 @@ type OpsTab = 'campaigns' | 'conversations' | 'schedule' | 'ai' | 'prospecting' 
   standalone: false
 })
 export class LeadGenOpsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   activeTab: OpsTab = 'campaigns';
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -67,7 +74,6 @@ export class LeadGenOpsComponent implements OnInit {
   selectedCampaignId = '';
   leads: Lead[] = [];
   conversations: ConversationItem[] = [];
-  seeding = false;
   agents: AiAgent[] = [];
   agentVersions: AgentVersion[] = [];
   agentExecutions: AgentExecution[] = [];
@@ -146,6 +152,7 @@ export class LeadGenOpsComponent implements OnInit {
 
   openEntityPopup(fields: EntityFormField[], submitLabel: string, run: (values: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -155,65 +162,44 @@ export class LeadGenOpsComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
 
   openAgentPopup(): void {
-    const cb = this.cb(); if (!cb) return;
-    this.openEntityPopup([
-      { key: 'name', label: 'Agent name', required: true, placeholder: 'Lead qualifier' },
-      { key: 'purpose', label: 'Purpose', required: true, placeholder: 'Qualify inbound leads' }
-    ], 'Create agent', (v) => this.api.createAgent(cb, {
-      name: v['name'].trim(), purpose: v['purpose'].trim(),
-      behaviourJson: '{}', permissionsJson: '{"canSendEmail":false,"canUpdateLeads":false}'
-    }), () => { this.message = 'Agent created.'; this.loadForBusiness(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId,  };
+    this.popupService.showCustomPopup(LeadGenAgentFormPopupComponent, { header: { text: 'New agent' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
+
 
   openAppointmentPopup(): void {
-    const cb = this.cb(); if (!cb) return;
-    this.openEntityPopup([
-      { key: 'appointmentTypeId', label: 'Type', type: 'select', required: true,
-        options: this.appointmentTypes.map(t => ({ value: t.id, label: `${t.name} (${t.durationMinutes}m)` })) },
-      { key: 'attendeeName', label: 'Attendee name', required: true },
-      { key: 'startAt', label: 'Start', type: 'datetime', required: true }
-    ], 'Book', (v) => this.api.createAppointment(cb, {
-      appointmentTypeId: v['appointmentTypeId'], attendeeName: v['attendeeName'],
-      startAt: new Date(v['startAt']).toISOString()
-    }), () => { this.message = 'Appointment booked.'; this.loadForBusiness(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId,  };
+    this.popupService.showCustomPopup(LeadGenBookingPopupComponent, { header: { text: 'Book appointment' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
+
 
   openWorkflowPopup(): void {
-    const cb = this.cb(); if (!cb) return;
-    this.openEntityPopup([
-      { key: 'name', label: 'Workflow name', required: true },
-      { key: 'triggerJson', label: 'Trigger JSON', placeholder: '{"type":"manual"}' },
-      { key: 'conditionsJson', label: 'Conditions JSON', type: 'textarea' },
-      { key: 'actionsJson', label: 'Actions JSON', type: 'textarea' }
-    ], 'Create', (v) => this.api.createWorkflow(cb, {
-      name: v['name'], triggerJson: v['triggerJson'] || '{}', conditionsJson: v['conditionsJson'] || '{}',
-      actionsJson: v['actionsJson'] || '{}', isActive: true
-    }), () => { this.message = 'Workflow created.'; this.loadForBusiness(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId,  };
+    this.popupService.showCustomPopup(LeadGenWorkflowFormPopupComponent, { header: { text: 'New workflow' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
+
 
   openSuppressionPopup(): void {
-    const cb = this.cb(); if (!cb) return;
-    this.openEntityPopup([
-      { key: 'contactKey', label: 'Contact key (email/phone)', required: true },
-      { key: 'reason', label: 'Reason', required: true }
-    ], 'Suppress', (v) => this.api.addSuppression(cb, v['contactKey'], v['reason']),
-      () => { this.message = 'Contact suppressed.'; this.loadForBusiness(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId,  };
+    this.popupService.showCustomPopup(LeadGenSuppressionPopupComponent, { header: { text: 'Suppress contact' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
 
+
   openEnrichPopup(): void {
-    const cb = this.cb(); if (!cb || !this.selectedProspectId) return;
-    this.openEntityPopup([
-      { key: 'email', label: 'Email', type: 'text', placeholder: 'name@company.com' },
-      { key: 'phone', label: 'Phone' }
-    ], 'Enrich', (v) => this.api.enrichProspect(cb, this.selectedProspectId,
-      { email: v['email'] || undefined, phone: v['phone'] || undefined, source: 'manual' }),
-      () => { this.message = 'Enrichment requested.'; });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId,  };
+    this.popupService.showCustomPopup(LeadGenEnrichPopupComponent, { header: { text: 'Enrich prospect' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.loadForBusiness(); });
   }
+
 
   get tabGroups(): { label: string; tabs: { key: OpsTab; label: string }[] }[] {
     return [
@@ -227,6 +213,10 @@ export class LeadGenOpsComponent implements OnInit {
     const tab = this.route.snapshot.data['tab'];
     if (tab) this.activeTab = tab;
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.loadForBusiness(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -290,16 +280,7 @@ export class LeadGenOpsComponent implements OnInit {
     return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';
   }
 
-  seedDemo(): void {
-    const cb = this.clientBusinessId;
-    if (!cb || this.seeding) return;
-    this.seeding = true;
-    this.error = '';
-    this.api.seedDemoData(cb).subscribe({
-      next: (r) => { this.seeding = false; this.message = `Demo data loaded (${r.recordsCreated} records).`; this.loadForBusiness(); },
-      error: (e: HttpErrorResponse) => { this.seeding = false; this.error = this.err(e); }
-    });
-  }
+
 
   loadForBusiness(): void {
     const cb = this.clientBusinessId;

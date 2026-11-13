@@ -961,18 +961,17 @@ export class LeadGenAiDashboardComponent implements OnInit {
     if (!cb) { this.businessProfile = undefined; this.offerings = []; this.targetIndustries = []; return; }
     this.isLoadingBusinessConfig = true;
     this.businessConfigError = '';
-    this.api.getBusinessProfile(cb).pipe(finalize(() => this.isLoadingBusinessConfig = false)).subscribe({
-      next: (profile) => {
-        this.businessProfile = profile;
-        this.profileForm.patchValue({ description: profile.description ?? '', industry: profile.industry ?? '', category: profile.category ?? '' });
+    this.api.getBusinessConfiguration(cb).pipe(finalize(() => this.isLoadingBusinessConfig = false)).subscribe({
+      next: (c) => {
+        this.businessProfile = c.profile ?? undefined;
+        this.profileForm.patchValue({ description: c.profile?.description ?? '', industry: c.profile?.industry ?? '', category: c.profile?.category ?? '' });
+        this.offerings = c.offerings ?? [];
+        this.targetIndustries = c.targetIndustries ?? [];
       },
       error: (error: HttpErrorResponse) => {
-        if (error.status === 404) { this.businessProfile = undefined; this.profileForm.reset({ description: '', industry: '', category: '' }); }
-        else this.businessConfigError = this.getRequestError(error);
+        this.businessConfigError = this.getRequestError(error);
       }
     });
-    this.api.listOfferings(cb).subscribe({ next: (o) => this.offerings = o, error: () => undefined });
-    this.api.listTargetIndustries(cb).subscribe({ next: (i) => this.targetIndustries = i, error: () => undefined });
   }
 
   saveBusinessProfile(): void {

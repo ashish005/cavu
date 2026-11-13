@@ -68,6 +68,13 @@
         <span class="label">Recommended next action</span>
         <p>{{ nextAction }}</p>
       </div>
+      <button type="button" class="btn-secondary ask-ai" [disabled]="aiLoading || !perms.canWrite" (click)="askAi()">
+        {{ aiLoading ? 'Thinking…' : '✦ Ask AI for insight' }}
+      </button>
+      <div class="insight-card ai-result" *ngIf="aiInsight">
+        <span class="label">AI analysis</span>
+        <p class="ai-text">{{ aiInsight }}</p>
+      </div>
       <ng-container *ngIf="aiItems.length">
         <div class="insight-card" *ngFor="let t of aiItems.slice(0, 5)">
           <span class="label">{{ t.kind }}</span>

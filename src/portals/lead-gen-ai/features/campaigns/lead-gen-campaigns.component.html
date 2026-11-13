@@ -5,10 +5,7 @@
       <p class="subtitle">Broadcast and sequence campaigns across channels</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <select [(ngModel)]="statusFilter" aria-label="Status filter">
+<select [(ngModel)]="statusFilter" aria-label="Status filter">
         <option value="">All statuses</option>
         <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
       </select>

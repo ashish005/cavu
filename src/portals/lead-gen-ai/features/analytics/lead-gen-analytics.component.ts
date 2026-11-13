@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   LeadGenApiService, ClientBusiness, SummaryReport, FunnelReport, AiUsageReport, Lead
 } from '../../services/lead-gen-api.service';
 import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-analytics',
@@ -12,6 +13,7 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
   standalone: false
 })
 export class LeadGenAnalyticsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   summary?: SummaryReport;
@@ -43,6 +45,10 @@ export class LeadGenAnalyticsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;

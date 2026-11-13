@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -9,6 +9,9 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenRolePopupComponent } from '../shared/popups/entity/role-popup.component';
+import { LeadGenInvitePopupComponent } from '../shared/popups/entity/invite-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const ROLES: { value: ClientBusinessRole; label: string; desc: string }[] = [
   { value: 'Viewer', label: 'Viewer', desc: 'Read-only access' },
@@ -23,6 +26,7 @@ const ROLES: { value: ClientBusinessRole; label: string; desc: string }[] = [
   standalone: false
 })
 export class LeadGenTeamComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -96,6 +100,10 @@ export class LeadGenTeamComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -125,6 +133,7 @@ export class LeadGenTeamComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -134,8 +143,8 @@ export class LeadGenTeamComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   selectUser(row: any): void { this.selectedUser = this.users.find(u => u.userId === row.userId); }
@@ -144,13 +153,11 @@ export class LeadGenTeamComponent implements OnInit {
   onOrgPage(e: any): void { this.orgPage = Math.floor(e.skip / e.take) + 1; }
 
   changeOrgRole(m: OrgMember): void {
-    this.openPopup([
-      { key: 'role', label: 'Organization role', type: 'select', required: true,
-        options: ['Owner', 'Admin', 'Member'].map(r => ({ value: r, label: r })) }
-    ], `Change org role for ${m.userId.slice(0, 8)}…`, (v) =>
-      this.api.assignOrganizationMember(m.userId, v['role']),
-      () => { this.message = 'Organization role updated.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, userId: m.userId, mode: 'org', currentRole: m.role };
+    this.popupService.showCustomPopup(LeadGenRolePopupComponent, { header: { text: 'Change org role' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
+
 
   revokeOrgMember(m: OrgMember): void {
     if (!confirm(`Revoke organization membership for ${m.userId.slice(0, 8)}…?`)) return;
@@ -161,15 +168,11 @@ export class LeadGenTeamComponent implements OnInit {
   }
 
   changeRole(u: ClientBusinessUser): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'role', label: 'Role', type: 'select', required: true,
-        options: ROLES.map(r => ({ value: r.value, label: `${r.label} — ${r.desc}` })) }
-    ], `Change role for ${u.userId.slice(0, 8)}…`, (v) =>
-      this.api.assignClientBusinessUser(cb, u.userId, v['role'] as ClientBusinessRole),
-      () => { this.message = 'Role updated.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, userId: u.userId, mode: 'business', currentRole: u.role };
+    this.popupService.showCustomPopup(LeadGenRolePopupComponent, { header: { text: 'Change role' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
+
 
   revokeUser(u: ClientBusinessUser): void {
     const cb = this.clientBusinessId;
@@ -181,15 +184,10 @@ export class LeadGenTeamComponent implements OnInit {
   }
 
   invite(): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'email', label: 'Email', required: true },
-      { key: 'role', label: 'Role', type: 'select', required: true,
-        options: ROLES.map(r => ({ value: r.value, label: `${r.label} — ${r.desc}` })) }
-    ], 'Invite user', (v) => this.api.inviteClientBusinessUser(cb, {
-      email: v['email'], role: v['role'] as ClientBusinessRole
-    } as any), () => { this.message = 'Invitation sent.'; this.load(); });
+    if (!this.clientBusinessId) return;
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenInvitePopupComponent, { header: { text: 'Invite user' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   revokeInvite(i: ClientBusinessInvitation): void {

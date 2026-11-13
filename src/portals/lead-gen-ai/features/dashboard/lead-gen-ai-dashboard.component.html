@@ -72,6 +72,16 @@
     <org-grid [data]="recentLeadRows" [options]="recentLeadGridOptions"></org-grid>
   </section>
 
+  <section class="card" *ngIf="perms.isOrganizationManager">
+    <div class="card-head"><h2>Agency</h2></div>
+    <div class="agency-stats">
+      <div class="agency-stat"><strong>{{ agencyStats.businesses }}</strong><span>Client businesses</span></div>
+      <div class="agency-stat"><strong>{{ agencyStats.activeBusinesses }}</strong><span>Active</span></div>
+      <div class="agency-stat"><strong>{{ agencyStats.members }}</strong><span>Members</span></div>
+      <div class="agency-stat"><strong>{{ agencyStats.subscriptions }}</strong><span>Subscriptions</span></div>
+    </div>
+  </section>
+
   <p class="empty-note" *ngIf="!isLoadingOrganization && !organization">
     Looks like you're new here — run the <a routerLink="/setup">setup wizard</a> to create your organization, client business, workspace, and load demo data in a few minutes.
   </p>

@@ -5,10 +5,7 @@
       <p class="subtitle">Provider configuration, call log, transcripts and escalation</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <select [(ngModel)]="statusFilter" (ngModelChange)="load()" aria-label="Status filter">
+<select [(ngModel)]="statusFilter" (ngModelChange)="load()" aria-label="Status filter">
         <option value="">All statuses</option>
         <option>Completed</option><option>InProgress</option><option>Failed</option><option>Escalated</option>
       </select>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +8,8 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenSubscriptionPopupComponent } from '../shared/popups/entity/subscription-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-billing',
@@ -16,6 +18,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenBillingComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -54,6 +57,10 @@ export class LeadGenBillingComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -79,6 +86,7 @@ export class LeadGenBillingComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -88,17 +96,14 @@ export class LeadGenBillingComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   subscribe(plan: SubscriptionPlan): void {
-    this.openPopup([
-      { key: 'scope', label: 'Scope', type: 'select', required: true,
-        options: [{ value: 'organization', label: 'Organization' }, { value: 'client-business', label: 'Client business' }] }
-    ], `Subscribe to ${plan.displayName}`, (v) => this.api.createSubscription(plan.id, v['scope'],
-      v['scope'] === 'client-business' ? this.clientBusinessId || undefined : undefined),
-      () => { this.message = 'Subscription created.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, planId: plan.id };
+    this.popupService.showCustomPopup(LeadGenSubscriptionPopupComponent, { header: { text: 'Subscribe — ' + plan.displayName }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   private err(e: HttpErrorResponse): string {

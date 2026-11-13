@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   LeadGenApiService, ClientBusiness, ConversationItem, InboundEnquiry
@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenRespondPopupComponent } from '../shared/popups/entity/respond-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-conversations',
@@ -16,6 +18,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenConversationsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
   conversations: ConversationItem[] = [];
@@ -65,6 +68,10 @@ export class LeadGenConversationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -90,14 +97,15 @@ export class LeadGenConversationsComponent implements OnInit {
     this.selectedEnquiry = this.enquiries.find(e => e.id === row.id);
   }
 
-  respond(e: InboundEnquiry): void {
-    this.openPopup([{ key: 'summary', label: 'Response summary', type: 'textarea', required: true }],
-      'Send response', (v) => this.api.respondInboundEnquiry(this.clientBusinessId, e.id, v['summary']),
-      () => { this.message = 'Response recorded.'; this.load(); });
+  respond(e: any): void {
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, enquiryId: this.selectedEnquiry?.id ?? '' };
+    this.popupService.showCustomPopup(LeadGenRespondPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -107,8 +115,8 @@ export class LeadGenConversationsComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   convert(e: InboundEnquiry): void {

@@ -5,10 +5,7 @@
       <p class="subtitle">{{ businessName }}</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <button type="button" class="btn-secondary" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Demo data' }}</button>
+<button type="button" class="btn-secondary" (click)="seedDemo()" [disabled]="seeding">{{ seeding ? 'Seeding…' : 'Demo data' }}</button>
       <div class="view-toggle">
         <button type="button" [class.active]="view === 'list'" (click)="view = 'list'">List</button>
         <button type="button" [class.active]="view === 'board'" (click)="view = 'board'">Board</button>

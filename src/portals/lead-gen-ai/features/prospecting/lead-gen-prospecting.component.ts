@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +8,9 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenDiscoveryJobPopupComponent } from '../shared/popups/entity/discovery-job-popup.component';
+import { LeadGenProspectFormPopupComponent } from '../shared/popups/entity/prospect-form-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-prospecting',
@@ -16,6 +19,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenProspectingComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -81,33 +85,9 @@ export class LeadGenProspectingComponent implements OnInit {
   selectProspectRow(row: any): void { this.selectedProspect = this.prospects.find(p => p.id === row.id); }
 
   editProspect(p: Prospect): void {
-    const parameters = {
-      fields: [
-        { key: 'name', label: 'Name', required: true },
-        { key: 'email', label: 'Email' },
-        { key: 'phone', label: 'Phone' },
-        { key: 'website', label: 'Website' },
-        { key: 'industry', label: 'Industry' }
-      ] as EntityFormField[],
-      submitLabel: 'Save changes',
-      initialValues: { name: p.name, email: p.email ?? '', phone: p.phone ?? '', website: p.website ?? '', industry: p.industry ?? '' },
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.updateProspect(p.id, {
-          name: values['name'], email: values['email'] || undefined,
-          phone: values['phone'] || undefined, website: values['website'] || undefined,
-          industry: values['industry'] || undefined
-        }).subscribe({
-          next: (u) => {
-            this.prospects = this.prospects.map(x => x.id === u.id ? u : x);
-            this.popupService.destroy(); this.message = 'Prospect updated.'; resolve();
-          },
-          error: (e: HttpErrorResponse) => reject(new Error(this.err(e)))
-        });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, prospect: p };
+    this.popupService.showCustomPopup(LeadGenProspectFormPopupComponent, { header: { text: 'Edit prospect' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   constructor(
@@ -125,6 +105,10 @@ export class LeadGenProspectingComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -154,6 +138,7 @@ export class LeadGenProspectingComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -163,38 +148,20 @@ export class LeadGenProspectingComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   addProspect(): void {
-    this.openPopup([
-      { key: 'type', label: 'Type', type: 'select', required: true, options: [{ value: 'B2B', label: 'B2B' }, { value: 'B2C', label: 'B2C' }] },
-      { key: 'name', label: 'Name', required: true },
-      { key: 'email', label: 'Email' },
-      { key: 'phone', label: 'Phone' },
-      { key: 'website', label: 'Website' },
-      { key: 'industry', label: 'Industry' }
-    ], 'Add prospect', (v) => this.api.createProspect({
-      type: v['type'] as 'B2B' | 'B2C', name: v['name'],
-      email: v['email'] || undefined, phone: v['phone'] || undefined,
-      website: v['website'] || undefined, industry: v['industry'] || undefined
-    }), () => { this.message = 'Prospect added.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenProspectFormPopupComponent, { header: { text: 'New prospect' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   newJob(): void {
-    this.openPopup([
-      { key: 'name', label: 'Job name', required: true },
-      { key: 'type', label: 'Type', required: true, placeholder: 'company-search' },
-      { key: 'geography', label: 'Geography' },
-      { key: 'industries', label: 'Industries (comma-separated)' },
-      { key: 'keywords', label: 'Keywords (comma-separated)' }
-    ], 'Create job', (v) => this.api.createDiscoveryJob({
-      name: v['name'], type: v['type'], clientBusinessId: this.clientBusinessId || undefined,
-      geography: v['geography'] || undefined,
-      industries: v['industries'] ? v['industries'].split(',').map(s => s.trim()).filter(Boolean) : undefined,
-      keywords: v['keywords'] ? v['keywords'].split(',').map(s => s.trim()).filter(Boolean) : undefined
-    }), () => { this.message = 'Discovery job created.'; this.load(); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenDiscoveryJobPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   runJob(j: DiscoveryJob): void {

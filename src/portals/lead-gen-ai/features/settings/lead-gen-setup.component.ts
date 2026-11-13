@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { finalize, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -6,9 +7,14 @@ import {
   BusinessProfile, ClientBusiness, CreateClientBusinessRequest, CreateWorkspaceRequest, IndustryPack,
   LeadGenApiService, OfferingRequest, Organization, TargetIndustry, Workspace
 } from '../../services/lead-gen-api.service';
+import { PopupService } from '@app-global';
+import { WorkspaceContextService } from '../../services/workspace-context.service';
+import { LeadGenOrgPopupComponent } from '../shared/popups/entity/org-popup.component';
+import { LeadGenBusinessPopupComponent } from '../shared/popups/entity/business-popup.component';
+import { LeadGenWorkspacePopupComponent } from '../shared/popups/entity/workspace-popup.component';
+import { LeadGenBusinessConfigPopupComponent } from '../shared/popups/entity/business-config-popup.component';
 
 type StepKey = 'organization' | 'business' | 'workspace' | 'configure' | 'launch';
-
 interface StepDef { key: StepKey; title: string; subtitle: string; }
 
 @Component({
@@ -50,6 +56,30 @@ export class LeadGenSetupComponent implements OnInit {
 
   // Step 3 — workspace
   workspaces: Workspace[] = [];
+  settingsTab: 'business' | 'workspace' = 'business';
+  businessPage = 1; workspacePage = 1; pageSize = 10;
+
+  businessGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: true, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{ headerName: 'Name', field: 'name' }, { headerName: 'Slug', field: 'slug' }, { headerName: 'Profile', field: 'profile' }, { headerName: 'Offerings', field: 'offerings' }, { headerName: 'Packs', field: 'packs' }, { headerName: 'Industries', field: 'industries' }, { headerName: 'Workspaces', field: 'workspaces' }, { headerName: 'Created', field: 'created' }] };
+  workspaceGridOptions: any = { header: { title: null, desc: null, add: false, refresh: false, edit: true, delete: false }, total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [{ headerName: 'Name', field: 'name' }, { headerName: 'Timezone', field: 'timeZoneId' }, { headerName: 'Client businesses', field: 'clients' }] };
+
+  bizCounts: Record<string, { offerings: number; packs: number; industries: number; profile: boolean }> = {};
+
+  loadBusinessCounts(): void {
+    this.api.getBusinessConfigurationSummary().subscribe({
+      next: (rows) => {
+        rows.forEach(r => { this.bizCounts[r.clientBusinessId] = { offerings: r.offerings, packs: r.installedPacks, industries: r.targetIndustries, profile: r.hasProfile }; });
+      },
+      error: () => undefined
+    });
+  }
+
+  get businessRows(): any[] { return this.businesses.map(b => { const c = this.bizCounts[b.id]; return { ...b, created: new Date(b.createdAt).toLocaleDateString(), offerings: c?.offerings ?? '—', packs: c?.packs ?? '—', industries: c?.industries ?? '—', profile: c ? (c.profile ? 'Yes' : 'No') : '—', workspaces: this.workspaces.filter(w => (w.clientBusinesses ?? []).some(x => x.id === b.id)).map(w => w.name).join(', ') || '—', openSection: (sec: string) => this.openConfigPopup(sec, b) }; }); }
+  get pagedBusinessRows(): any[] { return this.businessRows.slice((this.businessPage - 1) * this.pageSize, this.businessPage * this.pageSize); }
+  get workspaceRows(): any[] { return this.workspaces.map(w => ({ ...w, clients: (w.clientBusinesses ?? []).length })); }
+  get pagedWorkspaceRows(): any[] { return this.workspaceRows.slice((this.workspacePage - 1) * this.pageSize, this.workspacePage * this.pageSize); }
+  onGridPage(key: 'business' | 'workspace', e: any): void { if (key === 'business') this.businessPage = Math.floor(e.skip / e.take) + 1; else this.workspacePage = Math.floor(e.skip / e.take) + 1; }
   selectedWorkspaceId = '';
   workspaceForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
@@ -90,7 +120,7 @@ export class LeadGenSetupComponent implements OnInit {
   error = '';
   message = '';
 
-  constructor(private readonly api: LeadGenApiService, private readonly fb: FormBuilder) {}
+  constructor(private readonly api: LeadGenApiService, private readonly fb: FormBuilder, private readonly popupService: PopupService, private readonly router: Router, private readonly workspaceContext: WorkspaceContextService) {}
 
   get step(): StepKey { return this.steps[this.currentStep].key; }
   get selectedBusiness(): ClientBusiness | undefined {
@@ -120,6 +150,7 @@ export class LeadGenSetupComponent implements OnInit {
           this.orgForm.setValue({ name: org.name, slug: org.slug, defaultTimeZoneId: org.defaultTimeZoneId });
         }
         this.businesses = businesses;
+        this.loadBusinessCounts();
         if (!this.selectedBusinessId && businesses.length) this.selectedBusinessId = businesses[0].id;
         this.workspaces = workspaces;
         if (!this.selectedWorkspaceId && workspaces.length) this.selectedWorkspaceId = workspaces[0].id;
@@ -272,15 +303,16 @@ export class LeadGenSetupComponent implements OnInit {
   loadConfiguration(): void {
     if (!this.selectedBusinessId) return;
     const cb = this.selectedBusinessId;
-    this.api.getBusinessProfile(cb).pipe(catchError(() => of(null))).subscribe(p => {
-      this.businessProfile = p ?? undefined;
+    this.api.getBusinessConfiguration(cb).pipe(catchError(() => of(null))).subscribe(c => {
+      if (!c) return;
+      this.businessProfile = c.profile ?? undefined;
       this.profileForm.setValue({
-        description: p?.description ?? '', industry: p?.industry ?? '', category: p?.category ?? ''
+        description: c.profile?.description ?? '', industry: c.profile?.industry ?? '', category: c.profile?.category ?? ''
       });
+      this.offerings = (c.offerings ?? []).map(x => ({ id: x.id, name: x.name, kind: x.kind }));
+      this.industries = c.targetIndustries ?? [];
+      this.industryPacks = c.industryPacks ?? [];
     });
-    this.api.listOfferings(cb).pipe(catchError(() => of([]))).subscribe(o => this.offerings = o.map(x => ({ id: x.id, name: x.name, kind: x.kind })));
-    this.api.listTargetIndustries(cb).pipe(catchError(() => of([]))).subscribe(i => this.industries = i);
-    this.api.listIndustryPacks(cb).pipe(catchError(() => of([]))).subscribe(p => this.industryPacks = p);
   }
 
   saveProfile(): void {
@@ -332,22 +364,7 @@ export class LeadGenSetupComponent implements OnInit {
     this.api.removeTargetIndustry(this.selectedBusinessId, id).subscribe(() => this.loadConfiguration());
   }
 
-  seedDemo(): void {
-    if (!this.selectedBusinessId || this.seeding) return;
-    this.seeding = true;
-    this.error = '';
-    this.api.seedDemoData(this.selectedBusinessId)
-      .pipe(finalize(() => this.seeding = false))
-      .subscribe({
-        next: r => {
-          this.seededCount = r.recordsCreated;
-          this.message = r.recordsCreated > 0
-            ? `Demo data loaded — ${r.recordsCreated} records created.`
-            : 'Demo data already present — nothing new was needed.';
-        },
-        error: () => this.error = 'Could not seed demo data. You need Editor or ClientAdmin role on this business.'
-      });
-  }
+
 
   createFirstLead(): void {
     if (this.leadForm.invalid || !this.selectedBusinessId) { this.leadForm.markAllAsTouched(); return; }
@@ -361,5 +378,51 @@ export class LeadGenSetupComponent implements OnInit {
       next: () => { this.leadCreated = true; this.message = 'First lead created.'; },
       error: () => this.error = 'Could not create the lead.'
     });
+  }
+
+  selBusiness?: ClientBusiness;
+  selWorkspace?: Workspace;
+
+  selectBusinessRow(row: any): void { this.selBusiness = this.businesses.find(b => b.id === row.id); }
+  selectWorkspaceRow(row: any): void { this.selWorkspace = this.workspaces.find(w => w.id === row.id); }
+
+  updateBusinessRow(row: any){
+    debugger
+    this.openConfigPopup('', row);
+  }
+
+  private showPopup(component: any, header: string, params: any, onResolve?: (v: any) => void): void {
+    this.popupService.showCustomPopup(component, { header: { text: header }, aside: 'modal-right', size: 'w-50' }, { actionType: 'Show', ...params })
+      .then((v: any) => { this.popupService.destroy(); if (v?.section) { this.openConfigPopup(v.section); } else { this.loadAll(); onResolve?.(v); } },
+            () => { this.popupService.destroy(); this.loadAll(); });
+  }
+
+  openOrgPopup(): void { this.showPopup(LeadGenOrgPopupComponent, this.organization ? 'Edit organization' : 'Create organization', { org: this.organization }); }
+
+  openBusinessPopup(b?: ClientBusiness): void { this.showPopup(LeadGenBusinessPopupComponent, b ? 'Edit business' : 'Add business', { business: b }); }
+
+  openWorkspacePopup(w?: Workspace): void {
+    this.showPopup(LeadGenWorkspacePopupComponent, w ? 'Workspace' : 'Add workspace',
+      { workspace: w, clientBusinessIds: this.businesses.map(x => x.id) });
+  }
+
+  seedDemo(b?: ClientBusiness): void {
+    const target = b ?? this.selBusiness;
+    if (!target) return;
+    this.api.seedDemoData(target.id).subscribe({
+      next: (r) => { this.message = `Demo data loaded for ${target.name} (${r.recordsCreated} records).`; this.loadBusinessCounts(); },
+      error: () => { this.error = 'Could not load demo data.'; }
+    });
+  }
+
+  addLeadFor(b: ClientBusiness): void {
+    const ws = this.workspaces.find(w => (w.clientBusinesses ?? []).some(x => x.id === b.id)) ?? this.workspaces[0];
+    if (ws) this.workspaceContext.setActive({ workspaceId: ws.id, clientBusinessId: b.id });
+    this.router.navigate(['/leads']);
+  }
+
+  openConfigPopup(focus = '', business?: ClientBusiness): void {
+    const b = business ?? this.selBusiness ?? this.businesses.find(x => x.id === (this.selBusiness?.id ?? this.businesses[0]?.id));
+    this.showPopup(LeadGenBusinessConfigPopupComponent, 'Edit business', { clientBusinessId: b?.id ?? '', business: b, focus });
   }
 }

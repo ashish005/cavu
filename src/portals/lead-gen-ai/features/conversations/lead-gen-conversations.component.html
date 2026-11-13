@@ -5,10 +5,7 @@
       <p class="subtitle">Unified inbox — enquiries, calls, messages and campaigns</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <select [(ngModel)]="kindFilter" aria-label="Channel filter">
+<select [(ngModel)]="kindFilter" aria-label="Channel filter">
         <option value="">All channels</option>
         <option *ngFor="let k of kinds" [value]="k">{{ k }}</option>
       </select>

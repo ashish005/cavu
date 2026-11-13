@@ -5,10 +5,7 @@
       <p class="subtitle">Plans, subscriptions and usage entitlements</p>
     </div>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <button type="button" class="btn-secondary" (click)="load()">Refresh</button>
+<button type="button" class="btn-secondary" (click)="load()">Refresh</button>
     </div>
   </header>
 

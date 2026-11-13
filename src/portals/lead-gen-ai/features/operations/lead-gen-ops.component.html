@@ -3,12 +3,7 @@
     <h1>Operations</h1>
     <p>Campaigns, agents, appointments, workflows, integrations, inbound, duplicates, billing, notifications, and audit.</p>
     <div class="header-actions">
-      <select [ngModel]="clientBusinessId" (ngModelChange)="onBusinessChange($event)" aria-label="Client business">
-        <option value="">Select client business…</option>
-        <option *ngFor="let b of clientBusinesses" [value]="b.id">{{ b.name }}</option>
-      </select>
-      <button type="button" class="btn-secondary" (click)="seedDemo()" [disabled]="!hasBusiness || seeding">{{ seeding ? 'Seeding…' : 'Load demo data' }}</button>
-    </div>
+</div>
   </header>
   <p class="empty-note" *ngIf="!hasBusiness">Select a client business above to load data.</p>
 

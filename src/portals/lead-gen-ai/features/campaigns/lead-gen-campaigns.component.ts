@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +8,8 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenCampaignFormPopupComponent } from '../shared/popups/entity/campaign-form-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-campaigns',
@@ -16,6 +18,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenCampaignsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -74,6 +77,10 @@ export class LeadGenCampaignsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -108,6 +115,7 @@ export class LeadGenCampaignsComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -117,21 +125,15 @@ export class LeadGenCampaignsComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   create(): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'name', label: 'Campaign name', required: true },
-      { key: 'description', label: 'Description', type: 'textarea' },
-      { key: 'channel', label: 'Channel', type: 'select', required: true,
-        options: ['Email', 'SMS', 'WhatsApp', 'Voice', 'Social'].map(c => ({ value: c, label: c })) }
-    ], 'Create campaign', (v) => this.api.createCampaign(cb, {
-      name: v['name'], description: v['description'] || undefined, channel: v['channel']
-    }), () => { this.message = 'Campaign created.'; this.load(); });
+    if (!this.clientBusinessId) return;
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenCampaignFormPopupComponent, { header: { text: 'New campaign' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   act(c: Campaign, action: 'start' | 'pause' | 'cancel' | 'dispatch'): void {

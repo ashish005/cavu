@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +8,10 @@ import { WorkspaceContextService } from '../../services/workspace-context.servic
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenAgentRunPopupComponent } from '../shared/popups/entity/agent-run-popup.component';
+import { LeadGenAgentVersionPopupComponent } from '../shared/popups/entity/agent-version-popup.component';
+import { LeadGenAgentFormPopupComponent } from '../shared/popups/entity/agent-form-popup.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'lead-gen-ai-agents',
@@ -16,6 +20,7 @@ import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popu
   standalone: false
 })
 export class LeadGenAiAgentsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   readonly perms = inject(LeadGenPermissionsService);
   clientBusinessId = '';
   clientBusinesses: ClientBusiness[] = [];
@@ -35,6 +40,10 @@ export class LeadGenAiAgentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientBusinessId = this.workspaceContext.current?.clientBusinessId ?? '';
+    this.workspaceContext.context$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      const id = c?.clientBusinessId ?? '';
+      if (id && id !== this.clientBusinessId) { this.clientBusinessId = id; this.load(); }
+    });
     this.api.listClientBusinesses().subscribe({
       next: (bs) => {
         this.clientBusinesses = bs;
@@ -67,6 +76,7 @@ export class LeadGenAiAgentsComponent implements OnInit {
 
   openPopup(fields: EntityFormField[], submitLabel: string, run: (v: Record<string, string>) => Observable<unknown>, onDone?: () => void): void {
     const parameters = {
+      actionType: 'Show',
       fields, submitLabel,
       onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
         run(values).subscribe({
@@ -76,45 +86,30 @@ export class LeadGenAiAgentsComponent implements OnInit {
       }),
       onCancel: () => this.popupService.destroy()
     };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { header: { text: 'Form' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   create(): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'name', label: 'Agent name', required: true },
-      { key: 'purpose', label: 'Purpose', required: true, placeholder: 'Qualify inbound leads' },
-      { key: 'behaviourJson', label: 'Behaviour / system prompt (JSON)', type: 'textarea' }
-    ], 'Create agent', (v) => this.api.createAgent(cb, {
-      name: v['name'], purpose: v['purpose'],
-      behaviourJson: v['behaviourJson'] || '{}',
-      permissionsJson: '{"canSendEmail":false,"canUpdateLeads":false}'
-    }), () => { this.message = 'Agent created.'; this.load(); });
+    if (!this.clientBusinessId) return;
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId };
+    this.popupService.showCustomPopup(LeadGenAgentFormPopupComponent, { header: { text: 'New agent' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
   addVersion(a: AiAgent): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'behaviourJson', label: 'Behaviour / system prompt (JSON)', type: 'textarea', required: true },
-      { key: 'permissionsJson', label: 'Permissions JSON', type: 'textarea' }
-    ], 'Add version', (v) => this.api.addAgentVersion(cb, a.id,
-      v['behaviourJson'], v['permissionsJson'] || '{"canSendEmail":false,"canUpdateLeads":false}'),
-      () => { this.message = 'New version added.'; });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, agentId: a.id };
+    this.popupService.showCustomPopup(LeadGenAgentVersionPopupComponent, { header: { text: 'New version' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
 
+
   run(a: AiAgent): void {
-    const cb = this.clientBusinessId;
-    if (!cb) return;
-    this.openPopup([
-      { key: 'kind', label: 'Kind', type: 'select', required: true,
-        options: ['qualification', 'summary', 'classification', 'response', 'custom'].map(k => ({ value: k, label: k })) },
-      { key: 'input', label: 'Input / prompt', type: 'textarea' }
-    ], 'Run agent', (v) => this.api.runAgent(cb, a.id, v['kind'], v['input'] || undefined),
-      () => { this.message = 'Execution complete — check history.'; this.select(a); });
+    const parameters = { actionType: 'Show', clientBusinessId: this.clientBusinessId, agentId: a.id, agentName: a.name };
+    this.popupService.showCustomPopup(LeadGenAgentRunPopupComponent, { header: { text: 'Run agent' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy(); this.load(); });
   }
+
 
   private err(e: HttpErrorResponse): string {
     return typeof e.error?.detail === 'string' ? e.error.detail : 'Request failed.';

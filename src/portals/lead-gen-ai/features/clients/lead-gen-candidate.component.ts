@@ -2,6 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PopupService } from '@app-global';
 import { LeadGenEntityFormPopupComponent, EntityFormField } from '../shared/popups/lead-gen-entity-form-popup.component';
+import { LeadGenOutcomePopupComponent } from '../shared/popups/entity/outcome-popup.component';
+import { LeadGenCandidateResumePopupComponent } from '../shared/popups/entity/candidate-resume-popup.component';
+import { LeadGenCandidateAlertPopupComponent } from '../shared/popups/entity/candidate-alert-popup.component';
+import { LeadGenCandidateJobPopupComponent } from '../shared/popups/entity/candidate-job-popup.component';
 import { LeadGenPermissionsService } from '../../services/lead-gen-permissions.service';
 import {
   LeadGenApiService,
@@ -110,43 +114,18 @@ export class LeadGenCandidateComponent implements OnInit {
   }
 
   addJob(): void {
-    const parameters = {
-      fields: [
-        { key: 'title', label: 'Job title', required: true },
-        { key: 'company', label: 'Company' },
-        { key: 'location', label: 'Location' }
-      ] as EntityFormField[],
-      submitLabel: 'Add job',
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.createJobListing({ title: values['title'], company: values['company'] || undefined, location: values['location'] || undefined }).subscribe({
-          next: (j) => { this.jobs = [j, ...this.jobs]; this.popupService.destroy(); this.message = 'Job added.'; resolve(); },
-          error: (e) => reject(new Error(this.err(e)))
-        });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    const parameters = { actionType: 'Show',  };
+    this.popupService.showCustomPopup(LeadGenCandidateJobPopupComponent, { header: { text: 'Add job' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy();  });
   }
 
+
   addAlert(): void {
-    const parameters = {
-      fields: [
-        { key: 'name', label: 'Alert name', required: true },
-        { key: 'criteriaJson', label: 'Criteria JSON', required: true, placeholder: '{"keywords":["engineer"]}' }
-      ] as EntityFormField[],
-      submitLabel: 'Create alert',
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.createJobAlert({ name: values['name'], criteriaJson: values['criteriaJson'], frequency: 'Daily' }).subscribe({
-          next: (a) => { this.alerts = [a, ...this.alerts]; this.popupService.destroy(); this.message = 'Alert created.'; resolve(); },
-          error: (e) => reject(new Error(this.err(e)))
-        });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    const parameters = { actionType: 'Show',  };
+    this.popupService.showCustomPopup(LeadGenCandidateAlertPopupComponent, { header: { text: 'Create alert' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy();  });
   }
+
 
   pauseAlert(alert: JobAlert): void {
     this.api.setJobAlertStatus(alert.id, alert.status === 'Active' ? 'Paused' : 'Active').subscribe({
@@ -170,42 +149,18 @@ export class LeadGenCandidateComponent implements OnInit {
   }
 
   recordOutcome(app: JobApplication): void {
-    const parameters = {
-      fields: [{ key: 'outcome', label: 'Outcome (e.g. Rejected, Offer, Withdrawn)', required: true }] as EntityFormField[],
-      submitLabel: 'Save outcome',
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.recordApplicationOutcome(app.id, values['outcome']).subscribe({
-          next: (updated) => {
-            this.applications = this.applications.map(a => a.id === updated.id ? updated : a);
-            this.popupService.destroy(); resolve();
-          },
-          error: (e) => reject(new Error(this.err(e)))
-        });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    const parameters = { actionType: 'Show', applicationId: app.id };
+    this.popupService.showCustomPopup(LeadGenOutcomePopupComponent, { header: { text: 'Outcome' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy();  });
   }
 
+
   addResume(): void {
-    const parameters = {
-      fields: [
-        { key: 'fileName', label: 'File name', required: true },
-        { key: 'storageReference', label: 'Storage reference', required: true }
-      ] as EntityFormField[],
-      submitLabel: 'Upload',
-      onSubmit: (values: Record<string, string>) => new Promise<void>((resolve, reject) => {
-        this.api.createResume({ fileName: values['fileName'], storageReference: values['storageReference'] }).subscribe({
-          next: (r) => { this.resumes = [r, ...this.resumes]; this.popupService.destroy(); this.message = 'Resume uploaded.'; resolve(); },
-          error: (e) => reject(new Error(this.err(e)))
-        });
-      }),
-      onCancel: () => this.popupService.destroy()
-    };
-    this.popupService.showCustomPopup(LeadGenEntityFormPopupComponent, { size: 'W_50' }, parameters)
-      .then(() => this.popupService.destroy(), () => this.popupService.destroy());
+    const parameters = { actionType: 'Show',  };
+    this.popupService.showCustomPopup(LeadGenCandidateResumePopupComponent, { header: { text: 'Upload resume' }, aside: 'modal-right', size: 'w-50' }, parameters)
+      .then(() => this.popupService.destroy(), () => { this.popupService.destroy();  });
   }
+
 
   pages: Record<string, number> = {};
   pageSize = 10;
