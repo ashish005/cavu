@@ -1,52 +1,50 @@
 import {ChangeDetectorRef, Component, Injector, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router, RouterLink, RouterModule} from "@angular/router";
 import { AppPermissionService, OrgLookupService, OrgLookup } from "@app-global";
+import { AiStudioService } from "../../features/ai-studio/ai-studio.service";
 
 @Component({
   templateUrl: './templates/layout.html',
   standalone: false
 })
 export class MainLayout implements OnInit {
-  public navList: Array<any> = this.permService.getEmployeeNavList([
-    {
-      isFLatChildren: true, key: 'mainLayout.heading.main',
-      children:[
-        { routeTo: ['dashboard'], icon:"fa fa-dashboard", key: 'overview' },
-        { routeTo: ['leads'], icon:"fa fa-users", key: 'contactsLeads' },
-        { routeTo: ['conversations'], icon:"fa fa-comments", key: 'conversations' },
-        { routeTo: ['appointments'], icon:"fa fa-calendar", key: 'appointments' },
-        { routeTo: ['agents'], icon:"fa fa-robot", key: 'aiAgents' },
-        { routeTo: ['workflows'], icon:"fa fa-random", key: 'workflows' },
-        { routeTo: ['voice-ai'], icon:"fa fa-phone", key: 'voiceAi' },
-        { routeTo: ['campaigns'], icon:"fa fa-bullhorn", key: 'campaigns' },
-        { routeTo: ['prospecting'], icon:"fa fa-search", key: 'prospecting' },
-        { routeTo: ['analytics'], icon:"fa fa-chart-line", key: 'analytics' },
-        { routeTo: ['integrations'], icon:"fa fa-plug", key: 'integrations' },
-        { routeTo: ['billing'], icon:"fa fa-credit-card", key: 'billing' },
-        { routeTo: ['operations'], icon:"fa fa-sliders", key: 'operations' },
-        { routeTo: ['setup'], icon:"fa fa-cog", key: 'settings' },
-        { routeTo: ['candidate'], icon:"fa fa-briefcase", key: 'candidate' },
-        { routeTo: ['team'], icon:"fa fa-user-shield", key: 'team' },
-        { routeTo: ['help'], icon:"fa fa-question-circle", key: 'help' }
-      ]
-    }
-  ]);
-
+  get workspaces() { return this.studio.workspaceList; }
+  get industries() { return this.studio.industryList; }
+  navList: Array<any> = [];
   orgLookup: OrgLookup;
-  scopeOptions: { value: string; label: string; workspaceId: string; clientBusinessId: string }[] = [];
-  selectedScope = '';
   darkMode = false;
 
   constructor(public router: Router, public activatedRoute: ActivatedRoute,
               public cdref: ChangeDetectorRef,
-              public permService: AppPermissionService, public lookupService: OrgLookupService){
+              public permService: AppPermissionService, public lookupService: OrgLookupService,
+              public studio: AiStudioService){
       this.orgLookup = this.lookupService.getOrgLookup();
   }
+
+  get wsRoutes() { return this.studio.workspace?.routes ?? []; }
 
   ngOnInit() {
     this.darkMode = localStorage.getItem('leadgen-theme') === 'dark';
     this.applyTheme();
+    this.buildNav();
+    this.studio.workspace$.subscribe(() => {
+      this.buildNav();
+      const k=this.studio.workspace?.key;
+      if(k) this.router.navigate([k, 'command-center'], {relativeTo: this.activatedRoute});
+    });
   }
+
+  buildNav() {
+    const wsId = this.studio.workspace?.key ?? "business-growth";
+    this.navList = [{
+      isFLatChildren: true, key: 'mainLayout.heading.main',
+      children: this.wsRoutes.map(r => ({ routeTo: [wsId, r.path], icon: `fa fa-${r.icon}`, key: r.label }))
+    }];
+  }
+
+  switchWorkspace(id: string) { this.studio.setWorkspace(id as any); }
+  switchIndustry(key: string) { this.studio.setIndustry(key); }
+  resetStudio() { this.studio.reset(); }
 
   toggleTheme(): void {
     this.darkMode = !this.darkMode;
