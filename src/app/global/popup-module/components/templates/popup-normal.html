@@ -1,5 +1,5 @@
 <div class="modal fade modal-open-aside show" data-backdrop="true" data-class="modal-open-aside" aria-modal="true"
-     style="display: block;" [ngStyle]="style" [class]="popupClass">
+     style="display: block;" [ngStyle]="style" [class]="popupClass" (click)="backdropClicked($event)">
   <div class="modal-dialog white" [ngClass]="bodyClass">
     <div class="d-flex flex-column h-100 light bg">
       <div class="navbar white lt box-shadow d-flex d-print-none">

@@ -129,3 +129,5 @@ export const EMPLOYEE_COMMON_ROUES = [
           ]
       },*/
 ];
+export { TableComponent } from "./components/responsive-table/table.component";
+export { PaginationComponent } from "./components/responsive-table/pagination/pagination";

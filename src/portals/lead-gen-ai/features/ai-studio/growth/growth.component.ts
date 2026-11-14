@@ -2,6 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
+import { PopupService, ASIDE_CLASS, ASIDE_SIZE } from '@app-global';
+import { CampaignPopupComponent } from '../popups/campaign-popup.component';
+import { AppointmentPopupComponent } from '../popups/appointment-popup.component';
 
 @Component({
   selector: 'app-growth',
@@ -10,12 +13,8 @@ import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
   <div class="growth">
     <div class="cols">
       <section class="card">
-        <div class="hd"><h3>Campaigns</h3><button class="btn" (click)="showCamp=!showCamp">+ New</button></div>
-        <div *ngIf="showCamp" class="new">
-          <input [(ngModel)]="cName" placeholder="name"/>
-          <select [(ngModel)]="cChannel"><option>email</option><option>sms</option><option>voice</option><option>social</option></select>
-          <button class="btn primary" (click)="createCamp()">Create</button>
-        </div>
+        <div class="hd"><h3>Campaigns</h3><button class="btn" (click)="openCamp()">+ New</button></div>
+
         <div class="item" *ngFor="let c of campaigns">
           <div><b>{{ c.name }}</b><small>{{ c.channel }}</small></div>
           <div class="acts"><span class="badge" [class.on]="c.status==='active'">{{ c.status }}</span>
@@ -25,13 +24,8 @@ import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
       </section>
 
       <section class="card">
-        <div class="hd"><h3>Appointments</h3><button class="btn" (click)="showAppt=!showAppt">+ Book</button></div>
-        <div *ngIf="showAppt" class="new">
-          <input type="datetime-local" [(ngModel)]="aWhen"/>
-          <input type="number" [(ngModel)]="aDur" placeholder="mins" style="max-width:80px"/>
-          <input [(ngModel)]="aNotes" placeholder="notes"/>
-          <button class="btn primary" (click)="createAppt()">Book</button>
-        </div>
+        <div class="hd"><h3>Appointments</h3><button class="btn" (click)="openAppt()">+ Book</button></div>
+
         <div class="item" *ngFor="let a of appts">
           <div><b>{{ a.startUtc | date:'MMM d, h:mm a' }}</b><small>{{ a.durationMinutes }}min · {{ a.notes }}</small></div>
           <div class="acts"><span class="badge" [class.on]="a.status==='scheduled'">{{ a.status }}</span>
@@ -57,6 +51,7 @@ import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
 })
 export class GrowthComponent implements OnInit {
   studio = inject(AiStudioService);
+  popup = inject(PopupService);
   campaigns: Campaign[] = []; appts: Appt[] = [];
   showCamp = false; showAppt = false; cName=''; cChannel='email'; aWhen=''; aDur=30; aNotes='';
   ngOnInit() { this.load(); }
@@ -64,9 +59,12 @@ export class GrowthComponent implements OnInit {
     this.studio.listCampaigns().subscribe(c => this.campaigns = c);
     this.studio.listAppointments().subscribe(p => this.appts = p.items);
   }
-  createCamp() { this.studio.createCampaign(this.cName, this.cChannel).subscribe(() => { this.showCamp=false; this.cName=''; this.load(); }); }
-  createAppt() {
-    if (!this.aWhen) return;
-    this.studio.createAppointment(undefined, new Date(this.aWhen).toISOString(), this.aDur || 30, this.aNotes).subscribe(() => { this.showAppt=false; this.aNotes=''; this.load(); });
+  openCamp() {
+    const popup = { header: { text: 'New campaign' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    this.popup.showCustomPopup(CampaignPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => this.load()).catch(() => this.load());
+  }
+  openAppt() {
+    const popup = { header: { text: 'Book appointment' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    this.popup.showCustomPopup(AppointmentPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => this.load()).catch(() => this.load());
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '@app-environments';
 import { DEFAULT_INDUSTRY_KEY, DEFAULT_WORKSPACE_KEY, IndustryProfile, WorkspaceConfig } from './workspace-config';
 
@@ -33,6 +33,7 @@ export interface MessagePage { items: Msg[]; nextCursor?: number }
 export interface RunPage { items: AgentRunRec[]; nextCursor?: number }
 export interface ApptPage { items: Appt[]; nextCursor?: number }
 export interface JobPage { items: Job[]; nextCursor?: number }
+export interface PagedResult<T> { items: T[]; page: number; pageSize: number; totalCount: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }
 
 const base = `${(environment as any).leadUrl ?? 'http://localhost:5260'}/api/studio`;
 const parse = <T>(j: string): T => { try { return JSON.parse(j); } catch { return [] as any; } };
@@ -110,14 +111,21 @@ export class AiStudioService {
 
   // ---- core studio ----
   listEntities(classification?: string): Observable<StudioEntity[]> {
-    const q = classification ? `?classification=${classification}` : '';
-    return this.http.get<StudioEntity[]>(`${base}/entities${q}`).pipe(tap(x => this.entities$.next(x)));
+    return this.listEntitiesPaged(classification, 1, 200).pipe(map(p => { this.entities$.next(p.items); return p.items; }));
+  }
+  listEntitiesPaged(classification: string | undefined, page: number, pageSize: number): Observable<PagedResult<StudioEntity>> {
+    const params = [`page=${page}`, `pageSize=${pageSize}`];
+    if (classification) params.push(`classification=${classification}`);
+    return this.http.get<PagedResult<StudioEntity>>(`${base}/entities?${params.join('&')}`);
   }
   createEntity(e: Partial<StudioEntity>): Observable<StudioEntity> {
     return this.http.post<StudioEntity>(`${base}/entities`, e).pipe(tap(() => this.refreshAll()));
   }
   moveStage(id: string, stage: string): Observable<void> {
     return this.http.put<void>(`${base}/entities/${id}/stage`, { stage }).pipe(tap(() => this.refreshAll()));
+  }
+  updateEntity(id: string, e: Partial<StudioEntity>): Observable<StudioEntity> {
+    return this.http.put<StudioEntity>(`${base}/entities/${id}`, e).pipe(tap(() => this.refreshAll()));
   }
   listRuns(): Observable<Run[]> { return this.http.get<Run[]>(`${base}/runs`).pipe(tap(x => this.runs$.next(x))); }
   runDiscovery(query: string, sources: string[], maxResults = 5): Observable<Run> {
@@ -197,7 +205,8 @@ export class AiStudioService {
   pingProvider(url: string): Observable<{ ok: boolean; detail: string }> {
     return this.http.post<{ ok: boolean; detail: string }>(`${base}/providers/ping`, { url });
   }
-  seedDemo(): Observable<{ records: number; message: string }> {
-    return this.http.post<{ records: number; message: string }>(`${base}/seed-demo`, {});
+  seedDemo(force = false, workspace?: string): Observable<{ records: number; message: string }> {
+    const params = [force ? 'force=true' : '', workspace ? `workspace=${workspace}` : ''].filter(Boolean).join('&');
+    return this.http.post<{ records: number; message: string }>(`${base}/seed-demo${params ? '?' + params : ''}`, {});
   }
 }

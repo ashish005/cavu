@@ -25,14 +25,22 @@ export class PopupNormalComponent {
     footerTemplateRef: TemplateRef<any>;
     popupOptionsTemplateRef: TemplateRef<any>;
 
-    constructor(@Inject(DOCUMENT) private document: Document, private resolver: ComponentFactoryResolver) { }
+    constructor(@Inject(DOCUMENT) private document: Document, private resolver: ComponentFactoryResolver) {
+        this.document.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && this.style?.['display'] !== 'none') this.hide();
+        });
+    }
 
     okClicked = ($event) => {
         this.onOk.emit($event);
     }
 
     cancelClicked = ($event) => {
-        this.onCancel.emit($event);
+        this.hide();
+    }
+
+    backdropClicked = ($event) => {
+        if ($event.target === $event.currentTarget) this.hide();
     }
 
     show(content: any, input: any = {}, popupOptions) {
@@ -57,9 +65,12 @@ export class PopupNormalComponent {
         }
 
         Object.assign(componentRef.instance, input, { onOk: this.onOk, onCancel: this.onCancel });
+        componentRef.instance.onOk.subscribe(() => this.hide());
+        componentRef.instance.onCancel.subscribe(() => this.hide());
     }
 
     hide() {
+        if (this.style?.['display'] === 'none') return;
         this.onCancel.emit(null);
         this.document.body.classList.remove('modal-open');
         this.style = { 'display': 'none' };

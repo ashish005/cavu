@@ -8,7 +8,7 @@ import { AiStudioService, Schedule, Hook, Job } from '../ai-studio.service';
   standalone: true, imports: [CommonModule, FormsModule],
   template: `
   <div class="ops">
-    <div class="hd"><h2>Operations</h2><button class="btn primary" (click)="seed()">⚡ Load demo data</button></div>
+    <div class="hd"><h2>Operations</h2><button class="btn primary" (click)="seed()">⚡ Load demo data ({{ studio.workspace?.label }})</button></div>
     <p class="muted" *ngIf="seedMsg">{{ seedMsg }}</p>
 
     <div class="cols">
@@ -68,5 +68,9 @@ export class OpsComponent implements OnInit {
   loadHooks() { this.studio.listHooks().subscribe(h => this.hooks = h); }
   addHook() { if (!this.hUrl) return; this.studio.createHook(this.hUrl, `["${this.hEvents}"]`).subscribe(() => { this.hUrl=''; this.loadHooks(); }); }
   ping() { if (!this.pingUrl) return; this.studio.pingProvider(this.pingUrl).subscribe(r => this.pingRes = r.ok ? '✓ '+r.detail : '✗ '+r.detail); }
-  seed() { this.studio.seedDemo().subscribe(r => this.seedMsg = `${r.message} (${r.records} records)`); }
+  seed() {
+    const force = confirm('Load demo data? This wipes existing demo records for a clean reseed.');
+    if (!force) return;
+    this.studio.seedDemo(true, this.studio.workspace?.key).subscribe(r => { this.seedMsg = `${r.message} (${r.records} records)`; this.loadJobs(); this.studio.refreshAll(); });
+  }
 }

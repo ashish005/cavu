@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiStudioService, Thread, Msg } from '../ai-studio.service';
+import { PopupService, ASIDE_CLASS, ASIDE_SIZE, SharedService } from '@app-global';
+import { ThreadPopupComponent } from '../popups/thread-popup.component';
 
 @Component({
   selector: 'app-conversations',
@@ -10,12 +12,8 @@ import { AiStudioService, Thread, Msg } from '../ai-studio.service';
   <div class="conv">
     <div class="cols">
       <section class="card">
-        <div class="hd"><h3>Threads</h3><button class="btn" (click)="showNew=!showNew">+ New</button></div>
-        <div *ngIf="showNew" class="new">
-          <input [(ngModel)]="nChannel" placeholder="channel (email/sms/voice)"/>
-          <input [(ngModel)]="nSubject" placeholder="subject"/>
-          <button class="btn primary" (click)="create()">Create</button>
-        </div>
+        <div class="hd"><h3>Threads</h3><button class="btn" (click)="openNew()">+ New</button></div>
+
         <div class="th" *ngFor="let t of threads" [class.on]="sel?.id===t.id" (click)="open(t)">
           <b>{{ t.subject }}</b><small>{{ t.channel }} · {{ t.status }}</small>
         </div>
@@ -53,13 +51,16 @@ import { AiStudioService, Thread, Msg } from '../ai-studio.service';
 })
 export class ConversationsComponent implements OnInit {
   studio = inject(AiStudioService);
+  popup = inject(PopupService); shared = inject(SharedService);
   threads: Thread[] = []; msgs: Msg[] = []; sel?: Thread;
   showNew = false; nChannel = 'email'; nSubject = ''; draft = '';
   ngOnInit() { this.load(); }
   load() { this.studio.listThreads().subscribe(p => this.threads = p.items); }
   open(t: Thread) { this.sel = t; this.studio.listMessages(t.id).subscribe(p => this.msgs = [...p.items].reverse()); }
-  create() {
-    this.studio.createThread(undefined, this.nChannel, this.nSubject).subscribe(() => { this.showNew = false; this.nSubject=''; this.load(); });
+  openNew() {
+    const popup = { header: { text: 'New thread' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    this.popup.showCustomPopup(ThreadPopupComponent, popup, { id: null, data: {}, actionType: 'Show' })
+      .then(() => this.load()).catch(() => this.load());
   }
   send() {
     if (!this.sel) return;

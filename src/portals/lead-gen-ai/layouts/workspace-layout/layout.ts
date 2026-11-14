@@ -38,7 +38,10 @@ export class MainLayout implements OnInit {
     const wsId = this.studio.workspace?.key ?? "business-growth";
     this.navList = [{
       isFLatChildren: true, key: 'mainLayout.heading.main',
-      children: this.wsRoutes.map(r => ({ routeTo: [wsId, r.path], icon: `fa fa-${r.icon}`, key: r.label }))
+      children: [
+        ...this.wsRoutes.map(r => ({ routeTo: [wsId, r.path], icon: `fa fa-${r.icon}`, key: r.label })),
+        { routeTo: [wsId, 'operations'], icon: 'fa fa-cogs', key: 'Operations' }
+      ]
     }];
   }
 

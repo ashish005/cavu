@@ -2,6 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiStudioService, Agent, Workflow, Schedule } from '../ai-studio.service';
+import { PopupService, ASIDE_CLASS, ASIDE_SIZE } from '@app-global';
+import { AgentPopupComponent } from '../popups/agent-popup.component';
+import { WorkflowPopupComponent } from '../popups/workflow-popup.component';
 
 @Component({
   selector: 'app-automation',
@@ -10,11 +13,8 @@ import { AiStudioService, Agent, Workflow, Schedule } from '../ai-studio.service
   <div class="auto">
     <div class="cols">
       <section class="card">
-        <div class="hd"><h3>AI Agents</h3><button class="btn" (click)="showAgent=!showAgent">+ New</button></div>
-        <div *ngIf="showAgent" class="new">
-          <input [(ngModel)]="aName" placeholder="name"/><input [(ngModel)]="aPurpose" placeholder="purpose"/>
-          <button class="btn primary" (click)="createAgent()">Create</button>
-        </div>
+        <div class="hd"><h3>AI Agents</h3><button class="btn" (click)="openAgent()">+ New</button></div>
+
         <div class="item" *ngFor="let a of agents">
           <div><b>{{ a.name }}</b><small>{{ a.purpose }}</small></div>
           <div class="acts">
@@ -28,12 +28,8 @@ import { AiStudioService, Agent, Workflow, Schedule } from '../ai-studio.service
       </section>
 
       <section class="card">
-        <div class="hd"><h3>Workflows</h3><button class="btn" (click)="showWf=!showWf">+ New</button></div>
-        <div *ngIf="showWf" class="new">
-          <input [(ngModel)]="wName" placeholder="name"/>
-          <input [(ngModel)]="wCron" placeholder="cron e.g. 0 9 * * 1-5 (optional schedule)"/>
-          <button class="btn primary" (click)="createWf()">Create</button>
-        </div>
+        <div class="hd"><h3>Workflows</h3><button class="btn" (click)="openWf()">+ New</button></div>
+
         <div class="item" *ngFor="let w of workflows">
           <div><b>{{ w.name }}</b><small>v{{ w.version }} · {{ w.status }}</small></div>
           <div class="acts">
@@ -74,6 +70,7 @@ import { AiStudioService, Agent, Workflow, Schedule } from '../ai-studio.service
 })
 export class AutomationComponent implements OnInit {
   studio = inject(AiStudioService);
+  popup = inject(PopupService);
   agents: Agent[] = []; workflows: Workflow[] = []; schedules: Schedule[] = [];
   showAgent = false; showWf = false; aName=''; aPurpose=''; wName=''; wCron=''; cronExpr='0 9 * * 1-5';
   schedWf?: Workflow; lastRun?: any; lastExec?: any;
@@ -83,13 +80,13 @@ export class AutomationComponent implements OnInit {
     this.studio.listWorkflows().subscribe(w => this.workflows = w);
   }
   loadSched() { this.studio.listSchedules().subscribe(s => this.schedules = s); }
-  createAgent() { this.studio.createAgent(this.aName, this.aPurpose).subscribe(() => { this.showAgent=false; this.aName=''; this.aPurpose=''; this.load(); }); }
-  createWf() {
-    this.studio.createWorkflow(this.wName).subscribe(w => {
-      this.studio.activateWorkflow(w.id).subscribe(() => this.load());
-      if (this.wCron.trim()) this.studio.createSchedule(w.id, this.wCron.trim()).subscribe(() => this.loadSched());
-      this.showWf=false; this.wName=''; this.wCron='';
-    });
+  openAgent() {
+    const popup = { header: { text: 'New agent' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    this.popup.showCustomPopup(AgentPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => this.load()).catch(() => this.load());
+  }
+  openWf() {
+    const popup = { header: { text: 'New workflow' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
+    this.popup.showCustomPopup(WorkflowPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => { this.load(); this.loadSched(); }).catch(() => { this.load(); this.loadSched(); });
   }
   runAgent(a: Agent) {
     const input = prompt('Input for agent run:', 'Qualify new inbound lead');
