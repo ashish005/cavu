@@ -16,7 +16,7 @@ export class ThreadPopupComponent {
   channel='email'; subject=''; firstMsg='';
   async save(){ if(!this.subject.trim()){this.err='Subject required';return;} this.busy=true;this.err='';
     try{ const t=await this.studio.createThread(undefined,this.channel,this.subject.trim()).toPromise();
-      if(this.firstMsg.trim()&&t) await this.studio.postMessage(t.id,'inbound',this.firstMsg.trim()).toPromise();
+      if(this.firstMsg.trim()&&t) await this.studio.postMessage(t.id,'inbound',this.firstMsg.trim(), false).toPromise();
       this.onOk.emit(t);}catch(e:any){this.err=e?.message||'Failed';}finally{this.busy=false;} }
   @Output() onOk = new EventEmitter<any>();
   @Output() onCancel = new EventEmitter<any>();

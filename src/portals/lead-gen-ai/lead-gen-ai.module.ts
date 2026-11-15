@@ -11,31 +11,38 @@ import { EntitiesComponent } from "./features/ai-studio/entities/entities.compon
 import { ConversationsComponent } from "./features/ai-studio/conversations/conversations.component";
 import { AutomationComponent } from "./features/ai-studio/automation/automation.component";
 import { GrowthComponent } from "./features/ai-studio/growth/growth.component";
+import { PipelinesComponent } from './features/ai-studio/pipelines/pipelines.component';
+import { InboxComponent } from './features/ai-studio/inbox/inbox.component';
+import { SettingsComponent } from './features/ai-studio/settings/settings.component';
+import { AnalyticsComponent } from './features/ai-studio/analytics/analytics.component';
 import { OpsComponent } from "./features/ai-studio/ops/ops.component";
 
 const studioRoutes = [
-  { path: 'command-center', component: CommandCenterComponent },
-  { path: 'discovery', component: DiscoveryStudioComponent },
-  { path: 'entities', component: EntitiesComponent },
-  { path: 'candidates', component: EntitiesComponent },
-  { path: 'pipeline', component: EntitiesComponent },
-  { path: 'conversations', component: ConversationsComponent },
-  { path: 'campaigns', component: GrowthComponent },
-  { path: 'appointments', component: GrowthComponent },
-  { path: 'agents', component: AutomationComponent },
-  { path: 'workflows', component: AutomationComponent },
-  { path: 'operations', component: OpsComponent },
-  { path: 'analytics', component: CommandCenterComponent },
-  { path: 'clients', component: CommandCenterComponent },
-  { path: 'workspaces', component: CommandCenterComponent },
-  { path: 'billing', component: CommandCenterComponent },
-  { path: 'team', component: CommandCenterComponent },
-  { path: 'jobs', component: EntitiesComponent },
+  { path: 'command-center', data: { title: 'Command Center' }, component: CommandCenterComponent },
+  { path: 'discovery', data: { title: 'Discovery Studio' }, component: DiscoveryStudioComponent },
+  { path: 'entities', data: { title: 'Entities & Intelligence' }, component: EntitiesComponent },
+  { path: 'candidates', data: { title: 'Candidates' }, component: EntitiesComponent },
+  { path: 'pipeline', data: { title: 'Pipelines' }, component: PipelinesComponent },
+  { path: 'pipelines', data: { title: 'Pipelines & Schedule' }, component: PipelinesComponent },
+  { path: 'conversations', data: { title: 'Inbox' }, component: ConversationsComponent },
+  { path: 'inbox', data: { title: 'Inbox & Voice' }, component: InboxComponent },
+  { path: 'campaigns', data: { title: 'Campaigns' }, component: GrowthComponent },
+  { path: 'appointments', data: { title: 'Appointments' }, component: GrowthComponent },
+  { path: 'agents', data: { title: 'AI Agents' }, component: AutomationComponent },
+  { path: 'workflows', data: { title: 'Workflows' }, component: AutomationComponent },
+  { path: 'operations', data: { title: 'Operations' }, component: OpsComponent },
+  { path: 'analytics', data: { title: 'Analytics' }, component: AnalyticsComponent },
+  { path: 'settings', data: { title: 'Settings' }, component: SettingsComponent },
+  { path: 'clients', data: { title: 'Agency Clients' }, component: CommandCenterComponent },
+  { path: 'workspaces', data: { title: 'Workspaces' }, component: CommandCenterComponent },
+  { path: 'billing', data: { title: 'Billing' }, component: CommandCenterComponent },
+  { path: 'team', data: { title: 'Team' }, component: CommandCenterComponent },
+  { path: 'jobs', data: { title: 'Jobs' }, component: EntitiesComponent },
   
-  { path: 'settings', component: OpsComponent },
-  { path: 'tenants', component: CommandCenterComponent },
-  { path: 'audit', component: OpsComponent },
-  { path: 'integrations', component: OpsComponent },
+  { path: 'settings', data: { title: 'Settings' }, component: OpsComponent },
+  { path: 'tenants', data: { title: 'Tenants' }, component: CommandCenterComponent },
+  { path: 'audit', data: { title: 'Audit' }, component: OpsComponent },
+  { path: 'integrations', data: { title: 'Integrations' }, component: OpsComponent },
 ];
 
 @NgModule({

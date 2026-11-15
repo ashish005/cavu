@@ -11,6 +11,7 @@ import { AppointmentPopupComponent } from '../popups/appointment-popup.component
   standalone: true, imports: [CommonModule, FormsModule],
   template: `
   <div class="growth">
+    <div class="page-head"><div><h1>Campaigns & Appointments</h1><p class="sub">Multi-channel campaigns and scheduling</p></div></div>
     <div class="cols">
       <section class="card">
         <div class="hd"><h3>Campaigns</h3><button class="btn" (click)="openCamp()">+ New</button></div>

@@ -13,6 +13,7 @@ export class MainLayout implements OnInit {
   navList: Array<any> = [];
   orgLookup: OrgLookup;
   darkMode = false;
+  q = ''; qResults: any[] = []; toasts: string[] = []; pageTitle = 'Command Center';
 
   constructor(public router: Router, public activatedRoute: ActivatedRoute,
               public cdref: ChangeDetectorRef,
@@ -27,6 +28,10 @@ export class MainLayout implements OnInit {
     this.darkMode = localStorage.getItem('leadgen-theme') === 'dark';
     this.applyTheme();
     this.buildNav();
+    this.router.events.subscribe(() => {
+      const url = this.router.url; const seg = url.split('/').filter(Boolean).pop() ?? 'command-center';
+      this.pageTitle = seg.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+    });
     this.studio.workspace$.subscribe(() => {
       this.buildNav();
       const k=this.studio.workspace?.key;
@@ -36,12 +41,22 @@ export class MainLayout implements OnInit {
 
   buildNav() {
     const wsId = this.studio.workspace?.key ?? "business-growth";
+    const R = (path: string, icon: string, key: string) => ({ routeTo: [wsId, path], icon: `fa fa-${icon}`, key });
+    // Spec: 7 primary routes grouped Overview / Growth & Operations / AI & Platform / Settings
+    const extra = this.studio.workspace?.key === 'agency-operations' || this.studio.workspace?.key === 'platform-admin';
     this.navList = [{
       isFLatChildren: true, key: 'mainLayout.heading.main',
       children: [
-        ...this.wsRoutes.map(r => ({ routeTo: [wsId, r.path], icon: `fa fa-${r.icon}`, key: r.label })),
-        { routeTo: [wsId, 'operations'], icon: 'fa fa-cogs', key: 'Operations' }
-      ]
+        R('command-center', 'dashboard', 'Command Center'),
+        R('discovery', 'search', 'Discovery Studio'),
+        R('entities', 'database', 'Entities & Intelligence'),
+        R('pipelines', 'columns', 'Pipelines & Schedule'),
+        R('inbox', 'comments', 'Inbox & Voice'),
+        R('automation', 'cogs', 'AI Workforce & Flows'),
+        R('analytics', 'bar-chart', 'Analytics'),
+        R('settings', 'sliders', 'Settings'),
+        R('operations', 'wrench', 'Operations'),
+      ].filter(i => extra || !['analytics','settings'].includes(String(i.routeTo[1])) || true)
     }];
   }
 
@@ -60,6 +75,18 @@ export class MainLayout implements OnInit {
   }
 
     onActivate(componentRef){}
+    quickFilter() {
+      const q = this.q.toLowerCase();
+      if (!q) { this.qResults = []; return; }
+      const ws = this.studio.workspace?.key ?? 'business-growth';
+      this.qResults = [
+        ...this.studio.entities$.value.filter(e => e.name.toLowerCase().includes(q)).slice(0,4).map(e => ({ label: e.name, hint: `Entity · ${e.classification} · ${e.score}`, route: [ws, 'entities'] })),
+        ...this.studio.agents$.value.filter(a => a.name.toLowerCase().includes(q)).slice(0,3).map(a => ({ label: a.name, hint: 'AI Agent', route: [ws, 'automation'] })),
+        ...this.studio.workflows$.value.filter(w => w.name.toLowerCase().includes(q)).slice(0,3).map(w => ({ label: w.name, hint: 'Workflow', route: [ws, 'automation'] })),
+      ].slice(0, 8);
+    }
+    go(r: any) { this.q = ''; this.qResults = []; this.router.navigate(r.route, { relativeTo: this.activatedRoute }); }
+    toast(msg: string) { this.toasts.push(msg); setTimeout(() => this.toasts = this.toasts.slice(1), 3000); }
     ngAfterContentChecked() { this.cdref.detectChanges(); }
 
     routeToUrl=(path)=> this.router.navigate([path], {relativeTo: this.activatedRoute});

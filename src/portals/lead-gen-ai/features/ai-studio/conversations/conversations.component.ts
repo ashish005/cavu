@@ -10,6 +10,7 @@ import { ThreadPopupComponent } from '../popups/thread-popup.component';
   standalone: true, imports: [CommonModule, FormsModule],
   template: `
   <div class="conv">
+    <div class="page-head"><div><h1>Conversations</h1><p class="sub">Omnichannel inbox — AI agents + human handoff</p></div></div>
     <div class="cols">
       <section class="card">
         <div class="hd"><h3>Threads</h3><button class="btn" (click)="openNew()">+ New</button></div>

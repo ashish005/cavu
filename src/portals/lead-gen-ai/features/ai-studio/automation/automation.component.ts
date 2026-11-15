@@ -5,12 +5,14 @@ import { AiStudioService, Agent, Workflow, Schedule } from '../ai-studio.service
 import { PopupService, ASIDE_CLASS, ASIDE_SIZE } from '@app-global';
 import { AgentPopupComponent } from '../popups/agent-popup.component';
 import { WorkflowPopupComponent } from '../popups/workflow-popup.component';
+import { WorkflowBuilderComponent } from './workflow-builder.component';
 
 @Component({
   selector: 'app-automation',
-  standalone: true, imports: [CommonModule, FormsModule],
+  standalone: true, imports: [CommonModule, FormsModule, WorkflowBuilderComponent],
   template: `
   <div class="auto">
+    <div class="page-head"><div><h1>Automation Studio</h1><p class="sub">AI workforce, workflows, schedules & execution recovery</p></div></div>
     <div class="cols">
       <section class="card">
         <div class="hd"><h3>AI Agents</h3><button class="btn" (click)="openAgent()">+ New</button></div>
@@ -28,13 +30,15 @@ import { WorkflowPopupComponent } from '../popups/workflow-popup.component';
       </section>
 
       <section class="card">
-        <div class="hd"><h3>Workflows</h3><button class="btn" (click)="openWf()">+ New</button></div>
+        <div class="hd"><h3>Workflows</h3>
+          <div><button class="btn" (click)="builderWf=builderWf?null:(workflows[0]||null)">{{ builderWf?'List view':'Builder' }}</button>
+          <button class="btn" (click)="openWf()">+ New</button></div></div>
 
         <div class="item" *ngFor="let w of workflows">
           <div><b>{{ w.name }}</b><small>v{{ w.version }} · {{ w.status }}</small></div>
           <div class="acts">
             <button class="mini" (click)="studio.activateWorkflow(w.id).subscribe(load)">Activate</button>
-            <button class="mini" (click)="runWf(w)">Run now</button>
+            <button class="mini" (click)="openBuilder(w)" title="Open builder">Run now</button>
             <button class="mini" *ngIf="w.status==='active'" (click)="schedWf=w">Schedule</button>
           </div>
         </div>
@@ -84,6 +88,9 @@ export class AutomationComponent implements OnInit {
     const popup = { header: { text: 'New agent' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
     this.popup.showCustomPopup(AgentPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => this.load()).catch(() => this.load());
   }
+  builderWf: Workflow | null = null; builderJson = '';
+  openBuilder(w: Workflow) { this.builderWf = w; this.builderJson = w.definitionJson; }
+  saveBuilder() { if (this.builderWf) this.studio.updateWorkflow(this.builderWf.id, this.builderWf.name, this.builderJson).subscribe(() => this.load()); }
   openWf() {
     const popup = { header: { text: 'New workflow' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
     this.popup.showCustomPopup(WorkflowPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => { this.load(); this.loadSched(); }).catch(() => { this.load(); this.loadSched(); });
