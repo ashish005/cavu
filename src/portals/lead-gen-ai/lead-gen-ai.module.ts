@@ -30,6 +30,7 @@ const studioRoutes = [
   { path: 'appointments', data: { title: 'Appointments' }, component: GrowthComponent },
   { path: 'agents', data: { title: 'AI Agents' }, component: AutomationComponent },
   { path: 'workflows', data: { title: 'Workflows' }, component: AutomationComponent },
+  { path: 'automation', data: { title: 'AI Workforce & Flows' }, component: AutomationComponent },
   { path: 'operations', data: { title: 'Operations' }, component: OpsComponent },
   { path: 'analytics', data: { title: 'Analytics' }, component: AnalyticsComponent },
   { path: 'settings', data: { title: 'Settings' }, component: SettingsComponent },

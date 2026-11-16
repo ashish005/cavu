@@ -1,18 +1,19 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { skip } from 'rxjs/operators';
 import { AiStudioService, Run, StudioEntity } from '../ai-studio.service';
 import { DiscoveryBuilderComponent } from './builder/discovery-builder.component';
-import { DiscoverySourcesComponent } from './sources/discovery-sources.component';
 import { DiscoveryRunsComponent } from './runs/discovery-runs.component';
 import { DiscoveryOutputComponent } from './output/discovery-output.component';
+import { DiscoverySourcesComponent } from './sources/discovery-sources.component';
 import { DISCOVERY_SOURCES as SOURCES, CLASSES, GATES, srcs, shortId } from './discovery.shared';
 
 /** Discovery Studio — composed of small cards: builder, sources, runs log, attributed output. */
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, DiscoveryBuilderComponent, DiscoverySourcesComponent, DiscoveryRunsComponent, DiscoveryOutputComponent],
+  imports: [CommonModule, FormsModule, RouterLink, DiscoveryBuilderComponent, DiscoverySourcesComponent, DiscoveryRunsComponent, DiscoveryOutputComponent],
   template: `
   <div>
     <div class="page-head">
@@ -20,40 +21,46 @@ import { DISCOVERY_SOURCES as SOURCES, CLASSES, GATES, srcs, shortId } from './d
       <span class="ds-armed">{{ selected.size }} of {{ sources.length }} sources armed</span>
     </div>
 
-    <div class="ds-cols">
+    <div class="filters" style="margin:14px 0">
+      <button class="chip" [class.on]="tab==='studio'" (click)="tab='studio'">Query Studio</button>
+      <button class="chip" [class.on]="tab==='runs'" (click)="tab='runs'">Runs &amp; Attribution</button>
+      <button class="chip" [class.on]="tab==='output'" (click)="tab='output'">Attributed Output</button>
+    </div>
+
+    <ng-container *ngIf="tab==='studio'"><div class="ds-cols">
       <app-discovery-builder
         [presets]="presets" [classes]="classes" [gates]="gates"
         [armedCount]="selected.size" [scanning]="scanning" [hasLastRun]="!!lastRun"
         (applyPreset)="onPreset($event)" (saveSearch)="savePreset()" (run)="run()" (rerun)="rerun()">
       </app-discovery-builder>
       <app-discovery-sources [sources]="sources" [selected]="selected" (toggle)="toggle($event)"></app-discovery-sources>
-    </div>
+    </div></ng-container>
 
-    <app-discovery-runs [runs]="runs" [loading]="runsLoading" [page]="runsPage" [perPage]="runsPageSize" [total]="runsTotal"
+    <app-discovery-runs *ngIf="tab==='runs'" [runs]="runs" [loading]="runsLoading" [page]="runsPage" [perPage]="runsPageSize" [total]="runsTotal"
       (pageChange)="onRunsPage($event)" (rerun)="rerunRun($event)"></app-discovery-runs>
-    <app-discovery-output [entities]="outputEntities" [loading]="outputLoading" [page]="outputPage" [perPage]="outputPageSize" [total]="outputTotal"
+    <app-discovery-output *ngIf="tab==='output'" [entities]="outputEntities" [loading]="outputLoading" [page]="outputPage" [perPage]="outputPageSize" [total]="outputTotal"
       (pageChange)="onOutputPage($event)"></app-discovery-output>
   </div>`
 })
 export class DiscoveryStudioComponent implements OnInit {
-  studio = inject(AiStudioService);
+  studio = inject(AiStudioService); route = inject(ActivatedRoute);
   @ViewChild(DiscoveryBuilderComponent) builder?: DiscoveryBuilderComponent;
   sources = SOURCES; classes = CLASSES; gates = GATES;
   selected = new Set<string>(['registry', 'web', 'job-boards']);
   lastRun?: Run; scanning = false; presets: any[] = [];
+  tab: 'studio' | 'runs' | 'output' = 'studio';
   runs: Run[] = []; outputEntities: StudioEntity[] = [];
   runsPage = 1; runsPageSize = 25; runsTotal = 0; runsLoading = false;
   outputPage = 1; outputPageSize = 25; outputTotal = 0; outputLoading = false;
 
   ngOnInit() {
-    this.loadRuns(); this.loadOutput();
     this.studio.workspace$.subscribe(w => {
       if (!w?.key) return;
       this.studio.listPresets(w.key).subscribe(p => this.presets = p);
     });
+    this.loadRuns(); this.loadOutput();
     this.studio.reloaded$.pipe(skip(1)).subscribe(() => { this.loadRuns(); this.loadOutput(); });
   }
-
   loadRuns() {
     this.runsLoading = true;
     this.studio.listRuns(this.runsPage, this.runsPageSize).subscribe({
@@ -70,6 +77,7 @@ export class DiscoveryStudioComponent implements OnInit {
   }
   onRunsPage(e: { skip: number; take: number }) { this.runsPageSize = e.take; this.runsPage = Math.floor(e.skip / e.take) + 1; this.loadRuns(); }
   onOutputPage(e: { skip: number; take: number }) { this.outputPageSize = e.take; this.outputPage = Math.floor(e.skip / e.take) + 1; this.loadOutput(); }
+
   toggle(k: string) { this.selected.has(k) ? this.selected.delete(k) : this.selected.add(k); }
 
   onPreset(p: any) { this.builder?.applyPresetValues(p); }

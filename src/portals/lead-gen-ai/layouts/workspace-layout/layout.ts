@@ -43,10 +43,17 @@ export class MainLayout implements OnInit {
     });
     this.studio.workspace$.subscribe(() => {
       this.buildNav();
-      const k=this.studio.workspace?.key;
-      if(k) this.router.navigate([k, 'command-center'], {relativeTo: this.activatedRoute});
+      const k = this.studio.workspace?.key;
+      if (!k) return;
+      // The first non-null emission is the workspace resolving on load — keep the current URL so
+      // deep links (e.g. /talent-discovery/automation) are respected instead of bouncing to the
+      // command center. Only redirect to the command center when the user actually switches.
+      if (!this.navReady) { this.navReady = true; return; }
+      this.router.navigate([k, 'command-center'], {relativeTo: this.activatedRoute});
     });
   }
+
+  private navReady = false;
 
   buildNav() {
     const wsId = this.studio.workspace?.key ?? "business-growth";
