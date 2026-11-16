@@ -1,7 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AiStudioService, StudioEntity, Run, Thread } from '../ai-studio.service';
+import { skip } from 'rxjs/operators';
+import { TableComponent, PaginationComponent } from '@app-global';
+import { AiStudioService, StudioEntity, Run, Thread, Agent, Appt } from '../ai-studio.service';
+import { StudioRowActionsCell } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 type Win = 7 | 14 | 30;
 
@@ -9,7 +12,7 @@ type Win = 7 | 14 | 30;
 @Component({
   selector: 'app-command-center',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TableComponent, PaginationComponent],
   template: `
   <div class="cc">
     <div class="loading" *ngIf="loading">Loading command center…</div>
@@ -79,15 +82,26 @@ type Win = 7 | 14 | 30;
     <!-- D: priority records -->
     <section class="card">
       <div class="ch-head"><h3>Priority Records</h3><a class="lnk" (click)="go('entities')">View All Entities →</a></div>
-      <table><thead><tr><th>Entity</th><th>Type</th><th>Source</th><th>Stage</th><th class="r">Confidence</th><th></th></tr></thead>
-        <tbody><tr *ngFor="let e of priorityEntities">
-          <td><b>{{ e.name }}</b><div class="muted">{{ e.classification }} · {{ e.source }}</div></td>
-          <td>{{ e.classification }}</td><td>{{ e.source }}</td><td>{{ e.stage }}</td>
-          <td class="r mono">{{ e.score }}/100</td>
-          <td class="r"><button class="mini" (click)="inspect(e.id)">Inspect Dossier</button></td>
-        </tr></tbody></table>
+      <org-grid [data]="priorityEntities" [options]="priorityGrid" [isLoading]="priorityLoading"></org-grid>
+      <org-grid-pagination [page]="priorityPage" [count]="priorityTotal" [perPage]="priorityPageSize" [loading]="priorityLoading" (cb)="onPriorityPage($event)"></org-grid-pagination>
       <p class="muted" *ngIf="!priorityEntities.length">No entities yet — run discovery or load demo data.</p>
     </section>
+
+    <!-- E: agent activity + upcoming appointments -->
+    <div class="split">
+      <section class="card">
+        <div class="ch-head"><h3>AI Agent Activity</h3><a class="lnk" (click)="go('agents')">Manage Agents →</a></div>
+        <org-grid [data]="agents" [options]="agentsGrid"></org-grid>
+        <p class="muted" *ngIf="!agents.length">No AI agents provisioned yet.</p>
+      </section>
+
+      <section class="card">
+        <div class="ch-head"><h3>Upcoming Appointments</h3><a class="lnk" (click)="go('schedules')">View Schedule →</a></div>
+        <org-grid [data]="appointments" [options]="apptGrid" [isLoading]="apptLoading"></org-grid>
+        <org-grid-pagination [page]="apptPage" [count]="apptTotal" [perPage]="apptPageSize" [loading]="apptLoading" (cb)="onApptPage($event)"></org-grid-pagination>
+        <p class="muted" *ngIf="!appointments.length">No appointments scheduled.</p>
+      </section>
+    </div>
   </div>`,
   styles: [`
     .cc{padding:0 4px}.loading{padding:40px;text-align:center;color:#64748b}.cc-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:14px;border-bottom:1px solid #e2e8f0;margin-bottom:18px}
@@ -139,16 +153,62 @@ export class CommandCenterComponent implements OnInit {
 
   // KPI computations
   discovered = 0; qualified = 0; yieldPct = 0; handoffs = 0;
-  topThreads: Thread[] = []; priorityEntities: StudioEntity[] = [];
+  topThreads: Thread[] = [];
+  agents: Agent[] = []; appointments: Appt[] = [];
+
+  // priority records — server-paged so the full book is reachable, not just the top few
+  priorityEntities: StudioEntity[] = [];
+  priorityPage = 1; priorityPageSize = 10; priorityTotal = 0; priorityLoading = false;
+  priorityGrid: any = {
+    header: { title: 'Priority Records', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'name', headerName: 'Entity', cellFn: (e: StudioEntity) => e.name + ' · ' + e.classification },
+      { field: 'classification', headerName: 'Type' },
+      { field: 'source', headerName: 'Source' },
+      { field: 'stage', headerName: 'Stage' },
+      { field: 'score', headerName: 'Confidence', cellFn: (e: StudioEntity) => e.score + '/100' },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [{ label: 'Inspect Dossier', run: (e: StudioEntity) => this.inspect(e.id) }] },
+    ],
+  };
+
+  agentsGrid: any = {
+    header: { title: 'AI Agent Activity', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'name', headerName: 'Agent' },
+      { field: 'purpose', headerName: 'Purpose' },
+      { field: 'status', headerName: 'Status' },
+      { field: 'createdAt', headerName: 'Provisioned', cellFn: (a: Agent) => new Date(a.createdAt).toLocaleDateString() },
+    ],
+  };
+
+  // appointments — server-paged
+  apptPage = 1; apptPageSize = 10; apptTotal = 0; apptLoading = false;
+  apptGrid: any = {
+    header: { title: 'Upcoming Appointments', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'entityId', headerName: 'Entity', cellFn: (a: Appt) => this.entityName(a.entityId) || '—' },
+      { field: 'startUtc', headerName: 'Starts', cellFn: (a: Appt) => new Date(a.startUtc).toLocaleString() },
+      { field: 'durationMinutes', headerName: 'Mins' },
+      { field: 'status', headerName: 'Status' },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [
+        { label: 'Confirm', run: (a: Appt) => this.confirmAppt(a.id) },
+        { label: 'Cancel', class: 'danger', run: (a: Appt) => this.cancelAppt(a.id), when: (a: Appt) => a.status !== 'cancelled' },
+      ] },
+    ],
+  };
+
   private rebuild() {
     const d = Date.now() - this.win * 864e5;
     const wr = this.runs.filter(r => new Date(r.ranAt).getTime() > d);
     this.discovered = wr.reduce((s, r) => s + r.results, 0);
     this.qualified = wr.reduce((s, r) => s + (r.qualifiedCount ?? Math.round(r.results * 0.6)), 0);
     this.yieldPct = this.discovered ? Math.round((this.qualified / this.discovered) * 100) : 0;
-    this.handoffs = this.kpis.handoffsPending ?? this.threads.filter(t => this.mode(t) === 'Human Handoff Required').length;
-    this.topThreads = [...this.threads].sort((a, b) => (b.lastActivityAt ?? b.createdAt).localeCompare(a.lastActivityAt ?? a.createdAt)).slice(0, 3);
-    this.priorityEntities = [...this.entities].sort((a, b) => b.score - a.score).slice(0, 8);
+    const handoffThreads = this.threads.filter(t => this.mode(t) === 'Human Handoff Required').length;
+    this.handoffs = handoffThreads || (this.kpis.handoffsPending ?? 0);
+    this.topThreads = [...this.threads].sort((a, b) => (b.lastActivityAt ?? b.createdAt).localeCompare(a.lastActivityAt ?? a.createdAt));
     this.rebuildSeries();
   }
   setWin(w: Win) { this.win = w; this.hover = -1; this.rebuild(); }
@@ -187,12 +247,40 @@ export class CommandCenterComponent implements OnInit {
   openThread(t: Thread) { this.studio.pendingThreadId = t.id; this.go('inbox'); }
   inspect(id?: string) { if (id) { this.studio.pendingEntityId = id; this.go('entities'); } }
 
+  // ── paged sections ──────────────────────────────────────────────
+  loadPriority() {
+    this.priorityLoading = true;
+    this.studio.pageEntities(this.priorityPage, this.priorityPageSize).subscribe({
+      next: p => { this.priorityEntities = p.items; this.priorityTotal = p.totalCount; this.priorityGrid.total = p.totalCount; this.priorityLoading = false; },
+      error: () => this.priorityLoading = false,
+    });
+  }
+  onPriorityPage(e: { skip: number; take: number }) {
+    this.priorityPageSize = e.take; this.priorityPage = Math.floor(e.skip / e.take) + 1; this.loadPriority();
+  }
+  loadAppointments() {
+    this.apptLoading = true;
+    this.studio.listAppointments(this.apptPage, this.apptPageSize).subscribe({
+      next: p => { this.appointments = p.items; this.apptTotal = p.totalCount; this.apptGrid.total = p.totalCount; this.apptLoading = false; },
+      error: () => this.apptLoading = false,
+    });
+  }
+  onApptPage(e: { skip: number; take: number }) {
+    this.apptPageSize = e.take; this.apptPage = Math.floor(e.skip / e.take) + 1; this.loadAppointments();
+  }
+  confirmAppt(id: string) { this.studio.confirmAppointment(id).subscribe({ next: () => this.loadAppointments(), error: () => {} }); }
+  cancelAppt(id: string) { this.studio.cancelAppointment(id).subscribe({ next: () => this.loadAppointments(), error: () => {} }); }
+
   ngOnInit() {
     this.loading = true;
     this.studio.kpis$.subscribe(k => { this.kpis = k; this.rebuild(); });
     this.studio.entities$.subscribe(e => { this.entities = e; this.rebuild(); });
     this.studio.runs$.subscribe(r => { this.runs = r; this.rebuild(); });
+    this.studio.agents$.subscribe(a => this.agents = a);
     this.studio.listThreads().subscribe({ next: p => { this.threads = p.items; this.rebuild(); this.loading = false; }, error: () => this.loading = false });
-    this.studio.refreshAll();
+    // paged sections are their own queries, so reload them whenever the studio collections
+    // are refreshed (covers first-run auto-seeding that resolves after this screen mounts).
+    this.studio.reloaded$.pipe(skip(1)).subscribe(() => { this.loadPriority(); this.loadAppointments(); });
+    this.loadPriority(); this.loadAppointments();
   }
 }

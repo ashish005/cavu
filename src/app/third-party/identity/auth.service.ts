@@ -288,9 +288,12 @@ export class AuthService {
   public get idToken() { return this.oauthService.getIdToken(); }
   public get logoutUrl() { return this.oauthService.logoutUrl; }
 
-  get userId(): string { return (this.identityClaims as any)['sub'] || '-'; }
-  get orgId(): string { return (this.identityClaims as any)['orgId'] || ''; }
-  get email(): string { return (this.identityClaims as any)['email'] || '-'; }
-  get mobile(): string { return (this.identityClaims as any)['mobile'] || '-'; }
-  get username(): string { return (this.identityClaims as any)['preferred_username'] || '--'; }
+  // identityClaims is null until the OIDC user profile finishes loading, so every accessor
+  // must be null-safe (previously `identityClaims['orgId']` threw and broke consumers on init).
+  private claim(name: string): string { return (this.identityClaims as any)?.[name] ?? ''; }
+  get userId(): string { return this.claim('sub') || '-'; }
+  get orgId(): string { return this.claim('orgId'); }
+  get email(): string { return this.claim('email') || '-'; }
+  get mobile(): string { return this.claim('mobile') || '-'; }
+  get username(): string { return this.claim('preferred_username') || '--'; }
 }

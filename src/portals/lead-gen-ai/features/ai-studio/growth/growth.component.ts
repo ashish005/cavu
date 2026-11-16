@@ -2,13 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
-import { PopupService, ASIDE_CLASS, ASIDE_SIZE } from '@app-global';
+import { PopupService, ASIDE_CLASS, ASIDE_SIZE, TableComponent, PaginationComponent } from '@app-global';
 import { CampaignPopupComponent } from '../popups/campaign-popup.component';
 import { AppointmentPopupComponent } from '../popups/appointment-popup.component';
+import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 @Component({
   selector: 'app-growth',
-  standalone: true, imports: [CommonModule, FormsModule],
+  standalone: true, imports: [CommonModule, FormsModule, TableComponent, PaginationComponent, StudioRowActionsCell, StudioBadgeCellComponent],
   template: `
   <div class="growth">
     <div class="page-head"><div><h1>Campaigns & Appointments</h1><p class="sub">Multi-channel campaigns and scheduling</p></div></div>
@@ -16,23 +17,15 @@ import { AppointmentPopupComponent } from '../popups/appointment-popup.component
       <section class="card">
         <div class="hd"><h3>Campaigns</h3><button class="btn" (click)="openCamp()">+ New</button></div>
 
-        <div class="item" *ngFor="let c of campaigns">
-          <div><b>{{ c.name }}</b><small>{{ c.channel }}</small></div>
-          <div class="acts"><span class="badge" [class.on]="c.status==='active'">{{ c.status }}</span>
-            <button class="mini" (click)="studio.setCampaignStatus(c.id, c.status==='active'?'pause':'activate').subscribe(load)">{{ c.status==='active'?'Pause':'Activate' }}</button></div>
-        </div>
-        <p class="muted" *ngIf="!campaigns.length">No campaigns.</p>
+        <org-grid [data]="campaigns" [options]="campGrid" [isLoading]="campLoading"></org-grid>
+        <org-grid-pagination [page]="campPage" [count]="campTotal" [perPage]="campPageSize" [loading]="campLoading" (cb)="onCampPage($event)"></org-grid-pagination>
       </section>
 
       <section class="card">
         <div class="hd"><h3>Appointments</h3><button class="btn" (click)="openAppt()">+ Book</button></div>
 
-        <div class="item" *ngFor="let a of appts">
-          <div><b>{{ a.startUtc | date:'MMM d, h:mm a' }}</b><small>{{ a.durationMinutes }}min · {{ a.notes }}</small></div>
-          <div class="acts"><span class="badge" [class.on]="a.status==='scheduled'">{{ a.status }}</span>
-            <button class="mini" *ngIf="a.status==='scheduled'" (click)="studio.cancelAppointment(a.id).subscribe(load)">Cancel</button></div>
-        </div>
-        <p class="muted" *ngIf="!appts.length">No appointments.</p>
+        <org-grid [data]="appts" [options]="apptGrid" [isLoading]="apptLoading"></org-grid>
+        <org-grid-pagination [page]="apptPage" [count]="apptTotal" [perPage]="apptPageSize" [loading]="apptLoading" (cb)="onApptPage($event)"></org-grid-pagination>
       </section>
     </div>
   </div>`,
@@ -55,11 +48,52 @@ export class GrowthComponent implements OnInit {
   popup = inject(PopupService);
   campaigns: Campaign[] = []; appts: Appt[] = [];
   showCamp = false; showAppt = false; cName=''; cChannel='email'; aWhen=''; aDur=30; aNotes='';
+
+  campPage = 1; campPageSize = 25; campTotal = 0; campLoading = false;
+  apptPage = 1; apptPageSize = 25; apptTotal = 0; apptLoading = false;
+
+  campGrid: any = {
+    header: { title: 'Campaigns', desc: null, add: false, refresh: true, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'name', headerName: 'Name' },
+      { field: 'channel', headerName: 'Channel' },
+      { field: 'status', headerName: 'Status', cellTemplate: StudioBadgeCellComponent, tone: (v: string) => v === 'active' ? 'ok' : '' },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [
+        { label: (c: Campaign) => c.status === 'active' ? 'Pause' : 'Activate', run: (c: Campaign) => this.setCampStatus(c) },
+      ] },
+    ],
+  };
+  apptGrid: any = {
+    header: { title: 'Appointments', desc: null, add: false, refresh: true, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'startUtc', headerName: 'When', cellFn: (a: Appt) => new Date(a.startUtc).toLocaleString() },
+      { field: 'durationMinutes', headerName: 'Duration', cellFn: (a: Appt) => a.durationMinutes + ' min' },
+      { field: 'notes', headerName: 'Notes' },
+      { field: 'status', headerName: 'Status', cellTemplate: StudioBadgeCellComponent, tone: (v: string) => v === 'scheduled' ? 'ok' : '' },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [
+        { label: 'Cancel', class: 'danger', when: (a: Appt) => a.status === 'scheduled', run: (a: Appt) => this.studio.cancelAppointment(a.id).subscribe(() => this.load()) },
+      ] },
+    ],
+  };
+
   ngOnInit() { this.load(); }
   load() {
-    this.studio.listCampaigns().subscribe(c => this.campaigns = c);
-    this.studio.listAppointments().subscribe(p => this.appts = p.items);
+    this.campLoading = true;
+    this.studio.listCampaigns(this.campPage, this.campPageSize).subscribe({
+      next: p => { this.campaigns = p.items; this.campTotal = p.totalCount; this.campLoading = false; },
+      error: () => this.campLoading = false,
+    });
+    this.apptLoading = true;
+    this.studio.listAppointments(this.apptPage, this.apptPageSize).subscribe({
+      next: p => { this.appts = p.items; this.apptTotal = p.totalCount; this.apptLoading = false; },
+      error: () => this.apptLoading = false,
+    });
   }
+  onCampPage(e: { skip: number; take: number }) { this.campPageSize = e.take; this.campPage = Math.floor(e.skip / e.take) + 1; this.load(); }
+  onApptPage(e: { skip: number; take: number }) { this.apptPageSize = e.take; this.apptPage = Math.floor(e.skip / e.take) + 1; this.load(); }
+  setCampStatus(c: Campaign) { this.studio.setCampaignStatus(c.id, c.status === 'active' ? 'pause' : 'activate').subscribe(() => this.load()); }
   openCamp() {
     const popup = { header: { text: 'New campaign' }, aside: ASIDE_CLASS.RIGHT, size: ASIDE_SIZE.W_50 };
     this.popup.showCustomPopup(CampaignPopupComponent, popup, { id: null, data: {}, actionType: 'Show' }).then(() => this.load()).catch(() => this.load());

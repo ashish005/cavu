@@ -1,15 +1,17 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TableComponent, PaginationComponent } from '@app-global';
 import { AiStudioService, Schedule, Hook, Job } from '../ai-studio.service';
+import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 @Component({
   selector: 'app-ops',
-  standalone: true, imports: [CommonModule, FormsModule],
+  standalone: true, imports: [CommonModule, FormsModule, TableComponent, PaginationComponent],
   template: `
   <div class="ops">
     <div class="page-head"><div><h1>Operations</h1><p class="sub">Jobs, schedules, webhooks, providers & demo data</p></div></div>
-    <div class="hd"><h2>Operations</h2><button class="btn primary" (click)="seed()">⚡ Load demo data ({{ studio.workspace?.label }})</button></div>
+    <div class="hd"><h2>Operations</h2><button class="btn primary" (click)="seed()">⚡ Seed {{ studio.industry?.label || studio.workspace?.label }} demo data</button></div>
     <p class="muted" *ngIf="seedMsg">{{ seedMsg }}</p>
 
     <div class="cols">
@@ -19,12 +21,8 @@ import { AiStudioService, Schedule, Hook, Job } from '../ai-studio.service';
           <button class="chip" [class.on]="jobStatus==='queued'" (click)="jobStatus='queued';loadJobs()">Queued</button>
           <button class="chip" [class.on]="jobStatus==='dead'" (click)="jobStatus='dead';loadJobs()">Dead</button>
           <button class="chip" [class.on]="jobStatus==='completed'" (click)="jobStatus='completed';loadJobs()">Done</button></div>
-        <table><thead><tr><th>Type</th><th>Status</th><th>Attempts</th><th>Run at</th><th></th></tr></thead>
-        <tbody><tr *ngFor="let j of jobs">
-          <td>{{ j.jobType }}</td><td><span class="badge" [class.dead]="j.status==='dead'" [class.ok]="j.status==='completed'">{{ j.status }}</span></td>
-          <td>{{ j.attempts }}/{{ j.maxAttempts }}</td><td>{{ j.runAt|date:'short' }}</td>
-          <td><button class="mini" *ngIf="j.status==='dead'||j.status==='queued'" (click)="studio.retryJob(j.id).subscribe(loadJobs)">Retry</button></td></tr></tbody></table>
-        <p class="muted" *ngIf="!jobs.length">No jobs.</p>
+        <org-grid [data]="jobs" [options]="jobsGrid" [isLoading]="jobsLoading"></org-grid>
+        <org-grid-pagination [page]="jobsPage" [count]="jobsTotal" [perPage]="jobsPageSize" [loading]="jobsLoading" (cb)="onJobsPage($event)"></org-grid-pagination>
       </section>
 
       <section class="card">
@@ -32,13 +30,8 @@ import { AiStudioService, Schedule, Hook, Job } from '../ai-studio.service';
         <div class="new"><input [(ngModel)]="hUrl" placeholder="https://…"/>
           <input [(ngModel)]="hEvents" placeholder="events e.g. * or workflow.executed"/>
           <button class="btn" (click)="addHook()">Add</button></div>
-        <div class="item" *ngFor="let h of hooks">
-          <div><b class="url">{{ h.url }}</b><small>{{ h.eventsJson }} · fails: {{ h.failureCount }}</small></div>
-          <div class="acts"><span class="badge" [class.on]="h.isActive">{{ h.isActive?'active':'off' }}</span>
-            <button class="mini" (click)="studio.toggleHook(h.id).subscribe(loadHooks)">Toggle</button>
-            <button class="mini" (click)="studio.deleteHook(h.id).subscribe(loadHooks)">Del</button></div>
-        </div>
-        <p class="muted" *ngIf="!hooks.length">No webhooks.</p>
+        <org-grid [data]="hooks" [options]="hooksGrid" [isLoading]="hooksLoading"></org-grid>
+        <org-grid-pagination [page]="hooksPage" [count]="hooksTotal" [perPage]="hooksPageSize" [loading]="hooksLoading" (cb)="onHooksPage($event)"></org-grid-pagination>
         <div class="ping"><input [(ngModel)]="pingUrl" placeholder="provider URL to ping"/><button class="mini" (click)="ping()">Ping</button><span *ngIf="pingRes"> {{ pingRes }}</span></div>
       </section>
 
@@ -76,12 +69,7 @@ import { AiStudioService, Schedule, Hook, Job } from '../ai-studio.service';
 
       <section class="card">
         <h3>Provider analytics (30d)</h3>
-        <table><thead><tr><th>Provider</th><th>Calls</th><th>Success</th><th>Avg ms</th><th>Cost</th></tr></thead>
-          <tbody><tr *ngFor="let a of analytics?.providers">
-            <td>{{ a.provider }}</td><td>{{ a.calls }}</td>
-            <td>{{ (a.successRate * 100 | number:'1.0-0') }}%</td><td>{{ a.avgLatencyMs | number:'1.0-0' }}</td>
-            <td>&#36;{{ a.totalCostUsd | number:'1.4-4' }}</td></tr></tbody></table>
-        <p class="muted" *ngIf="!analytics?.providers?.length">No calls recorded yet — run agents/workflows to populate.</p>
+        <org-grid [data]="analytics?.providers || []" [options]="providersGrid"></org-grid>
       </section>
     </div>
   </div>`,
@@ -112,7 +100,47 @@ export class OpsComponent implements OnInit {
   jobStatus = ''; hUrl=''; hEvents='*'; pingUrl=''; pingRes=''; seedMsg='';
   providers: any[] = []; rules: any[] = []; analytics: any; testOut = '';
   ruleTask=''; ruleProv='';
-  ngOnInit() { this.loadJobs(); this.loadHooks(); this.studio.listSchedules().subscribe(s => this.schedules = s); this.loadProviders(); this.loadRules(); this.loadAnalytics(); }
+  jobsPage = 1; jobsPageSize = 25; jobsTotal = 0; jobsLoading = false;
+  hooksPage = 1; hooksPageSize = 25; hooksTotal = 0; hooksLoading = false;
+  jobsGrid: any = {
+    header: { title: 'Background jobs', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'jobType', headerName: 'Type' },
+      { field: 'status', headerName: 'Status', cellTemplate: StudioBadgeCellComponent, tone: (v: any) => v === 'completed' ? 'ok' : v === 'dead' ? 'danger' : '' },
+      { headerName: 'Attempts', cellFn: (j: Job) => j.attempts + '/' + j.maxAttempts },
+      { headerName: 'Run at', cellFn: (j: Job) => new Date(j.runAt).toLocaleString() },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [
+        { label: 'Retry', when: (j: Job) => j.status === 'dead' || j.status === 'queued', run: (j: Job) => this.studio.retryJob(j.id).subscribe(() => this.loadJobs()) },
+      ] },
+    ],
+  };
+  hooksGrid: any = {
+    header: { title: 'Webhooks', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'url', headerName: 'Url' },
+      { field: 'eventsJson', headerName: 'Events' },
+      { field: 'failureCount', headerName: 'Fails' },
+      { field: 'isActive', headerName: 'Status', cellTemplate: StudioBadgeCellComponent, tone: (v: any) => v ? 'ok' : '' },
+      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [
+        { label: 'Toggle', run: (h: Hook) => this.studio.toggleHook(h.id).subscribe(() => this.loadHooks()) },
+        { label: 'Del', class: 'danger', run: (h: Hook) => this.studio.deleteHook(h.id).subscribe(() => this.loadHooks()) },
+      ] },
+    ],
+  };
+  providersGrid: any = {
+    header: { title: 'Provider analytics', desc: null, add: false, refresh: false, edit: false, delete: false },
+    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+    columnDefs: [
+      { field: 'provider', headerName: 'Provider' },
+      { field: 'calls', headerName: 'Calls' },
+      { headerName: 'Success', cellFn: (a: any) => (a.successRate * 100).toFixed(0) + '%' },
+      { headerName: 'Avg ms', cellFn: (a: any) => Math.round(a.avgLatencyMs) },
+      { headerName: 'Cost', cellFn: (a: any) => '$' + a.totalCostUsd.toFixed(4) },
+    ],
+  };
+  ngOnInit() { this.loadJobs(); this.loadHooks(); this.studio.listSchedules(1, 100).subscribe(p => this.schedules = p.items); this.loadProviders(); this.loadRules(); this.loadAnalytics(); }
   loadProviders() { this.studio.listProviders().subscribe(p => this.providers = p); }
   loadRules() { this.studio.listRules().subscribe(r => this.rules = r); }
   loadAnalytics() { this.studio.llmAnalytics().subscribe(a => this.analytics = a); }
@@ -130,13 +158,27 @@ export class OpsComponent implements OnInit {
   toggleProv(p: any) { this.studio.saveCredential(p.key, { enabled: !p.enabled, priority: 100 }).subscribe(() => this.loadProviders()); }
   addRule() { if (!this.ruleTask || !this.ruleProv) return; this.studio.saveRule(this.ruleTask.trim(), this.ruleProv.trim()).subscribe(() => { this.ruleTask=''; this.ruleProv=''; this.loadRules(); }); }
   delRule(t: string) { this.studio.deleteRule(t).subscribe(() => this.loadRules()); }
-  loadJobs() { this.studio.listJobs(this.jobStatus || undefined).subscribe(p => this.jobs = p.items); }
-  loadHooks() { this.studio.listHooks().subscribe(h => this.hooks = h); }
+  loadJobs() {
+    this.jobsLoading = true;
+    this.studio.listJobs(this.jobStatus || undefined, this.jobsPage, this.jobsPageSize).subscribe({
+      next: p => { this.jobs = p.items; this.jobsTotal = p.totalCount; this.jobsLoading = false; },
+      error: () => this.jobsLoading = false,
+    });
+  }
+  loadHooks() {
+    this.hooksLoading = true;
+    this.studio.listHooks(this.hooksPage, this.hooksPageSize).subscribe({
+      next: p => { this.hooks = p.items; this.hooksTotal = p.totalCount; this.hooksLoading = false; },
+      error: () => this.hooksLoading = false,
+    });
+  }
+  onJobsPage(e: { skip: number; take: number }) { this.jobsPageSize = e.take; this.jobsPage = Math.floor(e.skip / e.take) + 1; this.loadJobs(); }
+  onHooksPage(e: { skip: number; take: number }) { this.hooksPageSize = e.take; this.hooksPage = Math.floor(e.skip / e.take) + 1; this.loadHooks(); }
   addHook() { if (!this.hUrl) return; this.studio.createHook(this.hUrl, `["${this.hEvents}"]`).subscribe(() => { this.hUrl=''; this.loadHooks(); }); }
   ping() { if (!this.pingUrl) return; this.studio.pingProvider(this.pingUrl).subscribe(r => this.pingRes = r.ok ? '✓ '+r.detail : '✗ '+r.detail); }
   seed() {
-    const force = confirm('Load demo data? This wipes existing demo records for a clean reseed.');
+    const force = confirm('Load demo data? This wipes existing demo records for a clean reseed (atomic per tenant).');
     if (!force) return;
-    this.studio.seedDemo(true, this.studio.workspace?.key).subscribe(r => { this.seedMsg = `${r.message} (${r.records} records)`; this.loadJobs(); this.studio.refreshAll(); });
+    this.studio.seedDemo(true, this.studio.workspace?.key, this.studio.industry?.key).subscribe(r => { this.seedMsg = `${r.message} (${r.records} records)`; this.loadJobs(); this.studio.refreshAll(); });
   }
 }

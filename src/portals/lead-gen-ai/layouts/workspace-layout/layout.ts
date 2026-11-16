@@ -5,7 +5,16 @@ import { AiStudioService } from "../../features/ai-studio/ai-studio.service";
 
 @Component({
   templateUrl: './templates/layout.html',
-  standalone: false
+  standalone: false,
+  styles: [`
+    .studio-search{padding:6px 10px;border-radius:8px;border:1px solid var(--st-border,#dfe3ee);background:transparent;color:inherit;font-size:12px;min-width:220px}
+    .studio-switch{padding:5px 8px;border-radius:8px;border:1px solid var(--st-border,#dfe3ee);background:transparent;color:inherit;font-size:12px;max-width:170px}
+    .jump-results{position:absolute;top:110%;left:0;right:0;background:var(--st-card,#fff);border:1px solid var(--st-border,#e6e9f2);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.12);z-index:50;overflow:hidden;min-width:300px}
+    .jump-results a{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;cursor:pointer;font-size:12px;color:inherit;text-decoration:none}
+    .jump-results a:hover{background:rgba(52,103,214,.08)}
+    .jr-label{font-weight:600}.jr-hint{opacity:.6}
+    .client-override{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 12px 8px;padding:8px 14px;border-radius:8px;background:#fff4e5;border:1px solid #f5d9a8;color:#8a5a00;font-size:13px}
+  `]
 })
 export class MainLayout implements OnInit {
   get workspaces() { return this.studio.workspaceList; }
@@ -63,6 +72,8 @@ export class MainLayout implements OnInit {
   switchWorkspace(id: string) { this.studio.setWorkspace(id as any); }
   switchIndustry(key: string) { this.studio.setIndustry(key); }
   resetStudio() { this.studio.reset(); }
+  get clientOverride() { return this.studio.clientOverride; }
+  exitOverride() { this.studio.exitClientOverride(); }
 
   toggleTheme(): void {
     this.darkMode = !this.darkMode;
