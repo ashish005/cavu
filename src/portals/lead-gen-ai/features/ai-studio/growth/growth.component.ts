@@ -5,11 +5,11 @@ import { AiStudioService, Campaign, Appt } from '../ai-studio.service';
 import { PopupService, ASIDE_CLASS, ASIDE_SIZE, TableComponent, PaginationComponent } from '@app-global';
 import { CampaignPopupComponent } from '../popups/campaign-popup.component';
 import { AppointmentPopupComponent } from '../popups/appointment-popup.component';
-import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
+import { StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 @Component({
   selector: 'app-growth',
-  standalone: true, imports: [CommonModule, FormsModule, TableComponent, PaginationComponent, StudioRowActionsCell, StudioBadgeCellComponent],
+  standalone: true, imports: [CommonModule, FormsModule, TableComponent, PaginationComponent],
   template: `
   <div class="growth">
     <div class="page-head"><div><h1>Campaigns & Appointments</h1><p class="sub">Multi-channel campaigns and scheduling</p></div></div>

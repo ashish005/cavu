@@ -6,7 +6,7 @@ import { PopupService, ASIDE_CLASS, ASIDE_SIZE, TableComponent, PaginationCompon
 import { AgentPopupComponent } from '../popups/agent-popup.component';
 import { WorkflowPopupComponent } from '../popups/workflow-popup.component';
 import { WorkflowBuilderComponent } from './workflow-builder.component';
-import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
+import { StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 const PROVIDERS = ['gemini', 'claude', 'openai', 'sip-voice'];
 
@@ -15,7 +15,7 @@ const execTone: Tone = (v: string) => v === 'completed' ? 'ok' : v === 'failed' 
 
 @Component({
   selector: 'app-automation',
-  standalone: true, imports: [CommonModule, FormsModule, WorkflowBuilderComponent, TableComponent, PaginationComponent, StudioRowActionsCell, StudioBadgeCellComponent],
+  standalone: true, imports: [CommonModule, FormsModule, WorkflowBuilderComponent, TableComponent, PaginationComponent],
   template: `
   <div class="auto">
     <div class="page-head"><div><h1>Automation Studio</h1><p class="sub">AI workforce, workflows, schedules & execution recovery</p></div></div>

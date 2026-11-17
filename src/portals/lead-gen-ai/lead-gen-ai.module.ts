@@ -16,10 +16,21 @@ import { InboxComponent } from './features/ai-studio/inbox/inbox.component';
 import { SettingsComponent } from './features/ai-studio/settings/settings.component';
 import { AnalyticsComponent } from './features/ai-studio/analytics/analytics.component';
 import { OpsComponent } from "./features/ai-studio/ops/ops.component";
+import {DiscoveryOutputViewComponent} from "./features/ai-studio/discovery/output/discovery-output-view.component";
+import {DiscoveryRunsViewComponent} from "./features/ai-studio/discovery/runs/discovery-runs-view.component";
+import {DiscoverySourceViewComponent} from "./features/ai-studio/discovery/sources/discovery-builder-view.component";
 
 const studioRoutes = [
   { path: 'command-center', data: { title: 'Command Center' }, component: CommandCenterComponent },
-  { path: 'discovery', data: { title: 'Discovery Studio' }, component: DiscoveryStudioComponent },
+  {
+    path: 'discovery', data: { title: 'Discovery Studio' }, component: DiscoveryStudioComponent,
+    children: [
+      { path: 'studio', data: { title: 'Discovery' }, component: DiscoverySourceViewComponent },
+      { path: 'runs', data: { title: 'Runs' }, component: DiscoveryRunsViewComponent },
+      { path: 'output', data: { title: 'Output' }, component: DiscoveryOutputViewComponent },
+      { path: '**', redirectTo: 'studio' },
+    ]
+  },
   { path: 'entities', data: { title: 'Entities & Intelligence' }, component: EntitiesComponent },
   { path: 'candidates', data: { title: 'Candidates' }, component: EntitiesComponent },
   { path: 'pipeline', data: { title: 'Pipelines' }, component: PipelinesComponent },

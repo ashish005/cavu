@@ -26,7 +26,7 @@
       <button class="btn btn-sm" (click)="exitOverride()">Exit to agency</button>
     </div>
     <div class="content-main d-flex flex" id="content-main">
-        <div class="studio-shell"><router-outlet (activate)='onActivate($event)'></router-outlet></div>
+        <router-outlet (activate)='onActivate($event)'></router-outlet>
     </div>
   </div>
 </div>

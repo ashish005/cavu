@@ -140,27 +140,14 @@ export class AnalyticsComponent implements OnInit {
   ngOnInit() {
     this.studio.kpis$.subscribe(k => { this.kpis = k; });
     this.studio.listKpis().subscribe({ error: () => {} });
-    this.studio.listRuns().subscribe({ error: () => {} });
     this.studio.listEntitiesPaged(undefined, 1, 300).subscribe({ error: () => {} });
     this.studio.llmAnalytics().subscribe(a => this.providerStats = a?.providers ?? []);
     this.studio.listSourceRoi().subscribe(r => this.sourceRoi = r);
     this.studio.listCampaigns(this.campPage, this.campPageSize).subscribe(p => { this.campaigns = p.items; this.campTotal = p.totalCount; });
     this.studio.listAppointments(this.apptPage, this.apptPageSize).subscribe(p => { this.appts = p.items; this.apptTotal = p.totalCount; });
-    // velocity series from runs
-    setTimeout(() => this.buildSeries(), 800);
   }
   onCampPage(e: { skip: number; take: number }) { this.campPageSize = e.take; this.campPage = Math.floor(e.skip / e.take) + 1; this.studio.listCampaigns(this.campPage, this.campPageSize).subscribe(p => { this.campaigns = p.items; this.campTotal = p.totalCount; }); }
   onApptPage(e: { skip: number; take: number }) { this.apptPageSize = e.take; this.apptPage = Math.floor(e.skip / e.take) + 1; this.studio.listAppointments(this.apptPage, this.apptPageSize).subscribe(p => { this.appts = p.items; this.apptTotal = p.totalCount; }); }
-  buildSeries() {
-    const runs = this.studio.runs$.value;
-    const mk = (days: number) => Array.from({ length: days }, (_, i) => {
-      const d = new Date(); d.setDate(d.getDate() - (days - 1 - i));
-      const day = d.toISOString().slice(0, 10);
-      return runs.filter(r => r.ranAt.slice(0, 10) === day).reduce((s, r) => s + r.results, 0);
-    });
-    const s14 = mk(14), s30 = mk(30);
-    this.series = [s14, s30.slice(-14)];
-  }
   lineFor(idx: number) {
     const s = this.series[idx] ?? [0]; const max = Math.max(...s, 1);
     return s.map((v, i) => `${(i / Math.max(s.length - 1, 1)) * 290 + 5},${85 - (v / max) * 75}`).join(' ');

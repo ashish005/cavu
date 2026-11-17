@@ -44,6 +44,7 @@ export class PopupNormalComponent {
     }
 
     show(content: any, input: any = {}, popupOptions) {
+        this.hiding = false;
         this.document.body.classList.add('modal-open');
         this.popupClass = popupOptions.popupClass;
         if(!popupOptions.backdropDisabled){
@@ -69,8 +70,10 @@ export class PopupNormalComponent {
         componentRef.instance.onCancel.subscribe(() => this.hide());
     }
 
+    private hiding = false;
     hide() {
-        if (this.style?.['display'] === 'none') return;
+        if (this.hiding || this.style?.['display'] === 'none') return;
+        this.hiding = true;
         this.onCancel.emit(null);
         this.document.body.classList.remove('modal-open');
         this.style = { 'display': 'none' };

@@ -87,6 +87,7 @@ export class CoreEndpointBase {
     protected get baseAPIUrl() { return this.appSetupService.baseAPIUrl; }
     protected get orgSetup() { return this.appSetupService.appSetup; }
     protected get baseSectorAPIUrl(): string { return this.appSetupService.baseSectorAPIUrl; }
+    protected get leadSectorAPIUrl(): string { return this.appSetupService.leadSectorAPIUrl; }
 
     private getRequestHeaders(d) {
         //const { id: orgId, countryId } = this.orgSetup;
@@ -333,7 +334,7 @@ export class CoreEndpointBase {
     }
 }
 
-class ResourceService<T extends CoreResource> extends CoreEndpointBase {
+export class ResourceService<T extends CoreResource> extends CoreEndpointBase {
   protected viewUrl: string;
   constructor(public override injector: Injector, protected serializer: CoreSerializer) {
     super(injector);
@@ -492,4 +493,11 @@ export class CoreResourceService<T extends CoreResource> extends ResourceService
     super(injector, serializer);
     this.viewUrl = `${this.baseAPIUrl}/${endpoint}`;
   }
+}
+
+export class LeadResourceService<T extends CoreResource> extends ResourceService<T> {
+    constructor(public override injector: Injector, protected endpoint: string, protected override serializer: CoreSerializer) {
+        super(injector, serializer);
+        this.viewUrl = `${this.baseSectorAPIUrl}/${endpoint}`;
+    }
 }

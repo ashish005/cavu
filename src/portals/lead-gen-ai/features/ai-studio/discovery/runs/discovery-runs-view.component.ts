@@ -1,46 +1,52 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { skip } from 'rxjs/operators';
-import { AiStudioService, Run } from '../../ai-studio.service';
-import { DiscoveryRunsComponent } from '../runs/discovery-runs.component';
-import { srcs } from '../discovery.shared';
+import { shortId, SOURCES, srcs } from '../discovery.shared';
+import {NumberCell, PaginationComponent, TableComponent, ViewExtender} from '@app-global';
+import { StudioRowActionsCell } from '../../entities/grid-cells/studio-entity-grid-cell.component';
+import {Run, RunQueryOptions} from "./run.serializer";
+import {RunService} from "./run.service";
+import {ActivatedRoute} from "@angular/router";
 
-/** Discovery → Runs & Attribution Log (independent child route). */
+/** Discovery → Runs & Attribution Log (child route). */
 @Component({
   selector: 'app-discovery-runs-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, DiscoveryRunsComponent],
-  template: `
-  <div>
-    <div class="page-head">
-      <div><h1>Discovery Runs &amp; Attribution</h1><p class="sub">Audit log of executed scans with qualified counts and re-run</p></div>
-      <button class="btn" (click)="loadRuns()">↻ Refresh</button>
-    </div>
-    <app-discovery-runs [runs]="runs" [loading]="loading" [page]="page" [perPage]="perPage" [total]="total"
-      (pageChange)="onPage($event)" (rerun)="rerun($event)"></app-discovery-runs>
-  </div>`
+  imports: [CommonModule, TableComponent, PaginationComponent],
+  providers: [RunService],
+  templateUrl: 'runs.html'
 })
-export class DiscoveryRunsViewComponent implements OnInit {
-  studio = inject(AiStudioService);
-  runs: Run[] = []; loading = false; page = 1; perPage = 25; total = 0; scanning = false;
+export class DiscoveryRunsViewComponent extends ViewExtender<Run> implements OnInit {
+  override coreState: RunQueryOptions = new RunQueryOptions();
+  constructor(public override service: RunService, public override activatedRoute: ActivatedRoute) {
+    super(activatedRoute, service);
+    this.gridOptions = {
+      header: { title: 'Discovery runs & attribution log', desc: null, add: false, refresh: false, edit: false, delete: false },
+      total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
+      columnDefs: [
+        { field: 'id', headerName: 'Run', cellFn: (r: Run) => shortId(r.id) + ' · ' + new Date(r.ranAt).toLocaleString() },
+        { field: 'query', headerName: 'Query & geography', cellFn: (r: Run) => r.geography ? `${r.query} · ${r.geography}` : r.query },
+        { field: 'sourcesJson', headerName: 'Sources', cellFn: (r: Run) => srcs(r, SOURCES) },
+        { field: 'results', headerName: 'Discovered' },
+        { field: 'qualifiedCount', headerName: 'Qualified' },
+        { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [{ label: 'Re-run', run: (r: Run) => this.rerun(r) }] },
+      ],
+    }
+  }
 
   ngOnInit() {
-    this.loadRuns();
-    this.studio.reloaded$.pipe(skip(1)).subscribe(() => this.loadRuns());
+    super.populateGrid();
   }
-  loadRuns() {
-    this.loading = true;
-    this.studio.listRuns(this.page, this.perPage).subscribe({
-      next: p => { this.runs = p.items; this.total = p.totalCount; this.loading = false; },
-      error: () => this.loading = false,
-    });
-  }
-  onPage(e: { skip: number; take: number }) { this.perPage = e.take; this.page = Math.floor(e.skip / e.take) + 1; this.loadRuns(); }
+
+  loadRuns(){ super.populateGrid(); }
+
+  scanning: boolean;
   rerun(r: Run) {
-    let srcs: string[] = []; try { srcs = JSON.parse(r.sourcesJson); } catch { }
+    let sources: string[] = []; try { sources = JSON.parse(r.sourcesJson); } catch { }
     this.scanning = true;
-    this.studio.runDiscovery(r.query, srcs, r.geography || 'Global', undefined, undefined)
-      .subscribe(() => { this.scanning = false; this.loadRuns(); });
+    var data = { query: r.query, sources, geography: r.geography || 'Global' }; // , classification, minScore
+    this.service.runDiscovery(data).subscribe({
+      next: () => { this.scanning = false; super.populateGrid(); },
+      error: () => this.scanning = false });
   }
+  actionCb(e){}
 }

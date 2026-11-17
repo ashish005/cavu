@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { skip } from 'rxjs/operators';
 import { TableComponent, PaginationComponent } from '@app-global';
-import { AiStudioService, StudioEntity, Run, Thread, Agent, Appt } from '../ai-studio.service';
+import { AiStudioService, StudioEntity, Thread, Agent, Appt } from '../ai-studio.service';
 import { StudioRowActionsCell } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 type Win = 7 | 14 | 30;
@@ -27,8 +27,10 @@ type Win = 7 | 14 | 30;
 
     <!-- B: KPI strip -->
     <div class="kpis">
-      <div class="kpi"><div class="k-top"><span class="k-label">Records Discovered ({{ win }}d)</span></div>
-        <div class="k-value">{{ discovered }}</div><div class="k-sub ok">{{ runs.length }} runs</div></div>
+      <div class="kpi">
+        <div class="k-top"><span class="k-label">Records Discovered ({{ win }}d)</span></div>
+        <div class="k-value">{{ discovered }}</div>
+      </div>
       <div class="kpi"><div class="k-top"><span class="k-label">Evidence-Verified Qualified</span></div>
         <div class="k-value">{{ qualified }}</div><div class="k-sub ok">{{ yieldPct }}% yield</div></div>
       <div class="kpi"><div class="k-top"><span class="k-label">AI Agent Executions (24h)</span></div>
@@ -78,15 +80,6 @@ type Win = 7 | 14 | 30;
         <p class="muted" *ngIf="!topThreads.length">No conversations yet.</p>
       </section>
     </div>
-
-    <!-- D: priority records -->
-    <section class="card">
-      <div class="ch-head"><h3>Priority Records</h3><a class="lnk" (click)="go('entities')">View All Entities →</a></div>
-      <org-grid [data]="priorityEntities" [options]="priorityGrid" [isLoading]="priorityLoading"></org-grid>
-      <org-grid-pagination [page]="priorityPage" [count]="priorityTotal" [perPage]="priorityPageSize" [loading]="priorityLoading" (cb)="onPriorityPage($event)"></org-grid-pagination>
-      <p class="muted" *ngIf="!priorityEntities.length">No entities yet — run discovery or load demo data.</p>
-    </section>
-
     <!-- E: agent activity + upcoming appointments -->
     <div class="split">
       <section class="card">
@@ -141,7 +134,7 @@ type Win = 7 | 14 | 30;
 export class CommandCenterComponent implements OnInit {
   studio = inject(AiStudioService); router = inject(Router); route = inject(ActivatedRoute);
   kpis: any = { total: 0, qualified: 0, avgScore: 0, pendingBookings: 0, runs7d: 0 };
-  runs: Run[] = []; threads: Thread[] = []; entities: StudioEntity[] = [];
+  threads: Thread[] = []; entities: StudioEntity[] = [];
   loading = false;
   win: Win = 14; readonly windows: Win[] = [7,14,30]; hover = -1;
 
@@ -155,22 +148,6 @@ export class CommandCenterComponent implements OnInit {
   discovered = 0; qualified = 0; yieldPct = 0; handoffs = 0;
   topThreads: Thread[] = [];
   agents: Agent[] = []; appointments: Appt[] = [];
-
-  // priority records — server-paged so the full book is reachable, not just the top few
-  priorityEntities: StudioEntity[] = [];
-  priorityPage = 1; priorityPageSize = 10; priorityTotal = 0; priorityLoading = false;
-  priorityGrid: any = {
-    header: { title: 'Priority Records', desc: null, add: false, refresh: false, edit: false, delete: false },
-    total: 0, hasNext: false, hasPrevious: false, isOrderable: false,
-    columnDefs: [
-      { field: 'name', headerName: 'Entity', cellFn: (e: StudioEntity) => e.name + ' · ' + e.classification },
-      { field: 'classification', headerName: 'Type' },
-      { field: 'source', headerName: 'Source' },
-      { field: 'stage', headerName: 'Stage' },
-      { field: 'score', headerName: 'Confidence', cellFn: (e: StudioEntity) => e.score + '/100' },
-      { field: 'id', headerName: '', cellTemplate: StudioRowActionsCell, actions: [{ label: 'Inspect Dossier', run: (e: StudioEntity) => this.inspect(e.id) }] },
-    ],
-  };
 
   agentsGrid: any = {
     header: { title: 'AI Agent Activity', desc: null, add: false, refresh: false, edit: false, delete: false },
@@ -202,7 +179,7 @@ export class CommandCenterComponent implements OnInit {
 
   private rebuild() {
     const d = Date.now() - this.win * 864e5;
-    const wr = this.runs.filter(r => new Date(r.ranAt).getTime() > d);
+    const wr = [];// this.runs.filter(r => new Date(r.ranAt).getTime() > d);
     this.discovered = wr.reduce((s, r) => s + r.results, 0);
     this.qualified = wr.reduce((s, r) => s + (r.qualifiedCount ?? Math.round(r.results * 0.6)), 0);
     this.yieldPct = this.discovered ? Math.round((this.qualified / this.discovered) * 100) : 0;
@@ -221,11 +198,15 @@ export class CommandCenterComponent implements OnInit {
   maxV = 1;
   private rebuildSeries() {
     const days = this.win; const out: { label: string; d: number; q: number }[] = [];
-    for (let i = days - 1; i >= 0; i--) {
-      const dt = new Date(); dt.setDate(dt.getDate() - i); const key = dt.toISOString().slice(0, 10);
-      const rs = this.runs.filter(r => r.ranAt.slice(0, 10) === key);
-      out.push({ label: dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), d: rs.reduce((s, r) => s + r.results, 0), q: rs.reduce((s, r) => s + (r.qualifiedCount ?? Math.round(r.results * 0.6)), 0) });
-    }
+    // for (let i = days - 1; i >= 0; i--) {
+    //   const dt = new Date(); dt.setDate(dt.getDate() - i); const key = dt.toISOString().slice(0, 10);
+    //   const rs = this.runs.filter(r => r.ranAt.slice(0, 10) === key);
+    //   out.push({
+    //     label: dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    //     d: rs.reduce((s, r) => s + r.results, 0),
+    //     q: rs.reduce((s, r) => s + (r.qualifiedCount ?? Math.round(r.results * 0.6)), 0)
+    //   });
+    // }
     this.series = out;
     this.maxV = Math.max(...out.flatMap(s => [s.d, s.q]), 1);
     this.points = out.map((s, i) => ({
@@ -247,17 +228,7 @@ export class CommandCenterComponent implements OnInit {
   openThread(t: Thread) { this.studio.pendingThreadId = t.id; this.go('inbox'); }
   inspect(id?: string) { if (id) { this.studio.pendingEntityId = id; this.go('entities'); } }
 
-  // ── paged sections ──────────────────────────────────────────────
-  loadPriority() {
-    this.priorityLoading = true;
-    this.studio.pageEntities(this.priorityPage, this.priorityPageSize).subscribe({
-      next: p => { this.priorityEntities = p.items; this.priorityTotal = p.totalCount; this.priorityGrid.total = p.totalCount; this.priorityLoading = false; },
-      error: () => this.priorityLoading = false,
-    });
-  }
-  onPriorityPage(e: { skip: number; take: number }) {
-    this.priorityPageSize = e.take; this.priorityPage = Math.floor(e.skip / e.take) + 1; this.loadPriority();
-  }
+
   loadAppointments() {
     this.apptLoading = true;
     this.studio.listAppointments(this.apptPage, this.apptPageSize).subscribe({
@@ -271,11 +242,15 @@ export class CommandCenterComponent implements OnInit {
   confirmAppt(id: string) { this.studio.confirmAppointment(id).subscribe({ next: () => this.loadAppointments(), error: () => {} }); }
   cancelAppt(id: string) { this.studio.cancelAppointment(id).subscribe({ next: () => this.loadAppointments(), error: () => {} }); }
 
+  loadPriority() {
+    this.studio.listEntitiesPaged(undefined, 1, 8).subscribe({ error: () => {} });
+  }
+
   ngOnInit() {
     this.loading = true;
     this.studio.kpis$.subscribe(k => { this.kpis = k; this.rebuild(); });
     this.studio.entities$.subscribe(e => { this.entities = e; this.rebuild(); });
-    this.studio.runs$.subscribe(r => { this.runs = r; this.rebuild(); });
+    //this.studio.runs$.subscribe(r => { this.runs = r; this.rebuild(); });
     this.studio.agents$.subscribe(a => this.agents = a);
     this.studio.listThreads().subscribe({ next: p => { this.threads = p.items; this.rebuild(); this.loading = false; }, error: () => this.loading = false });
     // paged sections are their own queries, so reload them whenever the studio collections

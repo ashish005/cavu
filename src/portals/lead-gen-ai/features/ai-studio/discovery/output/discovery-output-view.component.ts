@@ -30,7 +30,7 @@ export class DiscoveryOutputViewComponent implements OnInit {
   }
   loadOutput() {
     this.loading = true;
-    this.studio.listEntitiesPaged(undefined, this.page, this.perPage).subscribe({
+    this.studio.listEntitiesPaged(undefined, this.page, this.perPage, 'Discovered').subscribe({
       next: p => { this.entities = p.items; this.total = p.totalCount; this.loading = false; },
       error: () => this.loading = false,
     });

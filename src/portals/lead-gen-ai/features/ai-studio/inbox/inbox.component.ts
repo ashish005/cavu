@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AiStudioService, Thread, Msg } from '../ai-studio.service';
 import { TableComponent, PaginationComponent } from '@app-global';
-import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
+import { StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 type Tab = 'conversations' | 'voice';
 
@@ -12,7 +12,7 @@ type Tab = 'conversations' | 'voice';
 @Component({
   selector: 'app-inbox',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent, StudioRowActionsCell, StudioBadgeCellComponent],
+  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent],
   template: `
   <div>
     <div class="page-head">

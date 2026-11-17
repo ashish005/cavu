@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiStudioService, StudioEntity, Appt } from '../ai-studio.service';
 import { TableComponent, PaginationComponent } from '@app-global';
-import { StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
+import { StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 type Tab = 'pipeline' | 'schedule';
 
@@ -11,7 +11,7 @@ type Tab = 'pipeline' | 'schedule';
 @Component({
   selector: 'app-pipelines',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent, StudioRowActionsCell, StudioBadgeCellComponent],
+  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent],
   template: `
   <div>
     <div class="page-head">

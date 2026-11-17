@@ -1,0 +1,34 @@
+<div class="app-content box-shadow-0" role="main">
+  <div class="navbar light lt p-0">
+    <div class="navbar flex-nowrap">
+      <a data-toggle="modal" data-target="#content-aside" data-modal="" class="mr-1 d-md-none" data-pjax-state="">
+        <span class="btn btn-sm btn-icon primary"><i class="fa fa-th"></i></span>
+      </a>
+      <a class="no-shadow">
+        <h6 class="mb-0">Multi-Source Discovery Studio</h6>
+        <small class="float-left">Permission-scoped intake across registries, job boards, directories &amp; web signals</small>
+      </a>
+    </div>
+    <ul class="nav nav-xs flex-row no-border">
+      <ng-template *ngTemplateOutlet="actionTemplate"></ng-template>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['studio']" [routerLinkActive]="['active']"><i class="fa fa-fw fa-magic"></i>Query Studio</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['runs']" [routerLinkActive]="['active']"><i class="fa fa-fw fa-magic"></i>Runs &amp; Attribution</a>
+      </li>
+      <li class="nav-item mx-1">
+        <a class="btn btn-sm btn-outline border text-theme b-theme" [routerLink]="['output']" [routerLinkActive]="['active']"><i class="fa fa-fw fa-magic"></i>Attributed Output</a>
+      </li>
+    </ul>
+  </div>
+  <div class="content-main d-flex flex">
+    <div class="d-flex flex">
+      <div class="d-flex flex-column flex">
+        <div class="d-flex flex scroll-y">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

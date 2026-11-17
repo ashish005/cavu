@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { PopupService, SharedService, TableComponent, PaginationComponent } from '@app-global';
 import { AiStudioService, StudioEntity, Evidence, Agent } from '../ai-studio.service';
 import { StudioEntityCeComponent } from './components/studio-entity-ce.component';
-import { StudioRowActionsCell, StudioBadgeCellComponent, StudioSelectCellComponent } from './grid-cells/studio-entity-grid-cell.component';
+import { StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent } from '../entities/grid-cells/studio-entity-grid-cell.component';
 
 /** One audit entry shown in the dossier research timeline. */
 interface ResearchEntry { at: string; text: string }
@@ -16,7 +16,7 @@ type Mode = 'db' | 'score' | 'contacts';
 @Component({
   selector: 'app-entities',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent, StudioSelectCellComponent, StudioRowActionsCell, StudioBadgeCellComponent],
+  imports: [CommonModule, FormsModule, TableComponent, PaginationComponent],
   template: `
   <div class="ent">
     <div class="page-head">

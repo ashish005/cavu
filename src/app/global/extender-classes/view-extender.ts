@@ -2,7 +2,7 @@ import {Directive, OnDestroy, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {CoreQueryOptions, CoreResponse} from "../services/models/core-resource";
-import {OrgResourceService, CoreResourceService} from "../services/endpoint-base.service";
+import {OrgResourceService, CoreResourceService, ResourceService} from "../services/endpoint-base.service";
 
 //export enum GridAction { Add = "Save", Update = "Update" }
 @Directive()
@@ -35,7 +35,7 @@ export class ViewExtender<T> {
     private listSubscription : Subscription;
     public subjectSubscription : Subscription;
     protected coreState: CoreQueryOptions;
-    constructor(protected activatedRoute: ActivatedRoute, protected service: OrgResourceService<any> | CoreResourceService<any>){
+    constructor(protected activatedRoute: ActivatedRoute, protected service: ResourceService<any>){
         const { data, parent} = activatedRoute.snapshot || {};
         this.pageTitle = data['header'] || parent?.data['header'];
         this.pageIcon = data['icon'] || parent?.data['icon'];

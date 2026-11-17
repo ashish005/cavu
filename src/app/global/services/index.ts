@@ -2,7 +2,7 @@ export {UtcLocalTimeService, TimeOutputFormat } from "./utc-local-time.service";
 
 export {OrgOptions} from "./models/app-setup.serializer";
 
-export {CoreEndpointBase, CoreResourceService, OrgResourceService} from "./endpoint-base.service";
+export {CoreEndpointBase, CoreResourceService, OrgResourceService, LeadResourceService} from "./endpoint-base.service";
 export {AppPermissionService} from "./orgwise/module-permission/app-permission.service";
 export { AppSetupService } from "./app-setup.service";
 export {OrgLookupService} from "./org-lookup.service";

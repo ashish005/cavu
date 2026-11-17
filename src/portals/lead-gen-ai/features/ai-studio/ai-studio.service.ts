@@ -11,7 +11,7 @@ export interface StudioEntity {
   source: string; evidenceJson: string; contactJson?: string; createdAt: string;
 }
 export interface Evidence { label: string; source: string; verified: boolean; flagged?: boolean }
-export interface Run { id: string; query: string; sourcesJson: string; results: number; qualifiedCount?: number; geography?: string; ranAt: string }
+
 export interface Booking { id: string; entityId: string; slot: string; status: string; createdAt: string }
 export interface Kpis { total: number; qualified: number; avgScore: number; pendingBookings: number; runs7d: number; agentExec24h?: number; agentsActive?: number; agentsTotal?: number; handoffsPending?: number }
 interface RawWorkspace { key: string; label: string; description: string; icon: string; routesJson: string; capabilitiesJson: string }
@@ -49,7 +49,6 @@ export class AiStudioService {
   readonly workspace$ = this.ws$.asObservable();
   readonly industry$ = this.ind$.asObservable();
   readonly entities$ = new BehaviorSubject<StudioEntity[]>([]);
-  readonly runs$ = new BehaviorSubject<Run[]>([]);
   readonly bookings$ = new BehaviorSubject<Booking[]>([]);
   readonly kpis$ = new BehaviorSubject<Kpis>({ total: 0, qualified: 0, avgScore: 0, pendingBookings: 0, runs7d: 0, agentExec24h: 0, agentsActive: 0, agentsTotal: 0, handoffsPending: 0 });
   readonly agents$ = new BehaviorSubject<Agent[]>([]);
@@ -159,7 +158,6 @@ export class AiStudioService {
 
   refreshAll() {
     this.listKpis().subscribe({ error: () => {} });
-    this.listRuns(1, 200).subscribe({ error: () => {} });
     this.listBookings().subscribe({ error: () => {} });
     this.listAgents(1, 200).subscribe({ error: () => {} });
     this.listWorkflows(1, 200).subscribe({ error: () => {} });
@@ -168,13 +166,13 @@ export class AiStudioService {
   }
 
   // ── entities ────────────────────────────────────────────────────
-  listEntitiesPaged(classification?: string, page = 1, pageSize = 25): Observable<PagedResult<StudioEntity>> {
-    return this.pageEntities(page, pageSize, classification).pipe(tap(p => this.entities$.next(p.items)));
+  listEntitiesPaged(classification?: string, page = 1, pageSize = 25, stage?: string): Observable<PagedResult<StudioEntity>> {
+    return this.pageEntities(page, pageSize, classification, stage).pipe(tap(p => this.entities$.next(p.items)));
   }
   /** Paged entities without publishing to the shared `entities$` stream (for screens that page
    *  independently and must not clobber the shared collection used for name lookups). */
-  pageEntities(page = 1, pageSize = 25, classification?: string): Observable<PagedResult<StudioEntity>> {
-    const q = `?page=${page}&pageSize=${pageSize}${classification ? `&classification=${classification}` : ''}`;
+  pageEntities(page = 1, pageSize = 25, classification?: string, stage?: string): Observable<PagedResult<StudioEntity>> {
+    const q = `?page=${page}&pageSize=${pageSize}${classification ? `&classification=${classification}` : ''}${stage ? `&stage=${stage}` : ''}`;
     return this.http.get<PagedResult<StudioEntity>>(`${base}/entities${q}`);
   }
   getEntity(id: string): Observable<StudioEntity> { return this.http.get<StudioEntity>(`${base}/entities/${id}`); }
@@ -186,13 +184,6 @@ export class AiStudioService {
   }
 
   // ── discovery runs ──────────────────────────────────────────────
-  runDiscovery(query: string, sources: string[], geography?: string, classification?: string, minScore?: number): Observable<Run> {
-    return this.http.post<Run>(`${base}/runs`, { query, sources, geography, classification, minScore }).pipe(tap(r => this.runs$.next([r, ...this.runs$.value])));
-  }
-  listRuns(page = 1, pageSize = 25): Observable<PagedResult<Run>> {
-    return this.http.get<PagedResult<Run>>(`${base}/runs?page=${page}&pageSize=${pageSize}`)
-      .pipe(tap(p => this.runs$.next(p.items)));
-  }
   listKpis(): Observable<Kpis> { return this.http.get<Kpis>(`${base}/kpis`).pipe(tap(x => this.kpis$.next(x))); }
   listBookings(): Observable<Booking[]> { return this.http.get<Booking[]>(`${base}/bookings`).pipe(tap(x => this.bookings$.next(x))); }
   confirmBooking(id: string): Observable<void> { return this.http.post<void>(`${base}/bookings/${id}/confirm`, {}); }

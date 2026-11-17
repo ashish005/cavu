@@ -30,6 +30,8 @@ export class AppSetupService {
 
     public get baseAPIUrl() { return environment.authBaseUrl + '/api'; }
     public get baseSectorAPIUrl(): string { return environment.tenantUrl + '/api'; }
+    public get leadSectorAPIUrl(): string { return environment.leadUrl + '/api'; }
+
     constructor(private injector: Injector) {
         this.loaderService = injector.get(LoaderService);
         this.httpClient = injector.get(HttpClient);
